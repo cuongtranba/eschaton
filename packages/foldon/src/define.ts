@@ -3,7 +3,7 @@ import type { ValidationIssue } from "./issues";
 import { err, type Result } from "./result";
 import { validateFoldon } from "./validate";
 
-function canonicalizeAndFreeze(value: unknown): void {
+export function canonicalizeAndFreeze(value: unknown): void {
   if (typeof value !== "object" || value === null) return;
   if (Array.isArray(value)) {
     value.forEach((item: unknown, i) => {

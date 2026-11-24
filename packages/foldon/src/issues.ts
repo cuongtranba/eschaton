@@ -32,7 +32,21 @@ export type ValidationCode =
   | "socket-geometry-mismatch"
   | "socket-tolerance-invalid"
   | "component-unknown-crease"
-  | "component-invalid";
+  | "component-invalid"
+  | "duplicate-definition"
+  | "level-invalid"
+  | "recipe-empty"
+  | "part-duplicate-id"
+  | "part-invalid"
+  | "part-rotation-not-allowed"
+  | "ref-unknown"
+  | "ref-version-unknown"
+  | "assembly-cycle"
+  | "level-not-above-children"
+  | "depth-exceeded"
+  | "part-overlap"
+  | "socket-incompatible"
+  | "duplicate-recipe";
 
 export type ValidationIssue = Readonly<{
   code: ValidationCode;

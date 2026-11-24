@@ -18,6 +18,15 @@ export const faceNormal: Readonly<Record<Face, Vec3>> = {
   "-z": v3(0, 0, -1),
 };
 
+export const oppositeFace: Readonly<Record<Face, Face>> = {
+  "+x": "-x",
+  "-x": "+x",
+  "+y": "-y",
+  "-y": "+y",
+  "+z": "-z",
+  "-z": "+z",
+};
+
 export const socketProfiles = ["empty", "ground", "deck", "base", "wall", "eave", "beam", "open"] as const;
 export type SocketProfile = (typeof socketProfiles)[number];
 export type SocketRole = "support" | "side" | "cap";
@@ -152,7 +161,7 @@ export function socketsCompatible(a: SocketDefinition, b: SocketDefinition): boo
   return (
     distance(a.position, b.position) <= tolerance &&
     dot(a.normal, b.normal) <= -1 + tolerance &&
-    dot(a.tangent, b.tangent) >= 1 - tolerance &&
+    (a.normal[1] !== 0 || dot(a.tangent, b.tangent) >= 1 - tolerance) &&
     profilesCompatible(a.profile, b.profile)
   );
 }

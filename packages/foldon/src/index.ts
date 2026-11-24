@@ -1,11 +1,13 @@
 export { err, ok, type Result } from "./result";
 export {
+  assemblyId,
   creaseId,
   foldonId,
   materialId,
   panelId,
   placementId,
   socketId,
+  type AssemblyId,
   type CreaseId,
   type FoldonId,
   type MaterialId,
@@ -56,5 +58,23 @@ export {
 } from "./definition";
 export { defineFoldon } from "./define";
 export { validateFoldon } from "./validate";
-export { placeFootprint, placeGeometry, placeSockets, type Placement } from "./transform";
+export {
+  composePose,
+  identityPose,
+  placeFootprint,
+  placeGeometry,
+  placeSockets,
+  type Placement,
+  type Pose,
+} from "./transform";
 export { getPrimitive, primitiveCatalog } from "./catalog";
+export {
+  recipeHash,
+  type AssemblyDefinition,
+  type AssemblyLevel,
+  type AssemblyPart,
+  type AssemblyRecipe,
+  type PartRef,
+} from "./assembly";
+export { MAX_ASSEMBLY_DEPTH, createCatalog, type Catalog, type CatalogInput, type FlatInstance } from "./registry";
+export { assemblyCatalog, defaultCatalog } from "./assemblies";

@@ -1,15 +1,16 @@
-import type { Face, FoldonDefinition, Rotation, SocketDefinition } from "./definition";
+import type { Face, Rotation, SocketDefinition } from "./definition";
 import type { PlacementId, FoldonId } from "./ids";
 import type { PosedGeometry } from "./geometry";
 import { add, v3, type Cell, type Vec3 } from "./vec";
 
-export type Placement = Readonly<{
-  id: PlacementId;
-  definitionId: FoldonId;
-  definitionVersion: number;
-  anchor: Cell;
-  rotation: Rotation;
-}>;
+export type Pose = Readonly<{ anchor: Cell; rotation: Rotation }>;
+
+export type Placement = Pose &
+  Readonly<{
+    id: PlacementId;
+    definitionId: FoldonId;
+    definitionVersion: number;
+  }>;
 
 const rotatedFace: Readonly<Record<Rotation, Readonly<Record<Face, Face>>>> = {
   0: { "+x": "+x", "-x": "-x", "+y": "+y", "-y": "-y", "+z": "+z", "-z": "-z" },
@@ -44,21 +45,43 @@ function rotateDirection(d: Vec3, rotation: Rotation): Vec3 {
   }
 }
 
-const transformPoint = (p: Vec3, placement: Placement): Vec3 =>
+const transformPoint = (p: Vec3, placement: Pose): Vec3 =>
   add(rotatePoint(p, placement.rotation), placement.anchor);
 
-const transformDirection = (d: Vec3, placement: Placement): Vec3 => rotateDirection(d, placement.rotation);
+const transformDirection = (d: Vec3, placement: Pose): Vec3 => rotateDirection(d, placement.rotation);
 
-function transformCell(cell: Cell, placement: Placement): Cell {
+function transformCell(cell: Cell, placement: Pose): Cell {
   const centre = transformPoint(add(cell, v3(0.5, 0.5, 0.5)), placement);
   return v3(Math.round(centre[0] - 0.5), Math.round(centre[1] - 0.5), Math.round(centre[2] - 0.5));
 }
 
-export function placeFootprint(definition: FoldonDefinition, placement: Placement): readonly Cell[] {
+function addRotations(a: Rotation, b: Rotation): Rotation {
+  switch ((a + b) % 4) {
+    case 0:
+      return 0;
+    case 1:
+      return 1;
+    case 2:
+      return 2;
+    default:
+      return 3;
+  }
+}
+
+export const identityPose: Pose = { anchor: v3(0, 0, 0), rotation: 0 };
+
+export function composePose(outer: Pose, inner: Pose): Pose {
+  return {
+    anchor: add(rotateDirection(inner.anchor, outer.rotation), outer.anchor),
+    rotation: addRotations(outer.rotation, inner.rotation),
+  };
+}
+
+export function placeFootprint(definition: Readonly<{ footprint: readonly Cell[] }>, placement: Pose): readonly Cell[] {
   return definition.footprint.map((cell) => transformCell(cell, placement));
 }
 
-export function placeSockets(definition: FoldonDefinition, placement: Placement): readonly SocketDefinition[] {
+export function placeSockets(definition: Readonly<{ sockets: readonly SocketDefinition[] }>, placement: Pose): readonly SocketDefinition[] {
   return definition.sockets.map((socket) => ({
     ...socket,
     cell: transformCell(socket.cell, placement),
@@ -69,7 +92,7 @@ export function placeSockets(definition: FoldonDefinition, placement: Placement)
   }));
 }
 
-export function placeGeometry(posed: PosedGeometry, placement: Placement): PosedGeometry {
+export function placeGeometry(posed: PosedGeometry, placement: Pose): PosedGeometry {
   return {
     panels: posed.panels.map((panel) => ({
       id: panel.id,
