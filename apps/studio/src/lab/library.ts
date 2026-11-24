@@ -10,11 +10,22 @@ import {
   type ValidationIssue,
 } from "@eschaton/foldon";
 
-export type ItemRef = Readonly<{ kind: "primitive" | "assembly"; id: string }>;
+export const REFERENCE_SCENE_ID = "reference-composition";
+
+export type SceneDefinition = Readonly<{ id: string; name: string; summary: string }>;
+
+export const referenceScene: SceneDefinition = {
+  id: REFERENCE_SCENE_ID,
+  name: "Reference composition",
+  summary: "The Last District (look-dev)",
+};
+
+export type ItemRef = Readonly<{ kind: "primitive" | "assembly" | "scene"; id: string }>;
 
 export type ResolvedItem =
   | Readonly<{ kind: "primitive"; definition: FoldonDefinition }>
-  | Readonly<{ kind: "assembly"; definition: AssemblyDefinition }>;
+  | Readonly<{ kind: "assembly"; definition: AssemblyDefinition }>
+  | Readonly<{ kind: "scene"; definition: SceneDefinition }>;
 
 export type Library = Readonly<{ catalog: Catalog; items: readonly ItemRef[] }>;
 
@@ -26,6 +37,7 @@ export function loadLibrary(): Result<Library, readonly ValidationIssue[]> {
   if (!defaultCatalog.ok) return defaultCatalog;
   const catalog = defaultCatalog.value;
   const items: readonly ItemRef[] = [
+    { kind: "scene", id: REFERENCE_SCENE_ID },
     ...catalog.foldons().map((definition): ItemRef => ({ kind: "primitive", id: definition.id })),
     ...catalog.assemblies().map((definition): ItemRef => ({ kind: "assembly", id: definition.recipe.id })),
   ];
@@ -33,6 +45,9 @@ export function loadLibrary(): Result<Library, readonly ValidationIssue[]> {
 }
 
 export function resolveItem(library: Library, ref: ItemRef): ResolvedItem | undefined {
+  if (ref.kind === "scene") {
+    return ref.id === referenceScene.id ? { kind: "scene", definition: referenceScene } : undefined;
+  }
   if (ref.kind === "primitive") {
     const definition = library.catalog.foldon(foldonId(ref.id));
     return definition === undefined ? undefined : { kind: "primitive", definition };

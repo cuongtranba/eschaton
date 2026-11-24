@@ -1,8 +1,7 @@
 import {
+  assemblyId,
   foldProgress,
   foldonId,
-  panelId,
-  placeGeometry,
   poseGeometry,
   type CreaseId,
   type FoldonDefinition,
@@ -11,42 +10,18 @@ import {
   type PoseError,
   type PosedGeometry,
   type Result,
-  type Vec3,
 } from "@eschaton/foldon";
+import { basisOf } from "./basis";
+import { composeReferenceScene, type Composition } from "./composition/referenceScene";
+import type { AssemblyLeaves, PlacedFoldon } from "./composition/district";
 import { cellBounds, type Library, type ResolvedItem } from "./library";
 import { scatterSpots } from "./scatter";
 import type { LabState } from "./state";
-import type { Basis, Bounds, LeafBatch, ScenePoseError, SocketMarker, ViewModel } from "./viewModel";
+import type { Basis, Bounds, InkScale, Ink, LeafBatch, ScenePoseError, SocketMarker, ViewModel } from "./viewModel";
 
 const SCATTER_COUNT = 5;
 const SCATTER_FRAGMENT = "P09";
 const FRAME_MARGIN = 0.75;
-
-const probe: PosedGeometry = {
-  panels: [
-    {
-      id: panelId("probe"),
-      vertices: [
-        [0, 0, 0],
-        [1, 0, 0],
-        [0, 1, 0],
-        [0, 0, 1],
-      ],
-      normal: [0, 1, 0],
-    },
-  ],
-  creases: [],
-};
-
-export function basisOf(pose: Pose): Basis {
-  const placed = placeGeometry(probe, pose).panels[0]?.vertices;
-  const [origin, x, y, z] = placed ?? [];
-  if (origin === undefined || x === undefined || y === undefined || z === undefined) {
-    return { origin: [0, 0, 0], x: [1, 0, 0], y: [0, 1, 0], z: [0, 0, 1] };
-  }
-  const axis = (end: Vec3): Vec3 => [end[0] - origin[0], end[1] - origin[1], end[2] - origin[2]];
-  return { origin, x: axis(x), y: axis(y), z: axis(z) };
-}
 
 export function creaseTargets(
   definition: FoldonDefinition,
@@ -78,6 +53,12 @@ type LeafBatchGeometry = Readonly<{ geometry: PosedGeometry; poseKey: string }>;
 
 type Leaf = Readonly<{ definition: FoldonDefinition; pose: Pose }>;
 
+type LabItem = Exclude<ResolvedItem, Readonly<{ kind: "scene" }>>;
+
+const LAB_INK_SCALE: InkScale = { hazeStart: 40, hazeEnd: 220, hatchFrequency: 7, grainFrequency: 5 };
+const SCENE_INK_SCALE: InkScale = { hazeStart: 120, hazeEnd: 620, hatchFrequency: 0.9, grainFrequency: 0.45 };
+const NO_INK: Ink = { tone: 0 };
+
 function boundsOfCells(cells: ReturnType<typeof cellBounds>): Bounds {
   return {
     min: [cells.min[0], cells.min[1], cells.min[2]],
@@ -85,7 +66,7 @@ function boundsOfCells(cells: ReturnType<typeof cellBounds>): Bounds {
   };
 }
 
-function leavesOf(library: Library, item: ResolvedItem): readonly Leaf[] {
+function leavesOf(library: Library, item: LabItem): readonly Leaf[] {
   if (item.kind === "primitive") {
     return [{ definition: item.definition, pose: { anchor: [0, 0, 0], rotation: 0 } }];
   }
@@ -95,11 +76,40 @@ function leavesOf(library: Library, item: ResolvedItem): readonly Leaf[] {
   });
 }
 
-function socketsOf(item: ResolvedItem): readonly SocketMarker[] {
+function socketsOf(item: LabItem): readonly SocketMarker[] {
   return item.definition.sockets.map((socket) => ({ position: socket.position, normal: socket.normal, profile: socket.profile }));
 }
 
-export function buildViewModel(library: Library, item: ResolvedItem, state: LabState): ViewModel {
+type Group = { definition: FoldonDefinition; motion: PlacedFoldon["motion"]; bases: Basis[]; inks: Ink[] };
+
+function poseGroups(groups: ReadonlyMap<string, Group>, state: LabState, selectedId: FoldonId | undefined) {
+  const batches: LeafBatch[] = [];
+  const errors: ScenePoseError[] = [];
+  for (const [key, group] of groups) {
+    const posed = poseDefinition(group.definition, state, selectedId);
+    if (posed.ok) {
+      batches.push({
+        key,
+        poseKey: posed.value.poseKey,
+        geometry: posed.value.geometry,
+        bases: group.bases,
+        inks: group.inks,
+        ...(group.motion === undefined ? {} : { motion: group.motion }),
+      });
+    } else errors.push({ definitionKey: key, error: posed.error });
+  }
+  return { batches, errors };
+}
+
+function addToGroup(groups: Map<string, Group>, definition: FoldonDefinition, motion: PlacedFoldon["motion"], basis: Basis, ink: Ink): void {
+  const key = `${definition.id}@${definition.version}${motion === undefined ? "" : `:${motion}`}`;
+  const group = groups.get(key) ?? { definition, motion, bases: [], inks: [] };
+  group.bases.push(basis);
+  group.inks.push(ink);
+  groups.set(key, group);
+}
+
+function labViewModel(library: Library, item: LabItem, state: LabState): ViewModel {
   const itemId = item.kind === "primitive" ? item.definition.id : undefined;
   const footprint = item.definition.footprint;
   const cells = cellBounds(footprint);
@@ -114,21 +124,9 @@ export function buildViewModel(library: Library, item: ResolvedItem, state: LabS
     }
   }
 
-  const grouped = new Map<string, { definition: FoldonDefinition; bases: Basis[] }>();
-  for (const leaf of leaves) {
-    const key = `${leaf.definition.id}@${leaf.definition.version}`;
-    const group = grouped.get(key) ?? { definition: leaf.definition, bases: [] };
-    group.bases.push(basisOf(leaf.pose));
-    grouped.set(key, group);
-  }
-
-  const batches: LeafBatch[] = [];
-  const errors: ScenePoseError[] = [];
-  for (const [key, group] of grouped) {
-    const posed = poseDefinition(group.definition, state, itemId);
-    if (posed.ok) batches.push({ key, poseKey: posed.value.poseKey, geometry: posed.value.geometry, bases: group.bases });
-    else errors.push({ definitionKey: key, error: posed.error });
-  }
+  const groups = new Map<string, Group>();
+  for (const leaf of leaves) addToGroup(groups, leaf.definition, undefined, basisOf(leaf.pose), NO_INK);
+  const { batches, errors } = poseGroups(groups, state, itemId);
 
   const itemKey = `${item.kind}:${item.kind === "primitive" ? item.definition.id : item.definition.recipe.id}`;
   const layoutKey = [
@@ -141,8 +139,13 @@ export function buildViewModel(library: Library, item: ResolvedItem, state: LabS
   return {
     itemKey,
     layoutKey,
+    layoutHash: undefined,
     cameraMode: state.cameraMode,
     overlays: state.overlays,
+    look: state.look,
+    inkScale: LAB_INK_SCALE,
+    view: undefined,
+    motion: false,
     batches,
     sockets: socketsOf(item),
     footprint,
@@ -152,4 +155,71 @@ export function buildViewModel(library: Library, item: ResolvedItem, state: LabS
     },
     errors,
   };
+}
+
+function assemblyLeaves(library: Library): AssemblyLeaves {
+  return (id) => {
+    const definition = library.catalog.assembly(assemblyId(id));
+    if (definition === undefined) return [];
+    return library.catalog
+      .flatten(definition.recipe.id, definition.recipe.version)
+      .map((instance) => ({ definitionId: instance.definitionId, basis: basisOf({ anchor: instance.anchor, rotation: instance.rotation }) }));
+  };
+}
+
+let cachedComposition: Readonly<{ library: Library; seed: number; composition: Composition }> | undefined;
+
+function compositionFor(library: Library, seed: number): Composition {
+  if (cachedComposition?.library === library && cachedComposition.seed === seed) return cachedComposition.composition;
+  const composition = composeReferenceScene(seed, assemblyLeaves(library));
+  cachedComposition = { library, seed, composition };
+  return composition;
+}
+
+export function layoutHashOf(batches: readonly LeafBatch[]): string {
+  let hash = 0x811c9dc5;
+  const mix = (value: number): void => {
+    hash = Math.imul(hash ^ (Math.round(value * 100) & 0xffffff), 0x01000193) >>> 0;
+  };
+  for (const batch of batches) {
+    for (const character of batch.key) mix(character.charCodeAt(0));
+    for (const basis of batch.bases) {
+      for (const vector of [basis.origin, basis.x, basis.y, basis.z]) vector.forEach(mix);
+    }
+    batch.inks?.forEach((ink) => { mix(ink.tone); });
+  }
+  return hash.toString(16).padStart(8, "0");
+}
+
+function sceneViewModel(library: Library, state: LabState): ViewModel {
+  const composition = compositionFor(library, state.seed);
+  const groups = new Map<string, Group>();
+  for (const placed of composition.foldons) {
+    const definition = library.catalog.foldon(foldonId(placed.definitionId));
+    if (definition !== undefined) addToGroup(groups, definition, placed.motion, placed.basis, placed.ink);
+  }
+  const posed = poseGroups(groups, state, undefined);
+  const batches = [...posed.batches, ...composition.panels];
+  const itemKey = "scene:reference-composition";
+  const instances = batches.reduce((sum, batch) => sum + batch.bases.length, 0);
+  return {
+    itemKey,
+    layoutKey: `${itemKey}|seed:${state.seed}|${instances}|${batches.length}`,
+    layoutHash: layoutHashOf(batches),
+    cameraMode: state.cameraMode,
+    overlays: state.overlays,
+    look: state.look,
+    inkScale: SCENE_INK_SCALE,
+    view: composition.view,
+    motion: !state.reducedMotion,
+    batches,
+    sockets: [],
+    footprint: [],
+    bounds: composition.bounds,
+    errors: posed.errors,
+  };
+}
+
+export function buildViewModel(library: Library, item: ResolvedItem, state: LabState): ViewModel {
+  return item.kind === "scene" ? sceneViewModel(library, state) : labViewModel(library, item, state);
 }

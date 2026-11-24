@@ -6,14 +6,14 @@ Procedural origami-inspired world engine (TypeScript + Three.js). Authoritative 
 
 | Command | Purpose |
 |---|---|
-| `pnpm dev` | Studio dev server on http://localhost:5173 |
+| `pnpm dev` | Studio dev server on http://localhost:5173 (set `STUDIO_PORT` to use another port; `pnpm e2e` and `pnpm screenshots` honour it too) |
 | `pnpm test` | Vitest across packages |
 | `pnpm lint` | ESLint (type-aware, strict) |
 | `pnpm typecheck` | `tsc` per workspace project |
 | `pnpm build` | Production build of every buildable project |
 | `pnpm e2e` | Playwright against the Studio |
 | `pnpm bench` | Benchmarks (where defined) |
-| `pnpm screenshots` | Regenerate `docs/screenshots/p0.4-*.png` via Playwright (not part of `pnpm e2e`) |
+| `pnpm screenshots` | Regenerate `docs/screenshots/p0.4-*.png` and `p0.5-*.png` via Playwright (not part of `pnpm e2e`) |
 
 Run lint, typecheck, test and build before declaring work done. Never report a check as passed unless you ran it.
 

@@ -60,6 +60,13 @@ export function Viewport({ viewModel, forceWebGL, onFrame }: ViewportProps) {
           Renderer unavailable: {failure}
         </p>
       )}
+      {viewModel.look.compare && (
+        <div className="compare-labels" data-testid="compare-labels" aria-hidden="true">
+          <span>Flat (no ink)</span>
+          <div className="compare-labels__divider" />
+          <span>Ink look</span>
+        </div>
+      )}
       {viewModel.overlays.sockets && (
         <aside className="legend" aria-label="Socket legend" data-testid="socket-legend">
           <h3>Socket profiles</h3>

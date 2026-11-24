@@ -3,6 +3,7 @@ import {
   BufferGeometry,
   Color,
   Group,
+  InstancedBufferAttribute,
   InstancedMesh,
   LineSegments,
   Matrix4,
@@ -11,17 +12,21 @@ import {
   Scene,
   Vector3,
   WebGPURenderer,
+  Vector2,
 } from "three/webgpu";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { flatLook, resolveLook } from "../lab/look";
 import { palette } from "../lab/palette";
 import type { OverlayName } from "../lab/state";
-import type { Bounds, LeafBatch, ViewModel } from "../lab/viewModel";
+import type { Basis, Bounds, LeafBatch, ViewModel } from "../lab/viewModel";
 import {
   creaseVertexCount,
   panelEdgeVertexCount,
   panelVertexCount,
   writeCreaseAxes,
+  writeInstanceInks,
   writePanelEdges,
+  writePanelInks,
   writePanelTriangles,
 } from "./geometry";
 import { createLabMaterials } from "./materials";
@@ -59,6 +64,7 @@ type BatchObjects = {
   normals: Float32Array;
   positionAttribute: BufferAttribute;
   normalAttribute: BufferAttribute;
+  basis: readonly Basis[];
 };
 
 type DynamicLines = {
@@ -72,12 +78,17 @@ type Content = {
   group: Group;
   batches: BatchObjects[];
   edges: DynamicLines;
+  creaseEdges: DynamicLines;
   creases: DynamicLines;
+  motion: readonly BatchObjects[];
   overlays: Readonly<Record<Exclude<OverlayName, "edges" | "creases" | "scatter">, LineSegments>>;
   poseKeys: string;
 };
 
 const FIELD_OF_VIEW = 32;
+const FAR_PLANE = 1400;
+const CLOUD_DRIFT_AMPLITUDE = 16;
+const CLOUD_DRIFT_RATE = 0.035;
 const ORBIT_DIRECTION = new Vector3(1, 0.75, 1.1).normalize();
 const COMPOSITION_DIRECTION = new Vector3(1, 0.8, 1.3).normalize();
 const FRAME_SLACK = 1.05;
@@ -98,6 +109,8 @@ function boundsRadius(bounds: Bounds): number {
   ) / 2;
 }
 
+const isOutlined = (batch: LeafBatch): boolean => batch.outline !== false;
+
 function createLines(positions: Float32Array, material: LineSegments["material"], colors?: Float32Array): LineSegments {
   const geometry = new BufferGeometry();
   geometry.setAttribute("position", new BufferAttribute(positions, 3));
@@ -117,8 +130,9 @@ export async function createLabRenderer(canvas: HTMLCanvasElement, options: LabR
   const scene = new Scene();
   scene.background = new Color(palette.paper);
 
-  const perspective = new PerspectiveCamera(FIELD_OF_VIEW, 1, 0.1, 400);
+  const perspective = new PerspectiveCamera(FIELD_OF_VIEW, 1, 0.1, FAR_PLANE);
   const composition = new OrthographicCamera(-1, 1, 1, -1, 0.1, 400);
+  const presetCamera = new PerspectiveCamera(FIELD_OF_VIEW, 1, 1, FAR_PLANE);
   const controls = new OrbitControls(perspective, canvas);
   controls.enableDamping = true;
   controls.dampingFactor = 0.12;
@@ -156,36 +170,45 @@ export async function createLabRenderer(canvas: HTMLCanvasElement, options: LabR
       const vertexCount = panelVertexCount(batch.geometry);
       const positions = new Float32Array(vertexCount * 3);
       const normals = new Float32Array(vertexCount * 3);
+      const vertexInks = new Float32Array(vertexCount * 2);
+      const instanceInks = new Float32Array(batch.bases.length * 2);
       writePanelTriangles(batch.geometry, positions, normals);
+      writePanelInks(batch.geometry, batch.panelInks, vertexInks);
+      writeInstanceInks(batch.inks, batch.bases.length, instanceInks);
       const positionAttribute = new BufferAttribute(positions, 3);
       const normalAttribute = new BufferAttribute(normals, 3);
       const geometry = new BufferGeometry();
       geometry.setAttribute("position", positionAttribute);
       geometry.setAttribute("normal", normalAttribute);
+      geometry.setAttribute("ink", new BufferAttribute(vertexInks, 2));
+      geometry.setAttribute("instanceInk", new InstancedBufferAttribute(instanceInks, 2));
       const mesh = new InstancedMesh(geometry, materials.paper, batch.bases.length);
       mesh.frustumCulled = false;
       batch.bases.forEach((basis, index) => {
-        matrix.makeBasis(new Vector3(...basis.x), new Vector3(...basis.y), new Vector3(...basis.z));
-        matrix.setPosition(basis.origin[0], basis.origin[1], basis.origin[2]);
+        setInstance(matrix, basis);
         mesh.setMatrixAt(index, matrix);
       });
       mesh.instanceMatrix.needsUpdate = true;
       group.add(mesh);
-      return { batch, mesh, geometry, positions, normals, positionAttribute, normalAttribute };
+      return { batch, mesh, geometry, positions, normals, positionAttribute, normalAttribute, basis: batch.bases };
     });
 
-    const edgeCount = viewModel.batches.reduce((sum, b) => sum + panelEdgeVertexCount(b.geometry, b.bases.length), 0);
-    const creaseCount = viewModel.batches.reduce((sum, b) => sum + creaseVertexCount(b.geometry, b.bases.length), 0);
+    const outlined = viewModel.batches.filter(isOutlined);
+    const edgeCount = outlined.reduce((sum, b) => sum + panelEdgeVertexCount(b.geometry, b.bases.length), 0);
+    const creaseCount = outlined.reduce((sum, b) => sum + creaseVertexCount(b.geometry, b.bases.length), 0);
+    const axisCount = viewModel.batches.reduce((sum, b) => sum + creaseVertexCount(b.geometry, b.bases.length), 0);
     const edgePositions = new Float32Array(edgeCount * 3);
-    const creasePositions = new Float32Array(creaseCount * 3);
+    const creaseEdgePositions = new Float32Array(creaseCount * 3);
+    const creasePositions = new Float32Array(axisCount * 3);
     const edgeLines = createLines(edgePositions, materials.panelEdges);
+    const creaseEdgeLines = createLines(creaseEdgePositions, materials.creaseEdges);
     const creaseLines = createLines(creasePositions, materials.creaseAxes);
     creaseLines.renderOrder = 10;
     const grid = createLines(gridSegments(viewModel.bounds), materials.grid);
     const footprint = createLines(footprintSegments(viewModel.footprint), materials.footprint);
     const markers = socketSegments(viewModel.sockets);
     const sockets = createLines(markers.positions, materials.sockets, markers.colors);
-    group.add(edgeLines, creaseLines, grid, footprint, sockets);
+    group.add(edgeLines, creaseEdgeLines, creaseLines, grid, footprint, sockets);
 
     const attributeOf = (lines: LineSegments): BufferAttribute => {
       const attribute = lines.geometry.getAttribute("position");
@@ -196,7 +219,9 @@ export async function createLabRenderer(canvas: HTMLCanvasElement, options: LabR
       layoutKey: viewModel.layoutKey,
       group,
       batches,
+      motion: batches.filter((objects) => objects.batch.motion !== undefined),
       edges: { lines: edgeLines, positions: edgePositions, attribute: attributeOf(edgeLines) },
+      creaseEdges: { lines: creaseEdgeLines, positions: creaseEdgePositions, attribute: attributeOf(creaseEdgeLines) },
       creases: { lines: creaseLines, positions: creasePositions, attribute: attributeOf(creaseLines) },
       overlays: { grid, footprint, sockets },
       poseKeys: "",
@@ -210,7 +235,7 @@ export async function createLabRenderer(canvas: HTMLCanvasElement, options: LabR
       objects.mesh.dispose();
       objects.geometry.dispose();
     }
-    const lines = [content.edges.lines, content.creases.lines, ...Object.values(content.overlays)];
+    const lines = [content.edges.lines, content.creaseEdges.lines, content.creases.lines, ...Object.values(content.overlays)];
     for (const line of lines) line.geometry.dispose();
     content = undefined;
   }
@@ -220,6 +245,7 @@ export async function createLabRenderer(canvas: HTMLCanvasElement, options: LabR
     if (keys === target.poseKeys) return;
     target.poseKeys = keys;
     let edgeCursor = 0;
+    let creaseEdgeCursor = 0;
     let creaseCursor = 0;
     target.batches.forEach((objects, index) => {
       const batch = viewModel.batches[index];
@@ -228,14 +254,35 @@ export async function createLabRenderer(canvas: HTMLCanvasElement, options: LabR
       writePanelTriangles(batch.geometry, objects.positions, objects.normals);
       objects.positionAttribute.needsUpdate = true;
       objects.normalAttribute.needsUpdate = true;
-      edgeCursor = writePanelEdges(batch.geometry, batch.bases, target.edges.positions, edgeCursor);
+      if (isOutlined(batch)) {
+        edgeCursor = writePanelEdges(batch.geometry, batch.bases, target.edges.positions, edgeCursor);
+        creaseEdgeCursor = writeCreaseAxes(batch.geometry, batch.bases, target.creaseEdges.positions, creaseEdgeCursor, 0);
+      }
       creaseCursor = writeCreaseAxes(batch.geometry, batch.bases, target.creases.positions, creaseCursor);
     });
     target.edges.attribute.needsUpdate = true;
+    target.creaseEdges.attribute.needsUpdate = true;
     target.creases.attribute.needsUpdate = true;
   }
 
   function frameCamera(viewModel: ViewModel): void {
+    if (viewModel.view !== undefined) {
+      const { position, target, fov } = viewModel.view;
+      perspective.fov = fov;
+      perspective.position.set(...position);
+      perspective.lookAt(...target);
+      controls.target.set(...target);
+      controls.update();
+      presetCamera.fov = fov;
+      presetCamera.position.set(...position);
+      presetCamera.lookAt(...target);
+      presetCamera.aspect = perspective.aspect;
+      presetCamera.updateProjectionMatrix();
+      perspective.updateProjectionMatrix();
+      return;
+    }
+    perspective.fov = FIELD_OF_VIEW;
+    perspective.updateProjectionMatrix();
     const centre = boundsCentre(viewModel.bounds);
     const radius = Math.max(boundsRadius(viewModel.bounds), 1);
     const aspect = perspective.aspect;
@@ -270,7 +317,6 @@ export async function createLabRenderer(canvas: HTMLCanvasElement, options: LabR
     target.overlays.grid.visible = overlays.grid;
     target.overlays.footprint.visible = overlays.footprint;
     target.overlays.sockets.visible = overlays.sockets;
-    target.edges.lines.visible = overlays.edges;
     target.creases.lines.visible = overlays.creases;
   }
 
@@ -302,17 +348,78 @@ export async function createLabRenderer(canvas: HTMLCanvasElement, options: LabR
     renderer.setSize(width, height, false);
     perspective.aspect = width / height;
     perspective.updateProjectionMatrix();
+    presetCamera.aspect = perspective.aspect;
+    presetCamera.updateProjectionMatrix();
     if (current !== undefined) updateCompositionFrustum();
     dirty = true;
   }
 
-  function renderFrame(): void {
+  const matrixScratch = new Matrix4();
+  function animate(target: Content, seconds: number): void {
+    for (const objects of target.motion) {
+      if (objects.batch.motion === "cloud") {
+        objects.mesh.position.x = Math.sin(seconds * CLOUD_DRIFT_RATE) * CLOUD_DRIFT_AMPLITUDE;
+        continue;
+      }
+      objects.basis.forEach((basis, index) => {
+        const phase = index * 2.399;
+        const drift: Basis = {
+          ...basis,
+          origin: [
+            basis.origin[0] + Math.sin(seconds * 0.11 + phase) * 4,
+            basis.origin[1] + Math.sin(seconds * 0.07 + phase * 1.7) * 2.5,
+            basis.origin[2] + Math.cos(seconds * 0.09 + phase) * 3,
+          ],
+        };
+        setInstance(matrixScratch, drift);
+        objects.mesh.setMatrixAt(index, matrixScratch);
+      });
+      objects.mesh.instanceMatrix.needsUpdate = true;
+    }
+  }
+
+  function setOutlines(target: Content, visible: boolean): void {
+    target.edges.lines.visible = visible;
+    target.creaseEdges.lines.visible = visible;
+  }
+
+  const sizeScratch = new Vector2();
+  function draw(camera: PerspectiveCamera | OrthographicCamera, target: Content, viewModel: ViewModel): void {
+    const look = resolveLook(viewModel.look);
+    const edgesOn = viewModel.overlays.edges;
+    if (!viewModel.look.compare) {
+      materials.setLook(look, viewModel.inkScale);
+      setOutlines(target, edgesOn && look.outlines);
+      renderer.render(scene, camera);
+      return;
+    }
+    const flat = flatLook(viewModel.look);
+    materials.setLook(flat, viewModel.inkScale);
+    setOutlines(target, edgesOn && flat.outlines);
+    renderer.setScissorTest(false);
+    renderer.render(scene, camera);
+    renderer.getSize(sizeScratch);
+    const half = Math.floor(sizeScratch.x / 2);
+    renderer.setScissor(half, 0, Math.ceil(sizeScratch.x - half), sizeScratch.y);
+    renderer.setScissorTest(true);
+    renderer.autoClearColor = false;
+    materials.setLook(look, viewModel.inkScale);
+    setOutlines(target, edgesOn && look.outlines);
+    renderer.render(scene, camera);
+    renderer.autoClearColor = true;
+    renderer.setScissorTest(false);
+  }
+
+  function renderFrame(time: number): void {
     if (disposed) return;
     const moved = controls.update();
-    if (!dirty && !moved) return;
+    const animating = current?.motion === true && content !== undefined && content.motion.length > 0;
+    if (!dirty && !moved && !animating) return;
     dirty = false;
-    const camera = current?.cameraMode === "composition" ? composition : perspective;
-    renderer.render(scene, camera);
+    if (animating && content !== undefined) animate(content, time / 1000);
+    const camera =
+      current?.cameraMode === "composition" ? (current.view === undefined ? composition : presetCamera) : perspective;
+    if (current !== undefined && content !== undefined) draw(camera, content, current);
     frames += 1;
     options.onFrame?.(readStats());
   }
@@ -335,4 +442,9 @@ export async function createLabRenderer(canvas: HTMLCanvasElement, options: LabR
       void renderer.dispose();
     },
   };
+}
+
+function setInstance(matrix: Matrix4, basis: Basis): void {
+  matrix.makeBasis(new Vector3(...basis.x), new Vector3(...basis.y), new Vector3(...basis.z));
+  matrix.setPosition(basis.origin[0], basis.origin[1], basis.origin[2]);
 }

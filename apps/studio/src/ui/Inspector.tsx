@@ -10,6 +10,7 @@ import { cellBounds, footprintSize, type Library, type ResolvedItem } from "../l
 import { creaseTargets } from "../lab/scene";
 import type { LabCommand, LabState } from "../lab/state";
 import type { ViewModel } from "../lab/viewModel";
+import { LookPanel } from "./LookPanel";
 
 type InspectorProps = Readonly<{
   item: ResolvedItem;
@@ -235,10 +236,41 @@ function AssemblyDetails({ definition, library }: Readonly<{ definition: Assembl
   );
 }
 
+function SceneDetails({ state, viewModel }: Readonly<Pick<InspectorProps, "state" | "viewModel">>) {
+  const instances = viewModel.batches.reduce((sum, batch) => sum + batch.bases.length, 0);
+  return (
+    <dl className="inspector__list">
+      <Row label="Scene">The Last District (look-dev)</Row>
+      <Row label="Seed">
+        <code data-testid="scene-seed">{state.seed}</code>
+      </Row>
+      <Row label="Layout hash">
+        <code data-testid="layout-hash">{viewModel.layoutHash ?? "n/a"}</code>
+      </Row>
+      <Row label="Scene instances">
+        <span data-testid="scene-instances">{instances}</span>
+      </Row>
+      <Row label="Batches">{viewModel.batches.length}</Row>
+    </dl>
+  );
+}
+
+const titleOf = (item: ResolvedItem): string => {
+  switch (item.kind) {
+    case "primitive":
+      return item.definition.name;
+    case "assembly":
+      return item.definition.recipe.name;
+    case "scene":
+      return item.definition.name;
+  }
+};
+
 export function Inspector({ item, library, state, viewModel, dispatch }: InspectorProps) {
-  const title = item.kind === "primitive" ? item.definition.name : item.definition.recipe.name;
+  const title = titleOf(item);
   return (
     <aside className="panel panel--right" aria-label="Inspector">
+      <LookPanel look={state.look} dispatch={dispatch} />
       <h2>Inspector</h2>
       <h3 data-testid="inspector-title">{title}</h3>
       {viewModel.errors.map((entry) => (
@@ -246,11 +278,11 @@ export function Inspector({ item, library, state, viewModel, dispatch }: Inspect
           {entry.definitionKey}: {entry.error.message}
         </p>
       ))}
-      {item.kind === "primitive" ? (
+      {item.kind === "primitive" && (
         <PrimitiveDetails definition={item.definition} state={state} viewModel={viewModel} dispatch={dispatch} />
-      ) : (
-        <AssemblyDetails definition={item.definition} library={library} />
       )}
+      {item.kind === "assembly" && <AssemblyDetails definition={item.definition} library={library} />}
+      {item.kind === "scene" && <SceneDetails state={state} viewModel={viewModel} />}
     </aside>
   );
 }

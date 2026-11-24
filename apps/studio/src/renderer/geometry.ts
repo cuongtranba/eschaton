@@ -1,5 +1,5 @@
 import type { PosedGeometry, Vec3 } from "@eschaton/foldon";
-import type { Basis } from "../lab/viewModel";
+import type { Basis, Ink } from "../lab/viewModel";
 
 export const CREASE_EXTENSION = 0.25;
 
@@ -25,6 +25,25 @@ export function writePanelTriangles(posed: PosedGeometry, positions: Float32Arra
       push(second, panel.normal);
       push(third, panel.normal);
     }
+  }
+}
+
+export function writePanelInks(posed: PosedGeometry, panelInks: readonly Ink[] | undefined, out: Float32Array): void {
+  let cursor = 0;
+  posed.panels.forEach((panel, index) => {
+    const ink = panelInks?.[index];
+    const triangles = Math.max(0, panel.vertices.length - 2) * 3;
+    for (let i = 0; i < triangles; i++) {
+      out[cursor++] = ink?.tone ?? 0;
+      out[cursor++] = ink?.unlit === true ? 1 : 0;
+    }
+  });
+}
+
+export function writeInstanceInks(inks: readonly Ink[] | undefined, count: number, out: Float32Array): void {
+  for (let i = 0; i < count; i++) {
+    out[i * 2] = inks?.[i]?.tone ?? 0;
+    out[i * 2 + 1] = inks?.[i]?.unlit === true ? 1 : 0;
   }
 }
 
@@ -67,6 +86,7 @@ export function writeCreaseAxes(
   bases: readonly Basis[],
   out: Float32Array,
   offset: number,
+  extension = CREASE_EXTENSION,
 ): number {
   let cursor = offset;
   for (const basis of bases) {
@@ -76,7 +96,7 @@ export function writeCreaseAxes(
         crease.end[1] - crease.start[1],
         crease.end[2] - crease.start[2],
       );
-      const k = length === 0 ? 0 : CREASE_EXTENSION / length;
+      const k = length === 0 ? 0 : extension / length;
       const direction: Vec3 = [
         (crease.end[0] - crease.start[0]) * k,
         (crease.end[1] - crease.start[1]) * k,

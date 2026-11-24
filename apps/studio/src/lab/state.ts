@@ -1,16 +1,19 @@
+import { defaultLook, mergeLook, type LookSettings } from "./look";
+
 export const overlayNames = ["grid", "footprint", "sockets", "creases", "edges", "scatter"] as const;
 export type OverlayName = (typeof overlayNames)[number];
 export type Overlays = Readonly<Record<OverlayName, boolean>>;
 
 export type CameraMode = "orbit" | "composition";
 
-export type SelectedItem = Readonly<{ kind: "primitive" | "assembly"; id: string }>;
+export type SelectedItem = Readonly<{ kind: "primitive" | "assembly" | "scene"; id: string }>;
 
 export type LabState = Readonly<{
   selected: SelectedItem;
   foldProgress: number;
   creaseAngles: Readonly<Record<string, number>>;
   overlays: Overlays;
+  look: LookSettings;
   cameraMode: CameraMode;
   seed: number;
   reducedMotion: boolean;
@@ -23,6 +26,7 @@ export type LabCommand =
   | Readonly<{ type: "setFoldProgress"; progress: number }>
   | Readonly<{ type: "setCreaseAngle"; creaseId: string; angle: number }>
   | Readonly<{ type: "toggleOverlay"; overlay: OverlayName }>
+  | Readonly<{ type: "setLook"; patch: Partial<LookSettings> }>
   | Readonly<{ type: "setCameraMode"; mode: CameraMode }>
   | Readonly<{ type: "setSeed"; seed: number }>
   | Readonly<{ type: "rerollSeed" }>
@@ -39,6 +43,7 @@ export function initialLabState(reducedMotion: boolean): LabState {
     foldProgress: 1,
     creaseAngles: {},
     overlays: { grid: true, footprint: false, sockets: false, creases: false, edges: true, scatter: true },
+    look: defaultLook,
     cameraMode: "orbit",
     seed: DEFAULT_SEED,
     reducedMotion,
@@ -76,16 +81,24 @@ function tick(state: LabState, elapsedMs: number): LabState {
   return { ...state, foldProgress: progress };
 }
 
+function selectItem(state: LabState, item: SelectedItem): LabState {
+  const entering = item.kind === "scene" && state.selected.kind !== "scene";
+  const overlays = entering ? { ...state.overlays, grid: false } : state.overlays;
+  return { ...state, selected: item, overlays, creaseAngles: {}, playing: false };
+}
+
 export function labReducer(state: LabState, command: LabCommand): LabState {
   switch (command.type) {
     case "selectItem":
-      return { ...state, selected: command.item, creaseAngles: {}, playing: false };
+      return selectItem(state, command.item);
     case "setFoldProgress":
       return { ...state, foldProgress: clampUnit(command.progress), creaseAngles: {}, playing: false };
     case "setCreaseAngle":
       return { ...state, creaseAngles: { ...state.creaseAngles, [command.creaseId]: command.angle }, playing: false };
     case "toggleOverlay":
       return { ...state, overlays: { ...state.overlays, [command.overlay]: !state.overlays[command.overlay] } };
+    case "setLook":
+      return { ...state, look: mergeLook(state.look, command.patch) };
     case "setCameraMode":
       return { ...state, cameraMode: command.mode };
     case "setSeed":

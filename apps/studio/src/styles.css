@@ -233,3 +233,28 @@ kbd {
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
 }
+
+.look { display: grid; gap: 4px; padding-bottom: 10px; margin-bottom: 8px; border-bottom: 1px solid var(--line); }
+.look h2 { margin-bottom: 2px; }
+.look__row { display: grid; grid-template-columns: 112px 1fr 38px; align-items: center; gap: 6px; color: var(--text-dim); }
+.look__row select { grid-column: 2 / 4; background: var(--graphite-900); border: 1px solid var(--line); border-radius: 2px; padding: 2px 4px; }
+.look__row output { font-family: var(--mono); text-align: right; color: var(--text); }
+.look__toggles { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 8px; margin-top: 4px; }
+.look__check { display: inline-flex; align-items: center; gap: 6px; color: var(--text-dim); cursor: pointer; }
+.look__check input { accent-color: var(--paper); }
+.look input:disabled, .look select:disabled { opacity: 0.45; }
+
+.compare-labels { position: absolute; inset: 0; pointer-events: none; }
+.compare-labels__divider { position: absolute; top: 0; bottom: 0; left: 50%; width: 1px; background: var(--ink); }
+.compare-labels span {
+  position: absolute;
+  top: 8px;
+  padding: 1px 6px;
+  font: 10px/1.5 var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--paper);
+  background: rgba(34, 35, 33, 0.82);
+}
+.compare-labels span:first-of-type { left: 8px; }
+.compare-labels span:last-of-type { right: 8px; }

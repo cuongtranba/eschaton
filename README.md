@@ -12,14 +12,16 @@ Node ≥ 22.12, pnpm 10.
 
 ```sh
 pnpm install
-pnpm dev        # Studio at http://localhost:5173
+pnpm dev        # Studio at http://localhost:5173 (STUDIO_PORT=5183 pnpm dev to use another port)
 pnpm test       # Vitest (packages)
 pnpm lint       # ESLint, type-aware
 pnpm typecheck  # tsc per project
 pnpm build      # production build
 pnpm e2e        # Playwright specs against the Studio (starts the dev server itself)
-pnpm screenshots # regenerate docs/screenshots/p0.4-*.png
+pnpm screenshots # regenerate docs/screenshots/p0.4-*.png and p0.5-*.png
 ```
+
+The **Look** panel (right column) drives the ink look-dev: palette preset, quantized light, hatching strength, haze, sun elevation/azimuth, paper grain, outlines and a flat-versus-ink compare split. Select **Reference composition** in the catalog for the art-directed scene; research notes are in [`docs/research/look-dev.md`](docs/research/look-dev.md).
 
 Studio shortcuts: `F` play fold · `G` grid · `S` sockets · `C` crease axes · `O` orbit/composition camera · `[` `]` previous/next catalog item. Add `?forceWebGL=1` to the URL to force the WebGL2 backend.
 
