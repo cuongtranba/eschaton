@@ -29,6 +29,7 @@ import {
   writePanelInks,
   writePanelTriangles,
 } from "./geometry";
+import { readGpuCapability, type GpuCapability } from "./gpuCapability";
 import { createLabMaterials } from "./materials";
 import { footprintSegments, gridSegments, socketSegments } from "./overlays";
 
@@ -36,6 +37,7 @@ export type RendererBackend = "WebGPU" | "WebGL2";
 
 export type RendererStats = Readonly<{
   backend: RendererBackend;
+  gpu: GpuCapability;
   drawCalls: number;
   triangles: number;
   instances: number;
@@ -127,6 +129,7 @@ export async function createLabRenderer(canvas: HTMLCanvasElement, options: LabR
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
   const backend: RendererBackend = "isWebGPUBackend" in renderer.backend ? "WebGPU" : "WebGL2";
+  const gpu = await readGpuCapability(renderer.backend, backend, options.forceWebGL);
   const materials = createLabMaterials();
   const scene = new Scene();
   scene.background = new Color(palette.paper);
@@ -156,6 +159,7 @@ export async function createLabRenderer(canvas: HTMLCanvasElement, options: LabR
 
   const readStats = (): RendererStats => ({
     backend,
+    gpu,
     drawCalls: renderer.info.render.drawCalls,
     triangles: renderer.info.render.triangles,
     instances,

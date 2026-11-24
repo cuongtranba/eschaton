@@ -105,6 +105,18 @@ test("falls back to the WebGL2 backend when forced", async ({ page }) => {
   await expect(stat(page, "backend")).toHaveText("WebGL2");
 });
 
+test("never labels a software rasteriser as a physical GPU", async ({ page }) => {
+  await openLab(page);
+  const gpuClass = await stat(page, "gpu-class").innerText();
+  const gpu = await stat(page, "gpu").innerText();
+  if (gpuClass === "physical") {
+    expect(gpu).not.toMatch(/swiftshader|llvmpipe|lavapipe|software|basic render/i);
+    return;
+  }
+  expect(gpuClass).toBe("software");
+  expect(gpu).toMatch(/swiftshader|llvmpipe|lavapipe|software|basic render|fallback/i);
+});
+
 test("selecting every catalog item updates the inspector title", async ({ page }) => {
   await openLab(page);
   const items = page.locator("[data-item]");

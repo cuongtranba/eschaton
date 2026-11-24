@@ -21,6 +21,7 @@ const isTextEntry = (target: EventTarget | null): boolean =>
 const sameStats = (a: RendererStats | undefined, b: RendererStats): boolean =>
   a?.frames === b.frames &&
   a.backend === b.backend &&
+  a.gpu === b.gpu &&
   a.drawCalls === b.drawCalls &&
   a.triangles === b.triangles &&
   a.instances === b.instances &&

@@ -222,9 +222,11 @@ kbd {
   padding: 0 14px;
   background: var(--graphite-800);
   border-top: 1px solid var(--line);
+  overflow: hidden;
 }
-.statusbar dl { display: flex; gap: 18px; margin: 0; }
-.statusbar__entry { display: flex; gap: 6px; }
+.statusbar dl { display: flex; gap: 18px; margin: 0; min-width: 0; white-space: nowrap; }
+.statusbar__entry { display: flex; gap: 6px; min-width: 0; }
+.statusbar__entry dd[data-testid="stat-gpu"] { max-width: 34ch; overflow: hidden; text-overflow: ellipsis; }
 .statusbar dt { color: var(--text-dim); }
 .statusbar dd { margin: 0; font-family: var(--mono); }
 
