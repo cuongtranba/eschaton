@@ -31,7 +31,7 @@ The tangent is canonical per face: `faceTangent(face)` returns +x for ±y faces 
 4. **A door on a side face is partly expressible today, by face-specific profile, not by orientation.** A piece with a `door` profile on its +z face and `wall` elsewhere, mating only with a road-side profile, would be rejected when rotated to face away, because the adjacent faces would be `wall` and the road's profile. No catalog piece does this yet (P08 has `wall` on all four sides, `catalog.ts:247`) and there is no test of it. What cannot be expressed is anything that depends on how the two faces are turned or mirrored relative to each other.
 5. **`open` is a wildcard** (`profilesCompatible`, `definition.ts:154-157`): every face of P01, P02, P05, P07 and P09 that uses `open` (`catalog.ts:200-254`) passes any check, so a wildcard face never produces a mismatch reason (ADR 0009 consequences).
 6. **No test targets the rule.** ADR 0009 records that a search of `packages/foldon/test` for "tangent" finds nothing; the socket tests (`foldon.test.ts:308`, `:323`) exercise profile pairs.
-7. **The compatibility answer is a boolean.** Callers (`facingIssues`, `assembly.ts:207-229`) cannot tell why a pair failed beyond the profile names.
+7. **The compatibility answer is a boolean.** Callers (`facingIssues`, `assembly.ts:189-211`) cannot tell why a pair failed beyond the profile names.
 
 ### Why now
 
@@ -107,8 +107,8 @@ Each unordered pair appears once. `relation` is the nominal turn from the lower 
 ### Migration of P01–P09 and the assemblies
 
 - The table is created from the current data: profiles `empty, ground, deck, base, wall, eave, beam` get `symmetry: 4, handed: false, wildcard: false`; `open` becomes `wildcard: true`; the seven allowed pairs become `mates` with `relation: 0`.
-- Every existing socket keeps its canonical tangent and no hand. All current profiles are C4, so the new rule accepts exactly what the old rule accepted: no behaviour change, no definition version bump, and recipe hashes stay equal (hashes cover part references, not sockets: `assembly.ts:100-110`).
-- Assemblies need no recipe changes. Assembly external sockets inherit the placed tangent and hand of the part socket they expose (`assembly.ts:270-275`), so orientation survives nesting.
+- Every existing socket keeps its canonical tangent and no hand. All current profiles are C4, so the new rule accepts exactly what the old rule accepted: no behaviour change, no definition version bump, and recipe hashes stay equal (hashes cover part references, not sockets: `assembly.ts:82-92`).
+- Assemblies need no recipe changes. Assembly external sockets inherit the placed tangent and hand of the part socket they expose (`assembly.ts:252-256`), so orientation survives nesting.
 - New orientation-sensitive profiles (for example an axis-bound `rail`, C2) are **added**, not retrofitted. Whether P06's top, P07's top or P03/P04's eaves become oriented is a catalog decision for the owner (question 4); this ADR does not change them.
 - `socketsCompatible` is replaced by the table lookup, and the `open` wildcard becomes data. Moving the table into `CatalogInput` (so adding a profile is a catalog change, answering a note in ADR 0009) is proposed but optional (question 5).
 

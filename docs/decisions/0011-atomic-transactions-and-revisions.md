@@ -9,11 +9,11 @@
 
 Phase 0 has no authoritative world, so there is no transaction.
 
-- **The only mutable state is a UI reducer.** `labReducer(state, command)` (`apps/studio/src/lab/state.ts:130-155`) always returns a state. It clamps bad values (`clampUnit`, `:95`) instead of rejecting them, has no revision, and cannot fail.
-- **The catalog is the one all-or-nothing commit that exists.** `createCatalog` collects every issue, then returns `err(issues)` if any exist and builds nothing (`packages/foldon/src/registry.ts:183-270`, the gate at `:270`). `compileAssembly` validates before it builds (`assembly.ts:257-287`). Expected failures are `Result` values, not exceptions (`result.ts`, `AGENTS.md`).
-- **Definition data is already frozen** by `canonicalizeAndFreeze` (`define.ts`, `assembly.ts:285`), so immutable-by-construction is an existing convention.
-- **Seeded derivation exists.** `createRandom(seed, salt)` derives independent streams from one seed (`apps/studio/src/lab/composition/random.ts`); the lab seed is normalised in `state.ts:97`.
-- **Hashing exists** as FNV-1a 64 over a canonical string (`assembly.ts:80-110`), explicitly not a security boundary (ADR 0008).
+- **The only mutable state is a UI reducer.** `labReducer(state, command)` (`apps/studio/src/lab/state.ts:90-115`) always returns a state. It clamps bad values (`clampUnit`, `:55`) instead of rejecting them, has no revision, and cannot fail.
+- **The catalog is the one all-or-nothing commit that exists.** `createCatalog` collects every issue, then returns `err(issues)` if any exist and builds nothing (`packages/foldon/src/registry.ts:74-161`, the gate at `:161`). `compileAssembly` validates before it builds (`assembly.ts:239-269`). Expected failures are `Result` values, not exceptions (`result.ts`, `AGENTS.md`).
+- **Definition data is already frozen** by `canonicalizeAndFreeze` (`define.ts`, `assembly.ts:267`), so immutable-by-construction is an existing convention.
+- **Seeded derivation exists.** `createRandom(seed, salt)` derives independent streams from one seed (`apps/studio/src/lab/composition/random.ts`); the lab seed is normalised in `state.ts:57-59`.
+- **Hashing exists** as FNV-1a 64 over a canonical string (`assembly.ts:62-92`), explicitly not a security boundary (ADR 0008).
 - The plan wants worker proposals that never mutate the world, a commit only if the base revision still matches, a save header (schema, seed, catalog/rules/engine versions, tick) and replay from snapshot plus authoritative outcomes (§6.1, §8.1). The WFC experiment never reached a worker or cancellation (ADR 0004), so no proposal has existed yet.
 
 Roadmap v1.1 pulls the transaction contract into Phase 1 because attach/detach and the ownership invariants of ADR 0010 are meaningless without an atomic commit, and because Phase 2's frozen-boundary solve and Phase 4's rollback depend on it.

@@ -9,11 +9,11 @@
 
 Phase 0 has definitions and recipes but no runtime entities. Everything that looks like identity today is derived from recipe structure.
 
-- **Definitions are immutable data.** `FoldonDefinition` and `AssemblyDefinition` are frozen and JSON-serializable (`packages/foldon/src/definition.ts:54-65`, `assembly.ts:59-67`, `define.ts`).
-- **`Placement` is a recipe-space description, not a runtime entity.** It holds `{ id: PlacementId, definitionId, definitionVersion, anchor, rotation }` (`packages/foldon/src/transform.ts:8-13`). The id is only unique inside one recipe (`part-duplicate-id`, `assembly.ts:126-130`) and the constructor is an unchecked cast (`placementId`, `ids.ts:18`).
-- **`FlatInstance.path` is the closest thing to an instance id, and it is not stable.** `catalog.flatten` builds `path = `${prefix}/${part.id}`` starting from the recipe id (`registry.ts:277-282`, root prefix at `registry.ts:298`). Two instances of the same assembly flatten to identical paths, so the path cannot tell them apart. Renaming a part in a new recipe version renames every instance. A piece that leaves its assembly has no path at all.
-- **No state owns an entity.** The only mutable state is `LabState`, a UI reducer (`apps/studio/src/lab/state.ts:51-62`, `labReducer` at `:130-155`). It has no entity table, no revision and no notion of "who holds this piece".
-- **Occupancy is only checked inside one recipe** (`overlapIssues`, `assembly.ts:183-203`). Nothing prevents the same piece from being placed twice in a larger structure, because nothing says which piece it is.
+- **Definitions are immutable data.** `FoldonDefinition` and `AssemblyDefinition` are frozen and JSON-serializable (`packages/foldon/src/definition.ts:54-65`, `assembly.ts:41-49`, `define.ts`).
+- **`Placement` is a recipe-space description, not a runtime entity.** It holds `{ id: PlacementId, definitionId, definitionVersion, anchor, rotation }` (`packages/foldon/src/transform.ts:8-13`). The id is only unique inside one recipe (`part-duplicate-id`, `assembly.ts:108-112`) and the constructor is an unchecked cast (`placementId`, `ids.ts:18`).
+- **`FlatInstance.path` is the closest thing to an instance id, and it is not stable.** `catalog.flatten` builds `path = `${prefix}/${part.id}`` starting from the recipe id (`registry.ts:168-179`, root prefix at `registry.ts:189`). Two instances of the same assembly flatten to identical paths, so the path cannot tell them apart. Renaming a part in a new recipe version renames every instance. A piece that leaves its assembly has no path at all.
+- **No state owns an entity.** The only mutable state is `LabState`, a UI reducer (`apps/studio/src/lab/state.ts:11-22`, `labReducer` at `:90-115`). It has no entity table, no revision and no notion of "who holds this piece".
+- **Occupancy is only checked inside one recipe** (`overlapIssues`, `assembly.ts:165-185`). Nothing prevents the same piece from being placed twice in a larger structure, because nothing says which piece it is.
 - The reference composition treats leaf placements as shapes to scale and scatter (`apps/studio/src/lab/composition/district.ts:80-110`); it creates no identities.
 
 The plan requires: stable ids, a detached piece that cannot also occupy a static placement, no duplicate fragment ids, reassembly that reuses fragments, and conservation in conservation mode (§6.3, §12). Collapse and Rebirth (Phases 4 and 6) cannot be specified without a runtime entity model, so roadmap v1.1 pulls it into Phase 1.
@@ -39,7 +39,7 @@ The plan requires: stable ids, a detached piece that cannot also occupy a static
    - Cons: ids depend on the global count of earlier creations; a worker cannot pre-compute ids for a proposal; a counter is one more mutable value that a rollback must restore.
 3. **Hash of `(seed, revision, parent id, counter)`.** The owner's suggested shape.
    - Pros: ids can be computed without reading a counter; parent and seed are visible in the derivation.
-   - Cons: a hash can collide (the repo's only hash is FNV-1a 64, `assembly.ts:80-86`, explicitly not collision-resistant per ADR 0008); ids are opaque; the parent is already recorded by lineage.
+   - Cons: a hash can collide (the repo's only hash is FNV-1a 64, `assembly.ts:62-68`, explicitly not collision-resistant per ADR 0008); ids are opaque; the parent is already recorded by lineage.
 4. **Structured id `(revision, ordinal)` minted by the world on commit** (proposed).
    - Pros: unique by construction because revisions increase by one per commit (ADR 0011) and ordinals are assigned in a canonical order inside one commit; no counter to restore on rollback (a rejected patch consumes no revision); readable and sortable; gives a total creation order that makes lineage acyclicity checkable.
    - Cons: unique only inside one append-only history (branching a log would reuse revision numbers); workers cannot mint ids and must refer to new entities by proposal-local references.
@@ -60,7 +60,7 @@ C. **Fragments as a different entity type** that is converted to a placement ent
 
 ## Proposed decision
 
-**Identity.** Option 4: `EntityId` is minted by the world while committing a patch, from `(revision, ordinal)`. The ordinal order inside a patch is canonical: creations are ordered by `(group, anchor cell, rotation, definition key)`, the same kind of sort the recipe hash already uses (`recipeHash`, `assembly.ts:100-110`), and never by recipe part id. Parent, seed and cause are recorded in lineage, not in the id string. `FlatInstance.path` stays as a recipe-structural path used at instantiation time and is documented as **not identity**.
+**Identity.** Option 4: `EntityId` is minted by the world while committing a patch, from `(revision, ordinal)`. The ordinal order inside a patch is canonical: creations are ordered by `(group, anchor cell, rotation, definition key)`, the same kind of sort the recipe hash already uses (`recipeHash`, `assembly.ts:82-92`), and never by recipe part id. Parent, seed and cause are recorded in lineage, not in the id string. `FlatInstance.path` stays as a recipe-structural path used at instantiation time and is documented as **not identity**.
 
 **Ownership.** Option A. The runtime model is one table of entities, each with one `owner`:
 
