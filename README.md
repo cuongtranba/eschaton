@@ -35,3 +35,7 @@ assets/reference/   art-direction reference
 ## Version pins
 
 All versions are pinned exactly after checking the npm registry. **TypeScript is pinned to 6.0.3, not 7.x:** `typescript-eslint@8.74.0` declares peer `typescript >=4.8.4 <6.1.0`, so the native TypeScript 7 port cannot be used with the type-aware lint gate yet. Revisit when typescript-eslint adds TS 7 support.
+
+## `@eschaton/foldon`
+
+Immutable, serializable Foldon definitions: a folded-paper-net geometry recipe (panels + a crease tree authored in the rest pose), external-face sockets, components, and placement transforms. `poseGeometry` folds the recipe by rotating rigid sub-trees about hinges; targets outside a crease range are refused, never clamped. `primitiveCatalog` holds P01–P09. Fold-angle and coordinate conventions are documented in [`AGENTS.md`](AGENTS.md). Phase 0 limitation: crease networks must be trees (no closed loops).
