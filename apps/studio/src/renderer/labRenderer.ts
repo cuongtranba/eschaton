@@ -237,7 +237,10 @@ export async function createLabRenderer(canvas: HTMLCanvasElement, options: LabR
       objects.geometry.dispose();
     }
     const lines = [content.edges.lines, content.creaseEdges.lines, content.creases.lines, ...Object.values(content.overlays)];
-    for (const line of lines) line.geometry.dispose();
+    for (const line of lines) {
+      line.dispose();
+      line.geometry.dispose();
+    }
     content = undefined;
   }
 
