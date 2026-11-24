@@ -1,6 +1,6 @@
 # Phase 0 owner review package (T0)
 
-- Status: **PENDING owner review.** Nothing in this package is an approval. The visual reference scene, ADRs 0001–0013 and the Phase 0 gate are all awaiting your decision.
+- Status: **PENDING owner review.** Nothing in this package is an approval, acceptance or waiver. The visual reference scene, ADRs 0001–0013 and the Phase 0 gate are all awaiting your decision.
 - Prepared: 2026-11-24, branch `phase-0`, PR #1. The code reviewed is the tree at the PR head; screenshots and benchmarks name the commit they came from.
 - Gate report: [`../phase-0-exit.md`](../phase-0-exit.md). Roadmap: [`../master-plan.md`](../master-plan.md) §11 (v1.1).
 
@@ -92,7 +92,12 @@ All are **Proposed**. 0001–0009 describe what the Phase 0 code already does; 0
 
 ## 5. Decisions needed from you
 
-- **D1 Reference scene:** approve, approve with listed amendments, or reject? Which of the §2 gaps must be closed before the Phase 0 gate, and which can wait for later visual reviews (roadmap v1.1 has a visual review at every phase gate)?
+- **D1 Visual criterion:** choose one:
+  - (a) **Accept the proposed narrower Phase 0 visual criterion.** The reference scene counts as a look-development prototype, not final art and not evidence of generation. Phase 0 must show V1–V5: shared primitives read as folded paper, valid assemblies, visible folding, a basic ink/paper language, and documented limitations. Full fidelity is judged at the Genesis, Atmosphere and The Last District gates. See [`../phase-0-exit.md`](../phase-0-exit.md) §1a.
+  - (b) Keep the original criterion and approve the scene as-is or with listed amendments.
+  - (c) Reject the look direction.
+  Under (a) you still judge V1–V5 by eye. Neither (a) nor (b) waives a later visual gate.
+  *Agent recommendation:* (a). The scene's gaps are composition and ink-fidelity work that Phase 0 cannot settle honestly: the composition bypasses validation (ADR 0013). Polishing it now would invest in a placement path that is meant to be replaced.
 - **D2 2×2 and 4×4 assembly contracts:** §14 asks for "a 2×2 and 4×4 assembly contract". Phase 0 provides them as compiled assemblies with footprints, external socket boundaries, canonical hashes and the tags `module-2x2` / `module-4x4` (`roof-module`, `roof-house`), **not** as a separate typed contract that a placement could require. Is that sufficient for Phase 0, or should a typed module contract (for example a declared footprint plus boundary-socket signature that an assembly must satisfy) be added before the gate?
 - **D3 ADRs 0001–0009:** approve, amend or reject each (table above).
 - **D4 ADRs 0010–0013:** answer their approval questions before any Phase 1 code.

@@ -14,10 +14,46 @@
 | 2 | Three distinct assemblies from shared pieces | **Met; contract form needs owner decision** | `watchtower`, `roof-house`, `ruined-gate` and the nested `roof-module` (`packages/foldon/src/assemblies.ts`); tests "watchtower, roof-house and ruined-gate reuse shared pieces but are distinct recipes" and the nesting/flatten tests (`assembly.test.ts`). The §14 "2×2 and 4×4 assembly contract" exists as compiled assemblies (footprint, external socket boundary, canonical hash) tagged `module-2x2` / `module-4x4`, **not** as a separate typed contract. Owner question D2 in the review package. |
 | 3 | Socket and footprint overlays | **Met** | Studio overlay toggles and socket legend. e2e: "the sockets overlay shows a legend and adds a draw call"; "the footprint overlay of a multi-cell assembly adds one draw call and removes it again" (added in closure, commit `9595fef`). |
 | 4 | Continuous fold demo | **Met** | Fold slider, Play fold (`F`), per-crease sliders. Domain: hinge coincidence, measured dihedral, range refusal, rest-pose reproduction (`foldon.test.ts`). e2e (closure, `9595fef`): "play fold animates through intermediate creases before reaching the flat end", "setting one crease angle moves only that crease", "moving the fold slider discards a per-crease override"; plus "moving the fold slider to zero flattens every crease readout to 0°" and the reduced-motion jump. Limits: tree hinges only, no panel collision (ADR 0003). |
-| 5 | One visual reference scene approved | **Not met — owner approval pending** | Scene, side-by-side comparisons with the original artwork and a list of visible gaps: [`review/phase-0-owner-review.md`](review/phase-0-owner-review.md) §2. All views so far are software-rendered (SwiftShader). No approval has been given or is implied. |
+| 5 | One visual reference scene approved | **Not met — owner decision pending.** A narrower Phase 0 reading of this criterion is proposed in §1a; it is not adopted until the owner accepts it. | Scene, side-by-side comparisons with the original artwork and a list of visible gaps: [`review/phase-0-owner-review.md`](review/phase-0-owner-review.md) §2. All views so far are software-rendered (SwiftShader). No approval or waiver has been given or is implied. |
 | 6 | Baseline metrics recorded | **Met for this environment; physical-GPU numbers pending** | Recorded on clean commit `e9e50c5`: [`../benchmarks/phase-0/2026-11-24-e9e50c527/report.md`](../benchmarks/phase-0/2026-11-24-e9e50c527/report.md) with `foldon.json`, `wfc.json`, `studio.json` (each carries commit, `dirty: false`, machine). No §9.1 gate is claimed (software rasteriser). The physical WebGPU run is a pending manual test (§3). |
 
 Summary: criteria 1–4 met, 6 met with the stated limit, **5 open (owner)**, plus the owner decisions in §8. The gate cannot pass without the owner.
+
+## 1a. Proposed narrowing of the Phase 0 visual criterion (PENDING owner decision)
+
+**Status: proposal only.** The master plan's Phase 0 row still reads "one visual reference scene approved"; nothing below changes it until the owner accepts this proposal (decision D1 in the review package). Accepting it is an owner acceptance of a narrower criterion, not an approval of the scene as art, and not a waiver of later visual gates.
+
+**What the existing reference scene is.** "Reference composition" in the Studio is a **look-development prototype**:
+- It is not final art.
+- It is not evidence of procedural generation. It is hand-composed: a seeded generator lays out Foldon instances with free yaw, pitch and roll and non-uniform scale (`apps/studio/src/lab/composition/affine.ts`, `district.ts`), and those placements bypass Foldon occupancy and socket validation.
+- It is not an authoritative placement system and will not become one. ADR 0013 (proposed) keeps a single validated logical model, and the Genesis scene is to be rebuilt through it.
+
+No further effort goes into polishing this scene in Phase 0.
+
+**What Phase 0 must demonstrate visually (proposed reading of criterion 5):**
+
+| # | Demonstration | Evidence today |
+|---|---|---|
+| V1 | The shared primitives read as folded paper | P01–P09 in the Studio; `screenshots/p0.4-p08-mid-fold-creases.png` |
+| V2 | Valid assemblies are built from those shared pieces | Watchtower, roof-house, ruined-gate and roof-module, all validated by `createCatalog`; `screenshots/p0.4-*.png` |
+| V3 | Folding is visible and continuous | Fold slider, Play fold and per-crease sliders; e2e "play fold animates through intermediate creases before reaching the flat end" |
+| V4 | A basic ink-and-paper language exists and can be compared at a fixed camera and light: monochrome token palette, quantized light, world-anchored hatching, paper grain, ink outlines, haze; no colour accent in the baseline | `screenshots/p0.5-compare-{flat,quantized,hatching,full}.png`; ADR 0006; `research/look-dev.md` |
+| V5 | Limitations and the gaps against the reference artwork are documented honestly | `review/phase-0-owner-review.md` §2; §5 below |
+
+The owner judges V1–V5 by eye. Tests prove the behaviour behind V2 and V3, not the look.
+
+**Deferred to the recurring visual gates.** Roadmap v1.1 already requires an owner visual review at every phase gate. Under this proposal, full visual fidelity is assessed there:
+
+| Gap (review package §2) | Proposed gate |
+|---|---|
+| Composition: empty middle ground; missing pitched-roof massing, rubble and vehicles; mountain silhouettes; tree silhouette | Phase 3 Genesis (scene reached through validated placements, ADR 0013) |
+| Value weight, engraved linework, per-cell outline "toy block" read, sky striping, grain reading as stone, cloud bar over the sun | Phase 5 Atmosphere (ink and effects fidelity) |
+| Overall fidelity to the reference artwork; final visual approval | Phase 7 The Last District |
+| How the look renders on a physical GPU with WebGPU | First gate after the owner's physical-GPU test; **still unverified**, see below |
+
+The original artwork (`assets/reference/visual-direction.png`) stays the art-direction anchor. None of the listed gaps is closed by this proposal; it only schedules where each is judged.
+
+**Physical WebGPU** remains unverified. The test needs the owner's hardware ([`testing/webgpu-manual-test.md`](testing/webgpu-manual-test.md)), or the owner may explicitly waive it. Neither has happened, and this proposal implies neither.
 
 ## 2. Closure tasks (owner-authorised T0–T6)
 
@@ -106,7 +142,7 @@ All behavioural tests go through public seams (`@eschaton/foldon` entry point, t
 
 **Keep the Phase 0 gate open until the owner decides; recommend a conditional GO for Phase 1 (Foundation) once these are answered:**
 
-1. Owner visual decision on the reference scene (approve, approve with amendments for later gates, or reject). Roadmap v1.1 puts a visual review at every phase gate, so remaining gaps can be scheduled rather than blocking, if the owner agrees.
+1. Owner decision D1 on the visual criterion: accept the narrower Phase 0 reading in §1a (recommended), keep the original criterion, or reject the look direction. Under §1a the owner still judges V1–V5 by eye, and the remaining gaps are scheduled to the Genesis, Atmosphere and The Last District gates.
 2. Owner decision on the 2×2/4×4 assembly-contract form (D2).
 3. Owner approval or amendment of ADRs 0001–0009 and of the Phase 1 designs 0010–0013 (Phase 1 code depends on 0010–0012).
 4. Physical WebGPU manual test run, or an explicit owner waiver moving it to the first week of Phase 1.
