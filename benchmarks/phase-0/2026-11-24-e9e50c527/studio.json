@@ -1,7 +1,12 @@
 {
-  "generatedAt": "2026-11-24T07:02:34.419Z",
-  "commit": "0e34f55127a910a263c4f619afb3e2d59d73da76",
-  "workingTreeDirty": true,
+  "provenance": {
+    "commit": "e9e50c52794812cc553b70df378d4a6ddadfcbb9",
+    "shortCommit": "e9e50c527",
+    "commitDate": "2026-11-24",
+    "dirty": false,
+    "mode": "record",
+    "generatedAt": "2026-11-24T10:23:27.304Z"
+  },
   "seed": 20261124,
   "machine": {
     "os": "Linux 6.18.58.1-microsoft-standard-WSL2 (linux x64)",
@@ -12,9 +17,10 @@
     "browser": "chromium 159.0.8154.6",
     "viewport": "1440×860 CSS px at devicePixelRatio 1",
     "backend": "WebGL2",
-    "webglRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
-    "webglVendor": "Google Inc. (Google)",
-    "webgpu": "no WebGPU adapter",
+    "gpu": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+    "gpuClass": "software",
+    "forceWebGL": "off",
+    "gpuDetail": "renderer=ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver) vendor=Google Inc. (Google) unmasked=true source=webgl-debug-renderer-info",
     "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.8154.6 Safari/537.36"
   },
   "method": {
@@ -28,13 +34,13 @@
   },
   "timeToFirstFrameMs": {
     "runs": [
-      156.2,
-      144.1,
-      140.5,
-      142.8,
-      132.2
+      142.4,
+      138,
+      142.1,
+      135.3,
+      136.2
     ],
-    "median": 142.8,
+    "median": 138,
     "note": "page timeOrigin to first rendered frame, cold context, preview server on localhost"
   },
   "scenes": [
@@ -42,10 +48,10 @@
       "id": "single-primitive",
       "label": "Single primitive (P08 box shell)",
       "backend": "WebGL2",
-      "frameSamples": 164,
+      "frameSamples": 157,
       "frameP50Ms": 50,
-      "frameP95Ms": 50.1,
-      "frameMaxMs": 66.7,
+      "frameP95Ms": 66.6,
+      "frameMaxMs": 66.8,
       "drawCalls": 6,
       "triangles": 43,
       "instances": 6,
@@ -56,10 +62,10 @@
       "id": "roof-house",
       "label": "Assembly roof-house",
       "backend": "WebGL2",
-      "frameSamples": 119,
+      "frameSamples": 109,
       "frameP50Ms": 66.7,
-      "frameP95Ms": 83.4,
-      "frameMaxMs": 83.4,
+      "frameP95Ms": 99.9,
+      "frameMaxMs": 100.1,
       "drawCalls": 10,
       "triangles": 275,
       "instances": 36,
@@ -70,10 +76,10 @@
       "id": "watchtower",
       "label": "Assembly watchtower",
       "backend": "WebGL2",
-      "frameSamples": 110,
-      "frameP50Ms": 66.7,
+      "frameSamples": 103,
+      "frameP50Ms": 83.3,
       "frameP95Ms": 83.4,
-      "frameMaxMs": 83.4,
+      "frameMaxMs": 100.1,
       "drawCalls": 8,
       "triangles": 339,
       "instances": 32,
@@ -84,9 +90,9 @@
       "id": "reference",
       "label": "Reference composition (seed 20261124)",
       "backend": "WebGL2",
-      "frameSamples": 47,
-      "frameP50Ms": 166.7,
-      "frameP95Ms": 183.4,
+      "frameSamples": 46,
+      "frameP50Ms": 183.3,
+      "frameP95Ms": 216.5,
       "frameMaxMs": 233.4,
       "drawCalls": 15,
       "triangles": 5154,
@@ -98,10 +104,10 @@
       "id": "lab-1000",
       "label": "Lab with 1,000 seeded pieces (roof-house + ?stress=1000)",
       "backend": "WebGL2",
-      "frameSamples": 128,
-      "frameP50Ms": 66.6,
-      "frameP95Ms": 66.8,
-      "frameMaxMs": 83.4,
+      "frameSamples": 119,
+      "frameP50Ms": 66.7,
+      "frameP95Ms": 83.4,
+      "frameMaxMs": 116.7,
       "drawCalls": 13,
       "triangles": 5444,
       "instances": 1036,
@@ -115,134 +121,134 @@
       "instances": 36,
       "geometries": 9,
       "textures": 2,
-      "heapBytes": 12109610
+      "heapBytes": 11162310
     },
     "afterCycles": {
       "instances": 36,
       "geometries": 9,
       "textures": 2,
-      "heapBytes": 24913227
+      "heapBytes": 11911426
     },
     "perCycle": [
       {
         "instances": 36,
         "geometries": 9,
         "textures": 2,
-        "heapBytes": 12663842
+        "heapBytes": 11233065
       },
       {
         "instances": 36,
         "geometries": 9,
         "textures": 2,
-        "heapBytes": 13418674
+        "heapBytes": 11368681
       },
       {
         "instances": 36,
         "geometries": 9,
         "textures": 2,
-        "heapBytes": 14103543
+        "heapBytes": 11446289
       },
       {
         "instances": 36,
         "geometries": 9,
         "textures": 2,
-        "heapBytes": 14759423
+        "heapBytes": 11495953
       },
       {
         "instances": 36,
         "geometries": 9,
         "textures": 2,
-        "heapBytes": 15409491
+        "heapBytes": 11554185
       },
       {
         "instances": 36,
         "geometries": 9,
         "textures": 2,
-        "heapBytes": 16086591
+        "heapBytes": 11613893
       },
       {
         "instances": 36,
         "geometries": 9,
         "textures": 2,
-        "heapBytes": 16725683
+        "heapBytes": 11656722
       },
       {
         "instances": 36,
         "geometries": 9,
         "textures": 2,
-        "heapBytes": 17381191
+        "heapBytes": 11706390
       },
       {
         "instances": 36,
         "geometries": 9,
         "textures": 2,
-        "heapBytes": 18030459
+        "heapBytes": 11746110
       },
       {
         "instances": 36,
         "geometries": 9,
         "textures": 2,
-        "heapBytes": 18666131
+        "heapBytes": 11748506
       },
       {
         "instances": 36,
         "geometries": 9,
         "textures": 2,
-        "heapBytes": 19274363
+        "heapBytes": 11755062
       },
       {
         "instances": 36,
         "geometries": 9,
         "textures": 2,
-        "heapBytes": 19929751
+        "heapBytes": 11797782
       },
       {
         "instances": 36,
         "geometries": 9,
         "textures": 2,
-        "heapBytes": 20534231
+        "heapBytes": 11813010
       },
       {
         "instances": 36,
         "geometries": 9,
         "textures": 2,
-        "heapBytes": 21195663
+        "heapBytes": 11851242
       },
       {
         "instances": 36,
         "geometries": 9,
         "textures": 2,
-        "heapBytes": 21814915
+        "heapBytes": 11871758
       },
       {
         "instances": 36,
         "geometries": 9,
         "textures": 2,
-        "heapBytes": 22441103
+        "heapBytes": 11869758
       },
       {
         "instances": 36,
         "geometries": 9,
         "textures": 2,
-        "heapBytes": 23052111
+        "heapBytes": 11882998
       },
       {
         "instances": 36,
         "geometries": 9,
         "textures": 2,
-        "heapBytes": 23692115
+        "heapBytes": 11903682
       },
       {
         "instances": 36,
         "geometries": 9,
         "textures": 2,
-        "heapBytes": 24292143
+        "heapBytes": 11910186
       },
       {
         "instances": 36,
         "geometries": 9,
         "textures": 2,
-        "heapBytes": 24913227
+        "heapBytes": 11911426
       }
     ]
   }

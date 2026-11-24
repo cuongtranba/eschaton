@@ -1,6 +1,6 @@
 # Studio JS heap growth across reset cycles (C-T2)
 
-Status: **root cause found in our code and fixed.** The growth reported in `benchmarks/phase-0-2026-11-24.md` §4 (12.1 → 24.9 MB over 20 reset cycles) is a real retention bug in `labRenderer.ts`, not a three.js cache or a measurement artefact. After the fix the heap plateaus. Confidence: high for the root cause (verified three ways, below); medium for the residual ~12 KB/cycle drift, which is not visible in heap snapshots.
+Status: **root cause found in our code and fixed.** The growth reported in the original Phase 0 benchmark report §4 (`benchmarks/phase-0-2026-11-24.md` at commit `4cecd5b`, since replaced; 12.1 → 24.9 MB over 20 reset cycles) is a real retention bug in `labRenderer.ts`, not a three.js cache or a measurement artefact. After the fix the heap plateaus. Confidence: high for the root cause (verified three ways, below); medium for the residual ~12 KB/cycle drift, which is not visible in heap snapshots.
 
 ## Summary
 
@@ -301,3 +301,7 @@ for (let i = 0; i < N; i++) {
 }
 console.log(process.argv[2], Object.fromEntries(counts));
 ```
+
+## Re-measured after the fix (clean commit `e9e50c5`)
+
+The recorded benchmark ([`benchmarks/phase-0/2026-11-24-e9e50c527/report.md`](../../benchmarks/phase-0/2026-11-24-e9e50c527/report.md) §4, same single-`gc()` method as the original report) measured 11.2 → 11.9 MB over 20 reset cycles (≈0.04 MB per cycle), against 12.1 → 24.9 MB (≈0.64 MB per cycle) before the fix. `renderer.info` geometries/textures and instances returned to baseline every cycle. The regression gate is `apps/studio/e2e/heap.spec.ts`, which fails without the fix (2.69–2.86 MB growth measured on re-verification) and passes with it; since commit `e9e50c5` it runs with reduced motion so the decorative drift loop does not starve slow CI runners. It passes on GitHub Actions (run 45374198783).

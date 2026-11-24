@@ -73,16 +73,10 @@ Each of `foldon.json`, `wfc.json`, `studio.json` carries `provenance` (`commit`,
 | `runs/` | Scratch output (gitignored) |
 | `phase-0/<date>-<sha>/` | Recorded evidence (`foldon.json`, `wfc.json`, `wfc.md`, `studio.json`, `report.md`) |
 
-## Superseded files (not yet removed)
+## Recorded evidence
 
-Written by the old scripts, which modified tracked files by default. They stay until the owner re-records on a clean SHA; the re-record commit should delete them and repoint the docs that cite them.
-
-| File | Replaced by | Cited by |
+| Directory | Commit | Notes |
 |---|---|---|
-| `benchmarks/raw/foldon.json` | `phase-0/<date>-<sha>/foldon.json` (summary rows only) | report only |
-| `benchmarks/raw/studio.json` | `phase-0/<date>-<sha>/studio.json` | report only |
-| `benchmarks/raw/wfc-rerun.json` (14,619 lines, a second WFC run) | not needed: one run per directory; a rerun is a second directory | the old report |
-| `benchmarks/phase-0-2026-11-24.md` and `.json` | `phase-0/<date>-<sha>/report.md` (the combined `.json` duplicated the three JSON files and is dropped) | `docs/phase-0-exit.md`, `docs/research/heap-investigation.md` |
-| `experiments/wfc-placement/results/bench-2026-11-24.md` and `.json` | `phase-0/<date>-<sha>/wfc.md` and `wfc.json` | `experiments/wfc-placement/README.md`, `docs/decisions/0004-multi-cell-encoding.md`, `docs/phase-0-exit.md` |
+| [`phase-0/2026-11-24-e9e50c527/`](phase-0/2026-11-24-e9e50c527/report.md) | `e9e50c5` (clean) | Phase 0 closure baseline (C-T1). Recorded from a detached clean checkout with `BENCH_RECORD=1 pnpm bench` and `BENCH_RECORD=1 STUDIO_PORT=5190 pnpm bench:studio`. Software rasteriser (SwiftShader, WebGL2); no §9.1 gate claimed. |
 
-`AGENTS.md` and the root `README.md` still describe the old `pnpm bench` behaviour (restore with `git checkout -- experiments/wfc-placement/results`) and the old `benchmarks/raw/*` output paths; they need the same update in the re-record commit.
+The files written by the old scripts (`benchmarks/raw/*.json`, `benchmarks/phase-0-2026-11-24.{md,json}`, `experiments/wfc-placement/results/bench-2026-11-24.{md,json}`, measured at `0e34f55` with a dirty tree) were removed in the re-record commit; they remain in git history (e.g. `git show 4cecd5b:benchmarks/phase-0-2026-11-24.md`).

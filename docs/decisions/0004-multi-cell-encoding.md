@@ -1,6 +1,6 @@
 # ADR 0004: Multi-cell encoding
 
-- Status: Accepted for Phase 0 (public contract); solver internals are a Phase 2 decision
+- Status: Proposed — awaiting owner approval (Phase 0 code already follows it) (public contract); solver internals are a Phase 2 decision
 - Date: 2026-11-24
 - Master plan: §5.2, §14 step 6; research R3
 
@@ -27,7 +27,7 @@ A multi-cell piece (a 2×2 house, a sparse L-shaped 3×2 courtyard, a 4×4 assem
 
 ## Evidence
 
-- Experiment, tests and bench: `experiments/wfc-placement/` (commit `0e34f55`); numbers in `experiments/wfc-placement/results/bench-2026-11-24.md` and `.json`; narrative and "Not tested" list in `experiments/wfc-placement/README.md`.
+- Experiment, tests and bench: `experiments/wfc-placement/` (commit `0e34f55`); numbers recorded on clean commit `e9e50c5` in [`benchmarks/phase-0/2026-11-24-e9e50c527/wfc.md`](../../benchmarks/phase-0/2026-11-24-e9e50c527/wfc.md) (the original run at `0e34f55` is in git history); narrative and "Not tested" list in `experiments/wfc-placement/README.md`.
 - 1200 timed runs all ended `solved`; no `unsatisfiable` or `budget-exceeded` case occurred outside the unit tests. The result says nothing about hard catalogs.
 - Not tested: 3D stacking, workers and cancellation, local re-collapse, tiles larger than 3×2, non-chronological backtracking, cross-platform determinism.
 - R3 (Tessera) could not be read as text, so its encoding claims were not used.

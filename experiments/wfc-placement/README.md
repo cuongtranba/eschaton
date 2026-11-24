@@ -28,7 +28,9 @@ Symmetric 1×1 tiles are deduplicated by rotation in both encodings so identical
 
 ## Measured results
 
-Copied from `results/bench-2026-11-24.md` (the output of the former `pnpm bench`, which wrote into this directory; superseded by `benchmarks/phase-0/` after the next recorded run, see `benchmarks/README.md`). Machine: Linux 6.18.58.1-microsoft-standard-WSL2 (x64), AMD Ryzen 7 7800X3D (8 logical cores), Node v24.5.0, 19.5 GiB. Seeds 1..100 per scenario × size × encoding, 5 untimed warm-up runs per cell, `performance.now()` around each solve on the main thread, budget `maxNodes` 5000 and `maxBacktracks` 500. Times cover every run. One run on one machine: treat timing differences below about 10% as noise.
+**Current recorded evidence:** [`benchmarks/phase-0/2026-11-24-e9e50c527/wfc.md`](../../benchmarks/phase-0/2026-11-24-e9e50c527/wfc.md) (clean commit `e9e50c5`, recorded with `BENCH_RECORD=1 pnpm bench`). It reproduces the conclusions below: all 1,200 runs solved, node and backtrack counts identical per seed, offset-state faster at p50 by 1.06–1.59× (this table: 1.00–1.74×).
+
+The tables below are the **original Phase 0 run** at commit `0e34f55`, kept for traceability; its results file was removed when benchmark evidence moved to `benchmarks/phase-0/` (recover it with `git show 0e34f55:experiments/wfc-placement/results/bench-2026-11-24.md`). Machine: Linux 6.18.58.1-microsoft-standard-WSL2 (x64), AMD Ryzen 7 7800X3D (8 logical cores), Node v24.5.0, 19.5 GiB. Seeds 1..100 per scenario × size × encoding, 5 untimed warm-up runs per cell, `performance.now()` around each solve on the main thread, budget `maxNodes` 5000 and `maxBacktracks` 500. Times cover every run. One run on one machine: treat timing differences below about 10% as noise.
 
 ### Scenario `open`: demo tile set, no pins
 
