@@ -1,7 +1,7 @@
-import { mkdirSync, writeFileSync } from "node:fs";
-import os from "node:os";
-import { join } from "node:path";
+import { writeFileSync } from "node:fs";
+import { join, relative } from "node:path";
 import { performance } from "node:perf_hooks";
+import { captureMachine, exitWith, openRun, repositoryRoot, writeJson } from "@eschaton/benchmarks";
 import { createConstrainedProblem, createDemoProblem, hashGrid, solveOffsetState, solvePlacement } from "@eschaton/exp-wfc-placement";
 import type { Problem, SolveResult } from "@eschaton/exp-wfc-placement";
 
@@ -30,9 +30,12 @@ type Summary = {
   readonly budgetExceeded: number;
   readonly p50Ms: number;
   readonly p95Ms: number;
+  readonly maxMs: number;
   readonly meanNodes: number;
   readonly meanBacktracks: number;
   readonly meanPropagationSteps: number;
+  readonly maxBacktracks: number;
+  readonly maxBacktracksSeed: number;
 };
 
 const SIZES = [8, 12, 16] as const;
@@ -61,6 +64,7 @@ function mean(values: readonly number[]): number {
 function summarize(runs: readonly Run[], scenario: ScenarioName, size: number, encoding: EncodingName): Summary {
   const own = runs.filter((r) => r.scenario === scenario && r.size === size && r.encoding === encoding);
   const times = own.map((r) => r.ms).sort((a, b) => a - b);
+  const worst = own.reduce<Run | undefined>((best, r) => (best === undefined || r.backtracks > best.backtracks ? r : best), undefined);
   return {
     scenario,
     size,
@@ -70,12 +74,22 @@ function summarize(runs: readonly Run[], scenario: ScenarioName, size: number, e
     budgetExceeded: own.filter((r) => r.kind === "budget-exceeded").length,
     p50Ms: quantile(times, 0.5),
     p95Ms: quantile(times, 0.95),
+    maxMs: times.at(-1) ?? 0,
     meanNodes: mean(own.map((r) => r.nodes)),
     meanBacktracks: mean(own.map((r) => r.backtracks)),
     meanPropagationSteps: mean(own.map((r) => r.propagationSteps)),
+    maxBacktracks: worst?.backtracks ?? 0,
+    maxBacktracksSeed: worst?.seed ?? 0,
   };
 }
 
+const run = (() => {
+  try {
+    return openRun();
+  } catch (error) {
+    return exitWith(error);
+  }
+})();
 const runs: Run[] = [];
 for (const scenario of SCENARIOS) {
   for (const size of SIZES) {
@@ -121,20 +135,15 @@ const agreement = SCENARIOS.flatMap((scenario) =>
   }),
 );
 
-const date = new Date().toISOString().slice(0, 10);
-const cpus = os.cpus();
-const machine = {
-  os: `${os.type()} ${os.release()} (${os.platform()} ${os.arch()})`,
-  cpu: cpus[0]?.model ?? "unknown",
-  logicalCores: cpus.length,
-  totalMemoryGiB: Math.round((os.totalmem() / 1024 ** 3) * 10) / 10,
-  node: process.version,
-};
-const report = { date, machine, corpusSize: CORPUS_SIZE, warmupRuns: WARMUP_RUNS, budget: BUDGET, sizes: SIZES, summaries, agreement, runs };
+const machine = captureMachine();
+const { provenance } = run;
+const report = { provenance, machine, corpusSize: CORPUS_SIZE, warmupRuns: WARMUP_RUNS, budget: BUDGET, sizes: SIZES, summaries, agreement };
 
 const fmt = (value: number, digits = 2): string => value.toFixed(digits);
 const lines: string[] = [
-  `# WFC encoding benchmark ${date}`,
+  `# WFC encoding benchmark ${provenance.generatedAt.slice(0, 10)}`,
+  "",
+  `- Commit: ${provenance.commit}${provenance.dirty ? " (working tree dirty)" : ""}; mode: ${provenance.mode}`,
   "",
   `- OS: ${machine.os}`,
   `- CPU: ${machine.cpu} (${machine.logicalCores} logical cores)`,
@@ -152,12 +161,12 @@ for (const scenario of SCENARIOS) {
       ? "## Scenario `open`: demo tile set, no pins"
       : "## Scenario `constrained`: demo tile set without `road-end`, one house pinned at the centre",
     "",
-    "| Size | Encoding | Solved | Unsat | Budget | p50 ms | p95 ms | Mean nodes | Mean backtracks | Mean prop. steps |",
-    "|---|---|---:|---:|---:|---:|---:|---:|---:|---:|",
+    "| Size | Encoding | Solved | Unsat | Budget | p50 ms | p95 ms | Max ms | Mean nodes | Mean backtracks | Max backtracks (seed) | Mean prop. steps |",
+    "|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
   );
   for (const s of summaries.filter((x) => x.scenario === scenario)) {
     lines.push(
-      `| ${s.size}×${s.size} | ${s.encoding} | ${s.solved} | ${s.unsatisfiable} | ${s.budgetExceeded} | ${fmt(s.p50Ms)} | ${fmt(s.p95Ms)} | ${fmt(s.meanNodes, 1)} | ${fmt(s.meanBacktracks, 2)} | ${fmt(s.meanPropagationSteps, 0)} |`,
+      `| ${s.size}×${s.size} | ${s.encoding} | ${s.solved} | ${s.unsatisfiable} | ${s.budgetExceeded} | ${fmt(s.p50Ms)} | ${fmt(s.p95Ms)} | ${fmt(s.maxMs)} | ${fmt(s.meanNodes, 1)} | ${fmt(s.meanBacktracks, 2)} | ${s.maxBacktracks} (${s.maxBacktracksSeed}) | ${fmt(s.meanPropagationSteps, 0)} |`,
     );
   }
   lines.push("");
@@ -166,8 +175,8 @@ lines.push("## Agreement between encodings", "", "| Scenario | Size | Both solve
 for (const a of agreement) lines.push(`| ${a.scenario} | ${a.size}×${a.size} | ${a.bothSolved} | ${a.sameHash} |`);
 lines.push("");
 
-const directory = join(import.meta.dirname, "..", "results");
-mkdirSync(directory, { recursive: true });
-writeFileSync(join(directory, `bench-${date}.json`), `${JSON.stringify(report, null, 2)}\n`);
-writeFileSync(join(directory, `bench-${date}.md`), `${lines.join("\n")}\n`);
+const jsonPath = writeJson(run, "wfc.json", report);
+const markdownPath = join(run.directory, "wfc.md");
+writeFileSync(markdownPath, `${lines.join("\n")}\n`);
 console.log(lines.join("\n"));
+console.log(`WFC benchmark -> ${relative(repositoryRoot(), jsonPath)}, ${relative(repositoryRoot(), markdownPath)}`);

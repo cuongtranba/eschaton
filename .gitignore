@@ -5,4 +5,5 @@ coverage/
 test-results/
 playwright-report/
 .worktrees/
+benchmarks/runs/
 .DS_Store

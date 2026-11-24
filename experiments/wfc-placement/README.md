@@ -12,7 +12,7 @@ Throwaway experiment for master plan §5.2 and §14 step 6. It answers one quest
 | `src/tiles.ts` | Demo tile set (`ground`, `road-straight`, `road-turn`, `road-end`, 2×2 `house` with a door, `tower`, sparse L-shaped 3×2 `courtyard`, explicit `empty`) and problem builders |
 | `src/model.ts` | Shared rotation, variant, socket and pin handling used by both solvers and the checker |
 | `test/wfc.test.ts` | Behavioural tests through the package entry point |
-| `bench/run.ts` | `pnpm bench`: writes `results/bench-<date>.md` and `.json` |
+| `bench/run.ts` | `pnpm bench`: writes `wfc.md` and `wfc.json` (summaries only) into the benchmark run directory, `benchmarks/runs/…` by default; see `benchmarks/README.md` |
 
 Both solvers share: weighted choice with p = w / Σw over surviving options, weighted entropy H = −Σ p ln p for minimum-entropy cell selection, a local mulberry32 PRNG seeded from `options.seed` (ties are collected in cell-index order and picked by the PRNG), chronological backtracking over a trail, budgets `maxNodes` (decisions) and `maxBacktracks`, and the result type `solved | unsatisfiable | budget-exceeded`. A solver verifies its own grid with `verifySolution` before returning `solved` and throws if that fails; that path never triggered. Unsatisfiable and budget results carry `stats` and a bounded `trace` (last 24 events); `unsatisfiable` also carries `stats`, which the task statement did not require.
 
@@ -28,7 +28,7 @@ Symmetric 1×1 tiles are deduplicated by rotation in both encodings so identical
 
 ## Measured results
 
-Copied from `results/bench-2026-11-24.md` (the committed output of `pnpm bench`). Machine: Linux 6.18.58.1-microsoft-standard-WSL2 (x64), AMD Ryzen 7 7800X3D (8 logical cores), Node v24.5.0, 19.5 GiB. Seeds 1..100 per scenario × size × encoding, 5 untimed warm-up runs per cell, `performance.now()` around each solve on the main thread, budget `maxNodes` 5000 and `maxBacktracks` 500. Times cover every run. One run on one machine: treat timing differences below about 10% as noise.
+Copied from `results/bench-2026-11-24.md` (the output of the former `pnpm bench`, which wrote into this directory; superseded by `benchmarks/phase-0/` after the next recorded run, see `benchmarks/README.md`). Machine: Linux 6.18.58.1-microsoft-standard-WSL2 (x64), AMD Ryzen 7 7800X3D (8 logical cores), Node v24.5.0, 19.5 GiB. Seeds 1..100 per scenario × size × encoding, 5 untimed warm-up runs per cell, `performance.now()` around each solve on the main thread, budget `maxNodes` 5000 and `maxBacktracks` 500. Times cover every run. One run on one machine: treat timing differences below about 10% as noise.
 
 ### Scenario `open`: demo tile set, no pins
 
@@ -99,4 +99,4 @@ This is a recommendation from a small 2D experiment, not a go/no-go gate; the AD
 
 ## Commands
 
-From the repository root: `pnpm test` (Vitest, includes this package), `pnpm typecheck`, `pnpm lint`, `pnpm bench` (rewrites `results/bench-<today>.md` and `.json`; commit the output only from a deliberate run).
+From the repository root: `pnpm test` (Vitest, includes this package), `pnpm typecheck`, `pnpm lint`, `pnpm bench` (writes to the untracked `benchmarks/runs/` directory; `BENCH_RECORD=1` writes the tracked evidence directory, see `benchmarks/README.md`).

@@ -11,7 +11,7 @@
     "lint": "eslint .",
     "typecheck": "pnpm -r --if-present typecheck",
     "e2e": "pnpm --filter @eschaton/studio e2e",
-    "bench": "pnpm -r --if-present bench",
+    "bench": "node benchmarks/src/cli.ts",
     "screenshots": "pnpm --filter @eschaton/studio screenshots",
     "bench:studio": "pnpm --filter @eschaton/studio bench:studio"
   },

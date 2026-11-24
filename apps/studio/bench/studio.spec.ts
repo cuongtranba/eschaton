@@ -1,11 +1,7 @@
-import { execFileSync } from "node:child_process";
-import { mkdirSync, writeFileSync } from "node:fs";
-import os from "node:os";
-import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { captureMachine, exitWith, openRun, writeJson } from "@eschaton/benchmarks";
 import { expect, test, type Page } from "@playwright/test";
 import { DEFAULT_SEED } from "../src/lab/state";
-import { repositoryRootFrom, writeReport, type ResourceSnapshot, type SceneResult, type StudioResult } from "./report";
+import { writeReport, type ResourceSnapshot, type SceneResult, type StudioResult } from "./report";
 
 type Scene = Readonly<{ id: string; label: string; item: string; stress?: number }>;
 
@@ -23,10 +19,6 @@ const MIN_SAMPLES = 15;
 const MAX_SAMPLES = 400;
 const RESET_CYCLES = 20;
 const COLD_LOADS = 5;
-
-const here = dirname(fileURLToPath(import.meta.url));
-const ROOT = repositoryRootFrom(here);
-const OUTPUT = resolve(ROOT, "benchmarks/raw/studio.json");
 
 const url = (stress: number | undefined): string => `/?continuous=1${stress === undefined ? "" : `&stress=${stress}`}`;
 
@@ -129,25 +121,26 @@ async function snapshot(page: Page): Promise<ResourceSnapshot> {
   };
 }
 
-async function gpuInfo(page: Page): Promise<Readonly<Record<string, string>>> {
-  return page.evaluate(async () => {
-    const gl = document.createElement("canvas").getContext("webgl2");
-    const debug = gl?.getExtension("WEBGL_debug_renderer_info") ?? null;
-    const read = (name: number): string => String(gl?.getParameter(name) ?? "unavailable");
-    const gpu = (navigator as { gpu?: { requestAdapter: () => Promise<unknown> } }).gpu;
-    const adapter = gpu === undefined ? "navigator.gpu missing" : (await gpu.requestAdapter()) === null ? "no WebGPU adapter" : "WebGPU adapter available";
-    return {
-      webglRenderer: debug === null || gl === null ? read(0x1f01) : read(debug.UNMASKED_RENDERER_WEBGL),
-      webglVendor: debug === null || gl === null ? read(0x1f00) : read(debug.UNMASKED_VENDOR_WEBGL),
-      webgpu: adapter,
-      userAgent: navigator.userAgent,
-    };
-  });
+async function gpuReadout(page: Page): Promise<Readonly<Record<string, string>>> {
+  const read = (name: string): Promise<string> => page.getByTestId(`stat-${name}`).innerText();
+  return {
+    backend: await read("backend"),
+    gpu: await read("gpu"),
+    gpuClass: await read("gpu-class"),
+    forceWebGL: await read("force-webgl"),
+    gpuDetail: (await page.getByTestId("stat-gpu").getAttribute("title")) ?? "",
+    userAgent: await page.evaluate(() => navigator.userAgent),
+  };
 }
 
-const git = (...args: string[]): string => execFileSync("git", args, { encoding: "utf8" }).trim();
-
 test("records Phase 0 studio benchmarks", async ({ page, browser, browserName }) => {
+  const run = (() => {
+    try {
+      return openRun({ join: true });
+    } catch (error) {
+      return exitWith(error);
+    }
+  })();
   const cold: number[] = [];
   for (let load = 0; load < COLD_LOADS; load++) {
     const context = await browser.newContext({ viewport: { width: 1440, height: 860 }, deviceScaleFactor: 1 });
@@ -157,8 +150,7 @@ test("records Phase 0 studio benchmarks", async ({ page, browser, browserName })
   }
 
   await openLab(page, undefined);
-  const gpu = await gpuInfo(page);
-  const backend = await page.getByTestId("stat-backend").innerText();
+  const gpu = await gpuReadout(page);
 
   const scenes: SceneResult[] = [];
   for (const scene of SCENES.filter((entry) => entry.stress === undefined)) scenes.push(await measureScene(page, scene));
@@ -179,21 +171,13 @@ test("records Phase 0 studio benchmarks", async ({ page, browser, browserName })
   scenes.push(await measureScene(page, stressScene));
 
   const sorted = [...cold].sort((a, b) => a - b);
-  const cpus = os.cpus();
   const result: StudioResult = {
-    generatedAt: new Date().toISOString(),
-    commit: git("rev-parse", "HEAD"),
-    workingTreeDirty: git("status", "--porcelain").length > 0,
+    provenance: run.provenance,
     seed: DEFAULT_SEED,
     machine: {
-      os: `${os.type()} ${os.release()} (${os.platform()} ${os.arch()})`,
-      cpu: cpus[0]?.model ?? "unknown",
-      logicalCores: cpus.length,
-      totalMemoryGiB: round(os.totalmem() / 1024 ** 3, 1),
-      node: process.version,
+      ...captureMachine(),
       browser: `${browserName} ${browser.version()}`,
       viewport: "1440×860 CSS px at devicePixelRatio 1",
-      backend,
       ...gpu,
     },
     method: {
@@ -209,9 +193,8 @@ test("records Phase 0 studio benchmarks", async ({ page, browser, browserName })
     scenes,
     resourceLifetime: { cycles: RESET_CYCLES, baseline, afterCycles, perCycle: cycles },
   };
-  mkdirSync(dirname(OUTPUT), { recursive: true });
-  writeFileSync(OUTPUT, `${JSON.stringify(result, null, 2)}\n`);
-  writeReport(result, ROOT);
+  writeJson(run, "studio.json", result);
+  writeReport(result, run.directory);
 
   expect(scenes).toHaveLength(SCENES.length);
 });

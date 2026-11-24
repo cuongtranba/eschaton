@@ -1,5 +1,6 @@
-import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
-import { join, resolve } from "node:path";
+import type { Provenance } from "@eschaton/benchmarks";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 
 export type SceneResult = Readonly<{
   id: string;
@@ -19,9 +20,7 @@ export type SceneResult = Readonly<{
 export type ResourceSnapshot = Readonly<{ instances: number; geometries: number; textures: number; heapBytes: number | null }>;
 
 export type StudioResult = Readonly<{
-  generatedAt: string;
-  commit: string;
-  workingTreeDirty: boolean;
+  provenance: Provenance;
   seed: number;
   machine: Readonly<Record<string, string | number>>;
   method: Readonly<Record<string, string | number>>;
@@ -33,7 +32,7 @@ export type StudioResult = Readonly<{
 type FoldonRow = Readonly<{ name: string; opsPerSecond: number; p50Us: number; p99Us: number; samples: number }>;
 type FoldonResult = Readonly<{ startedAt: string; rows: readonly FoldonRow[] }> | undefined;
 type WfcRow = Readonly<{ scenario: string; size: number; encoding: string; solved: number; p50Ms: number; p95Ms: number }>;
-type WfcReference = Readonly<{ file: string; rows: readonly WfcRow[]; rerun: readonly WfcRow[] }> | undefined;
+type WfcReference = Readonly<{ rows: readonly WfcRow[] }> | undefined;
 
 type Record_ = Readonly<Record<string, unknown>>;
 const isRecord = (value: unknown): value is Record_ => typeof value === "object" && value !== null && !Array.isArray(value);
@@ -49,24 +48,12 @@ function readFoldon(path: string): FoldonResult {
   if (!existsSync(path)) return undefined;
   const root = readJson(path);
   if (!isRecord(root)) return undefined;
-  const rows: FoldonRow[] = [];
-  for (const file of list(root.testResults)) {
-    for (const assertion of isRecord(file) ? list(file.assertionResults) : []) {
-      for (const benchmark of isRecord(assertion) ? list(assertion.benchmarks) : []) {
-        for (const task of isRecord(benchmark) ? list(benchmark.tasks) : []) {
-          if (!isRecord(task) || !isRecord(task.latency) || !isRecord(task.throughput)) continue;
-          rows.push({
-            name: text(task.name),
-            opsPerSecond: num(task.throughput.mean),
-            p50Us: num(task.latency.p50) * 1000,
-            p99Us: num(task.latency.p99) * 1000,
-            samples: num(task.latency.samplesCount),
-          });
-        }
-      }
-    }
-  }
-  return { startedAt: new Date(num(root.startTime)).toISOString(), rows };
+  const rows = list(root.rows).flatMap((entry): FoldonRow[] =>
+    isRecord(entry)
+      ? [{ name: text(entry.name), opsPerSecond: num(entry.opsPerSecond), p50Us: num(entry.p50Us), p99Us: num(entry.p99Us), samples: num(entry.samples) }]
+      : [],
+  );
+  return { startedAt: text(root.startedAt), rows };
 }
 
 function wfcRows(root: unknown): readonly WfcRow[] {
@@ -78,11 +65,8 @@ function wfcRows(root: unknown): readonly WfcRow[] {
   );
 }
 
-function readWfc(directory: string, rerunPath: string): WfcReference {
-  if (!existsSync(directory)) return undefined;
-  const file = readdirSync(directory).filter((name) => name.endsWith(".json")).sort().at(-1);
-  if (file === undefined) return undefined;
-  return { file, rows: wfcRows(readJson(join(directory, file))), rerun: existsSync(rerunPath) ? wfcRows(readJson(rerunPath)) : [] };
+function readWfc(path: string): WfcReference {
+  return existsSync(path) ? { rows: wfcRows(readJson(path)) } : undefined;
 }
 
 const fixed = (value: number, digits: number): string => (Number.isFinite(value) ? value.toFixed(digits) : "n/a");
@@ -95,6 +79,9 @@ export type Gate = Readonly<{ scene: string; target: string; status: GateStatus;
 export function gatesFor(studio: StudioResult, wfc: WfcReference): readonly Gate[] {
   const stress = studio.scenes.find((scene) => scene.id === "lab-1000");
   const { baseline, afterCycles, cycles } = studio.resourceLifetime;
+  const flat = studio.resourceLifetime.perCycle.every(
+    (cycle) => cycle.instances === baseline.instances && cycle.geometries === baseline.geometries && cycle.textures === baseline.textures,
+  );
   const placement16 = wfc?.rows.filter((row) => row.encoding === "placement" && row.size === 16) ?? [];
   const worstP95 = Math.max(...placement16.map((row) => row.p95Ms));
   const heapGrowth =
@@ -104,15 +91,18 @@ export function gatesFor(studio: StudioResult, wfc: WfcReference): readonly Gate
       scene: "Lab",
       target: "100–1,000 pieces; smooth interaction; no persistent resource growth after reset",
       status: "partially assessed",
-      measured: `${stress === undefined ? "stress scene missing" : `${grouped(stress.instances)} instances, ${stress.drawCalls} draws, p50 ${fixed(stress.frameP50Ms, 1)} ms / p95 ${fixed(stress.frameP95Ms, 1)} ms (software WebGL2)`}; GPU-side counters flat over ${cycles} cycles (geometries ${baseline.geometries}→${afterCycles.geometries}, textures ${baseline.textures}→${afterCycles.textures}); ${heapGrowth}`,
-      reason: "Software rasteriser, not a target GPU, so \"smooth interaction\" is not judged. The JS heap kept growing across reset cycles and the cause is not identified, so the \"no persistent growth\" half is not claimed.",
+      measured: `${stress === undefined ? "stress scene missing" : `${grouped(stress.instances)} instances, ${stress.drawCalls} draws, p50 ${fixed(stress.frameP50Ms, 1)} ms / p95 ${fixed(stress.frameP95Ms, 1)} ms (${String(studio.machine.gpuClass)} GPU, ${String(studio.machine.backend)})`}; GPU-side counters ${flat ? "flat" : "NOT flat"} over ${cycles} cycles (geometries ${baseline.geometries}→${afterCycles.geometries}, textures ${baseline.textures}→${afterCycles.textures}); ${heapGrowth}`,
+      reason:
+        studio.machine.gpuClass === "software"
+          ? "Software rasteriser, not a target GPU, so \"smooth interaction\" is not judged."
+          : "Frame times were not compared with a documented smoothness threshold on a reference GPU.",
     },
     {
       scene: "District",
       target: "10k visible logical instances; p95 frame ≤ 16.7 ms on a discrete GPU",
       status: "not assessed",
       measured: "none",
-      reason: "No District scene exists. The largest Phase 0 scene is the reference composition (543 instances) and it was measured only on a software rasteriser.",
+      reason: `No District scene exists. The largest Phase 0 scene is the reference composition and it was measured on ${String(studio.machine.gpuClass)} GPU class only.`,
     },
     {
       scene: "Stress",
@@ -146,9 +136,9 @@ export function gatesFor(studio: StudioResult, wfc: WfcReference): readonly Gate
 }
 
 function foldonTable(foldon: FoldonResult): string {
-  if (foldon === undefined) return "_Not measured in this run: `benchmarks/raw/foldon.json` was missing. Run `pnpm bench` first._\n";
+  if (foldon === undefined) return "_Not measured in this run: `foldon.json` was missing from this run directory. Run `pnpm bench` first (same commit and dirty state) or set `BENCH_RUN_DIR`._\n";
   const lines = [
-    `Source: \`benchmarks/raw/foldon.json\` (vitest bench run started ${foldon.startedAt}). Warm-up 200 iterations / 300 ms, then 800 ms of timed samples per case.`,
+    `Source: \`foldon.json\` in this run directory (vitest bench run started ${foldon.startedAt}). Warm-up 200 iterations / 300 ms, then 800 ms of timed samples per case.`,
     "",
     "| Case | ops/s | p50 µs | p99 µs | samples |",
     "|---|---:|---:|---:|---:|",
@@ -176,28 +166,26 @@ function lifetimeTable(studio: StudioResult): string {
   const heaps = perCycle.flatMap((cycle) => (cycle.heapBytes === null ? [] : [cycle.heapBytes]));
   const slope = baseline.heapBytes === null || afterCycles.heapBytes === null ? Number.NaN : (afterCycles.heapBytes - baseline.heapBytes) / cycles;
   const rises = heaps.filter((value, index) => index > 0 && value > (heaps[index - 1] ?? Number.POSITIVE_INFINITY)).length;
+  const countersFlat = perCycle.every(
+    (cycle) => cycle.instances === baseline.instances && cycle.geometries === baseline.geometries && cycle.textures === baseline.textures,
+  );
   const lines = [
     "| | Instances | Geometries | Textures | JS heap after GC (MB) |",
     "|---|---:|---:|---:|---:|",
     `| Baseline (roof-house) | ${baseline.instances} | ${baseline.geometries} | ${baseline.textures} | ${megabytes(baseline.heapBytes)} |`,
     `| After ${cycles} reset cycles | ${afterCycles.instances} | ${afterCycles.geometries} | ${afterCycles.textures} | ${megabytes(afterCycles.heapBytes)} |`,
   ];
-  return `${lines.join("\n")}\n\nMean JS heap change: ${Number.isFinite(slope) ? `${(slope / 1e6).toFixed(2)} MB per cycle` : "n/a"}; the heap rose in ${rises} of ${Math.max(0, heaps.length - 1)} consecutive cycle pairs. \`renderer.info\` counters (geometries, textures) and the instance count returned exactly to the baseline every cycle, so GPU-side resource counts did not leak. The JS heap did keep growing; the cause was not identified and it is a known open item, not a pass.\n`;
+  return `${lines.join("\n")}\n\nMean JS heap change: ${Number.isFinite(slope) ? `${(slope / 1e6).toFixed(2)} MB per cycle` : "n/a"}; the heap rose in ${rises} of ${Math.max(0, heaps.length - 1)} consecutive cycle pairs. \`renderer.info\` counters (geometries, textures) and the instance count ${countersFlat ? "returned exactly to the baseline every cycle, so GPU-side resource counts did not leak" : "did NOT return to the baseline every cycle (see the per-cycle values in studio.json)"}. The JS heap figure is a single \`gc()\` before reading \`usedJSHeapSize\`; the e2e heap test (\`apps/studio/e2e/heap.spec.ts\`) is the gate for retained content, this table is context.\n`;
 }
 
 function wfcTable(wfc: WfcReference): string {
-  if (wfc === undefined) return "_No WFC results file found._\n";
-  const rerunOf = (row: WfcRow): WfcRow | undefined =>
-    wfc.rerun.find((other) => other.scenario === row.scenario && other.size === row.size && other.encoding === row.encoding);
+  if (wfc === undefined) return "_`wfc.json` was missing from this run directory. Run `pnpm bench` first._\n";
   const lines = [
-    `Committed results are cited, not regenerated: \`experiments/wfc-placement/results/${wfc.file}\` (method in \`experiments/wfc-placement/README.md\`). 2D, height 1, main thread, 100 seeds per row. The last two columns come from a second \`pnpm bench\` run in the same session (\`benchmarks/raw/wfc-rerun.json\`); the workload is deterministic per seed, so differences are machine noise or load.`,
+    "Source: `wfc.json` in this run directory (method in `experiments/wfc-placement/README.md`). 2D, height 1, main thread, 100 seeds per row; p50 and p95 are computed from the per-run times of the whole corpus before the raw samples are discarded.",
     "",
-    "| Scenario | Size | Encoding | Solved / 100 | p50 ms | p95 ms | Rerun p50 ms | Rerun p95 ms |",
-    "|---|---:|---|---:|---:|---:|---:|---:|",
-    ...wfc.rows.map((row) => {
-      const again = rerunOf(row);
-      return `| ${row.scenario} | ${row.size}×${row.size} | ${row.encoding} | ${row.solved} | ${fixed(row.p50Ms, 2)} | ${fixed(row.p95Ms, 2)} | ${again === undefined ? "n/a" : fixed(again.p50Ms, 2)} | ${again === undefined ? "n/a" : fixed(again.p95Ms, 2)} |`;
-    }),
+    "| Scenario | Size | Encoding | Solved / 100 | p50 ms | p95 ms |",
+    "|---|---:|---|---:|---:|---:|",
+    ...wfc.rows.map((row) => `| ${row.scenario} | ${row.size}×${row.size} | ${row.encoding} | ${row.solved} | ${fixed(row.p50Ms, 2)} | ${fixed(row.p95Ms, 2)} |`),
   ];
   return `${lines.join("\n")}\n`;
 }
@@ -211,35 +199,44 @@ function gateTable(gates: readonly Gate[]): string {
   return `${lines.join("\n")}\n`;
 }
 
-export function writeReport(studio: StudioResult, repositoryRoot: string): string {
-  const foldon = readFoldon(join(repositoryRoot, "benchmarks/raw/foldon.json"));
-  const wfc = readWfc(join(repositoryRoot, "experiments/wfc-placement/results"), join(repositoryRoot, "benchmarks/raw/wfc-rerun.json"));
+function banner(machine: StudioResult["machine"]): string {
+  const gpu = `${String(machine.gpu)} (class ${String(machine.gpuClass)}, backend ${String(machine.backend)})`;
+  if (machine.gpuClass === "software") {
+    return `> **These numbers are not representative of the master plan §9.1 targets.** The Studio was measured in headless Chromium on a **software rasteriser**: ${gpu}. A physical GPU was never exercised in this run, so no §9.1 gate is claimed as passed. Headless frame times are quantised to multiples of about 16.7 ms by the compositor's 60 Hz tick, so differences below one tick are not resolvable.`;
+  }
+  return `> The Studio was measured on: ${gpu}. GPU class \`${String(machine.gpuClass)}\` is what the Studio reported, not a guarantee; check the adapter detail in the environment table before using these numbers against §9.1.`;
+}
+
+export function writeReport(studio: StudioResult, directory: string): string {
+  const foldon = readFoldon(join(directory, "foldon.json"));
+  const wfc = readWfc(join(directory, "wfc.json"));
   const gates = gatesFor(studio, wfc);
-  const date = studio.generatedAt.slice(0, 10);
-  const machine = studio.machine;
-  const machineRows = Object.entries(machine).map(([key, value]) => `| ${key} | ${String(value)} |`);
+  const { provenance } = studio;
+  const date = provenance.generatedAt.slice(0, 10);
+  const machineRows = Object.entries(studio.machine).map(([key, value]) => `| ${key} | ${String(value)} |`);
   const markdown = [
     `# Phase 0 benchmarks — ${date}`,
     "",
-    "> **These numbers are not representative of the master plan §9.1 targets.** The Studio was measured in headless Chromium on WSL2 with no GPU adapter: `WebGPURenderer` fell back to the **WebGL2 backend on the SwiftShader software rasteriser**, and the WebGPU backend was never exercised. No §9.1 gate is claimed as passed. Headless frame times are quantised to multiples of about 16.7 ms by the compositor's 60 Hz tick, so differences below one tick are not resolvable.",
+    banner(studio.machine),
     "",
     "## Environment",
     "",
     "| Item | Value |",
     "|---|---|",
-    `| Commit | \`${studio.commit}\`${studio.workingTreeDirty ? " + uncommitted P0.8 changes (working tree was dirty when measured)" : ""} |`,
+    `| Commit | \`${provenance.commit}\`${provenance.dirty ? " **(working tree was dirty when measured)**" : " (clean working tree)"} |`,
+    `| Mode | ${provenance.mode} |`,
     `| Seed | ${studio.seed} (lab default; also seeds the 1,000-piece stress layout) |`,
-    `| Generated | ${studio.generatedAt} |`,
+    `| Generated | ${provenance.generatedAt} |`,
     ...machineRows,
     "",
-    "The Foldon benchmarks (section 1) ran on the same machine and Node version, outside a browser.",
+    "The Foldon benchmarks (section 1) ran on the same machine and Node version, outside a browser. Methodology: `benchmarks/README.md`.",
     "",
     "## Method",
     "",
     ...Object.entries(studio.method).map(([key, value]) => `- **${key}:** ${String(value)}`),
     "- **Stress scene:** `?stress=1000` places 1,000 seeded primitives on a 3-cell lattice around the selected assembly; `?continuous=1` makes the renderer draw every animation frame (the lab otherwise draws only when something changed).",
     "- **Frame time:** requestAnimationFrame deltas after 20 warm-up frames, at least 15 samples, up to 8 s. The sample count is in the table; p95 over fewer than 100 samples is weak.",
-    "- **Reproduce:** `pnpm bench` (Foldon and the WFC experiment), then `STUDIO_PORT=5183 pnpm bench:studio`.",
+    "- **Reproduce:** `pnpm bench` (Foldon and the WFC experiment, serially), then `STUDIO_PORT=5183 pnpm bench:studio`; add `BENCH_RECORD=1` to both to write the tracked evidence directory.",
     "",
     "## 1. Foldon package (Node)",
     "",
@@ -256,18 +253,14 @@ export function writeReport(studio: StudioResult, repositoryRoot: string): strin
     "## 4. Resource lifetime after reset cycles",
     "",
     lifetimeTable(studio),
-    "## 5. WFC placement experiment (by reference)",
+    "## 5. WFC placement experiment",
     "",
     wfcTable(wfc),
     "## 6. §9.1 gate status",
     "",
     gateTable(gates),
   ].join("\n");
-  const outputDirectory = join(repositoryRoot, "benchmarks");
-  mkdirSync(outputDirectory, { recursive: true });
-  writeFileSync(join(outputDirectory, `phase-0-${date}.md`), `${markdown}\n`);
-  writeFileSync(join(outputDirectory, `phase-0-${date}.json`), `${JSON.stringify({ studio, foldon, wfcReference: wfc, gates }, null, 2)}\n`);
-  return date;
+  const path = join(directory, "report.md");
+  writeFileSync(path, `${markdown}\n`);
+  return path;
 }
-
-export const repositoryRootFrom = (directory: string): string => resolve(directory, "../../..");

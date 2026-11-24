@@ -15,6 +15,7 @@
     "bench": "node bench/run.ts"
   },
   "devDependencies": {
+    "@eschaton/benchmarks": "workspace:*",
     "vitest": "5.1.1"
   }
 }

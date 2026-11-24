@@ -12,7 +12,7 @@
   "scripts": {
     "test": "vitest run",
     "typecheck": "tsc -p tsconfig.json",
-    "bench": "vitest bench --run --reporter=default --reporter=json --outputFile.json=../../benchmarks/raw/foldon.json"
+    "bench": "node ../../benchmarks/src/foldon.ts"
   },
   "devDependencies": {
     "vitest": "5.1.1"

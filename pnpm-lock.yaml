@@ -45,6 +45,9 @@ importers:
         specifier: 0.187.0
         version: 0.187.0
     devDependencies:
+      '@eschaton/benchmarks':
+        specifier: workspace:*
+        version: link:../../benchmarks
       '@playwright/test':
         specifier: 1.65.1
         version: 1.65.1
@@ -64,8 +67,13 @@ importers:
         specifier: 8.3.8
         version: 8.3.8(@types/node@26.6.6)
 
+  benchmarks: {}
+
   experiments/wfc-placement:
     devDependencies:
+      '@eschaton/benchmarks':
+        specifier: workspace:*
+        version: link:../../benchmarks
       vitest:
         specifier: 5.1.1
         version: 5.1.1(@types/node@26.6.6)(vite@8.3.8(@types/node@26.6.6))
