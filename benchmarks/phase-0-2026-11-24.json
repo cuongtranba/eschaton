@@ -1,0 +1,590 @@
+{
+  "studio": {
+    "generatedAt": "2026-11-24T07:02:34.419Z",
+    "commit": "0e34f55127a910a263c4f619afb3e2d59d73da76",
+    "workingTreeDirty": true,
+    "seed": 20261124,
+    "machine": {
+      "os": "Linux 6.18.58.1-microsoft-standard-WSL2 (linux x64)",
+      "cpu": "AMD Ryzen 7 7800X3D 8-Core Processor",
+      "logicalCores": 8,
+      "totalMemoryGiB": 19.5,
+      "node": "v24.5.0",
+      "browser": "chromium 159.0.8154.6",
+      "viewport": "1440×860 CSS px at devicePixelRatio 1",
+      "backend": "WebGL2",
+      "webglRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "webglVendor": "Google Inc. (Google)",
+      "webgpu": "no WebGPU adapter",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/159.0.8154.6 Safari/537.36"
+    },
+    "method": {
+      "warmupFrames": 20,
+      "sampleWindowMs": 8000,
+      "minSamples": 15,
+      "maxSamples": 400,
+      "frameTime": "requestAnimationFrame deltas with ?continuous=1 (every frame renders)",
+      "build": "vite build + vite preview (production bundle)",
+      "resetCycle": "select Reference composition, then select roof-house (content disposed and rebuilt twice per cycle)"
+    },
+    "timeToFirstFrameMs": {
+      "runs": [
+        156.2,
+        144.1,
+        140.5,
+        142.8,
+        132.2
+      ],
+      "median": 142.8,
+      "note": "page timeOrigin to first rendered frame, cold context, preview server on localhost"
+    },
+    "scenes": [
+      {
+        "id": "single-primitive",
+        "label": "Single primitive (P08 box shell)",
+        "backend": "WebGL2",
+        "frameSamples": 164,
+        "frameP50Ms": 50,
+        "frameP95Ms": 50.1,
+        "frameMaxMs": 66.7,
+        "drawCalls": 6,
+        "triangles": 43,
+        "instances": 6,
+        "geometries": 6,
+        "textures": 2
+      },
+      {
+        "id": "roof-house",
+        "label": "Assembly roof-house",
+        "backend": "WebGL2",
+        "frameSamples": 119,
+        "frameP50Ms": 66.7,
+        "frameP95Ms": 83.4,
+        "frameMaxMs": 83.4,
+        "drawCalls": 10,
+        "triangles": 275,
+        "instances": 36,
+        "geometries": 10,
+        "textures": 2
+      },
+      {
+        "id": "watchtower",
+        "label": "Assembly watchtower",
+        "backend": "WebGL2",
+        "frameSamples": 110,
+        "frameP50Ms": 66.7,
+        "frameP95Ms": 83.4,
+        "frameMaxMs": 83.4,
+        "drawCalls": 8,
+        "triangles": 339,
+        "instances": 32,
+        "geometries": 8,
+        "textures": 2
+      },
+      {
+        "id": "reference",
+        "label": "Reference composition (seed 20261124)",
+        "backend": "WebGL2",
+        "frameSamples": 47,
+        "frameP50Ms": 166.7,
+        "frameP95Ms": 183.4,
+        "frameMaxMs": 233.4,
+        "drawCalls": 15,
+        "triangles": 5154,
+        "instances": 543,
+        "geometries": 15,
+        "textures": 2
+      },
+      {
+        "id": "lab-1000",
+        "label": "Lab with 1,000 seeded pieces (roof-house + ?stress=1000)",
+        "backend": "WebGL2",
+        "frameSamples": 128,
+        "frameP50Ms": 66.6,
+        "frameP95Ms": 66.8,
+        "frameMaxMs": 83.4,
+        "drawCalls": 13,
+        "triangles": 5444,
+        "instances": 1036,
+        "geometries": 13,
+        "textures": 2
+      }
+    ],
+    "resourceLifetime": {
+      "cycles": 20,
+      "baseline": {
+        "instances": 36,
+        "geometries": 9,
+        "textures": 2,
+        "heapBytes": 12109610
+      },
+      "afterCycles": {
+        "instances": 36,
+        "geometries": 9,
+        "textures": 2,
+        "heapBytes": 24913227
+      },
+      "perCycle": [
+        {
+          "instances": 36,
+          "geometries": 9,
+          "textures": 2,
+          "heapBytes": 12663842
+        },
+        {
+          "instances": 36,
+          "geometries": 9,
+          "textures": 2,
+          "heapBytes": 13418674
+        },
+        {
+          "instances": 36,
+          "geometries": 9,
+          "textures": 2,
+          "heapBytes": 14103543
+        },
+        {
+          "instances": 36,
+          "geometries": 9,
+          "textures": 2,
+          "heapBytes": 14759423
+        },
+        {
+          "instances": 36,
+          "geometries": 9,
+          "textures": 2,
+          "heapBytes": 15409491
+        },
+        {
+          "instances": 36,
+          "geometries": 9,
+          "textures": 2,
+          "heapBytes": 16086591
+        },
+        {
+          "instances": 36,
+          "geometries": 9,
+          "textures": 2,
+          "heapBytes": 16725683
+        },
+        {
+          "instances": 36,
+          "geometries": 9,
+          "textures": 2,
+          "heapBytes": 17381191
+        },
+        {
+          "instances": 36,
+          "geometries": 9,
+          "textures": 2,
+          "heapBytes": 18030459
+        },
+        {
+          "instances": 36,
+          "geometries": 9,
+          "textures": 2,
+          "heapBytes": 18666131
+        },
+        {
+          "instances": 36,
+          "geometries": 9,
+          "textures": 2,
+          "heapBytes": 19274363
+        },
+        {
+          "instances": 36,
+          "geometries": 9,
+          "textures": 2,
+          "heapBytes": 19929751
+        },
+        {
+          "instances": 36,
+          "geometries": 9,
+          "textures": 2,
+          "heapBytes": 20534231
+        },
+        {
+          "instances": 36,
+          "geometries": 9,
+          "textures": 2,
+          "heapBytes": 21195663
+        },
+        {
+          "instances": 36,
+          "geometries": 9,
+          "textures": 2,
+          "heapBytes": 21814915
+        },
+        {
+          "instances": 36,
+          "geometries": 9,
+          "textures": 2,
+          "heapBytes": 22441103
+        },
+        {
+          "instances": 36,
+          "geometries": 9,
+          "textures": 2,
+          "heapBytes": 23052111
+        },
+        {
+          "instances": 36,
+          "geometries": 9,
+          "textures": 2,
+          "heapBytes": 23692115
+        },
+        {
+          "instances": 36,
+          "geometries": 9,
+          "textures": 2,
+          "heapBytes": 24292143
+        },
+        {
+          "instances": 36,
+          "geometries": 9,
+          "textures": 2,
+          "heapBytes": 24913227
+        }
+      ]
+    }
+  },
+  "foldon": {
+    "startedAt": "2026-11-24T06:59:25.244Z",
+    "rows": [
+      {
+        "name": "poseGeometry P01 Planar panel",
+        "opsPerSecond": 824123.1562072049,
+        "p50Us": 1.1349999999765714,
+        "p99Us": 2.8229999998075073,
+        "samples": 613543
+      },
+      {
+        "name": "poseGeometry P02 Triangular facet",
+        "opsPerSecond": 832171.8272868848,
+        "p50Us": 1.1169999997946434,
+        "p99Us": 3.0259999998634157,
+        "samples": 596106
+      },
+      {
+        "name": "poseGeometry P03 Hinged two-panel crease",
+        "opsPerSecond": 233573.4960208543,
+        "p50Us": 4.1879999998855055,
+        "p99Us": 8.321000000250933,
+        "samples": 181139
+      },
+      {
+        "name": "poseGeometry P05 Valley fold",
+        "opsPerSecond": 232476.48053543613,
+        "p50Us": 4.171999999925902,
+        "p99Us": 8.545999999623746,
+        "samples": 178845
+      },
+      {
+        "name": "poseGeometry P04 Mountain fold",
+        "opsPerSecond": 229543.10114857607,
+        "p50Us": 4.197000000203843,
+        "p99Us": 8.905960000483864,
+        "samples": 175664
+      },
+      {
+        "name": "poseGeometry P09 Irregular fragment",
+        "opsPerSecond": 103456.96641106493,
+        "p50Us": 9.410000000571017,
+        "p99Us": 22.4039999998422,
+        "samples": 80275
+      },
+      {
+        "name": "poseGeometry P07 Pyramid",
+        "opsPerSecond": 80842.55974062625,
+        "p50Us": 11.890999998286134,
+        "p99Us": 26.72813000051974,
+        "samples": 62344
+      },
+      {
+        "name": "poseGeometry P06 Triangular prism",
+        "opsPerSecond": 78837.89476614812,
+        "p50Us": 12.267000000065309,
+        "p99Us": 26.40810999961105,
+        "samples": 61122
+      },
+      {
+        "name": "poseGeometry P08 Box shell",
+        "opsPerSecond": 62396.05651333515,
+        "p50Us": 15.484999999898719,
+        "p99Us": 33.36285999985188,
+        "samples": 48324
+      },
+      {
+        "name": "flatten watchtower",
+        "opsPerSecond": 260561.2681974729,
+        "p50Us": 3.748999999515945,
+        "p99Us": 7.585999999719206,
+        "samples": 202161
+      },
+      {
+        "name": "flatten roof-house",
+        "opsPerSecond": 208964.12641760276,
+        "p50Us": 4.63099999979022,
+        "p99Us": 10.154999999940628,
+        "samples": 160724
+      },
+      {
+        "name": "foldProgress(P08, 0.5) + poseGeometry",
+        "opsPerSecond": 28875.67389732165,
+        "p50Us": 31.519000000116648,
+        "p99Us": 84.42220000048091,
+        "samples": 21325
+      },
+      {
+        "name": "createCatalog(default inputs)",
+        "opsPerSecond": 574.703696098785,
+        "p50Us": 1716.904999999315,
+        "p99Us": 2166.0816399995747,
+        "samples": 459
+      }
+    ]
+  },
+  "wfcReference": {
+    "file": "bench-2026-11-24.json",
+    "rows": [
+      {
+        "scenario": "open",
+        "size": 8,
+        "encoding": "placement",
+        "solved": 100,
+        "p50Ms": 5.762591000000015,
+        "p95Ms": 8.043640000000039
+      },
+      {
+        "scenario": "open",
+        "size": 8,
+        "encoding": "offset-state",
+        "solved": 100,
+        "p50Ms": 4.432492000000025,
+        "p95Ms": 4.863688000000025
+      },
+      {
+        "scenario": "open",
+        "size": 12,
+        "encoding": "placement",
+        "solved": 100,
+        "p50Ms": 18.933136000000104,
+        "p95Ms": 26.026678000000175
+      },
+      {
+        "scenario": "open",
+        "size": 12,
+        "encoding": "offset-state",
+        "solved": 100,
+        "p50Ms": 13.371565999999802,
+        "p95Ms": 18.349138000000494
+      },
+      {
+        "scenario": "open",
+        "size": 16,
+        "encoding": "placement",
+        "solved": 100,
+        "p50Ms": 47.205721999999696,
+        "p95Ms": 50.17991400000028
+      },
+      {
+        "scenario": "open",
+        "size": 16,
+        "encoding": "offset-state",
+        "solved": 100,
+        "p50Ms": 29.95097799999894,
+        "p95Ms": 34.34839699999975
+      },
+      {
+        "scenario": "constrained",
+        "size": 8,
+        "encoding": "placement",
+        "solved": 100,
+        "p50Ms": 3.6104990000003454,
+        "p95Ms": 7.842004000000088
+      },
+      {
+        "scenario": "constrained",
+        "size": 8,
+        "encoding": "offset-state",
+        "solved": 100,
+        "p50Ms": 3.58692499999961,
+        "p95Ms": 5.876944999999978
+      },
+      {
+        "scenario": "constrained",
+        "size": 12,
+        "encoding": "placement",
+        "solved": 100,
+        "p50Ms": 19.438476000001174,
+        "p95Ms": 26.230813000000126
+      },
+      {
+        "scenario": "constrained",
+        "size": 12,
+        "encoding": "offset-state",
+        "solved": 100,
+        "p50Ms": 15.83923700000014,
+        "p95Ms": 19.31406099999913
+      },
+      {
+        "scenario": "constrained",
+        "size": 16,
+        "encoding": "placement",
+        "solved": 100,
+        "p50Ms": 67.95607100000052,
+        "p95Ms": 97.77211399999942
+      },
+      {
+        "scenario": "constrained",
+        "size": 16,
+        "encoding": "offset-state",
+        "solved": 100,
+        "p50Ms": 39.06532099999822,
+        "p95Ms": 56.13027200000215
+      }
+    ],
+    "rerun": [
+      {
+        "scenario": "open",
+        "size": 8,
+        "encoding": "placement",
+        "solved": 100,
+        "p50Ms": 5.545648000000028,
+        "p95Ms": 8.912820999999994
+      },
+      {
+        "scenario": "open",
+        "size": 8,
+        "encoding": "offset-state",
+        "solved": 100,
+        "p50Ms": 4.470879000000082,
+        "p95Ms": 5.3324460000000045
+      },
+      {
+        "scenario": "open",
+        "size": 12,
+        "encoding": "placement",
+        "solved": 100,
+        "p50Ms": 19.38284900000008,
+        "p95Ms": 28.578083999999762
+      },
+      {
+        "scenario": "open",
+        "size": 12,
+        "encoding": "offset-state",
+        "solved": 100,
+        "p50Ms": 13.352057000000059,
+        "p95Ms": 18.78885899999932
+      },
+      {
+        "scenario": "open",
+        "size": 16,
+        "encoding": "placement",
+        "solved": 100,
+        "p50Ms": 47.79212100000041,
+        "p95Ms": 56.88951300000008
+      },
+      {
+        "scenario": "open",
+        "size": 16,
+        "encoding": "offset-state",
+        "solved": 100,
+        "p50Ms": 30.358916999999565,
+        "p95Ms": 39.17081000000144
+      },
+      {
+        "scenario": "constrained",
+        "size": 8,
+        "encoding": "placement",
+        "solved": 100,
+        "p50Ms": 3.4804039999999077,
+        "p95Ms": 6.6582369999996445
+      },
+      {
+        "scenario": "constrained",
+        "size": 8,
+        "encoding": "offset-state",
+        "solved": 100,
+        "p50Ms": 3.2666559999997844,
+        "p95Ms": 3.799872999999934
+      },
+      {
+        "scenario": "constrained",
+        "size": 12,
+        "encoding": "placement",
+        "solved": 100,
+        "p50Ms": 14.771882000000915,
+        "p95Ms": 16.91091199999937
+      },
+      {
+        "scenario": "constrained",
+        "size": 12,
+        "encoding": "offset-state",
+        "solved": 100,
+        "p50Ms": 10.974828999998863,
+        "p95Ms": 11.62150500000098
+      },
+      {
+        "scenario": "constrained",
+        "size": 16,
+        "encoding": "placement",
+        "solved": 100,
+        "p50Ms": 36.294589000001,
+        "p95Ms": 38.99499599999763
+      },
+      {
+        "scenario": "constrained",
+        "size": 16,
+        "encoding": "offset-state",
+        "solved": 100,
+        "p50Ms": 25.743899000000965,
+        "p95Ms": 31.559574000002613
+      }
+    ]
+  },
+  "gates": [
+    {
+      "scene": "Lab",
+      "target": "100–1,000 pieces; smooth interaction; no persistent resource growth after reset",
+      "status": "partially assessed",
+      "measured": "1,036 instances, 13 draws, p50 66.6 ms / p95 66.8 ms (software WebGL2); GPU-side counters flat over 20 cycles (geometries 9→9, textures 2→2); JS heap 12.1 → 24.9 MB over 20 cycles after forced GC",
+      "reason": "Software rasteriser, not a target GPU, so \"smooth interaction\" is not judged. The JS heap kept growing across reset cycles and the cause is not identified, so the \"no persistent growth\" half is not claimed."
+    },
+    {
+      "scene": "District",
+      "target": "10k visible logical instances; p95 frame ≤ 16.7 ms on a discrete GPU",
+      "status": "not assessed",
+      "measured": "none",
+      "reason": "No District scene exists. The largest Phase 0 scene is the reference composition (543 instances) and it was measured only on a software rasteriser."
+    },
+    {
+      "scene": "Stress",
+      "target": "100k static logical instances",
+      "status": "not assessed",
+      "measured": "none",
+      "reason": "The largest measured scene has about 1,000 instances. No chunking or 100k placement exists."
+    },
+    {
+      "scene": "Research",
+      "target": "1M logical pieces across streamed chunks",
+      "status": "not assessed",
+      "measured": "none",
+      "reason": "No streaming or chunk model in Phase 0."
+    },
+    {
+      "scene": "Local WFC",
+      "target": "16×16×8 region, bounded catalog, p95 ≤ 250 ms worker solve",
+      "status": "partially assessed",
+      "measured": "2D 16×16 (height 1), placement encoding, main thread: worst p95 97.8 ms over open and constrained corpora of 100 seeds",
+      "reason": "No third dimension, no worker, an easy tile set, and a throwaway solver, so the gate is not claimed."
+    },
+    {
+      "scene": "Interaction",
+      "target": "No solver-caused main-thread long tasks during worker solving; cancellation observable",
+      "status": "not assessed",
+      "measured": "none",
+      "reason": "There is no worker and no cancellation in Phase 0."
+    }
+  ]
+}

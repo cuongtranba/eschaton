@@ -177,6 +177,16 @@ test("switching items repeatedly does not grow GPU resources", async ({ page }) 
   await expect.poll(snapshot).toEqual(baseline);
 });
 
+test("the stress flag adds the requested number of seeded pieces without adding draw calls per piece", async ({ page }) => {
+  await openLab(page);
+  await expect.poll(() => readNumber(page, "instances")).toBeGreaterThan(0);
+  const base = await readNumber(page, "instances");
+  const baseDraws = await readNumber(page, "draw-calls");
+  await openLab(page, "?stress=200");
+  await expect.poll(() => readNumber(page, "instances")).toBe(base + 200);
+  expect(await readNumber(page, "draw-calls")).toBeLessThanOrEqual(baseDraws + 9);
+});
+
 test("the same seed rebuilds the same composition and another seed changes it", async ({ page }) => {
   await openLab(page);
   await choose(page, REFERENCE);

@@ -12,7 +12,8 @@
     "typecheck": "pnpm -r --if-present typecheck",
     "e2e": "pnpm --filter @eschaton/studio e2e",
     "bench": "pnpm -r --if-present bench",
-    "screenshots": "pnpm --filter @eschaton/studio screenshots"
+    "screenshots": "pnpm --filter @eschaton/studio screenshots",
+    "bench:studio": "pnpm --filter @eschaton/studio bench:studio"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

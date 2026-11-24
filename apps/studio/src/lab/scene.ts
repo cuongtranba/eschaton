@@ -15,7 +15,7 @@ import { basisOf } from "./basis";
 import { composeReferenceScene, type Composition } from "./composition/referenceScene";
 import type { AssemblyLeaves, PlacedFoldon } from "./composition/district";
 import { cellBounds, type Library, type ResolvedItem } from "./library";
-import { scatterSpots } from "./scatter";
+import { scatterSpots, stressSpots } from "./scatter";
 import type { LabState } from "./state";
 import type { Basis, Bounds, InkScale, Ink, LeafBatch, ScenePoseError, SocketMarker, ViewModel } from "./viewModel";
 
@@ -109,7 +109,9 @@ function addToGroup(groups: Map<string, Group>, definition: FoldonDefinition, mo
   groups.set(key, group);
 }
 
-function labViewModel(library: Library, item: LabItem, state: LabState): ViewModel {
+export type ViewOptions = Readonly<{ stress: number }>;
+
+function labViewModel(library: Library, item: LabItem, state: LabState, stress: number): ViewModel {
   const itemId = item.kind === "primitive" ? item.definition.id : undefined;
   const footprint = item.definition.footprint;
   const cells = cellBounds(footprint);
@@ -124,6 +126,19 @@ function labViewModel(library: Library, item: LabItem, state: LabState): ViewMod
     }
   }
 
+  const frame = boundsOfCells(cells);
+  const extent = { minX: frame.min[0], minZ: frame.min[2], maxX: frame.max[0], maxZ: frame.max[2] };
+  const stressed = library.catalog.foldons();
+  for (const spot of stressSpots(state.seed, stress, cells, stressed.length)) {
+    const definition = stressed[spot.index];
+    if (definition === undefined) continue;
+    leaves.push({ definition, pose: { anchor: spot.anchor, rotation: spot.rotation } });
+    extent.minX = Math.min(extent.minX, spot.anchor[0]);
+    extent.minZ = Math.min(extent.minZ, spot.anchor[2]);
+    extent.maxX = Math.max(extent.maxX, spot.anchor[0] + 2);
+    extent.maxZ = Math.max(extent.maxZ, spot.anchor[2] + 2);
+  }
+
   const groups = new Map<string, Group>();
   for (const leaf of leaves) addToGroup(groups, leaf.definition, undefined, basisOf(leaf.pose), NO_INK);
   const { batches, errors } = poseGroups(groups, state, itemId);
@@ -132,10 +147,10 @@ function labViewModel(library: Library, item: LabItem, state: LabState): ViewMod
   const layoutKey = [
     itemKey,
     state.overlays.scatter ? `scatter:${state.seed}` : "no-scatter",
+    stress > 0 ? `stress:${stress}:${state.seed}` : "no-stress",
     ...batches.map((batch) => `${batch.key}x${batch.bases.length}`),
   ].join("|");
 
-  const frame = boundsOfCells(cells);
   return {
     itemKey,
     layoutKey,
@@ -150,8 +165,8 @@ function labViewModel(library: Library, item: LabItem, state: LabState): ViewMod
     sockets: socketsOf(item),
     footprint,
     bounds: {
-      min: [frame.min[0] - FRAME_MARGIN, frame.min[1], frame.min[2] - FRAME_MARGIN],
-      max: [frame.max[0] + FRAME_MARGIN, frame.max[1], frame.max[2] + FRAME_MARGIN],
+      min: [extent.minX - FRAME_MARGIN, frame.min[1], extent.minZ - FRAME_MARGIN],
+      max: [extent.maxX + FRAME_MARGIN, frame.max[1], extent.maxZ + FRAME_MARGIN],
     },
     errors,
   };
@@ -220,6 +235,11 @@ function sceneViewModel(library: Library, state: LabState): ViewModel {
   };
 }
 
-export function buildViewModel(library: Library, item: ResolvedItem, state: LabState): ViewModel {
-  return item.kind === "scene" ? sceneViewModel(library, state) : labViewModel(library, item, state);
+export function buildViewModel(
+  library: Library,
+  item: ResolvedItem,
+  state: LabState,
+  options: ViewOptions = { stress: 0 },
+): ViewModel {
+  return item.kind === "scene" ? sceneViewModel(library, state) : labViewModel(library, item, state, options.stress);
 }

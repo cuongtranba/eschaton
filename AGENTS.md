@@ -12,14 +12,15 @@ Procedural origami-inspired world engine (TypeScript + Three.js). Authoritative 
 | `pnpm typecheck` | `tsc` per workspace project |
 | `pnpm build` | Production build of every buildable project |
 | `pnpm e2e` | Playwright against the Studio |
-| `pnpm bench` | Benchmarks (where defined) |
+| `pnpm bench` | Benchmarks: `packages/foldon` (vitest bench → `benchmarks/raw/foldon.json`) and the WFC experiment. The WFC bench rewrites its committed `results/bench-<date>.*`; restore it with `git checkout -- experiments/wfc-placement/results` unless a deliberate re-run is wanted |
+| `pnpm bench:studio` | Builds the Studio, serves the production bundle on `STUDIO_PORT`, measures it in headless Chromium and writes `benchmarks/raw/studio.json` plus `benchmarks/phase-0-<date>.md/.json`. Run `pnpm bench` first so the report includes the Foldon numbers; always set `STUDIO_PORT` |
 | `pnpm screenshots` | Regenerate `docs/screenshots/p0.4-*.png` and `p0.5-*.png` via Playwright (not part of `pnpm e2e`) |
 
 Run lint, typecheck, test and build before declaring work done. Never report a check as passed unless you ran it.
 
 ## Layout
 
-`apps/studio` (Vite + React UI) · `packages/foldon` (`@eschaton/foldon`, geometry/definitions/placement) · `experiments/` (throwaway) · `docs/` (plan, research, ADRs). Do not scaffold future packages before they are needed. Packages are consumed as TypeScript source (`exports` → `src/index.ts`); no build step.
+`apps/studio` (Vite + React UI) · `packages/foldon` (`@eschaton/foldon`, geometry/definitions/placement) · `experiments/` (throwaway) · `docs/` (plan, research, `decisions/` ADRs, `architecture/`, `phase-0-exit.md`) · `benchmarks/` (measured results). Do not scaffold future packages before they are needed. Packages are consumed as TypeScript source (`exports` → `src/index.ts`); no build step.
 
 ## Coding rules (master-plan §7.3)
 

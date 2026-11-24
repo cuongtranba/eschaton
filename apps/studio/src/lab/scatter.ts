@@ -38,3 +38,29 @@ export function scatterSpots(
   }
   return spots;
 }
+
+export type StressSpot = Readonly<{ anchor: Cell; rotation: Rotation; index: number }>;
+
+const STRESS_PITCH = 3;
+
+export function stressSpots(
+  seed: number,
+  count: number,
+  avoid: Readonly<{ min: Cell; max: Cell }>,
+  choices: number,
+): readonly StressSpot[] {
+  if (count <= 0 || choices <= 0) return [];
+  const random = mulberry32(seed ^ 0x5eed);
+  const side = Math.ceil(Math.sqrt(count)) + 3;
+  const centre = Math.floor(side / 2);
+  const free = (value: number, low: number, high: number): boolean => value < low - 1 || value > high + 2;
+  const spots: StressSpot[] = [];
+  for (let cell = 0; cell < side * side && spots.length < count; cell++) {
+    const x = ((cell % side) - centre) * STRESS_PITCH;
+    const z = (Math.floor(cell / side) - centre) * STRESS_PITCH;
+    if (!free(x, avoid.min[0], avoid.max[0]) && !free(z, avoid.min[2], avoid.max[2])) continue;
+    const rotation = ROTATIONS[Math.floor(random() * ROTATIONS.length)] ?? 0;
+    spots.push({ anchor: [x, 0, z], rotation, index: Math.floor(random() * choices) });
+  }
+  return spots;
+}

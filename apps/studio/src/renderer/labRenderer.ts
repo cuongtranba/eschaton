@@ -46,6 +46,7 @@ export type RendererStats = Readonly<{
 
 export type LabRendererOptions = Readonly<{
   forceWebGL: boolean;
+  continuous?: boolean;
   onFrame?: (stats: RendererStats) => void;
 }>;
 
@@ -414,7 +415,7 @@ export async function createLabRenderer(canvas: HTMLCanvasElement, options: LabR
     if (disposed) return;
     const moved = controls.update();
     const animating = current?.motion === true && content !== undefined && content.motion.length > 0;
-    if (!dirty && !moved && !animating) return;
+    if (!dirty && !moved && !animating && options.continuous !== true) return;
     dirty = false;
     if (animating && content !== undefined) animate(content, time / 1000);
     const camera =

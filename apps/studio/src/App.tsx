@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
+import { readLabFlags } from "./lab/flags";
 import { loadLibrary, resolveItem, type Library } from "./lab/library";
 import { buildViewModel } from "./lab/scene";
 import { shortcutCommand } from "./lab/shortcuts";
@@ -11,7 +12,6 @@ import { Toolbar } from "./ui/Toolbar";
 import { Viewport } from "./ui/Viewport";
 
 const prefersReducedMotion = (): boolean => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-const forceWebGL = (): boolean => new URLSearchParams(window.location.search).get("forceWebGL") === "1";
 
 const isTextEntry = (target: EventTarget | null): boolean =>
   target instanceof HTMLTextAreaElement ||
@@ -30,15 +30,15 @@ const sameStats = (a: RendererStats | undefined, b: RendererStats): boolean =>
 function Lab({ library }: Readonly<{ library: Library }>) {
   const [state, dispatch] = useReducer(labReducer, undefined, () => initialLabState(prefersReducedMotion()));
   const [stats, setStats] = useState<RendererStats | undefined>(undefined);
-  const [webGLForced] = useState(forceWebGL);
+  const [flags] = useState(() => readLabFlags(window.location.search));
 
   const send = useCallback((command: LabCommand) => { dispatch(command); }, []);
   const onFrame = useCallback((next: RendererStats) => { setStats((previous) => (sameStats(previous, next) ? previous : next)); }, []);
 
   const item = useMemo(() => resolveItem(library, state.selected), [library, state.selected]);
   const viewModel = useMemo(
-    () => (item === undefined ? undefined : buildViewModel(library, item, state)),
-    [library, item, state],
+    () => (item === undefined ? undefined : buildViewModel(library, item, state, { stress: flags.stress })),
+    [library, item, state, flags.stress],
   );
 
   const stateRef = useRef(state);
@@ -83,7 +83,7 @@ function Lab({ library }: Readonly<{ library: Library }>) {
       </header>
       <CatalogPanel library={library} selected={state.selected} dispatch={send} />
       <main className="shell__viewport" aria-label="Viewport" role="region">
-        <Viewport viewModel={viewModel} forceWebGL={webGLForced} onFrame={onFrame} />
+        <Viewport viewModel={viewModel} forceWebGL={flags.forceWebGL} continuous={flags.continuous} onFrame={onFrame} />
       </main>
       <Inspector item={item} library={library} state={state} viewModel={viewModel} dispatch={send} />
       <StatusBar stats={stats} />

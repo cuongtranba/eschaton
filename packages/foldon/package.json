@@ -11,7 +11,8 @@
   },
   "scripts": {
     "test": "vitest run",
-    "typecheck": "tsc -p tsconfig.json"
+    "typecheck": "tsc -p tsconfig.json",
+    "bench": "vitest bench --run --reporter=default --reporter=json --outputFile.json=../../benchmarks/raw/foldon.json"
   },
   "devDependencies": {
     "vitest": "5.1.1"

@@ -6,10 +6,11 @@ import { createLabRenderer, type LabRenderer, type RendererStats } from "../rend
 type ViewportProps = Readonly<{
   viewModel: ViewModel;
   forceWebGL: boolean;
+  continuous: boolean;
   onFrame: (stats: RendererStats) => void;
 }>;
 
-export function Viewport({ viewModel, forceWebGL, onFrame }: ViewportProps) {
+export function Viewport({ viewModel, forceWebGL, continuous, onFrame }: ViewportProps) {
   const hostRef = useRef<HTMLDivElement>(null);
   const [renderer, setRenderer] = useState<LabRenderer | undefined>(undefined);
   const [failure, setFailure] = useState<string | undefined>(undefined);
@@ -23,7 +24,7 @@ export function Viewport({ viewModel, forceWebGL, onFrame }: ViewportProps) {
     host.append(canvas);
     let cancelled = false;
     let created: LabRenderer | undefined;
-    createLabRenderer(canvas, { forceWebGL, onFrame }).then(
+    createLabRenderer(canvas, { forceWebGL, continuous, onFrame }).then(
       (lab) => {
         if (cancelled) {
           lab.dispose();
@@ -45,7 +46,7 @@ export function Viewport({ viewModel, forceWebGL, onFrame }: ViewportProps) {
       setRenderer(undefined);
       canvas.remove();
     };
-  }, [forceWebGL, onFrame]);
+  }, [forceWebGL, continuous, onFrame]);
 
   useEffect(() => {
     renderer?.apply(viewModel);
