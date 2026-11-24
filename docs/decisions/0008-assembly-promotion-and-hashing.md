@@ -1,6 +1,6 @@
 # ADR 0008: Assembly catalog promotion and canonical hashing
 
-- Status: Accepted for Phase 0
+- Status: Proposed — awaiting owner approval (Phase 0 code already follows it)
 - Date: 2026-11-24
 - Master plan: §4.1, §13 ("Recursive catalog explosion")
 

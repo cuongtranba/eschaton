@@ -1,6 +1,6 @@
 # ADR 0005: Renderer — `WebGPURenderer` with TSL node materials and automatic WebGL2 fallback
 
-- Status: Accepted for Phase 0; **the WebGPU backend has never been exercised**
+- Status: Proposed — awaiting owner approval (Phase 0 code already follows it); **the WebGPU backend has never been exercised**
 - Date: 2026-11-24
 - Master plan: §2.3, §9; research R8, R9, R10
 

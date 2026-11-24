@@ -1,6 +1,6 @@
 # ADR 0007: Component data and system order
 
-- Status: Accepted for Phase 0 (data only); system order is deferred to Phase 1
+- Status: Proposed — awaiting owner approval (Phase 0 code already follows it) (data only); system order is deferred to Phase 1
 - Date: 2026-11-24
 - Master plan: §7 (composition over inheritance), §6.1, §13 ("Composition turns into generic framework")
 

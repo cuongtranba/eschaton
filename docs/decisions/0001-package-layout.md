@@ -1,6 +1,6 @@
 # ADR 0001: Phase 0 package layout
 
-- Status: Accepted for Phase 0
+- Status: Proposed — awaiting owner approval (Phase 0 code already follows it)
 - Date: 2026-11-24
 - Master plan: §8 (architecture and ownership), §14 step 1 ("do not scaffold every future package")
 

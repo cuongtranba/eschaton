@@ -1,6 +1,6 @@
 # ADR 0003: Crease representation
 
-- Status: Accepted for Phase 0
+- Status: Proposed — awaiting owner approval (Phase 0 code already follows it)
 - Date: 2026-11-24
 - Master plan: §4.2, §9 (origami MVP), §13 ("Closed crease system cannot fold"); research R5, R6
 

@@ -1,6 +1,6 @@
 # ADR 0002: Cubic integer grid with yaw-only quarter-turn rotations
 
-- Status: Accepted for Phase 0; the "toy-like world" risk from master plan §13 is **not retired**
+- Status: Proposed — awaiting owner approval (Phase 0 code already follows it); the "toy-like world" risk from master plan §13 is **not retired**
 - Date: 2026-11-24
 - Master plan: §4, §13 ("Cubic grid creates a toy-like world")
 
