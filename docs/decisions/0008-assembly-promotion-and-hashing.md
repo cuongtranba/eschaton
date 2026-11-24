@@ -34,6 +34,18 @@ Option 3 (`packages/foldon/src/assembly.ts`, `registry.ts`).
 - Duplicate detection is only by identical part lists. Two geometrically equivalent but structurally different recipes (for example a 2×1 slab versus two 1×1 slabs) are accepted as distinct.
 - Level and depth limits are chosen by judgement (3 and 4); no catalog large enough exists to tune them.
 
+## Addendum (Phase 0 closure, 2026-11-24): typed module contracts and review findings
+
+Status of this ADR is unchanged (Proposed — awaiting owner approval). Facts recorded:
+
+- **Typed module contracts (commit `ffd2cc4`).** `ModuleContract` (`packages/foldon/src/contract.ts`) states a footprint span, an optional height range and the allowed socket profiles per side. An assembly recipe may declare `contract: { id, version }`. `createCatalog` checks the claim against the **compiled** footprint and external sockets: the contract stores requirements, not geometry, so the compiled assembly stays the only source of occupancy and sockets. New issue codes are `contract-invalid`, `contract-unknown`, `contract-footprint-mismatch` and `contract-boundary-incompatible`. `catalog.satisfiesContract(assembly, contract, rotation)` checks a quarter-turned fit using the existing `placeFootprint`/`placeSockets`. Authored contracts: `module-2x2` (`roof-module`) and `module-4x4` (`roof-house`); the former `module-*` tags were removed.
+- **Hash decision.** `contract` is **not** part of the canonical recipe hash. The hash identifies compiled content; a contract is a checked claim about that content, so identical parts with different declared contracts must still be caught as duplicate recipes, and a contract version change must not alter the content hash.
+- **Contract boundaries are orientation-free.** They inherit the socket model of ADR 0009 (no turn or hand), so a contract cannot yet require a side to face a particular way. ADR 0012 (proposed) would add that.
+- **Two checks cannot fire today** (independent review, `../review/adr-review.md`):
+  - `MAX_ASSEMBLY_DEPTH = 4` cannot be exceeded, because levels run from 1 to 3 and each nested assembly must have a lower level, so depth is at most 3.
+  - The contract's "no holes in the boundary" check cannot fire through the public API, because any assembly that passes the footprint check exposes a socket on every edge column.
+  Neither check is tested, because no input can make either one fail. The owner should decide whether to keep them as guards or remove them (review question for 0008).
+
 ## Evidence
 
 - Tests in `packages/foldon/test/assembly.test.ts` (cycle, level, duplicate-hash, overlap, incompatible sockets, flatten-equals-mask, JSON round-trip).
