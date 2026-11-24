@@ -1,6 +1,7 @@
 export { err, ok, type Result } from "./result";
 export {
   assemblyId,
+  contractId,
   creaseId,
   foldonId,
   materialId,
@@ -8,6 +9,7 @@ export {
   placementId,
   socketId,
   type AssemblyId,
+  type ContractId,
   type CreaseId,
   type FoldonId,
   type MaterialId,
@@ -76,5 +78,6 @@ export {
   type AssemblyRecipe,
   type PartRef,
 } from "./assembly";
+export { type ContractRef, type ModuleContract, type ModuleSpan } from "./contract";
 export { MAX_ASSEMBLY_DEPTH, createCatalog, type Catalog, type CatalogInput, type FlatInstance } from "./registry";
-export { assemblyCatalog, defaultCatalog } from "./assemblies";
+export { assemblyCatalog, defaultCatalog, moduleContracts } from "./assemblies";

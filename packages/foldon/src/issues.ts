@@ -46,7 +46,11 @@ export type ValidationCode =
   | "depth-exceeded"
   | "part-overlap"
   | "socket-incompatible"
-  | "duplicate-recipe";
+  | "duplicate-recipe"
+  | "contract-invalid"
+  | "contract-unknown"
+  | "contract-footprint-mismatch"
+  | "contract-boundary-incompatible";
 
 export type ValidationIssue = Readonly<{
   code: ValidationCode;

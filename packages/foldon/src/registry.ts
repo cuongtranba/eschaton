@@ -5,8 +5,9 @@ import {
   type PartRef,
   type RefResolver,
 } from "./assembly";
+import { checkContract, contractIssues, type ContractRef, type ModuleContract } from "./contract";
 import type { FoldonDefinition, Rotation } from "./definition";
-import type { AssemblyId, FoldonId } from "./ids";
+import type { AssemblyId, ContractId, FoldonId } from "./ids";
 import { issue, type ValidationIssue } from "./issues";
 import { err, ok, type Result } from "./result";
 import { composePose, identityPose, type Pose } from "./transform";
@@ -26,6 +27,7 @@ export type FlatInstance = Readonly<{
 export type CatalogInput = Readonly<{
   foldons: readonly FoldonDefinition[];
   assemblies: readonly AssemblyRecipe[];
+  contracts?: readonly ModuleContract[];
 }>;
 
 export type Catalog = Readonly<{
@@ -33,7 +35,15 @@ export type Catalog = Readonly<{
   assembly: (id: AssemblyId, version?: number) => AssemblyDefinition | undefined;
   foldons: () => readonly FoldonDefinition[];
   assemblies: () => readonly AssemblyDefinition[];
+  contract: (id: ContractId, version?: number) => ModuleContract | undefined;
+  contracts: () => readonly ModuleContract[];
   flatten: (id: AssemblyId, version?: number) => readonly FlatInstance[];
+  satisfiesContract: (
+    assembly: AssemblyId,
+    contract: ContractId,
+    rotation: Rotation,
+    versions?: Readonly<{ assembly?: number; contract?: number }>,
+  ) => Result<ContractRef, readonly ValidationIssue[]>;
 }>;
 
 type Versioned = Readonly<{ id: string; version: number }>;
@@ -72,10 +82,14 @@ const prefixed = (prefix: string, found: readonly ValidationIssue[]): Validation
 type Compiled = Readonly<{ definition: AssemblyDefinition; depth: number }>;
 
 export function createCatalog(input: CatalogInput): Result<Catalog, readonly ValidationIssue[]> {
+  const contractList = input.contracts ?? [];
+  const contractIndex = indexVersions(contractList);
   const issues: ValidationIssue[] = [
     ...duplicateIssues(input.foldons, "foldons"),
     ...duplicateIssues(input.assemblies, "assemblies"),
+    ...duplicateIssues(contractList, "contracts"),
   ];
+  contractList.forEach((contract, i) => issues.push(...prefixed(`contracts[${i}]`, contractIssues(contract))));
   input.foldons.forEach((definition, i) => {
     const validated = validateFoldon(definition);
     if (!validated.ok) issues.push(...prefixed(`foldons[${i}]`, validated.error));
@@ -124,6 +138,19 @@ export function createCatalog(input: CatalogInput): Result<Catalog, readonly Val
       issues.push(...prefixed(path, result.error));
       compiled.set(key, "failed");
       return;
+    }
+    const declared = recipe.contract;
+    if (declared !== undefined) {
+      const contract = lookup(contractIndex, declared.id, declared.version);
+      const failures =
+        contract === undefined
+          ? [issue("contract-unknown", "contract", `contract ${declared.id}@${declared.version} is not in the catalog`)]
+          : checkContract(contract, result.value, 0);
+      if (failures.length > 0) {
+        issues.push(...prefixed(path, failures));
+        compiled.set(key, "failed");
+        return;
+      }
     }
     const depth =
       1 +
@@ -183,6 +210,16 @@ export function createCatalog(input: CatalogInput): Result<Catalog, readonly Val
     assembly: (id, version) => lookup(assemblyIndex, id, version)?.definition,
     foldons: () => foldons,
     assemblies: () => definitions,
+    contract: (id, version) => lookup(contractIndex, id, version),
+    contracts: () => contractList,
+    satisfiesContract: (assembly, contract, rotation, versions) => {
+      const target = lookup(assemblyIndex, assembly, versions?.assembly);
+      if (target === undefined) return err([issue("ref-unknown", "assembly", `assembly ${assembly} is not in the catalog`)]);
+      const found = lookup(contractIndex, contract, versions?.contract);
+      if (found === undefined) return err([issue("contract-unknown", "contract", `contract ${contract} is not in the catalog`)]);
+      const failures = checkContract(found, target.definition, rotation);
+      return failures.length > 0 ? err(failures) : ok({ id: found.id, version: found.version });
+    },
     flatten: (id, version) => {
       const root = lookup(assemblyIndex, id, version);
       const out: FlatInstance[] = [];

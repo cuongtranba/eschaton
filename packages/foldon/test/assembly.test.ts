@@ -1,10 +1,13 @@
 import { expect, test } from "vitest";
 import {
+  allRotations,
   assemblyCatalog,
   assemblyId,
+  contractId,
   createCatalog,
   defaultCatalog,
   foldonId,
+  moduleContracts,
   placeFootprint,
   placementId,
   primitiveCatalog,
@@ -12,6 +15,8 @@ import {
   type AssemblyRecipe,
   type Catalog,
   type Cell,
+  type ContractRef,
+  type ModuleContract,
   type PartRef,
   type Rotation,
   type ValidationCode,
@@ -38,8 +43,19 @@ const recipe = (id: string, parts: readonly AssemblyPart[], level: 1 | 2 | 3 = 1
 
 const key = (cell: Cell): string => cell.join(",");
 
+const contractRef = (id: string): ContractRef => ({ id: contractId(id), version: 1 });
+
+const declaring = (target: AssemblyRecipe, contract: string): AssemblyRecipe => ({
+  ...target,
+  contract: contractRef(contract),
+});
+
 function compile(...extra: readonly AssemblyRecipe[]) {
-  return createCatalog({ foldons: primitiveCatalog, assemblies: [...assemblyCatalog, ...extra] });
+  return createCatalog({
+    foldons: primitiveCatalog,
+    assemblies: [...assemblyCatalog, ...extra],
+    contracts: moduleContracts,
+  });
 }
 
 function codes(result: ReturnType<typeof compile>): readonly ValidationCode[] {
@@ -180,8 +196,103 @@ test("the roof-house exposes only sockets on the outer boundary of its occupancy
   expect(house.bounds.max[2] - house.bounds.min[2] + 1).toBe(4);
 });
 
-test("assembly definitions round-trip through JSON to deep-equal values", () => {
+test("assembly definitions and module contracts round-trip through JSON to deep-equal values", () => {
   for (const definition of defaults().assemblies()) {
     expect(JSON.parse(JSON.stringify(definition))).toEqual(definition);
   }
+  expect(JSON.parse(JSON.stringify(moduleContracts))).toEqual(moduleContracts);
+});
+
+const grid2x2 = (ref: PartRef): readonly AssemblyPart[] => [
+  part("a", ref, [0, 0, 0]),
+  part("b", ref, [1, 0, 0]),
+  part("c", ref, [0, 0, 1]),
+  part("d", ref, [1, 0, 1]),
+];
+
+test("roof-module satisfies module-2x2 and roof-house satisfies module-4x4", () => {
+  const catalog = defaults();
+  expect(catalog.satisfiesContract(assemblyId("roof-module"), contractId("module-2x2"), 0).ok).toBe(true);
+  expect(catalog.satisfiesContract(assemblyId("roof-house"), contractId("module-4x4"), 0).ok).toBe(true);
+});
+
+test("a module-2x2 recipe whose footprint is not the full 2x2 square is rejected with the footprint code", () => {
+  const lShape = recipe("l-shape", [
+    part("a", foldonRef("P01"), [0, 0, 0]),
+    part("b", foldonRef("P01"), [1, 0, 0]),
+    part("c", foldonRef("P01"), [0, 0, 1]),
+  ]);
+  expect(codes(compile(declaring(lShape, "module-2x2")))).toContain("contract-footprint-mismatch");
+});
+
+test("a module-2x2 recipe exposing a wall profile on its sides is rejected with the boundary code", () => {
+  const walled = recipe("walled-block", grid2x2(box));
+  expect(codes(compile(declaring(walled, "module-2x2")))).toContain("contract-boundary-incompatible");
+});
+
+test("an unknown contract reference is rejected", () => {
+  const lone = recipe("lone-panel", [part("a", foldonRef("P01"), [0, 0, 0])]);
+  expect(codes(compile(declaring(lone, "module-9x9")))).toContain("contract-unknown");
+});
+
+test("a 4x4 module built from nested 2x2 modules satisfies module-4x4", () => {
+  const roof = assemblyRef("roof-module");
+  const quad = declaring(
+    recipe(
+      "roof-quad",
+      [part("nw", roof, [0, 0, 0]), part("ne", roof, [2, 0, 0]), part("sw", roof, [0, 0, 2]), part("se", roof, [2, 0, 2])],
+      2,
+    ),
+    "module-4x4",
+  );
+  expect(catalogOf(compile(quad)).satisfiesContract(assemblyId("roof-quad"), contractId("module-4x4"), 0).ok).toBe(true);
+});
+
+const asymmetricContract: ModuleContract = {
+  id: contractId("wall-east"),
+  version: 1,
+  name: "Wall on the east side",
+  size: { x: 2, z: 2 },
+  boundary: {
+    "+x": ["wall"],
+    "-x": ["open"],
+    "+z": ["open", "wall"],
+    "-z": ["open", "wall"],
+    "-y": ["base"],
+    "+y": ["deck"],
+  },
+};
+
+test("a module satisfies an asymmetric contract only at the quarter turn that lines its boundary up", () => {
+  const split = recipe("split-module", [
+    part("open-west", foldonRef("P01"), [0, 0, 0]),
+    part("open-east", foldonRef("P01"), [1, 0, 0]),
+    part("wall-west", box, [0, 0, 1]),
+    part("wall-east", box, [1, 0, 1]),
+  ]);
+  const catalog = catalogOf(
+    createCatalog({
+      foldons: primitiveCatalog,
+      assemblies: [...assemblyCatalog, split],
+      contracts: [...moduleContracts, asymmetricContract],
+    }),
+  );
+  const fits = allRotations.map((rotation) =>
+    catalog.satisfiesContract(assemblyId("split-module"), asymmetricContract.id, rotation).ok,
+  );
+  expect(fits).toEqual([false, true, false, false]);
+});
+
+test("a symmetric contract is satisfied at every quarter turn", () => {
+  const fits = allRotations.map((rotation) =>
+    defaults().satisfiesContract(assemblyId("roof-module"), contractId("module-2x2"), rotation).ok,
+  );
+  expect(fits).toEqual([true, true, true, true]);
+});
+
+test("declaring a contract does not change the canonical hash", () => {
+  const pair = [part("a", foldonRef("P03"), [0, 0, 0]), part("b", foldonRef("P03"), [1, 0, 0])];
+  const hashOf = (r: AssemblyRecipe): string | undefined =>
+    catalogOf(createCatalog({ foldons: primitiveCatalog, assemblies: [r], contracts: moduleContracts })).assembly(r.id)?.hash;
+  expect(hashOf(declaring(recipe("declared", pair), "module-2x2"))).toBe(hashOf(recipe("undeclared", pair)));
 });

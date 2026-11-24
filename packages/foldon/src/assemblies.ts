@@ -1,7 +1,8 @@
 import type { AssemblyPart, AssemblyRecipe, PartRef } from "./assembly";
 import { primitiveCatalog } from "./catalog";
 import type { Rotation } from "./definition";
-import { assemblyId, foldonId, placementId } from "./ids";
+import type { ModuleContract } from "./contract";
+import { assemblyId, contractId, foldonId, placementId } from "./ids";
 import type { ValidationIssue } from "./issues";
 import { createCatalog, type Catalog } from "./registry";
 import type { Result } from "./result";
@@ -31,7 +32,8 @@ const roofModule: AssemblyRecipe = {
   version: 1,
   name: "Roof module",
   level: 1,
-  tags: ["roof", "module-2x2"],
+  tags: ["roof"],
+  contract: { id: contractId("module-2x2"), version: 1 },
   parts: [part("slope-west", primitive("P03"), [0, 0, 0]), part("slope-east", primitive("P03"), [1, 0, 0])],
 };
 
@@ -54,7 +56,8 @@ const roofHouse: AssemblyRecipe = {
   version: 1,
   name: "Pitched-roof house",
   level: 2,
-  tags: ["house", "module-4x4"],
+  tags: ["house"],
+  contract: { id: contractId("module-4x4"), version: 1 },
   parts: [
     ...range(0, 4).flatMap((x) => range(0, 2).map((z) => part(`porch-${x}-${z}`, primitive("P01"), [x, 0, z]))),
     ...range(0, 4).flatMap((x) =>
@@ -86,9 +89,43 @@ const ruinedGate: AssemblyRecipe = {
   ],
 };
 
+export const moduleContracts: readonly ModuleContract[] = [
+  {
+    id: contractId("module-2x2"),
+    version: 1,
+    name: "2x2 module",
+    size: { x: 2, z: 2 },
+    height: { min: 1, max: 2 },
+    boundary: {
+      "+x": ["eave", "open", "empty"],
+      "-x": ["eave", "open", "empty"],
+      "+z": ["eave", "open", "empty"],
+      "-z": ["eave", "open", "empty"],
+      "-y": ["base"],
+      "+y": ["empty", "deck"],
+    },
+  },
+  {
+    id: contractId("module-4x4"),
+    version: 1,
+    name: "4x4 module",
+    size: { x: 4, z: 4 },
+    height: { min: 1, max: 4 },
+    boundary: {
+      "+x": ["eave", "wall", "open", "empty"],
+      "-x": ["eave", "wall", "open", "empty"],
+      "+z": ["eave", "wall", "open", "empty"],
+      "-z": ["eave", "wall", "open", "empty"],
+      "-y": ["base"],
+      "+y": ["empty", "deck"],
+    },
+  },
+];
+
 export const assemblyCatalog: readonly AssemblyRecipe[] = [roofModule, watchtower, roofHouse, ruinedGate];
 
 export const defaultCatalog: Result<Catalog, readonly ValidationIssue[]> = createCatalog({
   foldons: primitiveCatalog,
   assemblies: assemblyCatalog,
+  contracts: moduleContracts,
 });

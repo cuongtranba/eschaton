@@ -9,6 +9,7 @@ import {
   type FoldonDefinition,
 } from "./definition";
 import { canonicalizeAndFreeze } from "./define";
+import type { ContractRef } from "./contract";
 import type { AssemblyId, FoldonId, PlacementId } from "./ids";
 import { socketId } from "./ids";
 import { issue, type ValidationIssue } from "./issues";
@@ -36,6 +37,7 @@ export type AssemblyRecipe = Readonly<{
   level: AssemblyLevel;
   parts: readonly AssemblyPart[];
   tags: readonly string[];
+  contract?: ContractRef;
 }>;
 
 export type AssemblyDefinition = Readonly<{
