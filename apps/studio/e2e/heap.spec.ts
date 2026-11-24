@@ -5,6 +5,8 @@ const MEASURED_CYCLES = 20;
 const COLLECTIONS = 6;
 const MAX_GROWTH_BYTES = 1_250_000;
 
+test.use({ reducedMotion: "reduce" });
+
 const readStat = async (page: Page, name: string): Promise<number> => Number(await page.getByTestId(`stat-${name}`).innerText());
 
 async function choose(page: Page, key: string): Promise<void> {
