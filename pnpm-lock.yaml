@@ -84,6 +84,18 @@ importers:
         specifier: 5.1.1
         version: 5.1.1(@types/node@26.6.6)(vite@8.3.8(@types/node@26.6.6))
 
+  tools/architecture:
+    devDependencies:
+      eslint:
+        specifier: 10.15.0
+        version: 10.15.0
+      typescript-eslint:
+        specifier: 8.74.0
+        version: 8.74.0(eslint@10.15.0)(typescript@6.0.3)
+      vitest:
+        specifier: 5.1.1
+        version: 5.1.1(@types/node@26.6.6)(vite@8.3.8(@types/node@26.6.6))
+
 packages:
 
   '@cacheable/memory@2.2.0':

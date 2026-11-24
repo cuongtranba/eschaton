@@ -4,13 +4,14 @@ This describes the code as it is at the end of Phase 0 and compares it with the 
 
 ## What exists
 
-Three projects. Only the first two are product code.
+Four projects. Only the first two are product code.
 
 | Project | Package name | Role |
 |---|---|---|
 | `packages/foldon` | `@eschaton/foldon` | Pure TypeScript domain library: ids, `Result`, definitions, validation, geometry recipes and hinge posing, placement transforms, the P01–P09 catalog, assembly recipes, the catalog registry. No DOM, no three.js, no runtime dependencies. |
 | `apps/studio` | `@eschaton/studio` | Vite + React 19 laboratory: lab state, view-model building, the reference-scene generators, the renderer adapter, UI panels. |
 | `experiments/wfc-placement` | `@eschaton/exp-wfc-placement` | Throwaway solver comparison. Nothing imports it. See [ADR 0004](../decisions/0004-multi-cell-encoding.md). |
+| `tools/architecture` | `@eschaton/architecture` | Architecture test: lints virtual files against the repository ESLint config to prove each dependency rule rejects a violation. |
 
 ## Module table: now versus §8 target
 
@@ -28,20 +29,43 @@ Three projects. Only the first two are product code.
 
 ## Dependency direction
 
-```text
-@eschaton/foldon          (imports nothing from the workspace)
-      ▲
-apps/studio/src/lab       (imports foldon; never imports renderer or ui)
-      ▲
-apps/studio/src/renderer  (imports foldon + lab types and look/palette; imports three)
-      ▲
-apps/studio/src/ui, App   (import lab, renderer, foldon; React)
+The allowed import graph is enforced by ESLint (`eslint.config.js`, `no-restricted-imports` and `no-restricted-syntax`) and proved by `tools/architecture`, which lints virtual files against the real config and asserts each rule rejects a violating import and accepts the allowed one. Arrows point from importer to imported.
+
+```mermaid
+flowchart TD
+  F["@eschaton/foldon (pure domain)"]
+  subgraph STUDIO["apps/studio/src"]
+    UI["ui, App, main (React)"]
+    R["renderer (three)"]
+    L["lab (pure state and view-model)"]
+  end
+  X["experiments/*, benchmarks, tools/*"]
+  UI --> R
+  UI --> L
+  R --> L
+  UI --> F
+  R --> F
+  L --> F
+  X --> F
+  X -. "never" .-> STUDIO
+  F -. "never" .-> STUDIO
+  F -. "never" .-> X
 ```
 
-- `lab` has no import of `three`, `react` or `renderer`. `ViewModel` (`lab/viewModel.ts`) is the only type that crosses into the renderer.
-- `ui` and `App.tsx` import `renderer/labRenderer` for the `RendererStats` type and to create the renderer in `Viewport`.
-- The dependency graph is acyclic. This is checked by reading imports, not by a tool; there is no dependency-cruiser or similar gate yet.
-- Tests of `@eschaton/foldon` import only its entry point (lint-enforced). The Studio is covered by Playwright specs, not unit tests.
+| Importer | May import | Must not import |
+|---|---|---|
+| `packages/foldon` | its own modules | `three`, `react`, `react-dom`, Node built-ins (bare or `node:`), any app, experiment, tool or benchmark package |
+| `apps/studio/src/lab` | `@eschaton/foldon` entry | `three`, `react`, `react-dom`, `renderer`, `ui`, `App`, `main` |
+| `apps/studio/src/renderer` | `three`, `lab`, `@eschaton/foldon` entry | `react`, `react-dom`, `ui`, `App`, `main` |
+| `apps/studio/src/ui`, `App`, `main` | `react`, `lab`, `renderer`, `@eschaton/foldon` entry | `three` |
+| `experiments/**`, `benchmarks/**`, `tools/**` | workspace package entry points | any app, deep paths |
+| every workspace package and app | other packages only through the `exports` entry point | `@eschaton/*/<subpath>`, relative paths into `apps/`, `packages/`, `experiments/`, `benchmarks/`, `tools/` |
+
+- **Composition over inheritance:** class `extends` is a lint error in every first-party `.ts`/`.tsx` file. There are no exceptions today. A third-party adapter that genuinely has to subclass would get a dedicated config block for that file in `eslint.config.js` with a comment naming the dependency; interface `extends` is always allowed.
+- **Tests:** `*.test.ts` files additionally forbid relative imports and `vi`, so behavioral tests reach code only through the package entry point (`tools/architecture` is the deliberate exception that inspects source by design).
+- **Current direction:** `renderer` imports lab values (`look`, `palette`) and types; `ui` and `App.tsx` import `renderer/labRenderer` for `RendererStats` and the renderer factory. No import runs the other way.
+- **Limitations:** dynamic `import()` and `require` are not covered; cycles inside one folder are not detected (there is no dependency-cruiser gate); new workspace packages are picked up automatically for the "never import apps/experiments/tools" rules because the config reads workspace package names, but a new layer inside the Studio needs a new entry in `importAreas`.
+- Tests of `@eschaton/foldon` import only its entry point. The Studio is covered by Playwright specs, not unit tests.
 
 ## Runtime data flow
 

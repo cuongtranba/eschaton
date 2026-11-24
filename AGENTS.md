@@ -20,12 +20,13 @@ Run lint, typecheck, test and build before declaring work done. Never report a c
 
 ## Layout
 
-`apps/studio` (Vite + React UI) · `packages/foldon` (`@eschaton/foldon`, geometry/definitions/placement) · `experiments/` (throwaway) · `docs/` (plan, research, `decisions/` ADRs, `architecture/`, `phase-0-exit.md`) · `benchmarks/` (measured results). Do not scaffold future packages before they are needed. Packages are consumed as TypeScript source (`exports` → `src/index.ts`); no build step.
+`apps/studio` (Vite + React UI) · `packages/foldon` (`@eschaton/foldon`, geometry/definitions/placement) · `tools/architecture` (dependency-rule tests) · `experiments/` (throwaway) · `docs/` (plan, research, `decisions/` ADRs, `architecture/`, `phase-0-exit.md`) · `benchmarks/` (measured results). Do not scaffold future packages before they are needed. Packages are consumed as TypeScript source (`exports` → `src/index.ts`); no build step.
 
 ## Coding rules (master-plan §7.3)
 
 - Strict TypeScript. No `any`, no unchecked `as` casts to bypass validation. Prefer discriminated unions, exhaustive switches, branded IDs.
-- **Composition over inheritance.** No class `extends` in `packages/**` (ESLint-enforced). Prefer plain data + pure functions; classes only to encapsulate state behind a small API. Interface `extends` is fine.
+- **Composition over inheritance.** No class `extends` in any first-party `.ts`/`.tsx` (ESLint-enforced). Prefer plain data + pure functions; classes only to encapsulate state behind a small API. Interface `extends` is fine.
+- **Dependency direction (ESLint-enforced, `docs/architecture/overview.md`):** `foldon` is pure (no three/react/Node); Studio `ui → renderer → lab → foldon`, `three` only in `renderer`, React only in `ui`/`App`/`main`; packages are imported only through their entry point; nothing imports `apps/` or `experiments/`.
 - Definition data is immutable, versioned, serializable (no functions or renderer objects inside). Runtime state is stored separately.
 - One authoritative state; derived caches are not truth. UI sends commands, never mutates domain state. Acyclic, one-way dependencies.
 - Deep modules with behavior-level APIs; no shallow pass-through layers or premature abstractions. Avoid explanatory inline comments; record rationale in docs/ADRs.
