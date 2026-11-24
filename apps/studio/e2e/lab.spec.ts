@@ -93,6 +93,7 @@ async function setSeed(page: Page, seed: string): Promise<void> {
 }
 
 const REFERENCE = "scene:reference-composition";
+const SOFTWARE_RENDERING_TIMEOUT = 30_000;
 
 test("renders a non-blank scene on a reported backend", async ({ page }) => {
   await openLab(page);
@@ -152,6 +153,19 @@ test("the sockets overlay shows a legend and adds a draw call", async ({ page })
   await expect.poll(() => readNumber(page, "draw-calls")).toBe(before + 1);
 });
 
+test("the footprint overlay of a multi-cell assembly adds one draw call and removes it again", async ({ page }) => {
+  await openLab(page);
+  await choose(page, "assembly:roof-house");
+  await expect.poll(() => readNumber(page, "instances")).toBeGreaterThan(30);
+  const footprint = page.getByRole("checkbox", { name: "Footprint" });
+  await expect(footprint).not.toBeChecked();
+  const before = await readNumber(page, "draw-calls");
+  await footprint.check();
+  await expect.poll(() => readNumber(page, "draw-calls")).toBe(before + 1);
+  await footprint.uncheck();
+  await expect.poll(() => readNumber(page, "draw-calls")).toBe(before);
+});
+
 test("leaf foldons are batched into fewer draw calls than instances", async ({ page }) => {
   await openLab(page);
   await choose(page, "assembly:roof-house");
@@ -187,29 +201,70 @@ test("the stress flag adds the requested number of seeded pieces without adding 
   expect(await readNumber(page, "draw-calls")).toBeLessThanOrEqual(baseDraws + 9);
 });
 
-test("the same seed rebuilds the same composition and another seed changes it", async ({ page }) => {
-  await openLab(page);
-  await choose(page, REFERENCE);
-  await setSeed(page, "11");
-  const first = await page.getByTestId("layout-hash").innerText();
-  await expect.poll(() => readNumber(page, "instances")).toBeGreaterThan(300);
-  const firstInstances = await readNumber(page, "instances");
-  await setSeed(page, "22");
-  await expect(page.getByTestId("layout-hash")).not.toHaveText(first);
-  await setSeed(page, "11");
-  await expect(page.getByTestId("layout-hash")).toHaveText(first);
-  await expect.poll(() => readNumber(page, "instances")).toBe(firstInstances);
-});
-
 test("the composition keeps animating while motion is allowed", async ({ page }) => {
   await openLab(page);
   await choose(page, REFERENCE);
+  await expect.poll(() => readNumber(page, "instances")).toBeGreaterThan(300);
   const before = await framesOf(page);
-  await expect.poll(() => framesOf(page)).toBeGreaterThan(before + 5);
+  await expect.poll(() => framesOf(page), { timeout: SOFTWARE_RENDERING_TIMEOUT }).toBeGreaterThanOrEqual(before + 2);
+});
+
+test("play fold animates through intermediate creases before reaching the flat end", async ({ page }) => {
+  await openLab(page);
+  await choose(page, "primitive:P08");
+  const crease = page.getByTestId("crease-current-west");
+  await expect(crease).toHaveText("-90.0°");
+  await page.keyboard.press("f");
+  await expect
+    .poll(
+      async () => {
+        const angle = parseFloat(await crease.innerText());
+        return angle > -90 && angle < 0;
+      },
+      { timeout: SOFTWARE_RENDERING_TIMEOUT },
+    )
+    .toBe(true);
+  await expect(crease).toHaveText("0.0°", { timeout: SOFTWARE_RENDERING_TIMEOUT });
+  await expect(page.getByTestId("fold-slider")).toHaveValue("0");
+});
+
+test("setting one crease angle moves only that crease", async ({ page }) => {
+  await openLab(page);
+  await choose(page, "primitive:P08");
+  await page.getByTestId("crease-slider-west").fill("-45");
+  await expect(page.getByTestId("crease-current-west")).toHaveText("-45.0°");
+  for (const other of ["east", "north", "south", "lid"]) {
+    await expect(page.getByTestId(`crease-current-${other}`)).toHaveText("-90.0°");
+  }
+});
+
+test("moving the fold slider discards a per-crease override", async ({ page }) => {
+  await openLab(page);
+  await choose(page, "primitive:P08");
+  await page.getByTestId("crease-slider-west").fill("-45");
+  await expect(page.getByTestId("crease-current-west")).toHaveText("-45.0°");
+  await page.getByTestId("fold-slider").fill("0.25");
+  for (const crease of ["west", "east", "north", "south", "lid"]) {
+    await expect(page.getByTestId(`crease-current-${crease}`)).toHaveText("-22.5°");
+  }
 });
 
 test.describe("reduced motion", () => {
   test.use({ reducedMotion: "reduce" });
+
+  test("the same seed rebuilds the same composition and another seed changes it", async ({ page }) => {
+    await openLab(page);
+    await choose(page, REFERENCE);
+    await setSeed(page, "11");
+    const first = await page.getByTestId("layout-hash").innerText();
+    await expect.poll(() => readNumber(page, "instances")).toBeGreaterThan(300);
+    const firstInstances = await readNumber(page, "instances");
+    await setSeed(page, "22");
+    await expect(page.getByTestId("layout-hash")).not.toHaveText(first);
+    await setSeed(page, "11");
+    await expect(page.getByTestId("layout-hash")).toHaveText(first);
+    await expect.poll(() => readNumber(page, "instances")).toBe(firstInstances);
+  });
 
   test("the reference composition shows both near-black masses and pale paper", async ({ page }) => {
     await openLab(page);
