@@ -13,6 +13,7 @@ Procedural origami-inspired world engine (TypeScript + Three.js). Authoritative 
 | `pnpm build` | Production build of every buildable project |
 | `pnpm e2e` | Playwright against the Studio |
 | `pnpm bench` | Benchmarks (where defined) |
+| `pnpm screenshots` | Regenerate `docs/screenshots/p0.4-*.png` via Playwright (not part of `pnpm e2e`) |
 
 Run lint, typecheck, test and build before declaring work done. Never report a check as passed unless you ran it.
 

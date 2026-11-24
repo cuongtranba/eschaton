@@ -17,8 +17,11 @@ pnpm test       # Vitest (packages)
 pnpm lint       # ESLint, type-aware
 pnpm typecheck  # tsc per project
 pnpm build      # production build
-pnpm e2e        # Playwright smoke tests (starts the dev server itself)
+pnpm e2e        # Playwright specs against the Studio (starts the dev server itself)
+pnpm screenshots # regenerate docs/screenshots/p0.4-*.png
 ```
+
+Studio shortcuts: `F` play fold · `G` grid · `S` sockets · `C` crease axes · `O` orbit/composition camera · `[` `]` previous/next catalog item. Add `?forceWebGL=1` to the URL to force the WebGL2 backend.
 
 First-time Playwright setup: `pnpm --filter @eschaton/studio exec playwright install chromium` (a browser already installed under `~/.cache/ms-playwright` is reused).
 
