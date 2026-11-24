@@ -2,7 +2,7 @@
 ## A Self-Constructing Universe
 
 **Master research, architecture and implementation plan**  
-Version 1.0 · Proposed engineering baseline · 24 November 2026
+Version 1.1 · 2026-11-24 (roadmap revision; v1.0 baseline 24 November 2026)
 
 *Creation. Collapse. Rebirth.*
 
@@ -78,7 +78,7 @@ Test flat/quantized lighting, crease-edge rendering, stylized shadows, procedura
 | [R6] Origami Simulator | Crease constraints and GPU folding | Compare rigid hinges, compliant surfaces and advanced crease solving in experiments. |
 | [R7] MarkovJunior | Rewrite rules and constraint propagation | Explore local event-driven transformation and grammar-based regeneration. |
 | [R8–R10] Three.js | WebGPU, TSL, instancing | Use a renderer adapter; benchmark and capability-test GPU paths. |
-| [R11–R12] Block generation and infinite WFC | Boundary stability and incremental generation | Research streaming after bounded local repair passes invariants. |
+| [R11–R12] Block generation and infinite WFC | Boundary stability and incremental generation | Research streaming only after bounded local repair passes invariants, as the separate Phase 8 research track (§11). |
 | [R13] A Philosophy of Software Design | Deep modules and complexity control | Hide algorithms and internal representations behind behavior-level interfaces. |
 
 These references demonstrate individual techniques, not proof that their combination achieves Eschaton's goals. Phase 0 tests those assumptions. Check licenses, dependencies and supported APIs before adopting code. Prefer a small own-domain implementation over copying a full Unity-specific system.
@@ -176,11 +176,13 @@ An alternative implementation compiles each multi-cell tile into offset-specific
 
 Do not run WFC over every triangle in an entire continent. Hierarchical backtracking may revise coarse choices when finer detail is impossible. Keep budgets, deterministic ordering, constraints and diagnostics explicit. Hard constraints: compatibility, occupancy, support where required, pinned landmarks and seam matches. Soft preferences: silhouettes, repetition, proportion, orientation and stylistic variety. Soft preference must never override validity.
 
-### 5.4 Local re-collapse and streaming
+### 5.4 Local re-collapse and streaming (research)
+
+The local region solve under a frozen exterior contract, with pinned placements and cancellation, is production scope of Phase 2 (Wave) and is consumed by Phase 4 (Collapse). Streaming is a separate research track (Phase 8, §11) and is not on the release path.
 
 On topology-changing events, mark a region dirty. Expand it to include complete intersecting placements, affected bond boundaries and required dependency halo. Freeze the exterior contract; solve a local replacement under explicit scenario constraints (for example preserve ruins rather than repair them). Validate occupancy, seam and required networks. Commit a versioned patch only if base revision still matches; otherwise discard/retry. Preserve IDs for unchanged placements; preserve damage and state unless a rule explicitly changes them. Failure leaves prior valid state intact, emits diagnostics and may request bounded escalation. Detached rubble is a separate dynamic entity, not an invalid WFC placement.
 
-Later chunk generation uses canonical boundary ownership and stable seed derivation; test generation-order independence rather than assume it. A persistent change overlay must survive unloading/reloading. No chunk may independently change a shared seam. Stream based on budget and camera; authoritative simulation state must not depend on visual LOD.
+Chunk generation in Phase 8 (research) uses canonical boundary ownership and stable seed derivation; test generation-order independence rather than assume it. A persistent change overlay must survive unloading/reloading. No chunk may independently change a shared seam. Stream based on budget and camera; authoritative simulation state must not depend on visual LOD.
 
 ## 6. Dynamic simulation — creation, collapse, rebirth
 
@@ -364,7 +366,7 @@ Record exact OS, browser, device, driver, resolution, catalog, seed and commit. 
 | Lab | 100–1,000 pieces | Smooth interaction; no persistent resource growth after reset |
 | District | 10k visible logical instances | Aim for 60 FPS / p95 frame ≤16.7 ms on discrete GPU; report actual |
 | Stress | 100k static logical instances | Benchmark instancing/chunking; keep active dynamic subset bounded |
-| Research | 1M logical pieces across streamed chunks | No promise of simultaneous display or simulation; only after measured evidence |
+| Research | 1M logical pieces across streamed chunks | Phase 8 research track only; no promise of simultaneous display or simulation; only after measured evidence |
 | Local WFC | 16×16×8 region, bounded catalog | Initial p95 target ≤250 ms worker solve on benchmark hardware; budgeted failure is acceptable and reported |
 | Interaction | During worker solving | No solver-caused main-thread long tasks; cancellation observable |
 
@@ -382,22 +384,48 @@ UI direction: graphite panels, warm paper viewport, compact technical typography
 
 Durations are planning estimates for a small developer/agent team, not delivery promises. Scope, not calendar, controls progression. Every phase ends with a demo, passing tests, updated docs and an explicit go/no-go decision. No parallel implementation of later phases until dependencies stabilize.
 
+**Roadmap v1.1 is the only roadmap.** Other documents link here and must not restate the phase list. Version 1.1 was approved by the project owner on 2026-11-24; the v1.0 → v1.1 mapping is in §11.2.
+
+**Visual review at every phase gate.** Each gate includes an owner visual review of the current scene against the reference in §2. Visual approval is never inferred from passing tests, pixel comparisons or benchmark results; a gate without a recorded owner visual review is not passed.
+
 | Phase | Estimated effort | Deliverable | Exit criteria |
-|---|---:|---|---|
-| 0 — Research & geometry lab | 1–2 weeks | Primitive viewer, hinge experiment, ink look-dev, research ADRs | Nine draft primitives or justified reduced set; three distinct assemblies from shared pieces; socket/footprint overlays; continuous fold demo; one visual reference scene approved; baseline metrics recorded |
-| 1 — Foldon core | 1–2 weeks | Versioned catalog, placement, bonds, composition systems | Valid/invalid connections, transform, occupancy and identity invariants; attach/detach and round-trip serialization; roof/leaf share behavior without inheritance |
-| 2 — WFC | 2–3 weeks | Worker solver, multi-cell, backtracking and diagnostics | Same seed/version/input same logical result; multi-cell atomicity; zero overlap; explicit unsat/budget/cancel results; fixed regression corpus; no main-thread solver block |
-| 3 — Genesis | 2–3 weeks | Hierarchical district and semantic scene generation | Roads/river contracts and boundaries valid; recognizable architecture and terrain; ≥10 distinct valid seeds for one preset; no finished building meshes in core catalog |
+|---|---|---|---|
+| 0 — Laboratory closure | v1.0 estimate 1–2 weeks; closure tasks to be re-estimated | v1.0 Phase 0 (primitive viewer, hinge experiment, ink look-dev, research ADRs) plus closure tasks T0–T6: **T0** owner review package; **T1** benchmarks on a clean committed SHA; **T2** JS heap growth investigation; **T3** documentation corrections plus fold and footprint tests; **T4** CI; **T5** WebGPU test on a physical GPU; **T6** Phase 1 design ADRs 0010–0013 | Nine draft primitives or justified reduced set; three distinct assemblies from shared pieces; socket/footprint overlays; continuous fold demo; one visual reference scene approved; baseline metrics recorded; T0–T6 each done or explicitly waived by the owner; the Phase 1 design ADRs decided by the owner |
+| 1 — Foundation | v1.0 estimate 1–2 weeks; re-estimate at the Phase 0 gate | Versioned catalog, placement, bonds, composition systems, **runtime identity and ownership, fragment lineage, atomic transactions and revisions (rollback and replay contract), directional sockets, logical-versus-rendered placement model** | Valid/invalid connections, transform, occupancy and identity invariants; attach/detach and round-trip serialization; roof/leaf share behavior without inheritance; **identity/ownership invariants (no duplicate ownership, stable ids, acyclic lineage); transaction atomicity and rollback; directional socket compatibility tests** |
+| 2 — Wave | v1.0 estimate 2–3 weeks; re-estimate at the Phase 1 gate | Production 3D multi-cell WFC in a worker, with **pinned placements, frozen boundaries (local region solve under an exterior contract) and cancellation**, backtracking and diagnostics | Same seed/version/input same logical result; multi-cell atomicity; zero overlap; explicit unsat/budget/cancel results; fixed regression corpus; no main-thread solver block; **solve inside a frozen boundary; cancellation observable; cross-browser determinism scope documented** |
+| 3 — Genesis | 2–3 weeks | Hierarchical district and semantic scene generation | Roads/river contracts and boundaries valid; recognizable architecture and terrain; ≥10 distinct valid seeds for one preset; no finished building meshes in core catalog; **the scene look is reached through validated logical placements, bounded decorative offsets and a separate backdrop (ADR 0013)** |
 | 4 — Collapse | 2–4 weeks | Fixed tick, fields, support graph, topology change and local re-solve | Reproducible event sequence; local repair protects exterior; damaged pieces detach; failed solve rolls back; no duplicate ownership |
-| 5 — Ink & effects | 2–3 weeks | Origami particles, water, atmosphere, lighting | Consistent style with reference; stable hatching across motion; one cinematic collapse scene; accessible motion toggle and capability fallback |
-| 6 — Rebirth & streaming | 2–4 weeks | Assembly inventory, reconstruction, chunk proof, LOD | Ruins can reconstruct into a different valid structure; finite inventory conserved in demo; seam/load-order tests; persisted modifications survive reload; benchmark targets assessed |
-| 7 — Studio release | 1–3 weeks | Usable controls, save/replay/export, docs | End-to-end Genesis→Collapse→Rebirth demo; no known critical invariant violations; visual approval and documented performance/capability limits |
+| 5 — Atmosphere | 2–3 weeks | Origami particles, water, atmosphere, lighting (v1.0 "Ink & effects") | Consistent style with reference; stable hatching across motion; one cinematic collapse scene; accessible motion toggle and capability fallback |
+| 6 — Rebirth and finite inventory | v1.0 estimate 2–4 weeks including streaming; re-estimate at the Phase 5 gate | Assembly inventory and reconstruction | Ruins can reconstruct into a different valid structure; finite inventory conserved in demo |
+| 7 — The Last District | 1–3 weeks | Bounded integrated release: usable controls, save/replay/export, docs, the §11.1 vertical slice | End-to-end Genesis→Collapse→Rebirth demo; no known critical invariant violations; visual approval and documented performance/capability limits; the §11.1 vertical slice runs end to end |
+| 8 — Infinite Universe (research track) | Not scheduled | Streaming, chunks, seams and load order, LOD, persisted modifications across reload | Seam/load-order tests; persisted modifications survive reload; Stress and Research benchmark targets (§9.1) assessed. Separate research track, **not on the release path**; starts only on measured evidence from the earlier phases |
 
 ### 11.1 First vertical slice — The Last District
 
 A single bounded terrain region contains a winding pale corridor, towers, pitched roofs, debris, barren tree silhouettes, distant mountains and a radiant sun. Seed produces scene variation; scenario constraints preserve the visual composition. User triggers a local decay or wind event. A roof or tower loses bonds, breaks into visible fragments, and settles. Protected neighboring structures remain unchanged. A subsequent rebirth command reuses fragments in a new low structure. Environment responds through the shared field system. User can replay, change seed and inspect the pieces. The prototype can use simple supported camera composition rules, not a complete open-world generator.
 
 **Success is not maximum world size. Success is one convincing scene in which the same fragments can create, collapse and reconstruct coherently.**
+
+### 11.2 Roadmap change log
+
+| Version | Date | Change | Approval |
+|---|---|---|---|
+| 1.0 | 2026-11-24 | Baseline: phases 0–7 as first proposed ("Proposed engineering baseline") | Engineering proposal |
+| 1.1 | 2026-11-24 | Phases 0–7 restructured and a research phase 8 added; mapping below | Approved by the project owner on 2026-11-24 |
+
+| v1.0 phase | v1.1 phase | What moved and why |
+|---|---|---|
+| 0 — Research & geometry lab | 0 — Laboratory closure | Same exit criteria, plus closure tasks T0–T6 (owner review package, clean-SHA benchmarks, heap investigation, documentation corrections with fold and footprint tests, CI, WebGPU test on a physical GPU, Phase 1 design ADRs). The v1.0 evidence had open items that the gate cannot honestly pass without. |
+| 1 — Foldon core | 1 — Foundation | Runtime identity and ownership, fragment lineage, atomic transactions and revisions, directional sockets and the logical-versus-rendered placement model are pulled into Foundation, because attach/detach and the ownership invariants cannot be defined or tested without them. |
+| 2 — WFC | 2 — Wave | Frozen boundaries (local region solve under an exterior contract), pinned placements and observable cancellation are pulled out of Collapse into Wave, so the local re-solve that Phase 4 depends on is de-risked while the solver is being built, not discovered during Collapse. |
+| 3 — Genesis | 3 — Genesis | Criteria unchanged except one addition: the scene look must be reached through validated logical placements, bounded decorative offsets and a separate backdrop (ADR 0013), because the Phase 0 reference composition bypasses Foldon validation. |
+| 4 — Collapse | 4 — Collapse | Unchanged. |
+| 5 — Ink & effects | 5 — Atmosphere | Renamed only; same criteria. |
+| 6 — Rebirth & streaming | 6 — Rebirth and finite inventory | Rebirth and inventory criteria stay. Streaming, chunk proof, LOD, seam/load-order tests and persisted-modification reload move to Phase 8, because §11.1 states that success is not world size and §1.2 excludes an unrestricted infinite universe. The v1.0 criterion "benchmark targets assessed" splits: bounded-scene targets are assessed in Phase 7 (documented performance limits), Stress and Research targets in Phase 8. |
+| 7 — Studio release | 7 — The Last District | Renamed and framed as the bounded integrated release; criteria and the §11.1 vertical slice unchanged. |
+| (new) | 8 — Infinite Universe | Separate research track that receives the streaming scope of v1.0 Phase 6. Not on the release path; starts only on measured evidence. |
+
+The visual-review-at-every-gate rule (§11) is new in v1.1 and applies to every phase, including Phase 0.
 
 ## 12. Verification and invariants
 
@@ -410,7 +438,7 @@ A single bounded terrain region contains a winding pale corridor, towers, pitche
 | Semantic connectivity | Required road/river terminals connected according to scenario |
 | Stable identity/locality | Outside protected dirty region, placements and state remain identical |
 | Transactionality | Contradictory, cancelled or stale proposal cannot change committed world |
-| Seam consistency | Neighbor chunks agree on canonical boundary regardless of tested load order |
+| Seam consistency (Phase 8 research track; not a release-path invariant) | Neighbor chunks agree on canonical boundary regardless of tested load order |
 | Lifecycle ownership | A detached piece cannot simultaneously occupy a static placement; no duplicate fragment IDs |
 | Material conservation | In conservation-mode reconstruction, total fragment inventory preserved |
 | Replay | Snapshot plus recorded authoritative events reproduces canonical state |
@@ -434,9 +462,11 @@ Use deterministic real fixtures and generated seed corpora; report number of suc
 | Recursive catalog explosion | Canonical recipe hashes, validation, quotas, bounded levels and deliberate promotion |
 | Reference artwork usage rights unknown | Keep internal reference; obtain clearance before external distribution |
 
-Initial ADRs: grid vs irregular topology; multi-cell encoding; component data and system order; world transaction/replay semantics; renderer capability/fallback; ink visual strategy; crease representation/FOLD adapter; catalog promotion; local solve and seam ownership. Record actual experiments and alternatives, not just preferences.
+Initial ADRs: grid vs irregular topology; multi-cell encoding; component data and system order; world transaction/replay semantics; renderer capability/fallback; ink visual strategy; crease representation/FOLD adapter; catalog promotion; local solve (Phase 2) and seam ownership (Phase 8). The Phase 1 design ADRs 0010–0013 (identity and ownership, transaction and revision contract, directional sockets, logical versus rendered geometry) are drafted and await owner approval. Record actual experiments and alternatives, not just preferences.
 
-## 14. Coding-agent handoff — start with Phase 0 only
+## 14. Coding-agent handoff — Phase 0 — Laboratory closure only
+
+Scope of this handoff is **Phase 0 — Laboratory closure** (§11): steps 1–7 below are the v1.0 Phase 0 work, and closure tasks T0–T6 in the §11 table complete the phase. No later phase starts before the owner approves the Phase 0 gate.
 
 **Mission:** prove the smallest meaningful version of a self-constructing origami-inspired universe while honoring the supplied monochrome apocalypse reference and composition-over-inheritance rule.
 

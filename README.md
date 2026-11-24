@@ -2,7 +2,7 @@
 
 A web-based procedural world engine and laboratory: a small vocabulary of origami-inspired geometric pieces (**Foldons**) composed, folded and collapsed under explicit rules, rendered as a living woodcut print. See [`docs/master-plan.md`](docs/master-plan.md) for the full design and [`AGENTS.md`](AGENTS.md) for contributor rules.
 
-Status: **Phase 0 — research & geometry lab, awaiting the owner's gate decision.** See [`docs/phase-0-exit.md`](docs/phase-0-exit.md).
+Status: **Phase 0 — Laboratory closure (research & geometry lab plus closure tasks), awaiting the owner's gate decision.** The roadmap is in [`docs/master-plan.md`](docs/master-plan.md) §11. See [`docs/phase-0-exit.md`](docs/phase-0-exit.md).
 
 ## What Phase 0 delivers
 
@@ -29,10 +29,12 @@ Open the URL, pick items in the left catalog, drag the **Fold** slider or press 
 |---|---|
 | Master plan (authoritative design) | [`docs/master-plan.md`](docs/master-plan.md) |
 | Phase 0 exit report (draft, pending owner) | [`docs/phase-0-exit.md`](docs/phase-0-exit.md) |
+| Owner review package (Phase 0) | [`docs/review/phase-0-owner-review.md`](docs/review/phase-0-owner-review.md) |
+| Physical WebGPU manual test (pending) | [`docs/testing/webgpu-manual-test.md`](docs/testing/webgpu-manual-test.md) |
 | Architecture overview with data-flow diagram | [`docs/architecture/overview.md`](docs/architecture/overview.md) |
 | Decision records and the pending list | [`docs/decisions/`](docs/decisions/README.md) |
 | Research notes | [`docs/research/phase-0.md`](docs/research/phase-0.md), [`docs/research/look-dev.md`](docs/research/look-dev.md) |
-| Benchmarks (markdown, JSON, raw outputs) | [`benchmarks/`](benchmarks/) |
+| Benchmarks (recorded evidence, methodology) | [`benchmarks/README.md`](benchmarks/README.md); Phase 0 baseline [`benchmarks/phase-0/2026-11-24-e9e50c527/report.md`](benchmarks/phase-0/2026-11-24-e9e50c527/report.md) |
 | Screenshots | [`docs/screenshots/`](docs/screenshots/) |
 | WFC placement experiment | [`experiments/wfc-placement/`](experiments/wfc-placement/README.md) |
 
@@ -53,8 +55,9 @@ pnpm typecheck  # tsc per project
 pnpm build      # production build
 pnpm e2e        # Playwright specs against the Studio (starts the dev server itself)
 pnpm screenshots # regenerate docs/screenshots/p0.4-*.png and p0.5-*.png
-pnpm bench      # Foldon micro-benchmarks + the WFC experiment (the latter rewrites its dated results file)
+pnpm bench      # Foldon micro-benchmarks + the WFC experiment; scratch output in gitignored benchmarks/runs/
 STUDIO_PORT=5183 pnpm bench:studio  # builds, serves the production bundle and measures the Studio in headless Chromium
+# BENCH_RECORD=1 on both records tracked evidence from a clean tree (benchmarks/README.md)
 ```
 
 The **Look** panel (right column) drives the ink look-dev: palette preset, quantized light, hatching strength, haze, sun elevation/azimuth, paper grain, outlines and a flat-versus-ink compare split. Select **Reference composition** in the catalog for the art-directed scene; research notes are in [`docs/research/look-dev.md`](docs/research/look-dev.md).

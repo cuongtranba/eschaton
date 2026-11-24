@@ -1,6 +1,6 @@
 # Eschaton — agent rules
 
-Procedural origami-inspired world engine (TypeScript + Three.js). Authoritative design: `docs/master-plan.md`. Visual anchor: `assets/reference/visual-direction.png`. Current phase: **Phase 0 — research & geometry lab**; do not start later phases without approval.
+Procedural origami-inspired world engine (TypeScript + Three.js). Authoritative design: `docs/master-plan.md`. Visual anchor: `assets/reference/visual-direction.png`. Current phase: **Phase 0 — Laboratory closure** (roadmap v1.1, `docs/master-plan.md` §11); do not start later phases without approval.
 
 ## Commands (pnpm only)
 
@@ -12,8 +12,8 @@ Procedural origami-inspired world engine (TypeScript + Three.js). Authoritative 
 | `pnpm typecheck` | `tsc` per workspace project |
 | `pnpm build` | Production build of every buildable project |
 | `pnpm e2e` | Playwright against the Studio |
-| `pnpm bench` | Benchmarks: `packages/foldon` (vitest bench → `benchmarks/raw/foldon.json`) and the WFC experiment. The WFC bench rewrites its committed `results/bench-<date>.*`; restore it with `git checkout -- experiments/wfc-placement/results` unless a deliberate re-run is wanted |
-| `pnpm bench:studio` | Builds the Studio, serves the production bundle on `STUDIO_PORT`, measures it in headless Chromium and writes `benchmarks/raw/studio.json` plus `benchmarks/phase-0-<date>.md/.json`. Run `pnpm bench` first so the report includes the Foldon numbers; always set `STUDIO_PORT` |
+| `pnpm bench` | Foldon micro-benchmarks, then the WFC experiment (serially). Writes only to gitignored `benchmarks/runs/`; never changes `git status`. `BENCH_RECORD=1` writes tracked evidence to `benchmarks/phase-0/<date>-<sha>/` and refuses a dirty tree. See `benchmarks/README.md` |
+| `pnpm bench:studio` | Builds the Studio, serves the production bundle on `STUDIO_PORT`, measures it in headless Chromium (software rendering here) and joins the latest `pnpm bench` run directory. Same record/dirty rules; always set `STUDIO_PORT` |
 | `pnpm screenshots` | Regenerate `docs/screenshots/p0.4-*.png` and `p0.5-*.png` via Playwright (not part of `pnpm e2e`) |
 
 Run lint, typecheck, test and build before declaring work done. Never report a check as passed unless you ran it.
