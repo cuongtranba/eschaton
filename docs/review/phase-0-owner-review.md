@@ -103,4 +103,4 @@ All are **Proposed**. 0001–0009 describe what the Phase 0 code already does; 0
 - **D4 ADRs 0010–0013:** answer their approval questions before any Phase 1 code.
 - **D5 Physical WebGPU test:** run [`../testing/webgpu-manual-test.md`](../testing/webgpu-manual-test.md) on Windows Chrome + RTX 5070, or decide to waive it for the Phase 0 gate and run it at the start of Phase 1.
 - **D6 Phase 0 gate:** pass, pass with conditions, or keep open — after reading [`../phase-0-exit.md`](../phase-0-exit.md).
-- **D7 Phase 1 (Foundation):** go or no-go. No Phase 1 code will be written before this answer.
+- **D7 Phase 1 (Foundation):** the proposed milestone plan and the decisions that block Phase 1 code (P1-D1 to P1-D12) are in [`../plans/phase-1-foundation.md`](../plans/phase-1-foundation.md); the independent ADR review is [`adr-review.md`](adr-review.md). Decide go or no-go. No Phase 1 code will be written before this answer.

@@ -400,6 +400,8 @@ Durations are planning estimates for a small developer/agent team, not delivery 
 | 7 — The Last District | 1–3 weeks | Bounded integrated release: usable controls, save/replay/export, docs, the §11.1 vertical slice | End-to-end Genesis→Collapse→Rebirth demo; no known critical invariant violations; visual approval and documented performance/capability limits; the §11.1 vertical slice runs end to end |
 | 8 — Infinite Universe (research track) | Not scheduled | Streaming, chunks, seams and load order, LOD, persisted modifications across reload | Seam/load-order tests; persisted modifications survive reload; Stress and Research benchmark targets (§9.1) assessed. Separate research track, **not on the release path**; starts only on measured evidence from the earlier phases |
 
+Phase 1 milestone slicing (proposed, not started; subordinate to this section): [`plans/phase-1-foundation.md`](plans/phase-1-foundation.md).
+
 ### 11.1 First vertical slice — The Last District
 
 A single bounded terrain region contains a winding pale corridor, towers, pitched roofs, debris, barren tree silhouettes, distant mountains and a radiant sun. Seed produces scene variation; scenario constraints preserve the visual composition. User triggers a local decay or wind event. A roof or tower loses bonds, breaks into visible fragments, and settles. Protected neighboring structures remain unchanged. A subsequent rebirth command reuses fragments in a new low structure. Environment responds through the shared field system. User can replay, change seed and inspect the pieces. The prototype can use simple supported camera composition rules, not a complete open-world generator.
