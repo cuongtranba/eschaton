@@ -231,3 +231,27 @@ Further amendments:
 - **No store object.** Callers (the Studio's World mode, the self-assembly planner) hold `{ state, log }` themselves. A `World` store with `dispatch`/`submit` was not needed, so it was not built.
 - **Tests:** `packages/world/test/patch.test.ts` (M1) and `snapshot.test.ts` (M0, plus populated round trip and tamper rejection).
 - **Cost:** measured in `benchmarks/phase-1/` (M9). Reaching the measured cost took four changes: a 16-bit-limb FNV; native canonical JSON; indexed contacts computed once per check; per-patch bond settling.
+
+## Corrections and decisions at the Phase 1 gate (owner R1 and R5, 2026-11-25)
+
+### R1: every commit is bound to the world's catalog and rules
+
+- **Defect.** `applyPatch` accepted any catalog. A patch applied with a different catalog, or under a socket table of another version, committed and kept the old header, so invariant 11 held for `replay` and `parseSnapshot` but not for the commit itself. Regression tests (failing before the fix): "a patch applied with a different catalog than the world was built against is rejected and consumes no revision"; "a patch applied under a different rules version is rejected".
+- **Fix.** `applyPatch` first compares `header.versions.catalog` and `header.versions.rules` with the catalog it was given and rejects a mismatch (`catalog-mismatch`, `rules-mismatch`) before the stale check. Nothing is mutated and no revision is consumed.
+- **Cost.** The comparison is two string compares per commit. `catalog.fingerprint` is computed **once**, when `createCatalog` builds the catalog; no commit walks the catalog.
+- **Why caching is sound.** A catalog is immutable: `createCatalog` copies and deep-freezes its inputs (definitions, recipes, contracts and a custom socket table), freezes the collections it returns, and freezes itself. Test: "a catalog cannot be changed through its inputs or its returned collections".
+
+### Version policy
+
+| Field | Meaning | Checked by |
+|---|---|---|
+| `schema` | Snapshot shape. A newer schema is refused; older ones need an explicit migration | `parseSnapshot` |
+| `versions.catalog` | Fingerprint of the canonical content of every definition, recipe, contract and the socket table | `applyPatch`, `replay`, `parseSnapshot` |
+| `versions.rules` | `sockets@<table version>+invariants@<n>`. `n` must be raised whenever commit validation or derivation changes behaviour (it is 2 since the R3 bond rules) | `applyPatch`, `replay`, `parseSnapshot` |
+| `versions.engine` | The `@eschaton/world` package version that created the world. **Audit only, deliberately not a gate**: refusing every world on each package release would add no safety, because any behaviour change must already raise `rules` | nobody |
+
+### R5: no generic undo
+
+- Generic undo is **deferred**. Phase 1 keeps deterministic replay and atomic patch rollback (a rejected patch changes nothing).
+- **Future undo is a compensating transaction, not history branching.** A compensating transaction is a new patch, committed at the next revision, whose ops reverse the effect of an earlier one (for example `attach` after `detach`). The log stays append-only, ids are never re-minted, and replay stays valid. History branching (rewinding the revision and committing again) stays forbidden, because it would reuse `(revision, ordinal)` stamps (ADR 0010).
+- Not every op has a compensation that restores identity: `split`, `merge` and `consume` retire ids permanently. A future undo feature must define what "undo" means for them, and needs the owner's decision.

@@ -217,3 +217,18 @@ Context the original draft omitted. The rebuild experiment must also cover the l
 - P04 mounds (`:173-179`).
 
 Suppressing outlines on internal faces within a group (against the "window grid" read, ADR 0002) is an allowed experiment lever.
+
+## Owner direction after the rebuild study (R4, 2026-11-25)
+
+Recorded in [`../review/phase-1-owner-review.md`](../review/phase-1-owner-review.md). This answers ADR 0013's experiment question (step 5) as follows; it is a direction, not a final visual approval.
+
+- **The regular lattice stays.** The cubic, yaw-only logical grid (ADR 0002) is confirmed as the direction. No irregular lattice, and no widening of authoritative transforms (no per-instance non-uniform scale, no free yaw on placed entities).
+- **The grid is logical, not visually prescriptive.** The look is to be reached through more expressive primitives, footprints and proportions inside the lattice, plus render-side choices.
+- **Studies to run** (research and prototypes, findings recorded; none is a commitment):
+  - long pieces: beams and columns as multi-cell footprints (for example 1×1×3, 1×3×1);
+  - sloped roofs and branch-like pieces as larger or sparse footprints;
+  - suppressing outlines on internal edges within a group;
+  - a non-unit vertical cell size.
+- **Schedule.** Phase 2 adds only the pieces a representative generation corpus needs. Full fidelity is judged at the Genesis (Phase 3), Atmosphere (Phase 5) and The Last District (Phase 7) gates. The hand-built scenes are not polished further.
+- **Status of the Phase 1 images.** The owner accepts World mode and the rebuild study as **prototype-level evidence only**.
+- **Guard.** A material change to the lattice contract (cell shape, rotation group, authoritative transform content), or any new architectural decision beyond this direction, must be proposed with its trade-offs and decided by the owner. It is not to be adopted silently. A non-unit vertical cell size is such a change if it moves from study to the logical contract.

@@ -4,9 +4,11 @@
 - Branch / PR: `phase-1`, PR #2 (draft, stacked on `phase-0` @ `5b2a995`; not merged)
 - Date: 2026-11-25
 - Authorization: owner decision D7 (2026-11-25), after the conditional Phase 0 closure (D6; [`phase-0-exit.md`](phase-0-exit.md) §9)
-- Status: **AT THE PHASE 1 EXIT GATE, awaiting the owner.** Nothing in this report approves the gate.
-  - Exit approval, the visual review, ADR 0014 and the flagged interpretations (§6) belong to the owner.
-  - Phase 2 is not authorized and was not started.
+- Status: **CONDITIONALLY CLOSED by owner decision R6 (2026-11-25), subject to the evidence in §8.**
+  - R6 closes the phase only when the R1–R5 corrections and evidence are in, the documents are synchronized, and lint, typecheck, unit, build, e2e, architecture checks and remote CI are green on the exact final head. §8 records that evidence; the final-head CI run is in the PR #2 description. If any item is red or missing, the phase is not closed.
+  - The owner's decisions R1–R8 are recorded in [`review/phase-1-owner-review.md`](review/phase-1-owner-review.md). Sections 1–7 are the report as presented at the gate, with §6 annotated.
+  - World mode and the rebuild study are accepted as **prototype-level evidence only** (R4). This is not a final visual approval.
+  - Phase 2 is authorized by R7 after the closure and the merges of PR #1 and PR #2 (R8). Phase 3 is not authorized.
 
 ## 1. Exit criteria (master plan §11, Phase 1 row) mapped to tests
 
@@ -118,6 +120,8 @@ Recorded on clean commit `3a35dae` ([`../benchmarks/phase-1/2026-11-25-3a35dae8f
 
 ## 6. Decisions for the owner at this gate
 
+**Outcome (2026-11-25):** item 1 is R6 (conditional closure). Item 2 is R4 (regular lattice confirmed; prototype-level evidence). Item 3 is R3 (interpretation 1 confirmed, interpretation 2 replaced). In item 4, the undo row is decided by R5; the other rows stay unconfirmed. Items 5 and 6 stay open. The list below is kept as presented.
+
 1. **Phase 1 gate:** pass, pass with conditions, or keep open.
 2. **Visual review:**
    - World mode (`screenshots/p1-world-mode*.png`);
@@ -153,3 +157,39 @@ Recorded on clean commit `3a35dae` ([`../benchmarks/phase-1/2026-11-25-3a35dae8f
   - The rebuild study takes a few seconds to build on load.
   - The look-dev reference composition is unchanged and still bypasses validation, labelled as look-dev.
 - **Unpushed Home work:** any unpushed work on the Home machine is unknown and was not inspected.
+
+## 8. Gate corrections and closure evidence (R1–R6)
+
+### Corrections made after the gate review
+
+| Finding | Reproduction (failing public test first) | Fix | Commit |
+|---|---|---|---|
+| R1: `applyPatch` accepted a wrong catalog or rules version and kept the old header | "a patch applied with a different catalog than the world was built against is rejected and consumes no revision": it returned `committed`. "a patch applied under a different rules version is rejected": it returned `committed` | `applyPatch` compares the header's catalog fingerprint and rules version first, in O(1). The catalog is immutable (inputs copied and deep-frozen, returned collections frozen) and carries a fingerprint computed once at creation | `2803622` |
+| R2: asymmetric module contract accepted by `instantiate`, rejected by `planAssembly` at the same pose | "an assembly with an asymmetric module contract self-assembles at every rotation at which it can be instantiated": the planner rejected the quarter turns | One `resolvePlacement` for both paths; a contract is a local-frame claim proved by `createCatalog` | `87c1852` |
+| R3: ADR 0014 amendments | "touching empty faces are a legal contact and never a structural bond" and "a wildcard open face against a wall is a legal contact and no bond by default": both produced a bond | Bond eligibility is an explicit rule in socket table v2 (`structural`, `bond`); invariant-set version 2 | `1c05fce` |
+
+R4 and R5 are documentation decisions (ADR 0013, ADR 0002, ADR 0011, plan §2a).
+
+**Consequences of the corrections for earlier evidence:**
+- The socket table and the invariant-set version changed, so catalog fingerprints, rules versions and every state hash changed. The rebuild study now replays to a new hash, recorded in [`review/p1-rebuild-study.json`](review/p1-rebuild-study.json); the hash in §3 is the pre-correction value.
+- Bond counts fell, because `empty–empty` and wildcard contacts no longer bond. The Phase 1 screenshots were regenerated on the corrected tree.
+- The §5 benchmarks were recorded at `3a35dae`, before the corrections, and were not re-recorded. The corrections add two string comparisons per commit and remove no work, so they are kept as the Phase 1 baseline; Phase 2 profiles transaction cost again.
+
+### Test totals on the corrected tree
+
+| Scope | Count |
+|---|---|
+| `@eschaton/foldon` | 48 |
+| `tools/architecture` | 51 |
+| `@eschaton/world` | 50 |
+| WFC experiment | 13 |
+| Studio e2e | 26 |
+| **Total** | **188** |
+
+Local results (macOS 26.5.1, Apple M5 Pro, Node v24.20.0, pnpm 10.33.4): `pnpm lint`, `pnpm typecheck`, `pnpm build` exit 0; `pnpm test` 162 passed; `pnpm e2e` 26 passed. The remote CI run on the exact final `phase-1` head is recorded in the PR #2 description, because a commit cannot contain its own CI result. **Phase 1 counts as conditionally closed only once that run is green.**
+
+### GPU status at closure
+
+- **Verified:** manual-test checks C1–C4, automated on this Mac (Apple M5 Pro, Chrome 158): WebGPU on a physical adapter and WebGL2, including World mode and the rebuild study.
+- **Pending, not waived:** the Windows RTX 5070 run, and the human checks C5 (hatching stability under orbit) and C6 (frame feel).
+
