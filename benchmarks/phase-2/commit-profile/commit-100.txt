@@ -1,0 +1,13 @@
+### before (0dead22, full audit and full clone on every commit)
+entities=100 rounds=120 load=7.4/14.1/22.7
+one detach: n=120 p50=2.41 p95=3.20 p99=4.94 ms
+apply 8x4x8 wave proposal: n=120 p50=9.59 p95=12.82 p99=19.60 ms
+hashState: n=120 p50=0.75 p95=1.15 p99=1.91 ms
+heap growth per retained state (10 kept, no forced GC): 3.18 MiB
+
+### after (incremental validation, structural sharing, fragment-cached canonical text)
+entities=100 rounds=120 load=7.4/14.1/22.7
+one detach: n=120 p50=0.34 p95=0.54 p99=0.78 ms
+apply 8x4x8 wave proposal: n=120 p50=6.07 p95=8.22 p99=10.94 ms
+hashState: n=120 p50=0.22 p95=0.39 p99=0.71 ms
+heap growth per retained state (10 kept, no forced GC): 6.71 MiB

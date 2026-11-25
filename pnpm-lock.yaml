@@ -73,7 +73,20 @@ importers:
         specifier: 8.3.8
         version: 8.3.8(@types/node@26.6.6)
 
-  benchmarks: {}
+  benchmarks:
+    devDependencies:
+      '@eschaton/foldon':
+        specifier: workspace:*
+        version: link:../packages/foldon
+      '@eschaton/wave':
+        specifier: workspace:*
+        version: link:../packages/wave
+      '@eschaton/world':
+        specifier: workspace:*
+        version: link:../packages/world
+      vitest:
+        specifier: 5.1.1
+        version: 5.1.1(@types/node@26.6.6)(vite@8.3.8(@types/node@26.6.6))
 
   experiments/wfc-placement:
     devDependencies:

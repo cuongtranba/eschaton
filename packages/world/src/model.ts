@@ -114,7 +114,7 @@ export function matedBonds(catalog: Catalog, entities: readonly Entity[], only?:
   return bondsFromContacts(catalog, touching);
 }
 
-export function sortBonds(bonds: readonly Bond[], entities: readonly Entity[]): readonly Bond[] {
+export function bondComparator(entities: readonly Entity[]): (x: Bond, y: Bond) => number {
   const order = new Map(entities.map((entity, i) => [entity.id, i]));
   const key = (bond: Bond): readonly (number | string)[] => [
     order.get(bond.a.entity) ?? -1,
@@ -124,15 +124,21 @@ export function sortBonds(bonds: readonly Bond[], entities: readonly Entity[]): 
     cellKey(bond.b.cell),
     bond.b.face,
   ];
-  return [...bonds].sort((x, y) => {
+  return (x, y) => {
     const [kx, ky] = [key(x), key(y)];
     for (let i = 0; i < kx.length; i++) {
       const [p, q] = [kx[i] ?? 0, ky[i] ?? 0];
       if (p !== q) return p < q ? -1 : 1;
     }
     return 0;
-  });
+  };
 }
+
+export function sortBonds(bonds: readonly Bond[], entities: readonly Entity[]): readonly Bond[] {
+  return [...bonds].sort(bondComparator(entities));
+}
+
+export { structuralStrength };
 
 export type PlacementRef = Readonly<{ kind: "foldon" | "assembly"; id: string; version?: number }>;
 export type Leaf = Readonly<{ id: FoldonId; version: number; anchor: Cell; rotation: Rotation }>;

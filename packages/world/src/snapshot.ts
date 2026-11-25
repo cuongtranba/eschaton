@@ -1,5 +1,6 @@
 import { err, ok, type Catalog, type Cell, type Face, type Result, type Rotation, type Vec3 } from "@eschaton/foldon";
 import { deepFreeze } from "./canonical";
+import { trust } from "./delta";
 import { checkInvariants } from "./invariants";
 import { worldIssue, type WorldIssue } from "./issues";
 import {
@@ -218,5 +219,8 @@ export function parseSnapshot(catalog: Catalog, input: string): Result<WorldStat
   const mismatch = versionIssues(catalog, state.header.versions);
   if (mismatch.length > 0) return err(mismatch);
   const broken = checkInvariants(catalog, state);
-  return broken.length > 0 ? err(broken) : ok(deepFreeze(state));
+  if (broken.length > 0) return err(broken);
+  const frozen = deepFreeze(state);
+  trust(catalog, frozen);
+  return ok(frozen);
 }

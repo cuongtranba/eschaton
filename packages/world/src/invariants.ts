@@ -14,7 +14,7 @@ export function transformIssue(transform: ContinuousTransform): string | undefin
   return undefined;
 }
 
-const before = (a: Stamp, b: Stamp): boolean => a.revision < b.revision || (a.revision === b.revision && a.ordinal < b.ordinal);
+export const before = (a: Stamp, b: Stamp): boolean => a.revision < b.revision || (a.revision === b.revision && a.ordinal < b.ordinal);
 
 export function materialTotals(entities: readonly Entity[]): Readonly<Record<string, number>> {
   const totals: Record<string, number> = {};
@@ -25,57 +25,62 @@ export function materialTotals(entities: readonly Entity[]): Readonly<Record<str
   return totals;
 }
 
+export function entityIssuesOf(catalog: Catalog, revision: number, entity: Entity, validPoses: Map<string, boolean>, issues: WorldIssue[]): void {
+  const label = `entity ${entity.id}`;
+  if (entity.id !== entityIdOf(entity.created) || entity.created.revision > revision) {
+    issues.push(worldIssue("id-invalid", `${label} does not match its creation stamp`));
+  }
+  if (!Number.isSafeInteger(entity.quantity) || entity.quantity < 1) {
+    issues.push(worldIssue("quantity-invalid", `${label} quantity must be an integer >= 1`));
+  }
+  const definition = definitionOf(catalog, entity.definition);
+  if (definition === undefined) {
+    issues.push(worldIssue("ref-unknown", `${label} references unknown definition ${entity.definition.id}@${entity.definition.version}`));
+    return;
+  }
+  if (renderableMaterial(definition) !== entity.material) {
+    issues.push(worldIssue("material-missing", `${label} material does not match its definition`));
+  }
+  const creases = definition.geometry.creases.map((crease) => crease.id as string).sort();
+  const folded = Object.keys(entity.fold).sort();
+  const poseKey = `${definition.id}@${definition.version}|${folded.map((key) => `${key}=${entity.fold[key] ?? Number.NaN}`).join(",")}`;
+  const valid = validPoses.get(poseKey) ?? poseGeometry(definition.geometry, entity.fold).ok;
+  validPoses.set(poseKey, valid);
+  if (creases.join("|") !== folded.join("|") || !valid) {
+    issues.push(worldIssue("fold-invalid", `${label} fold angles do not form a valid pose`));
+  }
+  const { owner } = entity;
+  switch (owner.kind) {
+    case "placed":
+      if (!definition.rotations.includes(owner.rotation)) {
+        issues.push(worldIssue("rotation-not-allowed", `${label} uses rotation ${owner.rotation}, which its definition does not allow`));
+      }
+      break;
+    case "detached": {
+      const problem = transformIssue(owner.transform);
+      if (problem !== undefined) issues.push(worldIssue("transform-invalid", `${label}: ${problem}`));
+      break;
+    }
+    case "inventory":
+      if (owner.store.length === 0) issues.push(worldIssue("owner-invalid", `${label} is held by an unnamed store`));
+      break;
+    case "consumed":
+      if (owner.by > revision) issues.push(worldIssue("owner-invalid", `${label} is consumed in the future`));
+      break;
+  }
+}
+
 function entityIssues(catalog: Catalog, state: WorldState): WorldIssue[] {
   const issues: WorldIssue[] = [];
   const validPoses = new Map<string, boolean>();
   let previous: Stamp | undefined;
   for (const entity of state.entities) {
-    const label = `entity ${entity.id}`;
-    if (entity.id !== entityIdOf(entity.created) || entity.created.revision > state.header.revision) {
-      issues.push(worldIssue("id-invalid", `${label} does not match its creation stamp`));
-    }
+    const at = issues.length;
+    entityIssuesOf(catalog, state.header.revision, entity, validPoses, issues);
     if (previous !== undefined && !before(previous, entity.created)) {
-      issues.push(worldIssue("id-invalid", `${label} is not in creation order`));
+      issues.splice(Math.min(issues.length, at + (issues[at]?.code === "id-invalid" ? 1 : 0)), 0, worldIssue("id-invalid", `entity ${entity.id} is not in creation order`));
     }
     previous = entity.created;
-    if (!Number.isSafeInteger(entity.quantity) || entity.quantity < 1) {
-      issues.push(worldIssue("quantity-invalid", `${label} quantity must be an integer >= 1`));
-    }
-    const definition = definitionOf(catalog, entity.definition);
-    if (definition === undefined) {
-      issues.push(worldIssue("ref-unknown", `${label} references unknown definition ${entity.definition.id}@${entity.definition.version}`));
-      continue;
-    }
-    if (renderableMaterial(definition) !== entity.material) {
-      issues.push(worldIssue("material-missing", `${label} material does not match its definition`));
-    }
-    const creases = definition.geometry.creases.map((crease) => crease.id as string).sort();
-    const folded = Object.keys(entity.fold).sort();
-    const poseKey = `${definition.id}@${definition.version}|${folded.map((key) => `${key}=${entity.fold[key] ?? Number.NaN}`).join(",")}`;
-    const valid = validPoses.get(poseKey) ?? poseGeometry(definition.geometry, entity.fold).ok;
-    validPoses.set(poseKey, valid);
-    if (creases.join("|") !== folded.join("|") || !valid) {
-      issues.push(worldIssue("fold-invalid", `${label} fold angles do not form a valid pose`));
-    }
-    const { owner } = entity;
-    switch (owner.kind) {
-      case "placed":
-        if (!definition.rotations.includes(owner.rotation)) {
-          issues.push(worldIssue("rotation-not-allowed", `${label} uses rotation ${owner.rotation}, which its definition does not allow`));
-        }
-        break;
-      case "detached": {
-        const problem = transformIssue(owner.transform);
-        if (problem !== undefined) issues.push(worldIssue("transform-invalid", `${label}: ${problem}`));
-        break;
-      }
-      case "inventory":
-        if (owner.store.length === 0) issues.push(worldIssue("owner-invalid", `${label} is held by an unnamed store`));
-        break;
-      case "consumed":
-        if (owner.by > state.header.revision) issues.push(worldIssue("owner-invalid", `${label} is consumed in the future`));
-        break;
-    }
   }
   return issues;
 }
@@ -98,7 +103,7 @@ function placementIssues(catalog: Catalog, state: WorldState, touching: readonly
   return issues;
 }
 
-function lineageIssues(state: WorldState): WorldIssue[] {
+export function lineageIssues(state: WorldState): WorldIssue[] {
   const created = new Map<EntityId, Stamp>(state.entities.map((entity) => [entity.id, entity.created]));
   const issues: WorldIssue[] = [];
   const forward = (from: EntityId, to: EntityId): void => {
@@ -130,7 +135,7 @@ function lineageIssues(state: WorldState): WorldIssue[] {
   return issues;
 }
 
-function conservationIssues(state: WorldState): WorldIssue[] {
+export function conservationIssues(state: WorldState): WorldIssue[] {
   if (state.conservation === "off") return [];
   const { baseline } = state.conservation;
   const totals = materialTotals(state.entities);

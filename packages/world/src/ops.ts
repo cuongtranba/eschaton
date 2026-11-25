@@ -46,7 +46,8 @@ export type Draft = {
   readonly revision: Revision;
   readonly entities: Map<EntityId, Entity>;
   readonly lineage: LineageRecord[];
-  readonly moved: Set<EntityId>;
+  /** Entities this patch created or changed, with the value they had before the patch (undefined when created). */
+  readonly touched: Map<EntityId, Entity | undefined>;
   bonds: Bond[];
   conservation: Conservation;
   nextOrdinal: number;
@@ -104,18 +105,21 @@ function mint(draft: Draft, resolved: Resolved, quantity: number, group: GroupId
   const ref: DefinitionRef = { id: resolved.definition.id, version: resolved.definition.version };
   const entity: Entity = { id: entityIdOf(created), created, definition: ref, material: resolved.material, quantity, group, fold: restFold(resolved.definition), owner };
   draft.entities.set(entity.id, entity);
+  draft.touched.set(entity.id, undefined);
   return entity;
 }
 
 const update = (draft: Draft, entity: Entity, change: Partial<Pick<Entity, "owner" | "fold">>): void => {
+  if (!draft.touched.has(entity.id)) draft.touched.set(entity.id, entity);
   draft.entities.set(entity.id, { ...entity, ...change });
 };
 
 export function settleBonds(catalog: Catalog, draft: Draft): void {
-  if (draft.moved.size === 0) return;
+  if (draft.touched.size === 0) return;
+  const moved = new Set(draft.touched.keys());
   draft.bonds = [
-    ...draft.bonds.filter((bond) => !draft.moved.has(bond.a.entity) && !draft.moved.has(bond.b.entity)),
-    ...matedBonds(catalog, [...draft.entities.values()], draft.moved),
+    ...draft.bonds.filter((bond) => !moved.has(bond.a.entity) && !moved.has(bond.b.entity)),
+    ...matedBonds(catalog, [...draft.entities.values()], moved),
   ];
 }
 
@@ -142,15 +146,12 @@ const instantiate: Handler<"instantiate"> = (catalog, draft, op, index) => {
   const resolved = resolvePlacement(catalog, op.ref, { anchor: op.anchor, rotation: op.rotation });
   if (!resolved.ok) return worldIssue("ref-unknown", resolved.error, index);
   const group: GroupId | null = op.ref.kind === "assembly" ? groupIdOf({ revision: draft.revision, ordinal: draft.nextOrdinal }) : null;
-  const placed = new Set<EntityId>();
   for (const leaf of [...resolved.value.leaves].sort(compareLeaves)) {
     const found = resolveDefinition(catalog, { id: leaf.id, version: leaf.version });
     if (typeof found === "string") return worldIssue("material-missing", found, index);
     const entity = mint(draft, found, 1, group, { kind: "placed", anchor: leaf.anchor, rotation: leaf.rotation });
-    placed.add(entity.id);
     draft.lineage.push({ kind: "instantiated", at: draft.revision, entity: entity.id, source: resolved.value.source });
   }
-  for (const id of placed) draft.moved.add(id);
   return undefined;
 };
 
@@ -159,7 +160,6 @@ const detach: Handler<"detach"> = (_catalog, draft, op, index) => {
   if (isIssue(entity)) return entity;
   if (entity.owner.kind !== "placed") return worldIssue("owner-invalid", `entity ${op.entity} is not placed`, index);
   update(draft, entity, { owner: { kind: "detached", transform: logicalTransform(entity.owner.anchor, entity.owner.rotation) } });
-  draft.moved.add(entity.id);
   draft.lineage.push({ kind: "detached", at: draft.revision, entity: entity.id });
   return undefined;
 };
@@ -171,7 +171,6 @@ const attach: Handler<"attach"> = (_catalog, draft, op, index) => {
   if (!isCell(op.anchor) || !isRotation(op.rotation)) return worldIssue("op-invalid", "attach needs an integer anchor cell and a rotation 0..3", index);
   update(draft, entity, { owner: { kind: "placed", anchor: op.anchor, rotation: op.rotation } });
   draft.lineage.push({ kind: "reattached", at: draft.revision, entity: entity.id });
-  draft.moved.add(entity.id);
   return undefined;
 };
 
@@ -181,7 +180,6 @@ const store: Handler<"store"> = (_catalog, draft, op, index) => {
   if (entity.owner.kind === "inventory") return worldIssue("owner-invalid", `entity ${op.entity} is already in a store`, index);
   if (typeof op.store !== "string" || op.store.length === 0) return worldIssue("op-invalid", "store needs a store id", index);
   update(draft, entity, { owner: { kind: "inventory", store: op.store } });
-  draft.moved.add(entity.id);
   draft.lineage.push({ kind: "stored", at: draft.revision, entity: entity.id });
   return undefined;
 };
@@ -254,7 +252,6 @@ const consume: Handler<"consume"> = (_catalog, draft, op, index) => {
   const closed = closedIssue(draft, "destroying material", index);
   if (closed !== undefined) return closed;
   update(draft, entity, { owner: { kind: "consumed", by: draft.revision, reason: "destroyed" } });
-  draft.moved.add(entity.id);
   draft.lineage.push({ kind: "consumed", at: draft.revision, entity: entity.id, reason: "destroyed" });
   return undefined;
 };

@@ -6,6 +6,7 @@ export {
   type CommitRecord,
   type Committed,
   type InstanceRef,
+  type PatchOptions,
   type Origin,
   type Patch,
   type Rejection,

@@ -1,0 +1,36 @@
+profile CPU.20261125.150019.78134.0.001.cpuprofile: 6468 ms sampled
+
+Inclusive time of the commit-path functions:
+   67.5%     4369 ms  applyPatch
+   37.4%     2420 ms  applyProposal
+    9.5%      616 ms  settleTouched
+    3.0%      196 ms  assemble
+    1.5%       98 ms  structuredClone
+    1.4%       91 ms  deepFreeze
+    0.0%        0 ms  checkInvariants
+    1.8%      114 ms  lineageIssues
+    0.0%        0 ms  conservationIssues
+   73.5%     4751 ms  hashState
+   11.3%      728 ms  canonicalState
+   62.3%     4029 ms  fnv1a64
+    1.5%       99 ms  readRegion
+
+Top self time:
+   62.2%     4024 ms  fnv1a64 src/hash.ts:31
+    4.5%      289 ms  list src/world.ts:67
+    4.3%      279 ms  fragment src/world.ts:56
+    3.2%      204 ms  settleTouched src/delta.ts:37
+    2.7%      172 ms  (garbage collector) :0
+    2.3%      147 ms  applyPatch src/patch.ts:41
+    1.9%      124 ms  canonicalJson src/hash.ts:51
+    1.8%      114 ms  lineageIssues src/invariants.ts:108
+    1.4%       93 ms  structuredClone worker/js_transferable:113
+    1.4%       91 ms  deepFreeze src/canonical.ts:5
+    1.0%       65 ms  (anonymous) src/model.ts:122
+    1.0%       64 ms  (program) :0
+    1.0%       62 ms  (anonymous) src/delta.ts:117
+    0.9%       58 ms  (idle) :0
+    0.9%       57 ms  cellKey src/model.ts:18
+    0.7%       48 ms  sortedKeys src/hash.ts:44
+    0.7%       44 ms  bondComparator src/model.ts:112
+    0.7%       42 ms  assemble src/patch.ts:25
