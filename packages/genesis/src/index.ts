@@ -6,3 +6,4 @@ export { createDistrictJob, districtRegion, generateDistrict, type DistrictJob, 
 export { auditDistrict } from "./audit";
 export { settleDistrict, type DistrictSettlement } from "./settle";
 export { continueFrom, type Continuation } from "./continuation";
+export { createGenesisHost, type GenesisHost, type GenesisHostOptions, type GenesisOutcome, type GenesisRequest, type GenesisResponse, type GenesisTiming } from "./host";
