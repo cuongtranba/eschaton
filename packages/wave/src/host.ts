@@ -1,5 +1,5 @@
-import { createCatalog, type CatalogInput } from "@eschaton/foldon";
-import { compileTiles, type TileSpec } from "./solver/compile";
+import { canonicalJson, createCatalog, type CatalogInput } from "@eschaton/foldon";
+import { compileTiles, type CompiledTiles, type TileSpec } from "./solver/compile";
 import { createSolve, type WaveOutcome, type WaveProblem, type WaveProgress, type WaveStats } from "./solver/solve";
 
 export type JobOutcome =
@@ -7,52 +7,104 @@ export type JobOutcome =
   | Readonly<{ kind: "cancelled"; stats: WaveStats }>
   | Readonly<{ kind: "failed"; reason: string }>;
 
+export type JobTiming = Readonly<{ compileMs: number; solveMs: number; slices: number; tilesCached: boolean }>;
+
 export type HostRequest =
-  | Readonly<{ type: "solve"; job: string; source: CatalogInput; fingerprint: string; tiles: readonly TileSpec[]; problem: WaveProblem; sliceNodes: number }>
+  | Readonly<{
+      type: "solve";
+      job: string;
+      source: CatalogInput;
+      fingerprint: string;
+      tiles: readonly TileSpec[];
+      problem: WaveProblem;
+      /** Decisions per solver step. A slice is one step, or as many steps as fit in `sliceMs`. */
+      sliceNodes: number;
+      sliceMs?: number;
+    }>
   | Readonly<{ type: "cancel"; job: string }>;
 
 export type HostResponse =
   | Readonly<{ type: "progress"; job: string; progress: WaveProgress }>
-  | Readonly<{ type: "done"; job: string; outcome: JobOutcome }>;
+  | Readonly<{ type: "done"; job: string; outcome: JobOutcome; timing: JobTiming }>;
 
 export type HostOptions = Readonly<{
   post: (message: HostResponse) => void;
   /** Runs the task later, after pending messages have been delivered. This is what makes cancellation possible. */
   schedule: (task: () => void) => void;
+  /** A monotonic clock in milliseconds, for timings and time-based slices. Without it timings are zero. */
+  now?: () => number;
 }>;
 
 export type WaveHost = Readonly<{ receive: (message: HostRequest) => void }>;
 
+const NO_TIMING: JobTiming = { compileMs: 0, solveMs: 0, slices: 0, tilesCached: false };
+const describe = (error: unknown): string => (error instanceof Error ? error.message : String(error));
+
 /**
  * Runs solve jobs in slices. Between slices control returns to the scheduler, so a `cancel` message can arrive.
- * Progress messages are previews only; the single authoritative result of a job is its `done` message.
+ * Progress messages are previews only; the single authoritative result of a job is its `done` message, and every
+ * accepted job gets exactly one, also when the solver throws.
  */
 export function createWaveHost(options: HostOptions): WaveHost {
+  const now = options.now ?? (() => 0);
   const cancelled = new Set<string>();
   const running = new Set<string>();
+  let cache: Readonly<{ key: string; tiles: CompiledTiles }> | undefined;
+
+  const compiledFor = (message: Extract<HostRequest, { type: "solve" }>): CompiledTiles | string => {
+    const key = `${message.fingerprint}|${canonicalJson(message.tiles)}`;
+    if (cache?.key === key) return cache.tiles;
+    const catalog = createCatalog(message.source);
+    if (!catalog.ok) return `the catalog source is invalid: ${catalog.error.map((issue) => issue.code).join(", ")}`;
+    if (catalog.value.fingerprint !== message.fingerprint) return "the catalog source does not match the expected fingerprint";
+    const tiles = compileTiles(catalog.value, message.tiles);
+    if (!tiles.ok) return tiles.error.join("; ");
+    cache = { key, tiles: tiles.value };
+    return tiles.value;
+  };
 
   const start = (message: Extract<HostRequest, { type: "solve" }>): JobOutcome | undefined => {
     const { job } = message;
     const failed = (reason: string): JobOutcome => ({ kind: "failed", reason });
     if (running.has(job)) return failed(`job ${job} is already running`);
     if (!Number.isSafeInteger(message.sliceNodes) || message.sliceNodes < 1) return failed("sliceNodes must be an integer >= 1");
-    const catalog = createCatalog(message.source);
-    if (!catalog.ok) return failed(`the catalog source is invalid: ${catalog.error.map((issue) => issue.code).join(", ")}`);
-    if (catalog.value.fingerprint !== message.fingerprint) return failed("the catalog source does not match the expected fingerprint");
-    const tiles = compileTiles(catalog.value, message.tiles);
-    if (!tiles.ok) return failed(tiles.error.join("; "));
-    const solve = createSolve(tiles.value, message.problem);
+    const budget = message.sliceMs ?? 0;
+    if (!Number.isFinite(budget) || budget < 0) return failed("sliceMs must be a number >= 0");
+    const compileStart = now();
+    const tilesCached = cache?.key === `${message.fingerprint}|${canonicalJson(message.tiles)}`;
+    const tiles = compiledFor(message);
+    if (typeof tiles === "string") return failed(tiles);
+    const solve = createSolve(tiles, message.problem);
+    const compileMs = now() - compileStart;
+    let solveMs = 0;
+    let slices = 0;
     running.add(job);
-    const slice = (): void => {
-      const outcome: JobOutcome | undefined = cancelled.has(job) ? { kind: "cancelled", stats: solve.progress().stats } : solve.step(message.sliceNodes);
-      if (outcome === undefined) {
-        options.post({ type: "progress", job, progress: solve.progress() });
-        options.schedule(slice);
-        return;
-      }
+    const finish = (outcome: JobOutcome): void => {
       running.delete(job);
       cancelled.delete(job);
-      options.post({ type: "done", job, outcome });
+      options.post({ type: "done", job, outcome, timing: { compileMs, solveMs, slices, tilesCached } });
+    };
+    const slice = (): void => {
+      if (cancelled.has(job)) {
+        finish({ kind: "cancelled", stats: solve.progress().stats });
+        return;
+      }
+      const sliceStart = now();
+      slices += 1;
+      let outcome: JobOutcome | undefined;
+      try {
+        do outcome = solve.step(message.sliceNodes);
+        while (outcome === undefined && now() - sliceStart < budget);
+      } catch (error) {
+        outcome = failed(`the solver failed: ${describe(error)}`);
+      }
+      solveMs += now() - sliceStart;
+      if (outcome !== undefined) {
+        finish(outcome);
+        return;
+      }
+      options.post({ type: "progress", job, progress: solve.progress() });
+      options.schedule(slice);
     };
     options.schedule(slice);
     return undefined;
@@ -64,8 +116,13 @@ export function createWaveHost(options: HostOptions): WaveHost {
         if (running.has(message.job)) cancelled.add(message.job);
         return;
       }
-      const refused = start(message);
-      if (refused !== undefined) options.post({ type: "done", job: message.job, outcome: refused });
+      let refused: JobOutcome | undefined;
+      try {
+        refused = start(message);
+      } catch (error) {
+        refused = { kind: "failed", reason: `the job could not start: ${describe(error)}` };
+      }
+      if (refused !== undefined) options.post({ type: "done", job: message.job, outcome: refused, timing: NO_TIMING });
     },
   };
 }

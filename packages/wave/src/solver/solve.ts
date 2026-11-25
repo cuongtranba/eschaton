@@ -134,38 +134,53 @@ export function createSolve(tiles: CompiledTiles, problem: WaveProblem): WaveSol
 
   const candidateVariant: number[] = [];
   const candidateOrigin: number[] = [];
-  const candidateCells: number[][] = [];
   const covering: number[][] = Array.from({ length: total }, () => []);
   const coveringLocal: number[][] = Array.from({ length: total }, () => []);
 
+  const slotCandidates: number[][] = Array.from({ length: total * 6 }, () => []);
+  const slotSignatures: number[][] = Array.from({ length: total * 6 }, () => []);
+  const variantDeltas = tiles.variants.map((variant) => Int32Array.from(variant.cells, (offset) => (offset[1] * nz + offset[2]) * nx + offset[0]));
+  const NO_DELTAS = new Int32Array(0);
+  const deltasOf = (id: number): Int32Array => variantDeltas[candidateVariant[id] ?? 0] ?? NO_DELTAS;
+  const variantFaces = tiles.variants.map((variant) => Int32Array.from(variant.faces.flatMap((face) => [face.cell, face.direction, face.signature])));
+
   tiles.variants.forEach((variant, variantIndex) => {
     const count = variant.cells.length;
-    for (let origin = 0; origin < total; origin++) {
-      const [ox, oy, oz] = cellAt(origin);
-      const cells: number[] = [];
-      for (const offset of variant.cells) {
-        const index = indexOf(ox + offset[0], oy + offset[1], oz + offset[2]);
-        if (index < 0 || free[index] === 0) break;
-        cells.push(index);
-      }
-      if (cells.length !== count) continue;
-      let allowed = true;
-      for (const face of variant.faces) {
-        const slot = (cells[face.cell] ?? 0) * 6 + face.direction;
-        if (facing[slot] !== FREE_NEIGHBOUR && !fixedFaceAllows(slot, face.signature)) {
-          allowed = false;
-          break;
+    const faces = variantFaces[variantIndex] ?? new Int32Array(0);
+    let [sx, sy, sz] = [0, 0, 0];
+    for (const offset of variant.cells) {
+      sx = Math.max(sx, offset[0] + 1);
+      sy = Math.max(sy, offset[1] + 1);
+      sz = Math.max(sz, offset[2] + 1);
+    }
+    const deltas = variantDeltas[variantIndex] ?? NO_DELTAS;
+    for (let oy = 0; oy + sy <= ny; oy++) {
+      for (let oz = 0; oz + sz <= nz; oz++) {
+        for (let ox = 0; ox + sx <= nx; ox++) {
+          const origin = (oy * nz + oz) * nx + ox;
+          let fits = true;
+          for (let local = 0; local < count && fits; local++) fits = free[origin + (deltas[local] ?? 0)] === 1;
+          if (!fits) continue;
+          let allowed = true;
+          for (let i = 0; i < faces.length && allowed; i += 3) {
+            const slot = (origin + (deltas[faces[i] ?? 0] ?? 0)) * 6 + (faces[i + 1] ?? 0);
+            allowed = facing[slot] === FREE_NEIGHBOUR || fixedFaceAllows(slot, faces[i + 2] ?? 0);
+          }
+          if (!allowed) continue;
+          const id = candidateVariant.length;
+          candidateVariant.push(variantIndex);
+          candidateOrigin.push(origin);
+          for (let local = 0; local < count; local++) {
+            const cell = origin + (deltas[local] ?? 0);
+            covering[cell]?.push(id);
+            coveringLocal[cell]?.push(local);
+          }
+          for (let i = 0; i < faces.length; i += 3) {
+            const slot = (origin + (deltas[faces[i] ?? 0] ?? 0)) * 6 + (faces[i + 1] ?? 0);
+            slotCandidates[slot]?.push(id);
+            slotSignatures[slot]?.push(faces[i + 2] ?? 0);
+          }
         }
-      }
-      if (!allowed) continue;
-      const id = candidateVariant.length;
-      candidateVariant.push(variantIndex);
-      candidateOrigin.push(origin);
-      candidateCells.push(cells);
-      for (let local = 0; local < count; local++) {
-        const cell = cells[local] ?? 0;
-        covering[cell]?.push(id);
-        coveringLocal[cell]?.push(local);
       }
     }
   });
@@ -173,6 +188,8 @@ export function createSolve(tiles: CompiledTiles, problem: WaveProblem): WaveSol
   const candidates = candidateVariant.length;
   const alive = new Uint8Array(candidates).fill(1);
   const aliveCount = new Int32Array(total);
+  const aliveWeight = new Int32Array(total);
+  const candidateWeight = Int32Array.from(candidateVariant, (variant) => tiles.variants[variant]?.weight ?? 0);
   const airAlive = new Uint8Array(total);
   const decided = new Int32Array(total).fill(UNDECIDED);
   const support = new Int32Array(total * 6 * signatures);
@@ -183,6 +200,7 @@ export function createSolve(tiles: CompiledTiles, problem: WaveProblem): WaveSol
       continue;
     }
     aliveCount[index] = covering[index]?.length ?? 0;
+    for (const id of covering[index] ?? []) aliveWeight[index] = (aliveWeight[index] ?? 0) + (candidateWeight[id] ?? 0);
     let airAllowed = true;
     for (let direction = 0; direction < 6; direction++) {
       const other = facing[index * 6 + direction] ?? FACES_AIR;
@@ -218,15 +236,11 @@ export function createSolve(tiles: CompiledTiles, problem: WaveProblem): WaveSol
   };
 
   const bumpCandidate = (id: number, delta: number): void => {
-    const sides = variantSides[candidateVariant[id] ?? 0];
-    const cells = candidateCells[id] ?? [];
-    if (sides === undefined) return;
-    for (let local = 0; local < cells.length; local++) {
-      for (let direction = 0; direction < 6; direction++) {
-        const signature = sides[local * 6 + direction] ?? -1;
-        if (signature >= 0) bump(cells[local] ?? 0, direction, signature, delta);
-      }
-    }
+    const faces = variantFaces[candidateVariant[id] ?? 0];
+    const deltas = deltasOf(id);
+    const origin = candidateOrigin[id] ?? 0;
+    if (faces === undefined) return;
+    for (let i = 0; i < faces.length; i += 3) bump(origin + (deltas[faces[i] ?? 0] ?? 0), faces[i + 1] ?? 0, faces[i + 2] ?? 0, delta);
   };
   for (let id = 0; id < candidates; id++) bumpCandidate(id, 1);
 
@@ -242,8 +256,13 @@ export function createSolve(tiles: CompiledTiles, problem: WaveProblem): WaveSol
     if (alive[id] === 0) return;
     alive[id] = 0;
     trail.push(id);
-    for (const cell of candidateCells[id] ?? []) {
+    const weight = candidateWeight[id] ?? 0;
+    const deltas = deltasOf(id);
+    const origin = candidateOrigin[id] ?? 0;
+    for (const delta of deltas) {
+      const cell = origin + delta;
       aliveCount[cell] = (aliveCount[cell] ?? 0) - 1;
+      aliveWeight[cell] = (aliveWeight[cell] ?? 0) - weight;
       if (domainOf(cell) === 0) contradiction = true;
     }
     bumpCandidate(id, -1);
@@ -262,21 +281,28 @@ export function createSolve(tiles: CompiledTiles, problem: WaveProblem): WaveSol
     return variantSides[candidateVariant[id] ?? 0]?.[(coveringLocal[cell]?.[k] ?? 0) * 6 + direction] ?? -1;
   };
 
+  const verdict = new Int8Array(signatures);
   const revise = (slot: number): void => {
     const index = Math.floor(slot / 6);
     const direction = slot % 6;
     const other = neighbour(index, direction);
     const base = (other * 6 + (OPPOSITE[direction] ?? 0)) * words;
     const otherAir = airAlive[other] === 1;
-    const here = covering[index] ?? [];
+    const here = slotCandidates[slot] ?? [];
+    const sides = slotSignatures[slot] ?? [];
+    verdict.fill(0);
     for (let k = 0; k < here.length; k++) {
       const id = here[k] ?? 0;
       if (alive[id] === 0) continue;
-      const signature = sideOf(index, k, direction);
-      if (signature < 0 || (otherAir && !tiles.needsMate(signature))) continue;
-      let ok = false;
-      for (let w = 0; w < words && !ok; w++) ok = ((present[base + w] ?? 0) & (legalMask[signature * words + w] ?? 0)) !== 0;
-      if (!ok) kill(id);
+      const signature = sides[k] ?? 0;
+      let known = verdict[signature] ?? 0;
+      if (known === 0) {
+        let ok = otherAir && !tiles.needsMate(signature);
+        for (let w = 0; w < words && !ok; w++) ok = ((present[base + w] ?? 0) & (legalMask[signature * words + w] ?? 0)) !== 0;
+        known = ok ? 1 : -1;
+        verdict[signature] = known;
+      }
+      if (known < 0) kill(id);
     }
     if (airAlive[index] === 1 && !otherAir) {
       let ok = false;
@@ -303,7 +329,14 @@ export function createSolve(tiles: CompiledTiles, problem: WaveProblem): WaveSol
       const entry = trail.pop() ?? 0;
       if (entry >= 0) {
         alive[entry] = 1;
-        for (const cell of candidateCells[entry] ?? []) aliveCount[cell] = (aliveCount[cell] ?? 0) + 1;
+        const weight = candidateWeight[entry] ?? 0;
+        const deltas = deltasOf(entry);
+        const origin = candidateOrigin[entry] ?? 0;
+        for (const delta of deltas) {
+          const cell = origin + delta;
+          aliveCount[cell] = (aliveCount[cell] ?? 0) + 1;
+          aliveWeight[cell] = (aliveWeight[cell] ?? 0) + weight;
+        }
         bumpCandidate(entry, 1);
       } else {
         airAlive[-1 - entry] = 1;
@@ -314,13 +347,15 @@ export function createSolve(tiles: CompiledTiles, problem: WaveProblem): WaveSol
     contradiction = false;
   };
 
+  const cellsOf = (id: number): number[] => Array.from(deltasOf(id), (delta) => (candidateOrigin[id] ?? 0) + delta);
+
   const commitOption = (index: number, option: number): void => {
     if (option === AIR) {
       for (const id of covering[index] ?? []) kill(id);
       decided[index] = AIR;
       return;
     }
-    for (const cell of candidateCells[option] ?? []) {
+    for (const cell of cellsOf(option)) {
       for (const id of covering[cell] ?? []) if (id !== option) kill(id);
       killAir(cell);
       decided[cell] = option;
@@ -392,8 +427,7 @@ export function createSolve(tiles: CompiledTiles, problem: WaveProblem): WaveSol
       if (decided[index] !== UNDECIDED) continue;
       const count = domainOf(index);
       if (best >= 0 && count > bestCount) continue;
-      let weight = airAlive[index] === 1 ? problem.airWeight : 0;
-      for (const id of covering[index] ?? []) if (alive[id] === 1) weight += tiles.variants[candidateVariant[id] ?? 0]?.weight ?? 0;
+      const weight = (airAlive[index] === 1 ? problem.airWeight : 0) + (aliveWeight[index] ?? 0);
       if (best < 0 || count < bestCount || weight < bestWeight) {
         best = index;
         bestCount = count;
@@ -404,12 +438,11 @@ export function createSolve(tiles: CompiledTiles, problem: WaveProblem): WaveSol
   };
 
   const drawOption = (index: number): number => {
-    let sum = airAlive[index] === 1 ? problem.airWeight : 0;
-    for (const id of covering[index] ?? []) if (alive[id] === 1) sum += tiles.variants[candidateVariant[id] ?? 0]?.weight ?? 0;
+    const sum = (airAlive[index] === 1 ? problem.airWeight : 0) + (aliveWeight[index] ?? 0);
     let roll = random() % sum;
     for (const id of covering[index] ?? []) {
       if (alive[id] === 0) continue;
-      roll -= tiles.variants[candidateVariant[id] ?? 0]?.weight ?? 0;
+      roll -= candidateWeight[id] ?? 0;
       if (roll < 0) return id;
     }
     return AIR;
@@ -459,7 +492,7 @@ export function createSolve(tiles: CompiledTiles, problem: WaveProblem): WaveSol
       }
       nodes += 1;
       const option = drawOption(cell);
-      const cells = option === AIR ? [cell] : (candidateCells[option] ?? []);
+      const cells = option === AIR ? [cell] : cellsOf(option);
       frames.push({ mark: trail.length, cell, option, cells });
       commitOption(cell, option);
       propagate();

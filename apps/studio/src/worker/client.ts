@@ -1,7 +1,7 @@
 import type { Catalog } from "@eschaton/foldon";
-import type { HostRequest, HostResponse, JobOutcome, TileSpec, WaveProblem, WaveProgress } from "@eschaton/wave";
+import type { HostRequest, HostResponse, JobOutcome, JobTiming, TileSpec, WaveProblem, WaveProgress } from "@eschaton/wave";
 
-export type WaveHandlers = Readonly<{ onProgress: (progress: WaveProgress) => void; onDone: (outcome: JobOutcome) => void }>;
+export type WaveHandlers = Readonly<{ onProgress: (progress: WaveProgress) => void; onDone: (outcome: JobOutcome, timing: JobTiming) => void }>;
 
 export type WaveClient = Readonly<{
   solve: (job: string, catalog: Catalog, tiles: readonly TileSpec[], problem: WaveProblem, handlers: WaveHandlers) => void;
@@ -9,7 +9,9 @@ export type WaveClient = Readonly<{
   dispose: () => void;
 }>;
 
-const SLICE_NODES = 16;
+const SLICE_NODES = 32;
+const SLICE_MS = 12;
+const NO_TIMING: JobTiming = { compileMs: 0, solveMs: 0, slices: 0, tilesCached: false };
 const PREVIEW_INTERVAL_MS = 150;
 
 /** Owns the solver worker. Results come back as messages; nothing here touches world state. */
@@ -31,18 +33,18 @@ export function createWaveClient(): WaveClient {
       return;
     }
     jobs.delete(message.job);
-    handlers.onDone(message.outcome);
+    handlers.onDone(message.outcome, message.timing);
   };
   worker.onerror = (event) => {
     for (const [job, handlers] of jobs) {
       jobs.delete(job);
-      handlers.onDone({ kind: "failed", reason: event.message });
+      handlers.onDone({ kind: "failed", reason: event.message }, NO_TIMING);
     }
   };
   return {
     solve: (job, catalog, tiles, problem, handlers) => {
       jobs.set(job, handlers);
-      send({ type: "solve", job, source: catalog.source(), fingerprint: catalog.fingerprint, tiles, problem, sliceNodes: SLICE_NODES });
+      send({ type: "solve", job, source: catalog.source(), fingerprint: catalog.fingerprint, tiles, problem, sliceNodes: SLICE_NODES, sliceMs: SLICE_MS });
     },
     cancel: (job) => { send({ type: "cancel", job }); },
     dispose: () => { worker.terminate(); },

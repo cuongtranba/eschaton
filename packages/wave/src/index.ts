@@ -11,5 +11,5 @@ export {
   type WaveStats,
 } from "./solver/solve";
 export { prepareRegion, proposalOf, type RegionJob, type RegionRequest } from "./region";
-export { createWaveHost, type HostOptions, type HostRequest, type HostResponse, type JobOutcome, type WaveHost } from "./host";
+export { createWaveHost, type HostOptions, type HostRequest, type HostResponse, type JobOutcome, type JobTiming, type WaveHost } from "./host";
 export { goldenDigest, goldenPresetDigest, placementDigest } from "./golden";

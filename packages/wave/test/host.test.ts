@@ -1,4 +1,4 @@
-import { presetCatalog, type Catalog } from "@eschaton/foldon";
+import { presetCatalog, type Catalog, type CatalogInput } from "@eschaton/foldon";
 import { compileTiles, createWaveHost, solve, type HostRequest, type HostResponse, type TileSpec, type WaveProblem } from "@eschaton/wave";
 import { expect, test } from "vitest";
 
@@ -55,4 +55,30 @@ test("a catalog source that does not match the expected fingerprint fails the jo
   host.receive(request("c", "0000000000000000"));
   while (runOne());
   expect(posted.map((message) => (message.type === "done" ? message.outcome.kind : message.type))).toEqual(["failed"]);
+});
+
+test("a job whose catalog source is malformed ends as failed instead of hanging", () => {
+  const { host, posted, runOne } = harness();
+  const broken = JSON.parse('{"foldons":[{"id":"x"}],"assemblies":[]}') as CatalogInput;
+  host.receive({ type: "solve", job: "d", source: broken, fingerprint: "0", tiles, problem, sliceNodes: 20 });
+  while (runOne());
+  expect(posted.map((message) => (message.type === "done" ? message.outcome.kind : message.type))).toEqual(["failed"]);
+});
+
+test("with a clock, a slice keeps working until its time budget and the job reports compile and solve time", () => {
+  const posted: HostResponse[] = [];
+  const tasks: (() => void)[] = [];
+  let clock = 0;
+  const host = createWaveHost({ post: (message) => posted.push(message), schedule: (task) => tasks.push(task), now: () => (clock += 1) });
+  const request: HostRequest = { type: "solve", job: "e", source: catalog.source(), fingerprint: catalog.fingerprint, tiles, problem, sliceNodes: 4, sliceMs: 1_000_000 };
+  host.receive(request);
+  for (let task = tasks.shift(); task !== undefined; task = tasks.shift()) task();
+  host.receive({ ...request, job: "f" });
+  for (let task = tasks.shift(); task !== undefined; task = tasks.shift()) task();
+  const done = posted.filter((message) => message.type === "done");
+  expect(posted.filter((message) => message.type === "progress")).toEqual([]);
+  expect(done.map((message) => [message.outcome.kind, message.timing.slices, message.timing.solveMs > 0, message.timing.tilesCached])).toEqual([
+    ["solved", 1, true, false],
+    ["solved", 1, true, true],
+  ]);
 });
