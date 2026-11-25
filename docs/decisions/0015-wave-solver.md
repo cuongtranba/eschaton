@@ -54,7 +54,7 @@ ADR 0004 recommended the placement encoding from a 2D throwaway experiment. Phas
 - **Propagation was rewritten once, on a measurement.** The first version revised every neighbouring candidate on each change and took about 2.5 s for 16×8×16 with the town tile set. Face queues (only the faces whose support changed) plus signature bitmasks took the same solves to about 70 ms, with identical placements.
 - **Weights.** A tile's weight applies per candidate. A large tile covers a cell from many anchors, so it is drawn more often than its weight alone suggests; the tile list is where that is tuned.
 - **Job host:** `packages/wave/src/host.ts` (`createWaveHost`) runs a job in slices through an injected scheduler, posts progress previews and one `done` message (`solved`, `unsatisfiable`, `budget-exceeded`, `invalid`, `cancelled`, `failed`). It rebuilds the catalog from `catalog.source()` and refuses a fingerprint mismatch. The Studio owns the actual `Worker` (`apps/studio/src/worker/`).
-- **Tests:** `packages/wave/test/solver.test.ts` (12) and `host.test.ts` (3); Studio `e2e/wave.spec.ts` (5) against the real worker.
+- **Tests:** `packages/wave/test/solver.test.ts` (12) and `host.test.ts` (3 when written; 5 on `main` @ `d673f84`); Studio `e2e/wave.spec.ts` (5) against the real worker.
 - **Benchmarks:** `benchmarks/phase-2/`; summary in [`../phase-2-exit.md`](../phase-2-exit.md).
 
 ## Amendments (owner W4, 2026-11-25)

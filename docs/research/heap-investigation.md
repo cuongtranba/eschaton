@@ -1,6 +1,6 @@
 # Studio JS heap growth across reset cycles (C-T2)
 
-Status: **root cause found in our code and fixed.** The growth reported in the original Phase 0 benchmark report §4 (`benchmarks/phase-0-2026-11-24.md` at commit `4cecd5b`, since replaced; 12.1 → 24.9 MB over 20 reset cycles) is a real retention bug in `labRenderer.ts`, not a three.js cache or a measurement artefact. After the fix the heap plateaus. Confidence: high for the root cause (verified three ways, below); medium for the residual ~12 KB/cycle drift, which is not visible in heap snapshots.
+Status: **root cause found in our code and fixed.** The growth reported in the original Phase 0 benchmark report §4 (`benchmarks/phase-0-2026-11-24.md`, which existed at commit `4cecd5b` and was removed by `af863be` as superseded dirty-tree evidence; it is not in the current tree, so read it with `git show 4cecd5b:benchmarks/phase-0-2026-11-24.md`, and the current evidence is [`benchmarks/phase-0/2026-11-24-e9e50c527/report.md`](../../benchmarks/phase-0/2026-11-24-e9e50c527/report.md); 12.1 → 24.9 MB over 20 reset cycles) is a real retention bug in `labRenderer.ts`, not a three.js cache or a measurement artefact. After the fix the heap plateaus. Confidence: high for the root cause (verified three ways, below); medium for the residual ~12 KB/cycle drift, which is not visible in heap snapshots.
 
 ## Summary
 
@@ -140,7 +140,7 @@ After the fix the CDP heap still drifts ~0.012–0.017 MB per cycle (c20→c40),
 
 ## Scripts
 
-The scripts are throwaway tools kept here instead of in the repository.
+The scripts are throwaway tools kept here instead of in the repository. Their absolute paths name the `phase-0` worktree as it was on 2026-11-24; that worktree is historical, so adjust the path to your checkout before running them.
 
 `measure.mjs`:
 

@@ -67,8 +67,8 @@ The read set is compared **by content, not by revision**. If the region changes 
 
 ## Implementation (Phase 2)
 
-- **World:** `packages/world/src/region.ts` (`readRegion`, `applyProposal`, `cellInRegion`). Tests: `packages/world/test/region.test.ts` (10), including the shell rule (mutation-checked), the A → B → A case and replay of a rebased commit.
-- **Glue:** `packages/wave/src/region.ts` (`prepareRegion`, `proposalOf`). Tests: `packages/wave/test/region.test.ts` (8).
+- **World:** `packages/world/src/region.ts` (`readRegion`, `applyProposal`, `cellInRegion`). Tests: `packages/world/test/region.test.ts` (10 when written; 12 on `main` @ `d673f84`), including the shell rule (mutation-checked), the A → B → A case and replay of a rebased commit.
+- **Glue:** `packages/wave/src/region.ts` (`prepareRegion`, `proposalOf`). Tests: `packages/wave/test/region.test.ts` (8 when written; still 8 on `main` @ `d673f84`).
 - **Proposal ops** are `annotate` (an audit note with the region and solve seed), `consume` for cleared entities and `instantiate` for placements. Anything else is refused.
 - **Solve seed** is derived from the world seed, the request seed and the region, not from the revision, so a rebased result is the same result.
 - **Cost:** see the transaction profile in [`../phase-2-exit.md`](../phase-2-exit.md). `readRegion` and `applyProposal` scan the entity table once each; the commit itself is still O(world) (ADR 0011).
