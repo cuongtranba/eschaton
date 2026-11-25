@@ -15,6 +15,16 @@ export {
 } from "./patch";
 export { logicalTransform } from "./ops";
 export { checkInvariants } from "./invariants";
+export {
+  runSystem,
+  systemView,
+  windFold,
+  type ComponentKind,
+  type System,
+  type SystemEntity,
+  type SystemView,
+  type WindInput,
+} from "./systems";
 export { cellOccupant, findEntity } from "./queries";
 export { type WorldIssue, type WorldIssueCode } from "./issues";
 export {
