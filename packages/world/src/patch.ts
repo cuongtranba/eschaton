@@ -53,7 +53,8 @@ function assemble(state: WorldState, draft: Draft, bonds: readonly Bond[]): Worl
   return deepFreeze({ header: { ...state.header, revision: draft.revision }, entities, bonds: [...bonds], lineage, conservation });
 }
 
-export function applyPatch(catalog: Catalog, state: WorldState, patch: Patch, options: PatchOptions = {}): Result<Committed, Rejection> {
+/** Validates the patch and returns the state it produces. This is the whole commit except its record. */
+export function advance(catalog: Catalog, state: WorldState, patch: Patch, options: PatchOptions = {}): Result<WorldState, Rejection> {
   const mismatch = versionIssues(catalog, state.header.versions);
   if (mismatch.length > 0) return err({ kind: "invalid", issues: mismatch });
   const current = state.header.revision;
@@ -93,8 +94,15 @@ export function applyPatch(catalog: Catalog, state: WorldState, patch: Patch, op
     next = audited;
     trust(catalog, next);
   }
+  return ok(next);
+}
+
+export function applyPatch(catalog: Catalog, state: WorldState, patch: Patch, options: PatchOptions = {}): Result<Committed, Rejection> {
+  const advanced = advance(catalog, state, patch, options);
+  if (!advanced.ok) return advanced;
+  const next = advanced.value;
   const record: CommitRecord = deepFreeze(
-    structuredClone({ revision: draft.revision, tick: next.header.tick, origin: patch.origin, patch, stateHash: hashState(next) }),
+    structuredClone({ revision: next.header.revision, tick: next.header.tick, origin: patch.origin, patch, stateHash: hashState(next) }),
   );
   return ok({ state: next, record });
 }

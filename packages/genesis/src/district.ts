@@ -1,6 +1,6 @@
 import type { Catalog, Cell } from "@eschaton/foldon";
 import { compileTiles, prepareRegion, proposalOf, solve, type CompiledTiles } from "@eschaton/wave";
-import { applyPatch, applyProposal, createWorld, readRegion, type Origin, type Proposal, type Region, type WorldOp, type WorldState } from "@eschaton/world";
+import { applyPatch, createWorld, draftProposal, readRegion, type Origin, type Proposal, type Region, type WorldOp, type WorldState } from "@eschaton/world";
 import { planDistrict, type DistrictPlan, type Gate, type Lot, type Role } from "./plan";
 import type { DistrictPreset } from "./presets";
 import { scopedSeed } from "./seed";
@@ -118,9 +118,9 @@ export function createDistrictJob(catalog: Catalog, state: WorldState, request: 
       if (kind === "open" || kind === "lot") return;
       network.push({ op: "instantiate", ref: { kind: "foldon", id: GROUND_PIECE[kind] }, anchor: [at[0] + (index % width), at[1], at[2] + Math.floor(index / width)], rotation: 0 });
     });
-    const laid = applyProposal(catalog, scratch, { region, read: scratchRead, ops: network, origin: JOB_ORIGIN });
+    const laid = draftProposal(catalog, scratch, { region, read: scratchRead, ops: network, origin: JOB_ORIGIN });
     if (!laid.ok) return fail("network", laid.error.kind === "invalid" ? laid.error.issues.map((issue) => issue.code).join(", ") : laid.error.kind);
-    scratch = laid.value.state;
+    scratch = laid.value;
     ops.push(...network);
     stage = current.lots.length === 0 ? "done" : "lots";
     return undefined;
@@ -155,13 +155,13 @@ export function createDistrictJob(catalog: Catalog, state: WorldState, request: 
         continue;
       }
       const proposal = proposalOf(job.value, outcome, JOB_ORIGIN);
-      const applied = applyProposal(catalog, scratch, proposal);
+      const applied = draftProposal(catalog, scratch, proposal);
       if (!applied.ok) {
         diagnostics.push(`lot ${lot.id} (${lot.role}) attempt ${attempt} was rejected by the world: ${applied.error.kind}`);
         retries += 1;
         continue;
       }
-      scratch = applied.value.state;
+      scratch = applied.value;
       ops.push(...proposal.ops.filter((op) => op.op === "instantiate"));
       return;
     }

@@ -20,6 +20,7 @@ export { checkInvariants } from "./invariants";
 export {
   applyProposal,
   cellInRegion,
+  draftProposal,
   readRegion,
   type Proposal,
   type ProposalRejection,

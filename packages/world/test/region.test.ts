@@ -4,6 +4,7 @@ import {
   applyProposal,
   checkInvariants,
   createWorld,
+  draftProposal,
   hashState,
   readRegion,
   replay,
@@ -167,4 +168,15 @@ test("a proposal with a nonlocal dependency conflicts when that region changes a
   const unrelated = commit(base, box(40, 0, 40));
   const broken = commit(base, { op: "detach", entity: dependency.id });
   expect([verdict(applyProposal(catalog, unrelated, proposal)), verdict(applyProposal(catalog, broken, proposal))]).toEqual(["committed@3", "conflict"]);
+});
+
+test("drafting a proposal gives the state that committing it gives, and refuses what a commit refuses", () => {
+  const created = createWorld({ catalog, seed: 3 });
+  if (!created.ok) throw new Error("world must build");
+  const read = readRegion(catalog, created.value, region);
+  const proposal: Proposal = { region, read: { revision: read.revision, digest: read.digest }, ops: [box(10, 0, 10), box(11, 0, 10)], origin };
+  const [drafted, committed] = [draftProposal(catalog, created.value, proposal), applyProposal(catalog, created.value, proposal)];
+  const moved = commit(created.value, box(12, 0, 12));
+  const refused = draftProposal(catalog, moved, proposal);
+  expect([drafted.ok ? hashState(drafted.value) : "rejected", refused.ok ? "drafted" : refused.error.kind]).toEqual([committed.ok ? committed.value.record.stateHash : "", "conflict"]);
 });
