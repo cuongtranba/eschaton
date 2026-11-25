@@ -23,7 +23,7 @@ Questions that were not answered by D3 or D4 are marked **open owner question** 
 | [0011](0011-atomic-transactions-and-revisions.md) | Immutable snapshots, patches against a base revision (strict in Phase 1; read-region rebase required in Phase 2), atomic commit and an outcome log for replay | Accepted with amendments (D3, D4) |
 | [0012](0012-directional-sockets.md) | Orientation-aware sockets: in-face turn, per-profile symmetry (lcm rule) and side-face hand in one table | Accepted with amendments (D3, D4); the Q5 table placement is an interpretation for the owner to confirm |
 | [0013](0013-logical-vs-rendered-geometry.md) | Logical placements, decorative offsets (zero in Phase 1), fragments starting from the logical pose, and a separate backdrop | Accepted with amendments (D3, D4) |
-| 0014 | Bond model (Phase 1, before M4) | To be drafted on branch `phase-1`, scoped by plan decision P1-D11 |
+| [0014](0014-bond-model.md) | Bond record per mated socket pair, owned by the world, created when an entity becomes placed and removed when it leaves; strength is data only until Phase 4 | Proposed; core approved as P1-D11 (D4); two interpretations flagged for owner confirmation |
 
 ## Pending (not written in Phase 0)
 
