@@ -1,14 +1,15 @@
-# Architecture overview (Phase 0)
+# Architecture overview (Phase 0, extended in Phase 1)
 
-This describes the code as it is at the end of Phase 0 and compares it with the target architecture in [master plan §8](../master-plan.md). The plan's diagram shows runtime data flow, not imports; the diagram below shows both for the part that exists.
+This describes the code as it is at the end of Phase 0, plus the Phase 1 runtime package `@eschaton/world`, and compares it with the target architecture in [master plan §8](../master-plan.md). The plan's diagram shows runtime data flow, not imports; the diagram below shows both for the part that exists.
 
 ## What exists
 
-Four projects. Only the first two are product code.
+Five projects. The first three are product code.
 
 | Project | Package name | Role |
 |---|---|---|
 | `packages/foldon` | `@eschaton/foldon` | Pure TypeScript domain library: ids, `Result`, definitions, validation, geometry recipes and hinge posing, placement transforms, the P01–P09 catalog, assembly recipes, the catalog registry. No DOM, no three.js, no runtime dependencies. |
+| `packages/world` | `@eschaton/world` | Phase 1 runtime state: an immutable `WorldState` (header, entities, bonds, lineage, conservation), the only write path `applyPatch` (atomic, strict base revision), replay from the commit log, canonical snapshots and hashes, invariant checks, and derived queries (occupancy, contacts). Imports only `@eschaton/foldon`. ADRs 0010–0014. |
 | `apps/studio` | `@eschaton/studio` | Vite + React 19 laboratory: lab state, view-model building, the reference-scene generators, the renderer adapter, UI panels. |
 | `experiments/wfc-placement` | `@eschaton/exp-wfc-placement` | Throwaway solver comparison. Nothing imports it. See [ADR 0004](../decisions/0004-multi-cell-encoding.md). |
 | `tools/architecture` | `@eschaton/architecture` | Architecture test: lints virtual files against the repository ESLint config to prove each dependency rule rejects a violation. |
@@ -21,11 +22,11 @@ Four projects. Only the first two are product code.
 | foldon | **Exists** | `packages/foldon/src/` | Catalog, geometry recipes, assembly validation, canonical hashing. Owns definitions; does not own placement in a world. |
 | generation | **Experiment only** | `experiments/wfc-placement` | 2D throwaway; the Phase 2 solver will be new code. |
 | simulation | **Absent** | none | Component *data* exists on definitions; no system reads it ([ADR 0007](../decisions/0007-component-data-and-system-order.md)). |
-| world | **Absent in Phase 0; Phase 1 adds `@eschaton/world`** | none yet | The only mutable state is `LabState`, a UI reducer (`apps/studio/src/lab/state.ts`). There are no transactions, revisions or clock. Owner decision D4 approved the new package (ADR 0001 and ADR 0011 amendments). |
+| world | **Exists (Phase 1)** | `packages/world/src/` | The only mutable state is `LabState`, a UI reducer (`apps/studio/src/lab/state.ts`). There are no transactions, revisions or clock. Owner decision D4 approved the new package (ADR 0001 and ADR 0011 amendments). |
 | renderer | **Inside the Studio** | `apps/studio/src/renderer/` | Adapter from `ViewModel` to three.js; the only code that imports `three`. ([ADR 0005](../decisions/0005-renderer-webgpu-tsl-webgl2-fallback.md)) |
 | presets | **Absent** | none | The look palette and scene constants are code (`lab/look.ts`, `lab/palette.ts`, `lab/composition/`). |
 | studio | **Exists** | `apps/studio/src/{App,ui,lab}` | Sends commands to the reducer; never mutates domain definitions. |
-| persistence / replay | **Absent** | none | Definitions round-trip through JSON in tests; nothing is saved. |
+| persistence / replay | **Snapshot and replay exist (Phase 1)** | `packages/world/src/{world,snapshot,patch}.ts` | `serializeSnapshot` and `parseSnapshot` (version-checked); `replay` re-applies recorded patches and reports the first divergence. No storage backend. |
 
 ## Dependency direction
 
@@ -34,6 +35,7 @@ The allowed import graph is enforced by ESLint (`eslint.config.js`, `no-restrict
 ```mermaid
 flowchart TD
   F["@eschaton/foldon (pure domain)"]
+  W["@eschaton/world (pure runtime state)"]
   subgraph STUDIO["apps/studio/src"]
     UI["ui, App, main (React)"]
     R["renderer (three)"]
@@ -47,6 +49,8 @@ flowchart TD
   R --> F
   L --> F
   X --> F
+  W --> F
+  F -. "never" .-> W
   X -. "never" .-> STUDIO
   F -. "never" .-> STUDIO
   F -. "never" .-> X
@@ -57,6 +61,7 @@ flowchart TD
 | Importer | May import | Must not import |
 |---|---|---|
 | `packages/foldon` | its own modules | `three`, `react`, `react-dom`, Node built-ins (bare or `node:`), **any other workspace package** (`@eschaton/*` except itself), any app, experiment, tool or benchmark package |
+| `packages/world` | its own modules, `@eschaton/foldon` entry | `three`, `react`, `react-dom`, Node built-ins, any other workspace package, any app |
 | `apps/studio/src/lab` | `@eschaton/foldon` entry | `three`, `react`, `react-dom`, `renderer`, `ui`, `App`, `main` |
 | `apps/studio/src/renderer` | `three`, `lab`, `@eschaton/foldon` entry | `react`, `react-dom`, `ui`, `App`, `main` |
 | `apps/studio/src/ui`, `App`, `main` | `react`, `lab`, `renderer`, `@eschaton/foldon` entry | `three` |
