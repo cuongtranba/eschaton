@@ -6,6 +6,7 @@ import {
   contractId,
   createCatalog,
   defaultCatalog,
+  defaultSocketTable,
   foldonId,
   moduleContracts,
   placeFootprint,
@@ -295,4 +296,22 @@ test("declaring a contract does not change the canonical hash", () => {
   const hashOf = (r: AssemblyRecipe): string | undefined =>
     catalogOf(createCatalog({ foldons: primitiveCatalog, assemblies: [r], contracts: moduleContracts })).assembly(r.id)?.hash;
   expect(hashOf(declaring(recipe("declared", pair), "module-2x2"))).toBe(hashOf(recipe("undeclared", pair)));
+});
+
+test("a catalog cannot be changed through its inputs or its returned collections", () => {
+  const contracts = moduleContracts.map((contract) => structuredClone(contract));
+  const table = structuredClone(defaultSocketTable);
+  const built = createCatalog({ foldons: primitiveCatalog, assemblies: assemblyCatalog, contracts, sockets: table });
+  if (!built.ok) throw new Error("catalog must build");
+  const before = built.value.fingerprint;
+  contracts.pop();
+  Reflect.set(table, "version", 99);
+  const attempts = [
+    Reflect.set(built.value.foldons(), 0, undefined),
+    Reflect.set(built.value.contracts(), "length", 0),
+    Reflect.set(built.value.sockets().mates, 0, undefined),
+    Reflect.set(built.value, "fingerprint", "x"),
+  ];
+  expect(attempts).toEqual([false, false, false, false]);
+  expect([built.value.contracts().length, built.value.sockets().version, built.value.fingerprint]).toEqual([moduleContracts.length, defaultSocketTable.version, before]);
 });

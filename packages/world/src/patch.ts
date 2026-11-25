@@ -35,6 +35,8 @@ function patchShapeIssue(patch: Patch): WorldIssue | undefined {
 }
 
 export function applyPatch(catalog: Catalog, state: WorldState, patch: Patch): Result<Committed, Rejection> {
+  const mismatch = versionIssues(catalog, state.header.versions);
+  if (mismatch.length > 0) return err({ kind: "invalid", issues: mismatch });
   const current = state.header.revision;
   if (patch.baseRevision !== current) return err({ kind: "stale", base: patch.baseRevision, current });
   const shape = patchShapeIssue(patch);

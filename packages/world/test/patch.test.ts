@@ -98,3 +98,20 @@ test("replay against a different rules version is refused", () => {
   const replayed = replay(rulesV2.value, initial, [a.record]);
   expect(replayed.ok ? [] : replayed.error.issues.map((i) => i.code)).toContain("rules-mismatch");
 });
+
+test("a patch applied with a different catalog than the world was built against is rejected and consumes no revision", () => {
+  const world = commit(emptyWorld(), box(0, 0)).state;
+  const other = createCatalog({ foldons: primitiveCatalog, assemblies: [] });
+  if (!other.ok) throw new Error("primitive catalog must build");
+  const result = applyPatch(other.value, world, { baseRevision: world.header.revision, ops: [box(4, 0)], origin });
+  expect(result.ok ? ["committed", result.value.state.header.versions.catalog] : result.error.kind === "invalid" ? result.error.issues.map((i) => i.code) : []).toEqual(["catalog-mismatch"]);
+  expect(world.header.revision).toBe(1);
+});
+
+test("a patch applied under a different rules version is rejected", () => {
+  const world = emptyWorld();
+  const rulesV9 = createCatalog({ foldons: primitiveCatalog, assemblies: assemblyCatalog, contracts: moduleContracts, sockets: { ...defaultSocketTable, version: 9 } });
+  if (!rulesV9.ok) throw new Error("catalog with another socket table version must build");
+  const result = applyPatch(rulesV9.value, world, { baseRevision: 0, ops: [box(0, 0)], origin });
+  expect(result.ok ? ["committed"] : result.error.kind === "invalid" ? result.error.issues.map((i) => i.code) : []).toContain("rules-mismatch");
+});

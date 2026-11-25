@@ -8,20 +8,7 @@ const INVARIANT_SET_VERSION = 1;
 
 export const ENGINE_VERSION = `@eschaton/world@${packageJson.version}`;
 
-const byKey = <T>(key: (item: T) => string) => (a: T, b: T): number => {
-  const x = key(a);
-  const y = key(b);
-  return x < y ? -1 : x > y ? 1 : 0;
-};
-
-export function catalogFingerprint(catalog: Catalog): string {
-  const foldons = [...catalog.foldons()].sort(byKey((d) => `${d.id}@${d.version}`));
-  const assemblies = [...catalog.assemblies()]
-    .map((d) => ({ recipe: d.recipe, hash: d.hash }))
-    .sort(byKey((d) => `${d.recipe.id}@${d.recipe.version}`));
-  const contracts = [...catalog.contracts()].sort(byKey((c) => `${c.id}@${c.version}`));
-  return fnv1a64(canonicalJson({ foldons, assemblies, contracts, sockets: catalog.sockets() }));
-}
+export const catalogFingerprint = (catalog: Catalog): string => catalog.fingerprint;
 
 export const rulesVersion = (catalog: Catalog): string => `sockets@${catalog.sockets().version}+invariants@${INVARIANT_SET_VERSION}`;
 
