@@ -76,6 +76,19 @@ const pureRuntime = {
     { group: ["@eschaton/*", "!@eschaton/foldon", "!@eschaton/world"], message: "packages/world imports only @eschaton/foldon among workspace packages (ADR 0001 amendment)." },
   ],
 };
+const pureGeneration = {
+  paths: [
+    ...["three", "react", "react-dom", ...builtinModules].map((name) => ({ name, message: "packages/wave is pure generation: no renderer, UI or Node built-ins." })),
+  ],
+  patterns: [
+    { group: ["three/*", "react/*", "react-dom/*", "node:*"], message: "packages/wave is pure generation: no renderer, UI or Node built-ins." },
+    { group: ["@eschaton/*", "!@eschaton/foldon", "!@eschaton/world", "!@eschaton/wave"], message: "packages/wave imports only @eschaton/foldon and @eschaton/world among workspace packages (ADR 0015)." },
+  ],
+};
+const solverCore = {
+  paths: [{ name: "@eschaton/world", message: "The wave solver core knows no world state: it imports @eschaton/foldon only (ADR 0015)." }],
+  patterns: [{ group: ["../*", "!../solver", "!../solver/*"], message: "The wave solver core does not import the region glue or the job host." }],
+};
 const behavioralTests = {
   patterns: [{ group: ["./*", "../*"], message: "Behavioral tests import only the package entry point." }],
   paths: [{ name: "vitest", importNames: ["vi"], message: "No mocks or spies in behavioral tests." }],
@@ -97,6 +110,8 @@ const importAreas = [
   { dir: "packages", rules: libraryRules },
   { dir: "packages/foldon", rules: [...libraryRules, pureDomain] },
   { dir: "packages/world", rules: [...libraryRules, pureRuntime] },
+  { dir: "packages/wave", rules: [...libraryRules, pureGeneration] },
+  { dir: "packages/wave/src/solver", rules: [...libraryRules, pureGeneration, solverCore] },
   { dir: "apps/studio", rules: [...studioRules, noThree] },
   { dir: "apps/studio/src/renderer", rules: [...studioRules, noReact, noUiLayer] },
   { dir: "apps/studio/src/lab", rules: [...studioRules, noThree, noReact, noUiLayer, noRendererLayer] },

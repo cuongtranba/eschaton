@@ -19,7 +19,9 @@ export type WorldIssueCode =
   | "snapshot-malformed"
   | "schema-newer"
   | "catalog-mismatch"
-  | "rules-mismatch";
+  | "rules-mismatch"
+  | "region-invalid"
+  | "write-outside-region";
 
 export type WorldIssue = Readonly<{ code: WorldIssueCode; message: string; op?: number }>;
 

@@ -17,6 +17,16 @@ export { logicalTransform } from "./ops";
 export { assemble, planAssembly, type AssemblyFailure, type AssemblyOutcome, type AssemblyRequest } from "./assemble";
 export { checkInvariants } from "./invariants";
 export {
+  applyProposal,
+  cellInRegion,
+  readRegion,
+  type Proposal,
+  type ProposalRejection,
+  type Region,
+  type RegionEntity,
+  type RegionRead,
+} from "./region";
+export {
   runSystem,
   systemView,
   windFold,
@@ -27,6 +37,7 @@ export {
   type WindInput,
 } from "./systems";
 export { cellOccupant, findEntity } from "./queries";
+export { resolvePlacement, type Leaf, type PlacementRef, type ResolvedPlacement } from "./model";
 export { type WorldIssue, type WorldIssueCode } from "./issues";
 export {
   storeId,

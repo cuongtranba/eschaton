@@ -37,6 +37,8 @@ const syntax = (title: string, file: string, code: string, verdict: Verdict): Ca
 
 const FOLDON = "packages/foldon/src/probe.ts";
 const WORLD = "packages/world/src/probe.ts";
+const WAVE = "packages/wave/src/probe.ts";
+const SOLVER = "packages/wave/src/solver/probe.ts";
 const LAB = "apps/studio/src/lab/probe.ts";
 const RENDERER = "apps/studio/src/renderer/probe.ts";
 const UI = "apps/studio/src/ui/Probe.tsx";
@@ -68,6 +70,15 @@ const cases: readonly Case[] = [
   imports("accepts world importing the foldon entry point", WORLD, `import { createCatalog } from "@eschaton/foldon";`, "accepted"),
   imports("rejects world tests importing internals relatively", "packages/world/test/probe.test.ts", `import { applyPatch } from "../src/patch";`, "rejected"),
   imports("accepts world tests importing both entry points", "packages/world/test/probe.test.ts", `import { createWorld } from "@eschaton/world";`, "accepted"),
+  imports("rejects world importing wave", WORLD, `import { solve } from "@eschaton/wave";`, "rejected"),
+  imports("rejects foldon importing wave", FOLDON, `import { solve } from "@eschaton/wave";`, "rejected"),
+  imports("rejects wave importing three", WAVE, `import { Vector3 } from "three";`, "rejected"),
+  imports("rejects wave importing a Node built-in", WAVE, `import { Worker } from "node:worker_threads";`, "rejected"),
+  imports("rejects wave importing the studio", WAVE, `import { App } from "@eschaton/studio";`, "rejected"),
+  imports("accepts the wave region glue importing world", WAVE, `import { readRegion } from "@eschaton/world";`, "accepted"),
+  imports("rejects the wave solver core importing world", SOLVER, `import { readRegion } from "@eschaton/world";`, "rejected"),
+  imports("rejects the wave solver core importing the region glue", SOLVER, `import { prepareRegion } from "../region";`, "rejected"),
+  imports("accepts the wave solver core importing foldon and its own modules", SOLVER, `import { compileTiles } from "./compile";`, "accepted"),
   imports("rejects the studio deep-importing foldon source", LAB, `import { cellKey } from "@eschaton/foldon/src/definition";`, "rejected"),
   imports("rejects the studio importing foldon by relative path", LAB, `import { cellKey } from "../../../../packages/foldon/src/definition";`, "rejected"),
   imports("accepts the studio importing the foldon entry point", LAB, `import { createCatalog } from "@eschaton/foldon";`, "accepted"),
