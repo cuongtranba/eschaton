@@ -1,21 +1,15 @@
 import {
-  assemblyId,
-  composePose,
-  err,
   foldonId,
-  ok,
   poseGeometry,
   type Catalog,
   type Cell,
   type FoldonDefinition,
-  type FoldonId,
   type MaterialId,
-  type Result,
   type Rotation,
 } from "@eschaton/foldon";
 import { materialTotals, transformIssue } from "./invariants";
 import { worldIssue, type WorldIssue } from "./issues";
-import { definitionOf, matedBonds, renderableMaterial } from "./model";
+import { definitionOf, matedBonds, renderableMaterial, resolvePlacement, type Leaf, type PlacementRef } from "./model";
 import {
   entityIdOf,
   groupIdOf,
@@ -32,7 +26,7 @@ import {
   type StoreId,
 } from "./state";
 
-export type InstanceRef = Readonly<{ kind: "foldon" | "assembly"; id: string; version?: number }>;
+export type InstanceRef = PlacementRef;
 export type SplitChild = Readonly<{ definition: Readonly<{ id: string; version: number }>; quantity: number }>;
 
 export type WorldOp =
@@ -82,8 +76,6 @@ const isCell = (cell: unknown): cell is Cell =>
 
 const isRotation = (value: unknown): value is Rotation => value === 0 || value === 1 || value === 2 || value === 3;
 
-type Leaf = Readonly<{ id: FoldonId; version: number; anchor: Cell; rotation: Rotation }>;
-
 function compareLeaves(a: Leaf, b: Leaf): number {
   for (let axis = 0; axis < 3; axis++) {
     const delta = (a.anchor[axis] ?? 0) - (b.anchor[axis] ?? 0);
@@ -92,23 +84,6 @@ function compareLeaves(a: Leaf, b: Leaf): number {
   if (a.rotation !== b.rotation) return a.rotation - b.rotation;
   const [x, y] = [`${a.id}@${a.version}`, `${b.id}@${b.version}`];
   return x < y ? -1 : x > y ? 1 : 0;
-}
-
-function resolveLeaves(catalog: Catalog, op: Extract<WorldOp, { op: "instantiate" }>): Result<readonly Leaf[], string> {
-  const { ref, anchor, rotation } = op;
-  if (ref.kind === "foldon") {
-    const definition = catalog.foldon(foldonId(ref.id), ref.version);
-    if (definition === undefined) return err(`foldon ${ref.id}@${ref.version ?? "latest"} is not in the catalog`);
-    return ok([{ id: definition.id, version: definition.version, anchor, rotation }]);
-  }
-  const assembly = catalog.assembly(assemblyId(ref.id), ref.version);
-  if (assembly === undefined) return err(`assembly ${ref.id}@${ref.version ?? "latest"} is not in the catalog`);
-  return ok(
-    catalog.flatten(assembly.recipe.id, assembly.recipe.version).map((leaf) => {
-      const pose = composePose({ anchor, rotation }, { anchor: leaf.anchor, rotation: leaf.rotation });
-      return { id: leaf.definitionId, version: leaf.definitionVersion, anchor: pose.anchor, rotation: pose.rotation };
-    }),
-  );
 }
 
 type Resolved = Readonly<{ definition: FoldonDefinition; material: MaterialId }>;
@@ -164,16 +139,16 @@ const instantiate: Handler<"instantiate"> = (catalog, draft, op, index) => {
   }
   const closed = closedIssue(draft, "creating material with instantiate", index);
   if (closed !== undefined) return closed;
-  const leaves = resolveLeaves(catalog, op);
-  if (!leaves.ok) return worldIssue("ref-unknown", leaves.error, index);
+  const resolved = resolvePlacement(catalog, op.ref, { anchor: op.anchor, rotation: op.rotation });
+  if (!resolved.ok) return worldIssue("ref-unknown", resolved.error, index);
   const group: GroupId | null = op.ref.kind === "assembly" ? groupIdOf({ revision: draft.revision, ordinal: draft.nextOrdinal }) : null;
   const placed = new Set<EntityId>();
-  for (const leaf of [...leaves.value].sort(compareLeaves)) {
-    const resolved = resolveDefinition(catalog, { id: leaf.id, version: leaf.version });
-    if (typeof resolved === "string") return worldIssue("material-missing", resolved, index);
-    const entity = mint(draft, resolved, 1, group, { kind: "placed", anchor: leaf.anchor, rotation: leaf.rotation });
+  for (const leaf of [...resolved.value.leaves].sort(compareLeaves)) {
+    const found = resolveDefinition(catalog, { id: leaf.id, version: leaf.version });
+    if (typeof found === "string") return worldIssue("material-missing", found, index);
+    const entity = mint(draft, found, 1, group, { kind: "placed", anchor: leaf.anchor, rotation: leaf.rotation });
     placed.add(entity.id);
-    draft.lineage.push({ kind: "instantiated", at: draft.revision, entity: entity.id, source: `${op.ref.kind}:${op.ref.id}@${op.ref.version ?? "latest"}` });
+    draft.lineage.push({ kind: "instantiated", at: draft.revision, entity: entity.id, source: resolved.value.source });
   }
   for (const id of placed) draft.moved.add(id);
   return undefined;

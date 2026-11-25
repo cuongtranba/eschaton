@@ -1,11 +1,20 @@
 import {
+  assemblyId,
+  composePose,
+  err,
+  foldonId,
+  ok,
   placeFootprint,
   placeSockets,
   socketMismatches,
   type Catalog,
   type Cell,
   type FoldonDefinition,
+  type FoldonId,
   type MaterialId,
+  type Pose,
+  type Result,
+  type Rotation,
   type SocketDefinition,
   type SocketMismatch,
 } from "@eschaton/foldon";
@@ -121,5 +130,32 @@ export function sortBonds(bonds: readonly Bond[], entities: readonly Entity[]): 
       if (p !== q) return p < q ? -1 : 1;
     }
     return 0;
+  });
+}
+
+export type PlacementRef = Readonly<{ kind: "foldon" | "assembly"; id: string; version?: number }>;
+export type Leaf = Readonly<{ id: FoldonId; version: number; anchor: Cell; rotation: Rotation }>;
+export type ResolvedPlacement = Readonly<{ source: string; leaves: readonly Leaf[] }>;
+
+/**
+ * The one definition of "this catalog item placed at this world pose". A module contract is a claim about an
+ * assembly in its own frame, proved once by createCatalog, so it turns with the assembly and is not re-checked here;
+ * `catalog.satisfiesContract(..., rotation)` answers the different question of fitting a slot.
+ */
+export function resolvePlacement(catalog: Catalog, ref: PlacementRef, pose: Pose): Result<ResolvedPlacement, string> {
+  if (ref.kind === "foldon") {
+    const definition = catalog.foldon(foldonId(ref.id), ref.version);
+    if (definition === undefined) return err(`foldon ${ref.id}@${ref.version ?? "latest"} is not in the catalog`);
+    return ok({ source: `foldon:${definition.id}@${definition.version}`, leaves: [{ id: definition.id, version: definition.version, ...pose }] });
+  }
+  const assembly = catalog.assembly(assemblyId(ref.id), ref.version);
+  if (assembly === undefined) return err(`assembly ${ref.id}@${ref.version ?? "latest"} is not in the catalog`);
+  const { id, version } = assembly.recipe;
+  return ok({
+    source: `assembly:${id}@${version}`,
+    leaves: catalog.flatten(id, version).map((leaf) => {
+      const placed = composePose(pose, { anchor: leaf.anchor, rotation: leaf.rotation });
+      return { id: leaf.definitionId, version: leaf.definitionVersion, anchor: placed.anchor, rotation: placed.rotation };
+    }),
   });
 }

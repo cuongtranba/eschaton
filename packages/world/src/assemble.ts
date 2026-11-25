@@ -1,4 +1,5 @@
-import { assemblyId, composePose, err, ok, type Catalog, type Cell, type FoldonId, type Result, type Rotation } from "@eschaton/foldon";
+import { err, ok, type Catalog, type Cell, type FoldonId, type Result, type Rotation } from "@eschaton/foldon";
+import { resolvePlacement } from "./model";
 import { worldIssue, type WorldIssue } from "./issues";
 import { applyPatch, type CommitRecord, type Patch, type Rejection } from "./patch";
 import type { Entity, EntityId, StoreId, WorldState } from "./state";
@@ -26,17 +27,9 @@ const stampOrder = (a: Entity, b: Entity): number =>
   a.created.revision - b.created.revision || a.created.ordinal - b.created.ordinal;
 
 export function planAssembly(catalog: Catalog, state: WorldState, request: AssemblyRequest): Result<readonly Patch[], readonly WorldIssue[]> {
-  const target = catalog.assembly(assemblyId(request.target.id), request.target.version);
-  if (target === undefined) return err([worldIssue("ref-unknown", `assembly ${request.target.id} is not in the catalog`)]);
-  const declared = target.recipe.contract;
-  if (declared !== undefined) {
-    const fits = catalog.satisfiesContract(target.recipe.id, declared.id, request.rotation, { assembly: target.recipe.version, contract: declared.version });
-    if (!fits.ok) return err(fits.error.map((issue) => worldIssue("op-invalid", `contract ${declared.id}: ${issue.message}`)));
-  }
-  const slots: Slot[] = catalog.flatten(target.recipe.id, target.recipe.version).map((leaf) => {
-    const pose = composePose({ anchor: request.anchor, rotation: request.rotation }, { anchor: leaf.anchor, rotation: leaf.rotation });
-    return { definition: leaf.definitionId, version: leaf.definitionVersion, anchor: pose.anchor, rotation: pose.rotation };
-  });
+  const resolved = resolvePlacement(catalog, { kind: "assembly", ...request.target }, { anchor: request.anchor, rotation: request.rotation });
+  if (!resolved.ok) return err([worldIssue("ref-unknown", resolved.error)]);
+  const slots: Slot[] = resolved.value.leaves.map((leaf) => ({ definition: leaf.id, version: leaf.version, anchor: leaf.anchor, rotation: leaf.rotation }));
   slots.sort(bottomUp);
 
   const available = new Map<string, Entity[]>();
@@ -55,10 +48,10 @@ export function planAssembly(catalog: Catalog, state: WorldState, request: Assem
   }
   if (missing.size > 0) {
     const list = [...missing].map(([key, count]) => `${count} × ${key}`).join(", ");
-    return err([worldIssue("entity-unknown", `store ${request.from} lacks ${list} for ${target.recipe.id}`)]);
+    return err([worldIssue("entity-unknown", `store ${request.from} lacks ${list} for ${resolved.value.source}`)]);
   }
 
-  const origin = { kind: "job", id: `assemble:${target.recipe.id}@${target.recipe.version}` } as const;
+  const origin = { kind: "job", id: `assemble:${resolved.value.source}` } as const;
   return ok(
     steps.map(({ slot, entity }, i): Patch => ({
       baseRevision: state.header.revision + i,
