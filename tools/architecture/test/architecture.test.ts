@@ -36,6 +36,7 @@ const syntax = (title: string, file: string, code: string, verdict: Verdict): Ca
 });
 
 const FOLDON = "packages/foldon/src/probe.ts";
+const WORLD = "packages/world/src/probe.ts";
 const LAB = "apps/studio/src/lab/probe.ts";
 const RENDERER = "apps/studio/src/renderer/probe.ts";
 const UI = "apps/studio/src/ui/Probe.tsx";
@@ -59,6 +60,14 @@ const cases: readonly Case[] = [
   imports("rejects tests importing vi", "packages/foldon/test/probe.test.ts", `import { vi } from "vitest";`, "rejected"),
   imports("accepts foldon tests importing the entry point", "packages/foldon/test/probe.test.ts", `import { createCatalog } from "@eschaton/foldon";`, "accepted"),
 
+  imports("rejects world importing three", WORLD, `import { Vector3 } from "three";`, "rejected"),
+  imports("rejects world importing a Node built-in", WORLD, `import { readFileSync } from "node:fs";`, "rejected"),
+  imports("rejects world deep-importing foldon source", WORLD, `import { cellKey } from "@eschaton/foldon/src/definition";`, "rejected"),
+  imports("rejects world importing the studio", WORLD, `import { App } from "@eschaton/studio";`, "rejected"),
+  imports("rejects world importing another workspace package", WORLD, `import { solvePlacement } from "@eschaton/exp-wfc-placement";`, "rejected"),
+  imports("accepts world importing the foldon entry point", WORLD, `import { createCatalog } from "@eschaton/foldon";`, "accepted"),
+  imports("rejects world tests importing internals relatively", "packages/world/test/probe.test.ts", `import { applyPatch } from "../src/patch";`, "rejected"),
+  imports("accepts world tests importing both entry points", "packages/world/test/probe.test.ts", `import { createWorld } from "@eschaton/world";`, "accepted"),
   imports("rejects the studio deep-importing foldon source", LAB, `import { cellKey } from "@eschaton/foldon/src/definition";`, "rejected"),
   imports("rejects the studio importing foldon by relative path", LAB, `import { cellKey } from "../../../../packages/foldon/src/definition";`, "rejected"),
   imports("accepts the studio importing the foldon entry point", LAB, `import { createCatalog } from "@eschaton/foldon";`, "accepted"),
