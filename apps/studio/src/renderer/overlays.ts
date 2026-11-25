@@ -52,7 +52,7 @@ export function socketSegments(markers: readonly SocketMarker[]): ColoredSegment
     colors.push(tint.r, tint.g, tint.b, tint.r, tint.g, tint.b);
   };
   for (const { position: p, normal: n, profile } of markers) {
-    const hex = socketProfileColor[profile];
+    const hex = socketProfileColor(profile);
     const r = MARKER_RADIUS;
     line([p[0] - r, p[1], p[2]], [p[0] + r, p[1], p[2]], hex);
     line([p[0], p[1] - r, p[2]], [p[0], p[1] + r, p[2]], hex);

@@ -1,0 +1,6 @@
+{
+  "revision": "27",
+  "hash": "9d0becfc9644b430",
+  "entities": "1233",
+  "study": "REBUILD STUDY (ADR 0013)\nCell size\n4.4 units\nLogical\n1199\nFragments\n34\nRejected\n0\nMoved\n11\nNot reproduced: per-instance non-uniform stretch (towers 4.4x7.4, slab blocks, ground slabs): only one uniform cell size exists\nNot reproduced: the barren tree and the 16 free-angle debris beams: beams need non-uniform scale, which neither placements nor fragments carry\nNot reproduced: the 620-unit ground slabs and the distant skyline: backdrop candidates, not rebuilt\nNot reproduced: free yaw on towers and houses: snapped to quarter turns"
+}

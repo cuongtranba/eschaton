@@ -1,4 +1,5 @@
 export { err, ok, type Result } from "./result";
+export { canonicalJson, fnv1a64 } from "./hash";
 export {
   assemblyId,
   contractId,
@@ -43,21 +44,34 @@ export {
   foldable,
   rectangularFootprint,
   renderable,
-  socketProfiles,
-  socketsCompatible,
   structural,
   thermal,
+  turnOf,
   windResponsive,
   type ComponentSpec,
   type Face,
   type FaceProfiles,
+  type FaceSocketSpec,
   type FoldonDefinition,
   type FoldonInput,
+  type Hand,
   type Rotation,
   type SocketDefinition,
   type SocketProfile,
   type SocketRole,
+  type Turn,
 } from "./definition";
+export {
+  defaultSocketTable,
+  bondEligible,
+  socketMismatches,
+  socketsCompatible,
+  validateSocketTable,
+  type MateSpec,
+  type ProfileSpec,
+  type SocketMismatch,
+  type SocketTable,
+} from "./sockets";
 export { defineFoldon } from "./define";
 export { validateFoldon } from "./validate";
 export {
@@ -81,3 +95,4 @@ export {
 export { type ContractRef, type ModuleContract, type ModuleSpan } from "./contract";
 export { createCatalog, type Catalog, type CatalogInput, type FlatInstance } from "./registry";
 export { assemblyCatalog, defaultCatalog, moduleContracts } from "./assemblies";
+export { presetCatalog, presetFoldons } from "./presets";

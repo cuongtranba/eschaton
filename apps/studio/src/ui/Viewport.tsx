@@ -53,12 +53,18 @@ export function Viewport({ viewModel, forceWebGL, continuous, onFrame }: Viewpor
   }, [renderer, viewModel]);
 
   const profiles = [...new Set(viewModel.sockets.map((socket) => socket.profile))].sort();
+  const backdrop = viewModel.batches.some((batch) => batch.authority === "none");
 
   return (
     <div className="viewport" ref={hostRef}>
       {failure !== undefined && (
         <p className="viewport__failure" role="alert">
           Renderer unavailable: {failure}
+        </p>
+      )}
+      {backdrop && (
+        <p className="backdrop-label" data-testid="world-backdrop-label">
+          Backdrop — not part of the world
         </p>
       )}
       {viewModel.look.compare && (
@@ -74,7 +80,7 @@ export function Viewport({ viewModel, forceWebGL, continuous, onFrame }: Viewpor
           <ul>
             {profiles.map((profile) => (
               <li key={profile}>
-                <span className="legend__swatch" style={{ background: socketProfileColor[profile] }} />
+                <span className="legend__swatch" style={{ background: socketProfileColor(profile) }} />
                 {profile}
               </li>
             ))}

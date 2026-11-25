@@ -8,7 +8,9 @@ import {
 import { checkContract, contractIssues, type ContractRef, type ModuleContract } from "./contract";
 import type { FoldonDefinition, Rotation } from "./definition";
 import type { AssemblyId, ContractId, FoldonId } from "./ids";
+import { canonicalJson, fnv1a64, immutable } from "./hash";
 import { issue, type ValidationIssue } from "./issues";
+import { catalogSocketIssues, defaultSocketTable, validateSocketTable, type SocketTable } from "./sockets";
 import { err, ok, type Result } from "./result";
 import { composePose, identityPose, type Pose } from "./transform";
 import type { Cell } from "./vec";
@@ -26,15 +28,18 @@ export type CatalogInput = Readonly<{
   foldons: readonly FoldonDefinition[];
   assemblies: readonly AssemblyRecipe[];
   contracts?: readonly ModuleContract[];
+  sockets?: SocketTable;
 }>;
 
 export type Catalog = Readonly<{
+  fingerprint: string;
   foldon: (id: FoldonId, version?: number) => FoldonDefinition | undefined;
   assembly: (id: AssemblyId, version?: number) => AssemblyDefinition | undefined;
   foldons: () => readonly FoldonDefinition[];
   assemblies: () => readonly AssemblyDefinition[];
   contract: (id: ContractId, version?: number) => ModuleContract | undefined;
   contracts: () => readonly ModuleContract[];
+  sockets: () => SocketTable;
   flatten: (id: AssemblyId, version?: number) => readonly FlatInstance[];
   satisfiesContract: (
     assembly: AssemblyId,
@@ -77,18 +82,33 @@ function duplicateIssues(items: readonly Versioned[], collection: string): Valid
 const prefixed = (prefix: string, found: readonly ValidationIssue[]): ValidationIssue[] =>
   found.map((item) => issue(item.code, `${prefix}.${item.path}`, item.message));
 
-export function createCatalog(input: CatalogInput): Result<Catalog, readonly ValidationIssue[]> {
-  const contractList = input.contracts ?? [];
+const byVersionKey = (a: Versioned, b: Versioned): number => {
+  const [x, y] = [versionKey(a), versionKey(b)];
+  return x < y ? -1 : x > y ? 1 : 0;
+};
+
+export function createCatalog(given: CatalogInput): Result<Catalog, readonly ValidationIssue[]> {
+  const input = {
+    foldons: immutable([...given.foldons]),
+    assemblies: immutable([...given.assemblies]),
+    contracts: immutable([...(given.contracts ?? [])]),
+    sockets: immutable(given.sockets ?? defaultSocketTable),
+  };
+  const contractList = input.contracts;
   const contractIndex = indexVersions(contractList);
+  const table = input.sockets;
+  const tableResult = validateSocketTable(table);
   const issues: ValidationIssue[] = [
+    ...(tableResult.ok ? [] : prefixed("sockets", tableResult.error)),
     ...duplicateIssues(input.foldons, "foldons"),
     ...duplicateIssues(input.assemblies, "assemblies"),
     ...duplicateIssues(contractList, "contracts"),
   ];
-  contractList.forEach((contract, i) => issues.push(...prefixed(`contracts[${i}]`, contractIssues(contract))));
+  contractList.forEach((contract, i) => issues.push(...prefixed(`contracts[${i}]`, contractIssues(contract, table))));
   input.foldons.forEach((definition, i) => {
     const validated = validateFoldon(definition);
     if (!validated.ok) issues.push(...prefixed(`foldons[${i}]`, validated.error));
+    issues.push(...prefixed(`foldons[${i}]`, catalogSocketIssues(table, definition.sockets)));
   });
 
   const foldonIndex = indexVersions(input.foldons);
@@ -129,7 +149,7 @@ export function createCatalog(input: CatalogInput): Result<Catalog, readonly Val
       compiled.set(key, "failed");
       return;
     }
-    const result = compileAssembly(recipe, resolve);
+    const result = compileAssembly(recipe, resolve, table);
     if (!result.ok) {
       issues.push(...prefixed(path, result.error));
       compiled.set(key, "failed");
@@ -172,7 +192,18 @@ export function createCatalog(input: CatalogInput): Result<Catalog, readonly Val
   const assemblyIndex = indexVersions(
     definitions.map((definition) => ({ id: definition.recipe.id, version: definition.recipe.version, definition })),
   );
-  const foldons = [...input.foldons];
+  const foldons = input.foldons;
+  Object.freeze(definitions);
+  const fingerprint = fnv1a64(
+    canonicalJson({
+      foldons: [...foldons].sort(byVersionKey),
+      assemblies: definitions
+        .map((definition) => ({ recipe: definition.recipe, hash: definition.hash }))
+        .sort((a, b) => byVersionKey(a.recipe, b.recipe)),
+      contracts: [...contractList].sort(byVersionKey),
+      sockets: table,
+    }),
+  );
 
   const flattenInto = (definition: AssemblyDefinition, pose: Pose, prefix: string, out: FlatInstance[]): void => {
     for (const part of definition.recipe.parts) {
@@ -187,13 +218,15 @@ export function createCatalog(input: CatalogInput): Result<Catalog, readonly Val
     }
   };
 
-  return ok({
+  return ok(Object.freeze<Catalog>({
+    fingerprint,
     foldon: (id, version) => lookup(foldonIndex, id, version),
     assembly: (id, version) => lookup(assemblyIndex, id, version)?.definition,
     foldons: () => foldons,
     assemblies: () => definitions,
     contract: (id, version) => lookup(contractIndex, id, version),
     contracts: () => contractList,
+    sockets: () => table,
     satisfiesContract: (assembly, contract, rotation, versions) => {
       const target = lookup(assemblyIndex, assembly, versions?.assembly);
       if (target === undefined) return err([issue("ref-unknown", "assembly", `assembly ${assembly} is not in the catalog`)]);
@@ -208,5 +241,5 @@ export function createCatalog(input: CatalogInput): Result<Catalog, readonly Val
       if (root !== undefined) flattenInto(root.definition, identityPose, root.definition.recipe.id, out);
       return out;
     },
-  });
+  }));
 }

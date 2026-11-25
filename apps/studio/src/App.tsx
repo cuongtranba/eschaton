@@ -4,6 +4,7 @@ import { loadLibrary, resolveItem, type Library } from "./lab/library";
 import { buildViewModel } from "./lab/scene";
 import { shortcutCommand } from "./lab/shortcuts";
 import { initialLabState, labReducer, type LabCommand } from "./lab/state";
+import { createRebuildSession, createWorldSession, worldReducer, type WorldCommand, type WorldSession } from "./lab/world/session";
 import type { RendererStats } from "./renderer/labRenderer";
 import { CatalogPanel } from "./ui/CatalogPanel";
 import { Inspector } from "./ui/Inspector";
@@ -28,18 +29,20 @@ const sameStats = (a: RendererStats | undefined, b: RendererStats): boolean =>
   a.geometries === b.geometries &&
   a.textures === b.textures;
 
-function Lab({ library }: Readonly<{ library: Library }>) {
+function Lab({ library, initialWorld }: Readonly<{ library: Library; initialWorld: WorldSession }>) {
   const [state, dispatch] = useReducer(labReducer, undefined, () => initialLabState(prefersReducedMotion()));
+  const [world, worldDispatch] = useReducer(worldReducer, initialWorld);
   const [stats, setStats] = useState<RendererStats | undefined>(undefined);
   const [flags] = useState(() => readLabFlags(window.location.search));
 
   const send = useCallback((command: LabCommand) => { dispatch(command); }, []);
+  const sendWorld = useCallback((command: WorldCommand) => { worldDispatch(command); }, []);
   const onFrame = useCallback((next: RendererStats) => { setStats((previous) => (sameStats(previous, next) ? previous : next)); }, []);
 
   const item = useMemo(() => resolveItem(library, state.selected), [library, state.selected]);
   const viewModel = useMemo(
-    () => (item === undefined ? undefined : buildViewModel(library, item, state, { stress: flags.stress })),
-    [library, item, state, flags.stress],
+    () => (item === undefined ? undefined : buildViewModel(library, item, state, world, { stress: flags.stress })),
+    [library, item, state, world, flags.stress],
   );
 
   const stateRef = useRef(state);
@@ -86,27 +89,31 @@ function Lab({ library }: Readonly<{ library: Library }>) {
       <main className="shell__viewport" aria-label="Viewport" role="region">
         <Viewport viewModel={viewModel} forceWebGL={flags.forceWebGL} continuous={flags.continuous} onFrame={onFrame} />
       </main>
-      <Inspector item={item} library={library} state={state} viewModel={viewModel} dispatch={send} />
+      <Inspector item={item} library={library} state={state} viewModel={viewModel} dispatch={send} world={world} worldDispatch={sendWorld} />
       <StatusBar stats={stats} />
+    </div>
+  );
+}
+
+function Fatal({ title, lines }: Readonly<{ title: string; lines: readonly string[] }>) {
+  return (
+    <div role="alert" className="fatal">
+      <h1>{title}</h1>
+      <ul>
+        {lines.map((line) => (
+          <li key={line}>{line}</li>
+        ))}
+      </ul>
     </div>
   );
 }
 
 export function App() {
   const library = useMemo(() => loadLibrary(), []);
+  const world = useMemo(() => (readLabFlags(window.location.search).study === "rebuild" ? createRebuildSession() : createWorldSession()), []);
   if (!library.ok) {
-    return (
-      <div role="alert" className="fatal">
-        <h1>Catalog failed validation</h1>
-        <ul>
-          {library.error.map((issue) => (
-            <li key={`${issue.code}:${issue.path}`}>
-              {issue.code} at {issue.path}: {issue.message}
-            </li>
-          ))}
-        </ul>
-      </div>
-    );
+    return <Fatal title="Catalog failed validation" lines={library.error.map((issue) => `${issue.code} at ${issue.path}: ${issue.message}`)} />;
   }
-  return <Lab library={library.value} />;
+  if (!world.ok) return <Fatal title="World failed to build" lines={[world.error]} />;
+  return <Lab library={library.value} initialWorld={world.value} />;
 }

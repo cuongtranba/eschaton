@@ -8,6 +8,8 @@ export type Ink = Readonly<{ tone: number; unlit?: boolean }>;
 
 export type BatchMotion = "cloud" | "dust";
 
+export type BatchAuthority = "logical" | "fragment" | "none";
+
 export type LeafBatch = Readonly<{
   key: string;
   poseKey: string;
@@ -17,6 +19,7 @@ export type LeafBatch = Readonly<{
   panelInks?: readonly Ink[];
   outline?: boolean;
   motion?: BatchMotion;
+  authority?: BatchAuthority;
 }>;
 
 export type SocketMarker = Readonly<{ position: Vec3; normal: Vec3; profile: SocketProfile }>;

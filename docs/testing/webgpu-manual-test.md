@@ -110,3 +110,27 @@ Copy this table into a new section at the bottom of this file (or a PR comment) 
 | C6 frame feel and DevTools frame times | | | |
 
 After the run, update the capability matrix in ADR 0005 (rows "WebGPU on a physical GPU" and "WebGL2 on a physical GPU") and keep ADR 0005's status unchanged unless the owner decides otherwise.
+
+## Start of Phase 1: automated smoke test on a different physical GPU (2026-11-25)
+
+Owner decision D5 deferred a real-GPU smoke test to the start of Phase 1. The owner's RTX 5070 machine was not reachable. This Mac has a physical GPU, so checks C1–C4 were automated on it with Playwright driving the installed Google Chrome. **This run does not replace the RTX 5070 test above, which stays PENDING.** It shows that the WebGPU backend, three.js's TSL-to-WGSL compilation of the ink material and the WebGL2 fallback work on one real GPU.
+
+| Item | Value |
+|---|---|
+| Date | 2026-11-25 |
+| Machine | Apple M5 Pro (Metal 4), macOS 26.5.1 |
+| Browser | Google Chrome 158.0.8127.37 (system install), new headless mode, launched by Playwright 1.65.1 with `channel: "chrome"` |
+| Studio commit | `5b2a995` (final Phase 0 head; the Studio is unchanged at the start of Phase 1) |
+| Adapter tooltip (default URL) | `vendor=apple architecture=metal-3 device=- description=- isFallbackAdapter=false; … source=webgpu-device-adapter-info` |
+| Backend / GPU / class (default URL) | `WebGPU` / `apple metal-3` / `physical` |
+| Backend / GPU / class (`?forceWebGL=1`) | `WebGL2` / `ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)` / `physical` |
+
+| Check | Result | Screenshot | Observations |
+|---|---|---|---|
+| C1 backend = WebGPU on a physical adapter | **pass (Apple GPU, not the RTX 5070)** | `docs/screenshots/p1-webgpu-m5pro-reference.png` (status bar) | The class comes from three's own device adapter info, not from the reporting-only `requestAdapter()` |
+| C2 reference composition on WebGPU | **pass** | `docs/screenshots/p1-webgpu-m5pro-reference.png` | Quantized bands, hatching, grain, haze and outlines present; 15 draw calls, 5,154 triangles, 543 instances, the same as the Phase 0 software baseline |
+| C3 reference composition on forced WebGL2 | **pass** | `docs/screenshots/p1-webgpu-m5pro-reference-webgl2.png` | Same counts |
+| C4 backend parity | **pass** | — | Viewport crops compared pixel by pixel: 0.59 % of pixels differ by more than 30/255 in luminance; mean absolute difference 0.63/255. No shader compile error or warning in the console. The only console error was a 404 for `/favicon.ico` (the Studio has no favicon) |
+| C5 hatching stability under orbit | **not assessed** | — | Needs a human watching motion |
+| C6 frame feel and DevTools frame times | **not assessed** | — | Needs a human and a headed DevTools session |
+

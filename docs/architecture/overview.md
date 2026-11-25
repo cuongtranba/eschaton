@@ -1,15 +1,16 @@
-# Architecture overview (Phase 0)
+# Architecture overview (Phase 0, extended in Phase 1)
 
-This describes the code as it is at the end of Phase 0 and compares it with the target architecture in [master plan §8](../master-plan.md). The plan's diagram shows runtime data flow, not imports; the diagram below shows both for the part that exists.
+This describes the code as it is at the end of Phase 0, plus the Phase 1 runtime package `@eschaton/world`, and compares it with the target architecture in [master plan §8](../master-plan.md). The plan's diagram shows runtime data flow, not imports; the diagram below shows both for the part that exists.
 
 ## What exists
 
-Four projects. Only the first two are product code.
+Five projects. The first three are product code.
 
 | Project | Package name | Role |
 |---|---|---|
 | `packages/foldon` | `@eschaton/foldon` | Pure TypeScript domain library: ids, `Result`, definitions, validation, geometry recipes and hinge posing, placement transforms, the P01–P09 catalog, assembly recipes, the catalog registry. No DOM, no three.js, no runtime dependencies. |
-| `apps/studio` | `@eschaton/studio` | Vite + React 19 laboratory: lab state, view-model building, the reference-scene generators, the renderer adapter, UI panels. |
+| `packages/world` | `@eschaton/world` | Phase 1 runtime state: an immutable `WorldState` (header, entities, bonds, lineage, conservation), the only write path `applyPatch` (atomic, strict base revision), replay from the commit log, canonical snapshots and hashes, invariant checks, and derived queries (occupancy, contacts). Imports only `@eschaton/foldon`. ADRs 0010–0014. |
+| `apps/studio` | `@eschaton/studio` | Vite + React 19 laboratory: lab state, view-model building, the reference-scene generators, the renderer adapter, UI panels, and (Phase 1 M7) World mode, which renders a `WorldState` from `@eschaton/world`. |
 | `experiments/wfc-placement` | `@eschaton/exp-wfc-placement` | Throwaway solver comparison. Nothing imports it. See [ADR 0004](../decisions/0004-multi-cell-encoding.md). |
 | `tools/architecture` | `@eschaton/architecture` | Architecture test: lints virtual files against the repository ESLint config to prove each dependency rule rejects a violation. |
 
@@ -18,14 +19,14 @@ Four projects. Only the first two are product code.
 | §8 module | Phase 0 status | Where it lives | Notes |
 |---|---|---|---|
 | contracts | **Merged into foldon** | `packages/foldon/src/{ids,result,issues,vec}.ts` | Branded ids, `Result<T,E>`, `ValidationIssue`. No commands or transactions yet. ([ADR 0001](../decisions/0001-package-layout.md)) |
-| foldon | **Exists** | `packages/foldon/src/` | Catalog, geometry recipes, assembly validation, canonical hashing. Owns definitions; does not own placement in a world. |
+| foldon | **Exists** | `packages/foldon/src/` | Catalog, geometry recipes, assembly validation, canonical hashing, and (Phase 1 M3) the versioned socket table with the directional matcher `socketMismatches` ([ADR 0012](../decisions/0012-directional-sockets.md)). Owns definitions; does not own placement in a world. |
 | generation | **Experiment only** | `experiments/wfc-placement` | 2D throwaway; the Phase 2 solver will be new code. |
 | simulation | **Absent** | none | Component *data* exists on definitions; no system reads it ([ADR 0007](../decisions/0007-component-data-and-system-order.md)). |
-| world | **Absent in Phase 0; Phase 1 adds `@eschaton/world`** | none yet | The only mutable state is `LabState`, a UI reducer (`apps/studio/src/lab/state.ts`). There are no transactions, revisions or clock. Owner decision D4 approved the new package (ADR 0001 and ADR 0011 amendments). |
+| world | **Exists (Phase 1)** | `packages/world/src/` | Immutable `WorldState`, `applyPatch`, revisions and replay; no clock (Phase 4). The Studio's World mode holds one `WorldSession` and writes only through `applyPatch`/`runSystem`. Owner decision D4 approved the new package (ADR 0001 and ADR 0011 amendments). |
 | renderer | **Inside the Studio** | `apps/studio/src/renderer/` | Adapter from `ViewModel` to three.js; the only code that imports `three`. ([ADR 0005](../decisions/0005-renderer-webgpu-tsl-webgl2-fallback.md)) |
 | presets | **Absent** | none | The look palette and scene constants are code (`lab/look.ts`, `lab/palette.ts`, `lab/composition/`). |
-| studio | **Exists** | `apps/studio/src/{App,ui,lab}` | Sends commands to the reducer; never mutates domain definitions. |
-| persistence / replay | **Absent** | none | Definitions round-trip through JSON in tests; nothing is saved. |
+| studio | **Exists** | `apps/studio/src/{App,ui,lab}` | Sends commands to the reducers; never mutates domain definitions or world state. World mode: `lab/world/`. |
+| persistence / replay | **Snapshot and replay exist (Phase 1)** | `packages/world/src/{world,snapshot,patch}.ts` | `serializeSnapshot` and `parseSnapshot` (version-checked); `replay` re-applies recorded patches and reports the first divergence. No storage backend. |
 
 ## Dependency direction
 
@@ -34,6 +35,7 @@ The allowed import graph is enforced by ESLint (`eslint.config.js`, `no-restrict
 ```mermaid
 flowchart TD
   F["@eschaton/foldon (pure domain)"]
+  W["@eschaton/world (pure runtime state)"]
   subgraph STUDIO["apps/studio/src"]
     UI["ui, App, main (React)"]
     R["renderer (three)"]
@@ -46,7 +48,11 @@ flowchart TD
   UI --> F
   R --> F
   L --> F
+  L --> W
+  UI --> W
   X --> F
+  W --> F
+  F -. "never" .-> W
   X -. "never" .-> STUDIO
   F -. "never" .-> STUDIO
   F -. "never" .-> X
@@ -57,9 +63,10 @@ flowchart TD
 | Importer | May import | Must not import |
 |---|---|---|
 | `packages/foldon` | its own modules | `three`, `react`, `react-dom`, Node built-ins (bare or `node:`), **any other workspace package** (`@eschaton/*` except itself), any app, experiment, tool or benchmark package |
-| `apps/studio/src/lab` | `@eschaton/foldon` entry | `three`, `react`, `react-dom`, `renderer`, `ui`, `App`, `main` |
+| `packages/world` | its own modules, `@eschaton/foldon` entry | `three`, `react`, `react-dom`, Node built-ins, any other workspace package, any app |
+| `apps/studio/src/lab` | `@eschaton/foldon` and `@eschaton/world` entries | `three`, `react`, `react-dom`, `renderer`, `ui`, `App`, `main` |
 | `apps/studio/src/renderer` | `three`, `lab`, `@eschaton/foldon` entry | `react`, `react-dom`, `ui`, `App`, `main` |
-| `apps/studio/src/ui`, `App`, `main` | `react`, `lab`, `renderer`, `@eschaton/foldon` entry | `three` |
+| `apps/studio/src/ui`, `App`, `main` | `react`, `lab`, `renderer`, `@eschaton/foldon` and `@eschaton/world` entries | `three` |
 | `experiments/**`, `benchmarks/**`, `tools/**` | workspace package entry points | any app, deep paths |
 | every workspace package and app | other packages only through the `exports` entry point | `@eschaton/*/<subpath>`, relative paths into `apps/`, `packages/`, `experiments/`, `benchmarks/`, `tools/` |
 
@@ -79,8 +86,15 @@ flowchart LR
     POSE["foldProgress, poseGeometry, placeGeometry"]
     CAT --> REG
   end
+  subgraph WORLD["packages/world (@eschaton/world)"]
+    APPLY["applyPatch, runSystem(windFold), replay, hashState"]
+  end
   subgraph LAB["apps/studio/src/lab (no three.js, no React)"]
     STATE["LabState reducer: commands in, state out"]
+    SESSION["WorldSession reducer (lab/world/session.ts)"]
+    WVIEW["lab/world/view.ts: entities, derived offsets, backdrop"]
+    SESSION --> WVIEW
+    WVIEW --> VM
     LIB["library: catalog items"]
     COMP["composition: sky, ridges, district, referenceScene"]
     SCENE["scene.ts: buildViewModel"]
@@ -104,6 +118,9 @@ flowchart LR
   POSE --> SCENE
   VM --> ADAPT
   PANELS -- "dispatch commands" --> STATE
+  PANELS -- "world commands" --> SESSION
+  SESSION -- "patches" --> APPLY
+  APPLY -- "Committed or Rejected" --> SESSION
   STATE -- "state" --> PANELS
   ADAPT -. "RendererStats" .-> PANELS
 ```
@@ -118,10 +135,18 @@ Solid arrows are data or calls that cross a module boundary. The dotted arrow is
 4. **View model.** Everything the renderer needs is one immutable `ViewModel`: batches (posed geometry, instance bases, per-instance ink), sockets, footprint, bounds, camera preset, look and ink scale, a `layoutKey`.
 5. **Renderer adapter.** `renderer.apply(viewModel)` rebuilds GPU content only when `layoutKey` changes (disposing the old meshes and geometries) and otherwise rewrites pose buffers in place. One `InstancedMesh` per batch; overlays and outlines are line batches. Frames are drawn only when something changed, unless `?continuous=1` is set for benchmarks.
 6. **Feedback.** Per-frame `renderer.info` counters flow back to the status bar. No domain state flows back.
+7. **World mode (Phase 1 M7).** The catalog's Scenes section has a **World** entry (`scene:world`). Ownership:
+   - `@eschaton/world` owns the truth: `WorldState`, its revisions and the commit log records. The only writes are `applyPatch` (detach, re-attach) and `runSystem(windFold)`; a rejection leaves the state object unchanged and is shown as text.
+   - `lab/world/session.ts` holds one `WorldSession` as pure data and a pure `worldReducer` (held by `App.tsx` through `useReducer`): the preset catalog, the `initial` world (seed `DEFAULT_SEED`, revision 0), the current `state`, the commit `log`, the selected `EntityId`, the last rejection, the wind slider value, the last replay result and the look-dev `offsets` toggle. The setup commit (`roof-module` at [0,0,0], a `leaf` at [3,0,0], a `P08` at [5,0,0]) is the first log record, so `replay(catalog, initial, log)` reproduces it too.
+   - `homes` in the session maps a detached entity id to the pose it was detached from. It exists only so the UI can offer "Re-attach at previous pose"; it is **UI convenience, not domain truth**. It is never hashed or replayed; the re-attach itself is an ordinary `attach` op whose anchor and rotation are recorded in the log. Losing `homes` loses only the button.
+   - `lab/world/view.ts` derives the `ViewModel` from the session: placed entities are posed with their own `fold` angles and placed with `basisOf(pose)`; detached entities use their `ContinuousTransform` (quaternion, position, uniform scale) as the basis; inventory and consumed entities are not drawn. Batches are grouped per definition, authority and fold pose, and labelled `authority: "logical" | "fragment"`; the reused sky, cloud and ridge generators become `authority: "none"` backdrop batches, and the viewport shows "Backdrop — not part of the world".
+   - `lab/world/offsets.ts` derives decorative offsets from `(world seed, entity id)` only (ADR 0013 layer B). The envelope is zero by default; the "Decorative offsets (look-dev)" toggle switches to the illustrative ADR 0013 envelope (≤ 0.15 cell per axis, yaw ≤ 4°, pitch and roll ≤ 3°, scale ±8 % per axis), applied to placed entities only, about the footprint's base centre. Offsets are never stored in the session's world state and never enter `hashState`.
+   - The renderer is unchanged and holds no world state: it receives a new `layoutKey` whenever the revision, the offsets toggle or the selection changes.
+   - The Phase 0 catalog view and the reference composition are untouched and labelled look-dev in the catalog panel.
 
 ## Differences from the §8 target that matter for Phase 1
 
-- There is no authoritative world. `LabState` is a UI model; placing pieces in a world with identity, occupancy and bonds is Phase 1.
+- The authoritative world exists only in World mode. The catalog view and the reference composition still render definitions directly from `LabState` (look-dev).
 - The renderer adapter takes whole batches, not patches. A patch protocol (§8 "Snapshot and patch") is not designed.
 - The view-model builder in `lab/scene.ts` re-poses every definition on every state change that affects pose; it is cached only for the reference composition (per seed).
 - Composition generators live in the Studio, so they are not reachable from the headless test seam ([ADR 0001](../decisions/0001-package-layout.md)).

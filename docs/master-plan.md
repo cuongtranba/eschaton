@@ -400,7 +400,7 @@ Durations are planning estimates for a small developer/agent team, not delivery 
 | 7 — The Last District | 1–3 weeks | Bounded integrated release: usable controls, save/replay/export, docs, the §11.1 vertical slice | End-to-end Genesis→Collapse→Rebirth demo; no known critical invariant violations; visual approval and documented performance/capability limits; the §11.1 vertical slice runs end to end |
 | 8 — Infinite Universe (research track) | Not scheduled | Streaming, chunks, seams and load order, LOD, persisted modifications across reload | Seam/load-order tests; persisted modifications survive reload; Stress and Research benchmark targets (§9.1) assessed. Separate research track, **not on the release path**; starts only on measured evidence from the earlier phases |
 
-Phase 1 milestone slicing (approved by the owner, D4 and D7 on 2026-11-25; subordinate to this section): [`plans/phase-1-foundation.md`](plans/phase-1-foundation.md).
+Phase 1 milestone slicing (approved by the owner, D4 and D7 on 2026-11-25; subordinate to this section): [`plans/phase-1-foundation.md`](plans/phase-1-foundation.md). Phase 1 was conditionally closed by owner decision R6 on 2026-11-25 on the evidence in [`phase-1-exit.md`](phase-1-exit.md) §8; decisions R1–R8 are in [`review/phase-1-owner-review.md`](review/phase-1-owner-review.md). Phase 2 (Wave) is authorized by R7; Phase 3 is not.
 
 ### 11.1 First vertical slice — The Last District
 

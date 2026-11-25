@@ -2,7 +2,7 @@
 
 Short MADR-style records. Each one states the context, the options considered, the decision, the consequences and the evidence in this repository.
 
-**Owner decisions of 2026-11-25** (recorded in [`../review/phase-0-owner-review.md`](../review/phase-0-owner-review.md) §0):
+**Owner decisions of 2026-11-25** (D1–D7 recorded in [`../review/phase-0-owner-review.md`](../review/phase-0-owner-review.md) §0; R1–R8 in [`../review/phase-1-owner-review.md`](../review/phase-1-owner-review.md)):
 - **D3** approved ADRs 0001–0013 on condition that the independent-review amendments ([`../review/adr-review.md`](../review/adr-review.md)) are applied. Each ADR now ends with an "Amendments" section that applies them and traces every answer to its source.
 - **D4** approved the Phase 1 plan recommendations that answer the open design questions.
 
@@ -22,10 +22,10 @@ Questions that were not answered by D3 or D4 are marked **open owner question** 
 | [0010](0010-runtime-identity-ownership-lineage.md) | Runtime entities with ids `(revision, ordinal)` minted on commit, one ownership field, lineage and conservation | Accepted with amendments (D3, D4); open owner questions Q5, Q9, Q10 |
 | [0011](0011-atomic-transactions-and-revisions.md) | Immutable snapshots, patches against a base revision (strict in Phase 1; read-region rebase required in Phase 2), atomic commit and an outcome log for replay | Accepted with amendments (D3, D4) |
 | [0012](0012-directional-sockets.md) | Orientation-aware sockets: in-face turn, per-profile symmetry (lcm rule) and side-face hand in one table | Accepted with amendments (D3, D4); the Q5 table placement is an interpretation for the owner to confirm |
-| [0013](0013-logical-vs-rendered-geometry.md) | Logical placements, decorative offsets (zero in Phase 1), fragments starting from the logical pose, and a separate backdrop | Accepted with amendments (D3, D4) |
-| 0014 | Bond model (Phase 1, before M4) | To be drafted on branch `phase-1`, scoped by plan decision P1-D11 |
+| [0013](0013-logical-vs-rendered-geometry.md) | Logical placements, decorative offsets (zero in Phase 1), fragments starting from the logical pose, and a separate backdrop | Accepted with amendments (D3, D4); regular-lattice direction confirmed after the rebuild study (R4) |
+| [0014](0014-bond-model.md) | Bond record per bond-eligible socket pair (explicit `bond` rule in the socket table; `empty` never bonds, the `open` wildcard only by explicit rule), created when an entity becomes placed and removed when it leaves; strength is data only until Phase 4 | Accepted with amendments (R3) |
 
-## Pending (not written in Phase 0)
+## Pending (not written yet)
 
 These come from the master plan §13 list and need evidence that Phase 0 did not produce.
 
@@ -33,5 +33,7 @@ These come from the master plan §13 list and need evidence that Phase 0 did not
 |---|---|---|
 | Tick pipeline, system order and simulation replay semantics | The transaction and revision contract is [ADR 0011](0011-atomic-transactions-and-revisions.md); Phase 1 systems run only on explicit invocation ([ADR 0007](0007-component-data-and-system-order.md) amendment); stepping, idle ticks and system order need the Phase 4 tick ADR | 4 |
 | Read-region rebase (region-aware frozen-boundary validation) | Strict base-revision equality in Phase 1 ([ADR 0011](0011-atomic-transactions-and-revisions.md) amendment); required by the Phase 2 exit criteria | 2 |
+| Generic undo | Deferred (R5). Future undo is a compensating transaction, never history branching ([ADR 0011](0011-atomic-transactions-and-revisions.md)); semantics for `split`, `merge` and `consume` need an owner decision | not scheduled |
+| Broken bonds, force and damage | [ADR 0014](0014-bond-model.md) records how a broken bond will differ from contact; the model itself is the Phase 4 ADR | 4 |
 | Closed-loop crease networks | Research gate before the Phase 4 gate ([ADR 0003](0003-crease-representation.md) amendment) | before 4 |
 | Local solve and seam ownership | Split by roadmap v1.1 ([master plan §11](../master-plan.md)): the frozen-boundary local solve is Phase 2 scope; seam ownership belongs to the Phase 8 research track. The WFC experiment is 2D, single-chunk and throwaway | 2 (local solve), 8 (seams) |

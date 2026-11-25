@@ -37,18 +37,29 @@ Code for a milestone cannot start until the decisions it lists are answered. **O
 | P1-D11 | Bond model: an explicit bond record per mated socket pair, created by `attach`, removed by `detach`; strength is data only until Phase 4 | M4 | Yes; needs a short ADR (0014) before M4 |
 | P1-D12 | Decorative offset envelope bounds and group-level offsets (ADR 0013 Q4/Q9) | M7 | Default to zero offsets in Phase 1; set bounds after the ADR 0013 rebuild experiment |
 
-### 2a. Interpretations and gaps not covered by an approved recommendation
+### 2a. Interpretations and gaps: status after the owner's Phase 1 decisions (R1–R8, 2026-11-25)
 
-The owner asked for gaps to be flagged rather than silently decided. Each entry below is either the narrowest reading of approved text that the code needs, or an open question. None of them blocks a milestone. All are reported at the Phase 1 gate for confirmation.
+The owner asked for gaps to be flagged rather than silently decided. The owner's R3 and R5 decide two rows. **The other rows were not selected by any owner decision and stay as recorded: implemented provisionally, not approved.** None blocks the Phase 1 closure or Phase 2.
 
-| Item | Status | What Phase 1 does |
+| Item | Status | What the code does |
 |---|---|---|
-| Conservation key (ADR 0010 Q9) | Open owner question | Implements "per material" as ADR 0010 proposed: the definition's `renderable` `MaterialId`, derived in one function |
+| Bond semantics beyond P1-D11 (ADR 0014) | **Decided (R3):** `instantiate` bonds like `attach`; `empty–empty` never bonds; `open` bonds only by explicit rule | Bond eligibility is an explicit rule in the versioned socket table |
+| M7 undo test; generic undo | **Decided (R5):** generic undo deferred; future undo is a compensating transaction, never history branching | No undo or replay-to-revision is exposed |
+| Conservation key (ADR 0010 Q9) | Open owner question | "Per material": the definition's `renderable` `MaterialId`, derived in one function |
 | Group on detach, store and attach (ADR 0010 Q10) | Open owner question | Provisional: ownership ops leave `group` unchanged |
-| Socket table placement (ADR 0012 Q5) | Interpretation of the approved M3 tests | The table is data passed to the matcher; `CatalogInput.sockets` is optional with the shipped default; `SocketProfile` becomes a validated string id |
-| Bond semantics beyond P1-D11 (ADR 0014) | Interpretation; ADR 0014 names it | Bonds are created for every mated socket pair whenever an entity becomes placed (`instantiate` or `attach`), so the same structure has the same bonds however it was built |
-| Studio offset toggle (M7 test) | Interpretation of P1-D12 | Default envelope zero; the toggle switches to the illustrative ADR 0013 envelope, labelled look-dev, off by default |
 | Tombstone compaction (ADR 0010 Q5) | Open, later phases | Tombstones are kept |
+| Socket table placement (ADR 0012 Q5) | Unconfirmed interpretation of the approved M3 tests | The table is data passed to the matcher; `CatalogInput.sockets` is optional with the shipped default; `SocketProfile` is a validated string id |
+| Studio offset toggle (M7 test) | Unconfirmed interpretation of P1-D12 | Default envelope zero; the toggle switches to the illustrative ADR 0013 envelope, labelled look-dev, off by default |
+| Decorative offset details (M7, ADR 0013 layer B) | Unconfirmed interpretation of P1-D12 | Seed = the world's header seed; applied about the base centre of the footprint in the entity's local frame; placed entities only. ADR 0013 invariant 5 ("rendered shape within margin") is not implemented |
+| Studio "re-attach at previous pose" (M7) | Unconfirmed interpretation; UI only | The Studio session keeps a `homes` map. It is UI convenience, not domain truth: never hashed, never replayed; the re-attach is an ordinary `attach` op |
+| Cross-engine generation determinism (ADR 0004) | Open owner question, Phase 2 scope | Phase 2 documents the scope it actually tests and claims nothing beyond it |
+| Hatching on moving pieces (ADR 0006) | Open owner question, Phase 5 scope | World-anchored hatching, unchanged |
+
+## 2b. Milestone status (2026-11-25)
+
+M0–M8 are implemented and M9's evidence is collected. Phase 1 is **conditionally closed by owner decision R6**, subject to the evidence in the exit report §8; see [`../phase-1-exit.md`](../phase-1-exit.md) for commits, test mapping, benchmarks, the rebuild study and the decisions still open. Plan deviations, all recorded in §2a:
+- the M4 test "detaching an entity yields the same state hash with and without a look preset" is covered structurally, because the world API takes no look input, and in the Studio by the M7 e2e test on offsets and hash;
+- the M7 undo test is dropped.
 
 ## 3. Milestones (dependency-ordered vertical slices)
 

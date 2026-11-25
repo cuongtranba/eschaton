@@ -1,6 +1,6 @@
 # Eschaton — agent rules
 
-Procedural origami-inspired world engine (TypeScript + Three.js). Authoritative design: `docs/master-plan.md`. Visual anchor: `assets/reference/visual-direction.png`. Current phase: **Phase 1 — Foundation**, authorized by owner decision D7 (2026-11-25) after the conditional Phase 0 closure (D6; evidence in `docs/phase-0-exit.md` §9). Scope: `docs/plans/phase-1-foundation.md` M0–M9 and roadmap v1.1 (`docs/master-plan.md` §11). Phase 2 is **not** authorized; Phase 1 exit approval belongs to the owner.
+Procedural origami-inspired world engine (TypeScript + Three.js). Authoritative design: `docs/master-plan.md`. Visual anchor: `assets/reference/visual-direction.png`. Current phase: **Phase 2 — Wave**, authorized by owner decision R7 (2026-11-25) after the conditional closures of Phase 0 (D6) and Phase 1 (R6; evidence in `docs/phase-1-exit.md` §8). Scope: roadmap v1.1 (`docs/master-plan.md` §11) and the Phase 2 plan in `docs/plans/`. Phase 3 is **not** authorized; no Phase 2 PR is merged without the owner's explicit approval.
 
 ## Commands (pnpm only)
 
@@ -12,15 +12,15 @@ Procedural origami-inspired world engine (TypeScript + Three.js). Authoritative 
 | `pnpm typecheck` | `tsc` per workspace project |
 | `pnpm build` | Production build of every buildable project |
 | `pnpm e2e` | Playwright against the Studio |
-| `pnpm bench` | Foldon micro-benchmarks, then the WFC experiment (serially). Writes only to gitignored `benchmarks/runs/`; never changes `git status`. `BENCH_RECORD=1` writes tracked evidence to `benchmarks/phase-0/<date>-<sha>/` and refuses a dirty tree. See `benchmarks/README.md` |
+| `pnpm bench` | Foldon and world micro-benchmarks, then the WFC experiment (serially). Writes only to gitignored `benchmarks/runs/`; never changes `git status`. `BENCH_RECORD=1` writes tracked evidence to `benchmarks/phase-1/<date>-<sha>/` (Phase 0 evidence stays in `benchmarks/phase-0/`) and refuses a dirty tree. See `benchmarks/README.md` |
 | `pnpm bench:studio` | Builds the Studio, serves the production bundle on `STUDIO_PORT`, measures it in headless Chromium (software rendering here) and joins the latest `pnpm bench` run directory. Same record/dirty rules; always set `STUDIO_PORT` |
-| `pnpm screenshots` | Regenerate `docs/screenshots/p0.4-*.png` and `p0.5-*.png` via Playwright (not part of `pnpm e2e`) |
+| `pnpm screenshots` | Regenerate `docs/screenshots/p0.4-*`, `p0.5-*`, `p1-world-*` and the ADR 0013 rebuild study `p1-rebuild-*` (plus `docs/review/p1-rebuild-study.json`) via Playwright (not part of `pnpm e2e`). The study opens with `?study=rebuild` |
 
 Run lint, typecheck, test and build before declaring work done. Never report a check as passed unless you ran it.
 
 ## Layout
 
-`apps/studio` (Vite + React UI) · `packages/foldon` (`@eschaton/foldon`, geometry/definitions/placement) · `tools/architecture` (dependency-rule tests) · `experiments/` (throwaway) · `docs/` (plan, research, `decisions/` ADRs, `architecture/`, `phase-0-exit.md`) · `benchmarks/` (measured results). Do not scaffold future packages before they are needed. Packages are consumed as TypeScript source (`exports` → `src/index.ts`); no build step.
+`apps/studio` (Vite + React UI) · `packages/foldon` (`@eschaton/foldon`, geometry/definitions/placement/socket table) · `packages/world` (`@eschaton/world`, runtime state: entities, patches, replay, bonds, lineage, systems, self-assembly; imports only foldon) · `tools/architecture` (dependency-rule tests) · `experiments/` (throwaway) · `docs/` (plan, research, `decisions/` ADRs, `architecture/`, `phase-0-exit.md`) · `benchmarks/` (measured results). Do not scaffold future packages before they are needed. Packages are consumed as TypeScript source (`exports` → `src/index.ts`); no build step.
 
 ## Coding rules (master-plan §7.3)
 
@@ -35,7 +35,7 @@ Run lint, typecheck, test and build before declaring work done. Never report a c
 
 ## Tests
 
-- Vitest; TDD at public seams. Behavioral tests import **only** the package entry point (`@eschaton/foldon`), never internal modules (lint-enforced via relative-import ban).
+- Vitest; TDD at public seams. Behavioral tests import **only** package entry points (`@eschaton/foldon`, `@eschaton/world`), never internal modules (lint-enforced via relative-import ban).
 - No mocks/spies (`vi.*`), no sleeps. Real lightweight inputs, seeds, explicit clocks.
 - Flat `test("does x")` titles that state behavior; one cause → one decisive outcome. Regression tests name the original defect. Cover promises, not lines; delete tests that would not catch a realistic bug.
 - Never weaken, skip or delete a valid test to make code pass.

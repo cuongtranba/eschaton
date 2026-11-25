@@ -5,7 +5,12 @@ import {
   faceCentre,
   faceNormal,
   faceTangent,
+  hands,
+  isVerticalFace,
+  turnTangents,
+  type Face,
   type FoldonDefinition,
+  type SocketDefinition,
 } from "./definition";
 import {
   analyzeTree,
@@ -197,6 +202,14 @@ function geometryIssues(def: FoldonDefinition): ValidationIssue[] {
   return issues;
 }
 
+const allowedTangents = (face: Face): readonly Vec3[] => (isVerticalFace(face) ? turnTangents : [faceTangent(face)]);
+
+function handIssues(socket: SocketDefinition, path: string): ValidationIssue[] {
+  if (socket.hand === undefined) return [];
+  if (isVerticalFace(socket.face)) return [issue("socket-hand-invalid", `${path}.hand`, "only side faces may carry a hand")];
+  return hands.includes(socket.hand) ? [] : [issue("socket-hand-invalid", `${path}.hand`, "hand must be left or right")];
+}
+
 function socketIssues(def: FoldonDefinition): ValidationIssue[] {
   if (def.footprint.length === 0 || !def.footprint.every((c) => c.every(Number.isInteger))) return [];
   const issues: ValidationIssue[] = [];
@@ -224,12 +237,13 @@ function socketIssues(def: FoldonDefinition): ValidationIssue[] {
     const aligned =
       distance(socket.position, faceCentre(target.cell, target.face)) <= socket.tolerance &&
       distance(socket.normal, faceNormal[target.face]) <= socket.tolerance &&
-      distance(socket.tangent, faceTangent(target.face)) <= socket.tolerance;
+      allowedTangents(target.face).some((tangent) => distance(socket.tangent, tangent) <= socket.tolerance);
     if (!aligned) {
       issues.push(
-        issue("socket-geometry-mismatch", path, "socket frame must sit at the face centre with outward normal and the canonical tangent"),
+        issue("socket-geometry-mismatch", path, "socket frame must sit at the face centre with outward normal and an allowed tangent"),
       );
     }
+    issues.push(...handIssues(socket, path));
   });
   for (const [key, entry] of expected) {
     if (!seenKeys.has(key)) {

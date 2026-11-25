@@ -2,7 +2,7 @@
 
 A web-based procedural world engine and laboratory: a small vocabulary of origami-inspired geometric pieces (**Foldons**) composed, folded and collapsed under explicit rules, rendered as a living woodcut print. See [`docs/master-plan.md`](docs/master-plan.md) for the full design and [`AGENTS.md`](AGENTS.md) for contributor rules.
 
-Status: **Phase 0 — Laboratory closure, conditionally closed by owner decision D6 (2026-11-25) on the evidence in [`docs/phase-0-exit.md`](docs/phase-0-exit.md) §9; Phase 1 (Foundation) is authorized by D7 and runs on branch `phase-1`.** The roadmap is in [`docs/master-plan.md`](docs/master-plan.md) §11.
+Status: **Phase 1 — Foundation is conditionally closed by owner decision R6 (2026-11-25)** on the evidence in [`docs/phase-1-exit.md`](docs/phase-1-exit.md) §8; Phase 2 (Wave) is authorized by R7. Phase 0 was conditionally closed by owner decision D6 on 2026-11-25 ([`docs/phase-0-exit.md`](docs/phase-0-exit.md) §9). Phase 3 is not authorized. The roadmap is in [`docs/master-plan.md`](docs/master-plan.md) §11.
 
 ## What Phase 0 delivers
 
@@ -28,6 +28,7 @@ Open the URL, pick items in the left catalog, drag the **Fold** slider or press 
 | What | Where |
 |---|---|
 | Master plan (authoritative design) | [`docs/master-plan.md`](docs/master-plan.md) |
+| Phase 1 exit report (conditional closure, owner R6) | [`docs/phase-1-exit.md`](docs/phase-1-exit.md) |
 | Phase 0 exit report (conditional closure, owner D6) | [`docs/phase-0-exit.md`](docs/phase-0-exit.md) |
 | Owner review package (Phase 0) | [`docs/review/phase-0-owner-review.md`](docs/review/phase-0-owner-review.md) |
 | Physical WebGPU manual test (pending) | [`docs/testing/webgpu-manual-test.md`](docs/testing/webgpu-manual-test.md) |

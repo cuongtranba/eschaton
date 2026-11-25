@@ -75,10 +75,12 @@ Readouts seen in this environment:
 
 | Configuration | Exercised? | Where | Result |
 |---|---|---|---|
-| WebGPU on a physical GPU | **No** | Pending: [manual test](../testing/webgpu-manual-test.md) on the owner's Windows Chrome with an RTX 5070 | **PENDING.** TSL graph compilation to WGSL, line rendering, MSAA and visual parity are unknown. |
+| WebGPU on a physical GPU: owner's RTX 5070, Windows Chrome (the target) | **No** | Pending: [manual test](../testing/webgpu-manual-test.md) | **PENDING.** |
+| WebGPU on a physical GPU: Apple M5 Pro, macOS Chrome 158 (start of Phase 1, 2026-11-25) | **Yes, automated C1–C4** | [manual test, Phase 1 section](../testing/webgpu-manual-test.md) | Class `physical` from three's device adapter info. The TSL ink material compiles to WGSL and renders the reference composition. Parity with WebGL2 on the same GPU: 0.59 % of pixels differ by more than 30/255. No shader errors. Motion stability and frame feel (C5, C6) are not assessed. |
 | WebGPU on the SwiftShader fallback adapter | Partially: the adapter is reachable with `google-chrome` 138 and the flags above, and the Studio starts, creates a device and reports `software`; frames were not compared or timed | Ad hoc probe on 2026-11-24 (readout above); not in CI | Renderer initialises. Output correctness and performance not assessed; a fallback adapter is never evidence for the WebGPU target. |
 | WebGL2 on SwiftShader | **Yes** | Playwright headless Chromium: every e2e test, screenshot and benchmark in Phase 0; CI | Works. Ink look renders; frame times are software-rendering numbers and say nothing about the §9.1 targets. |
-| WebGL2 on a physical GPU | **No** | Pending: manual test check C3 | **PENDING.** |
+| WebGL2 on a physical GPU: RTX 5070 | **No** | Pending: manual test check C3 | **PENDING.** |
+| WebGL2 on a physical GPU: Apple M5 Pro (ANGLE Metal) | **Yes, automated C3** | as above | Renders the reference composition with the same draw counts. |
 
 The status of this ADR is unchanged. Closing the two pending rows is part of the Phase 0 owner review, not a precondition for the Phase 0 decisions recorded above.
 

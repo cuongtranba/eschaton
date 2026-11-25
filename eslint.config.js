@@ -67,6 +67,15 @@ const pureDomain = {
     { group: ["@eschaton/*", "!@eschaton/foldon"], message: "packages/foldon is the bottom of the graph: it imports no other workspace package (ADR 0001)." },
   ],
 };
+const pureRuntime = {
+  paths: [
+    ...["three", "react", "react-dom", ...builtinModules].map((name) => ({ name, message: "packages/world is pure runtime state: no renderer, UI or Node built-ins." })),
+  ],
+  patterns: [
+    { group: ["three/*", "react/*", "react-dom/*", "node:*"], message: "packages/world is pure runtime state: no renderer, UI or Node built-ins." },
+    { group: ["@eschaton/*", "!@eschaton/foldon", "!@eschaton/world"], message: "packages/world imports only @eschaton/foldon among workspace packages (ADR 0001 amendment)." },
+  ],
+};
 const behavioralTests = {
   patterns: [{ group: ["./*", "../*"], message: "Behavioral tests import only the package entry point." }],
   paths: [{ name: "vitest", importNames: ["vi"], message: "No mocks or spies in behavioral tests." }],
@@ -87,6 +96,7 @@ const studioRules = [entryPointsOnly, forbid("The Studio imports neither experim
 const importAreas = [
   { dir: "packages", rules: libraryRules },
   { dir: "packages/foldon", rules: [...libraryRules, pureDomain] },
+  { dir: "packages/world", rules: [...libraryRules, pureRuntime] },
   { dir: "apps/studio", rules: [...studioRules, noThree] },
   { dir: "apps/studio/src/renderer", rules: [...studioRules, noReact, noUiLayer] },
   { dir: "apps/studio/src/lab", rules: [...studioRules, noThree, noReact, noUiLayer, noRendererLayer] },

@@ -260,3 +260,24 @@ kbd {
 }
 .compare-labels span:first-of-type { left: 8px; }
 .compare-labels span:last-of-type { right: 8px; }
+
+.catalog__note { margin: 6px 0 0; font-size: 11px; }
+
+.backdrop-label {
+  position: absolute;
+  top: 8px;
+  left: 12px;
+  margin: 0;
+  padding: 1px 6px;
+  font: 10px/1.5 var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--paper);
+  background: rgba(34, 35, 33, 0.82);
+  pointer-events: none;
+}
+
+.world__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 6px 0; }
+.world__actions input[type="range"] { width: 110px; }
+.world__entity { grid-template-columns: 44px 1fr auto; }
+[data-testid="world-rejection"] { min-height: 1.4em; margin: 6px 0; overflow-wrap: anywhere; }
