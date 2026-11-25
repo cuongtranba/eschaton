@@ -213,3 +213,36 @@ The inline edits above apply the review: the matching rule uses `lcm`, invariant
 | Q7 `open` | Kept as a documented wildcard profile (`wildcard: true`) | D4 (plan M3) |
 | Q8 lcm fix | Applied | D3, D4, P1-D7 |
 | Q9 orientation in module contracts | Later; contracts stay orientation-free until a contract needs orientation | D4 (plan M3) |
+
+## Implementation (M3)
+
+Landed in commit `47928a2` on branch `phase-1-m3`, in `packages/foldon/src/sockets.ts` (table, matcher, table validation) with changes to `definition.ts`, `validate.ts`, `registry.ts`, `assembly.ts` and `contract.ts`. Final public API (exported from `@eschaton/foldon`):
+
+```ts
+type Turn = 0 | 1 | 2 | 3;
+type Hand = "left" | "right";
+type SocketProfile = string; // open id, validated against the table by createCatalog
+type ProfileSpec = Readonly<{ id: SocketProfile; symmetry: 1 | 2 | 4; handed: boolean; wildcard: boolean }>;
+type MateSpec = Readonly<{ a: SocketProfile; b: SocketProfile; relation: Turn }>;
+type SocketTable = Readonly<{ version: number; profiles: readonly ProfileSpec[]; mates: readonly MateSpec[] }>;
+type SocketMismatch = "position" | "normal" | "profile" | "turn" | "hand";
+type FaceSocketSpec = SocketProfile | Readonly<{ profile: SocketProfile; turn?: Turn; hand?: Hand }>;
+
+const defaultSocketTable: SocketTable; // version 1, frozen
+function validateSocketTable(table: SocketTable): Result<SocketTable, readonly ValidationIssue[]>;
+function turnOf(tangent: Vec3): Turn | undefined;
+function socketMismatches(table: SocketTable, a: SocketDefinition, b: SocketDefinition): readonly SocketMismatch[];
+function socketsCompatible(a: SocketDefinition, b: SocketDefinition): boolean; // default table
+// SocketDefinition gains `hand?: Hand`; FaceProfiles entries are FaceSocketSpec.
+// CatalogInput gains `sockets?: SocketTable`; Catalog gains `sockets(): SocketTable`.
+```
+
+Behaviour as built:
+
+- `faceSockets` sets a ±y socket's tangent to `[+x, −z, −x, +z][turn]` (default 0) and copies `hand` onto side faces only. `turn` on a side face and `hand` on a ±y face are ignored, so a `default` entry can carry either without affecting the other faces.
+- `socketMismatches` reports geometry reasons first. A wildcard on either side then ends the check. Otherwise `profile` is reported when either profile is missing from the table or the unordered pair is not a mate. Turn and hand are checked only when the normals are opposed: ±y pairs use `lcm` of the two symmetries, and side pairs use the hand rule.
+- `validateSocketTable` reports `socket-table-invalid` for a bad version, an empty or duplicate profile id, a bad symmetry, a pair listed twice or in both orders, a relation outside 0–3, or a self-pair whose relation is not 0 or 2. It reports `socket-profile-unknown` for a mate naming an unknown profile. In a catalog these paths are prefixed `sockets.`.
+- `createCatalog` reports `socket-profile-unknown` for a foldon socket whose profile is not in the table. It reports `socket-hand-invalid` for a side socket whose hand presence disagrees with its profile's `handed` flag. Contract boundary profiles are checked against the table (`contract-invalid`). The `socket-incompatible` message lists the mismatch reasons.
+- `validateFoldon` stays table-independent. It accepts the four axis tangents on ±y faces, keeps +y on side faces, and reports `socket-hand-invalid` for a hand on a ±y face or a hand other than `left` or `right`.
+- `socketProfiles` (the old closed list) is no longer exported. The profile ids live in `defaultSocketTable.profiles`.
+- The migration is verified by the test "migrating the profile table changes no primitive, assembly or hash". It pins the pre-change recipe hashes (`roof-module` `dcd032040d40fe17`, `watchtower` `64da8e9a29dabc1a`, `roof-house` `e4ed8a33570fc9d4`, `ruined-gate` `72172b6052872a8b`) and JSON fingerprints of the primitive catalog and of the compiled assemblies, all taken before the change.
