@@ -85,7 +85,7 @@ export const windFold: System<WindInput> = {
   id: "wind-fold",
   reads: ["foldable", "wind-responsive"],
   plan: (view, { wind }) => {
-    const strength = Math.hypot(wind[0], wind[1], wind[2]);
+    const strength = Math.sqrt(wind[0] * wind[0] + wind[1] * wind[1] + wind[2] * wind[2]);
     if (!Number.isFinite(strength)) return err([worldIssue("op-invalid", "wind must be a finite vector")]);
     return ok(
       view.entities.flatMap(({ entity, definition }): WorldOp[] => {

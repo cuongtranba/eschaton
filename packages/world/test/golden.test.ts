@@ -34,7 +34,9 @@ function emptyWorld(seed: number): WorldState {
   return created.value;
 }
 
-test("a fixed history has the state hashes recorded before the commit path was optimised", () => {
+// Recorded before the commit path was optimised (W3). Re-recorded once in Phase 3, when stored recipe numbers were
+// rounded to be the same on every engine: that changed the catalog fingerprint, which every state hash includes.
+test("a fixed history has the recorded state hashes", () => {
   let state = emptyWorld(77);
   const hashes: string[] = [];
   const step = (...ops: WorldOp[]): void => {
@@ -57,8 +59,8 @@ test("a fixed history has the state hashes recorded before the commit path was o
   state = wind.value.state;
   hashes.push(wind.value.record.stateHash);
   step({ op: "conserve" });
-  expect(hashes).toEqual(["3337e935405a6509", "1898bf5f63845615", "429c5c861c053a11", "fc87688493ffd0f5", "07d2e96c3ee53825"]);
-  expect([hashState(state), fnv1a64(serializeSnapshot(state)), fnv1a64(canonicalJson(state))]).toEqual(["07d2e96c3ee53825", "07d2e96c3ee53825", "07d2e96c3ee53825"]);
+  expect(hashes).toEqual(["ccf6bbfbd539d9ef", "003e6f72c33fd825", "8f4d495dea11f735", "a17a84dc0397003b", "68a3fbdb7ab3a443"]);
+  expect([hashState(state), fnv1a64(serializeSnapshot(state)), fnv1a64(canonicalJson(state))]).toEqual(["68a3fbdb7ab3a443", "68a3fbdb7ab3a443", "68a3fbdb7ab3a443"]);
 });
 
 function randomPatches(seed: number): (state: WorldState) => Patch {

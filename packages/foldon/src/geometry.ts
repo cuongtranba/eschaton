@@ -315,8 +315,22 @@ function findSharedEdge(parent: Panel, child: Panel): SharedEdge | undefined {
   return undefined;
 }
 
+/**
+ * Numbers stored in a recipe (panel vertices and rest angles) are multiples of 1 / this. They become part of the
+ * definition and so of the catalog fingerprint and of world state hashes, but `sin`, `cos`, `atan2` and `hypot` may
+ * differ in the last bits between JavaScript engines. Rounding to a grid far coarser than that difference makes the
+ * stored recipe the same on every engine. Authored decimals with up to nine places are unchanged by it.
+ */
+const STORED_STEPS = 1e9;
+
+function stored(value: number): number {
+  const steps = Math.round(value * STORED_STEPS);
+  return steps === 0 ? 0 : steps / STORED_STEPS;
+}
+
 export function foldedNet(input: NetInput): Result<GeometryRecipe, string> {
-  const panels = new Map<PanelId, Panel>(input.panels.map((p) => [p.id, p]));
+  const net = input.panels.map((p): Panel => ({ ...p, vertices: p.vertices.map((v) => v3(stored(v[0]), stored(v[1]), stored(v[2]))) }));
+  const panels = new Map<PanelId, Panel>(net.map((p) => [p.id, p]));
   const creases: CreaseDefinition[] = [];
   for (const hinge of input.hinges) {
     const parent = panels.get(hinge.parent);
@@ -329,7 +343,7 @@ export function foldedNet(input: NetInput): Result<GeometryRecipe, string> {
       return err(`hinge ${hinge.id}: panels ${hinge.parent} and ${hinge.child} share no edge`);
     }
     const measured = creaseAngle(parent.vertices, shared.parentEdge, child.vertices);
-    const restAngle = Math.abs(measured) < 1e-12 ? 0 : measured;
+    const restAngle = stored(measured);
     const range: readonly [number, number] =
       hinge.range ?? (restAngle > 0 ? [0, Math.PI] : restAngle < 0 ? [-Math.PI, 0] : [-Math.PI, Math.PI]);
     creases.push({
@@ -343,5 +357,5 @@ export function foldedNet(input: NetInput): Result<GeometryRecipe, string> {
       stiffness: hinge.stiffness ?? 0.5,
     });
   }
-  return ok({ panels: input.panels, root: input.root, creases });
+  return ok({ panels: net, root: input.root, creases });
 }
