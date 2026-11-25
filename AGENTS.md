@@ -1,6 +1,6 @@
 # Eschaton — agent rules
 
-Procedural origami-inspired world engine (TypeScript + Three.js). Authoritative design: `docs/master-plan.md`. Visual anchor: `assets/reference/visual-direction.png`. Current phase: **Phase 1 — Foundation**, authorized by owner decision D7 (2026-11-25) after the conditional Phase 0 closure (D6; evidence in `docs/phase-0-exit.md` §9). Scope: `docs/plans/phase-1-foundation.md` M0–M9 and roadmap v1.1 (`docs/master-plan.md` §11). Phase 2 is **not** authorized; Phase 1 exit approval belongs to the owner.
+Procedural origami-inspired world engine (TypeScript + Three.js). Authoritative design: `docs/master-plan.md`. Visual anchor: `assets/reference/visual-direction.png`. Current phase: **Phase 1 — Foundation**, authorized by owner decision D7 (2026-11-25) after the conditional Phase 0 closure (D6; evidence in `docs/phase-0-exit.md` §9). Scope: `docs/plans/phase-1-foundation.md` M0–M9 and roadmap v1.1 (`docs/master-plan.md` §11). Phase 1 is at its exit gate (`docs/phase-1-exit.md`); Phase 2 is **not** authorized; Phase 1 exit approval belongs to the owner.
 
 ## Commands (pnpm only)
 

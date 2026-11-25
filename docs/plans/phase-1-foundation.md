@@ -53,6 +53,12 @@ The owner asked for gaps to be flagged rather than silently decided. Each entry 
 | Decorative offset details (M7, ADR 0013 layer B) | Interpretation of P1-D12 | Seed = the world's header seed (not the Studio toolbar seed); applied about the base centre of the definition footprint, in the entity's local frame; placed entities only. With the toggle off the envelope is zero |
 | M7 undo test | Dropped as the plan allows | No replay-to-revision or undo is exposed: rewinding and re-committing would re-mint ids, and ADR 0010 forbids history branching in Phase 1 |
 
+## 2b. Milestone status (2026-11-25)
+
+M0–M8 are implemented and M9's evidence is collected. Phase 1 is **at its exit gate, awaiting the owner**; see [`../phase-1-exit.md`](../phase-1-exit.md) for commits, test mapping, benchmarks, the rebuild study and the decisions still open. Plan deviations, all recorded in §2a:
+- the M4 test "detaching an entity yields the same state hash with and without a look preset" is covered structurally, because the world API takes no look input, and in the Studio by the M7 e2e test on offsets and hash;
+- the M7 undo test is dropped.
+
 ## 3. Milestones (dependency-ordered vertical slices)
 
 Every milestone ends green on `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build` and `pnpm e2e`, in CI, with its tests written first at the public seam. Tests import only `@eschaton/world` or `@eschaton/foldon`, or drive the Studio UI. They use no mocks, spies or sleeps, and each has one decisive outcome.
