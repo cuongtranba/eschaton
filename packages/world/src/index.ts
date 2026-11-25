@@ -10,8 +10,10 @@ export {
   type Patch,
   type Rejection,
   type ReplayDivergence,
+  type SplitChild,
   type WorldOp,
 } from "./patch";
+export { logicalTransform } from "./ops";
 export { checkInvariants } from "./invariants";
 export { cellOccupant, findEntity } from "./queries";
 export { type WorldIssue, type WorldIssueCode } from "./issues";

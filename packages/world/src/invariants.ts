@@ -1,6 +1,7 @@
 import { poseGeometry, type Catalog } from "@eschaton/foldon";
 import { worldIssue, type WorldIssue } from "./issues";
-import { contacts, definitionOf, occupancy, renderableMaterial } from "./model";
+import { canonicalJson } from "./canonical";
+import { contacts, definitionOf, matedBonds, occupancy, renderableMaterial, sortBonds } from "./model";
 import { entityIdOf, type ContinuousTransform, type Entity, type EntityId, type Stamp, type WorldState } from "./state";
 
 const QUATERNION_TOLERANCE = 1e-9;
@@ -137,6 +138,21 @@ function conservationIssues(state: WorldState): WorldIssue[] {
     .map((key) => worldIssue("conservation-violated", `material ${key} totals ${totals[key] ?? 0}; the closed baseline is ${baseline[key] ?? 0}`));
 }
 
+function bondIssues(catalog: Catalog, state: WorldState): WorldIssue[] {
+  const expected = sortBonds(matedBonds(catalog, state.entities), state.entities);
+  return canonicalJson(state.bonds) === canonicalJson(expected)
+    ? []
+    : [worldIssue("bond-invalid", `stored bonds (${state.bonds.length}) differ from the mated socket pairs between placed entities (${expected.length})`)];
+}
+
+export { sortBonds };
+
 export function checkInvariants(catalog: Catalog, state: WorldState): readonly WorldIssue[] {
-  return [...entityIssues(catalog, state), ...placementIssues(catalog, state), ...lineageIssues(state), ...conservationIssues(state)];
+  return [
+    ...entityIssues(catalog, state),
+    ...placementIssues(catalog, state),
+    ...bondIssues(catalog, state),
+    ...lineageIssues(state),
+    ...conservationIssues(state),
+  ];
 }

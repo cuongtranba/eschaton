@@ -1,27 +1,12 @@
-import { assemblyId, composePose, err, foldonId, ok, type Catalog, type Cell, type FoldonId, type Result, type Rotation } from "@eschaton/foldon";
+import { err, ok, type Catalog, type Result } from "@eschaton/foldon";
 import { deepFreeze } from "./canonical";
-import { checkInvariants } from "./invariants";
+import { checkInvariants, sortBonds } from "./invariants";
 import { worldIssue, type WorldIssue } from "./issues";
-import { definitionOf, renderableMaterial } from "./model";
-import {
-  entityIdOf,
-  groupIdOf,
-  type Bond,
-  type Conservation,
-  type Entity,
-  type EntityId,
-  type GroupId,
-  type LineageRecord,
-  type Revision,
-  type WorldState,
-} from "./state";
+import { applyOp, type Draft, type WorldOp } from "./ops";
+import type { Revision, WorldState } from "./state";
 import { hashState, versionIssues } from "./world";
 
-export type InstanceRef = Readonly<{ kind: "foldon" | "assembly"; id: string; version?: number }>;
-
-export type WorldOp =
-  | Readonly<{ op: "annotate"; note: string }>
-  | Readonly<{ op: "instantiate"; ref: InstanceRef; anchor: Cell; rotation: Rotation }>;
+export type { InstanceRef, SplitChild, WorldOp } from "./ops";
 
 export type Origin = Readonly<{ kind: "command" | "job" | "system"; id: string }>;
 
@@ -40,97 +25,6 @@ export type CommitRecord = Readonly<{
 }>;
 
 export type Committed = Readonly<{ state: WorldState; record: CommitRecord }>;
-
-type Draft = {
-  readonly revision: Revision;
-  readonly entities: Map<EntityId, Entity>;
-  readonly lineage: LineageRecord[];
-  readonly bonds: Bond[];
-  conservation: Conservation;
-  nextOrdinal: number;
-};
-
-const MAX_NOTE_LENGTH = 256;
-
-const isCell = (cell: unknown): cell is Cell =>
-  Array.isArray(cell) && cell.length === 3 && cell.every((n) => typeof n === "number" && Number.isSafeInteger(n));
-
-const isRotation = (value: unknown): value is Rotation => value === 0 || value === 1 || value === 2 || value === 3;
-
-type Leaf = Readonly<{ id: FoldonId; version: number; anchor: Cell; rotation: Rotation }>;
-
-const leafKey = (leaf: Leaf): string => `${leaf.id}@${leaf.version}`;
-
-function compareLeaves(a: Leaf, b: Leaf): number {
-  for (let axis = 0; axis < 3; axis++) {
-    const delta = (a.anchor[axis] ?? 0) - (b.anchor[axis] ?? 0);
-    if (delta !== 0) return delta;
-  }
-  if (a.rotation !== b.rotation) return a.rotation - b.rotation;
-  const x = leafKey(a);
-  const y = leafKey(b);
-  return x < y ? -1 : x > y ? 1 : 0;
-}
-
-function resolveLeaves(catalog: Catalog, op: Extract<WorldOp, { op: "instantiate" }>): Result<readonly Leaf[], string> {
-  const { ref, anchor, rotation } = op;
-  if (ref.kind === "foldon") {
-    const definition = catalog.foldon(foldonId(ref.id), ref.version);
-    if (definition === undefined) return err(`foldon ${ref.id}@${ref.version ?? "latest"} is not in the catalog`);
-    return ok([{ id: definition.id, version: definition.version, anchor, rotation }]);
-  }
-  const assembly = catalog.assembly(assemblyId(ref.id), ref.version);
-  if (assembly === undefined) return err(`assembly ${ref.id}@${ref.version ?? "latest"} is not in the catalog`);
-  return ok(
-    catalog.flatten(assembly.recipe.id, assembly.recipe.version).map((leaf) => {
-      const pose = composePose({ anchor, rotation }, { anchor: leaf.anchor, rotation: leaf.rotation });
-      return { id: leaf.definitionId, version: leaf.definitionVersion, anchor: pose.anchor, rotation: pose.rotation };
-    }),
-  );
-}
-
-function instantiate(catalog: Catalog, draft: Draft, op: Extract<WorldOp, { op: "instantiate" }>, index: number): WorldIssue | undefined {
-  if (!isCell(op.anchor) || !isRotation(op.rotation)) {
-    return worldIssue("op-invalid", "instantiate needs an integer anchor cell and a rotation 0..3", index);
-  }
-  const leaves = resolveLeaves(catalog, op);
-  if (!leaves.ok) return worldIssue("ref-unknown", leaves.error, index);
-  const ordered = [...leaves.value].sort(compareLeaves);
-  const group: GroupId | null = op.ref.kind === "assembly" ? groupIdOf({ revision: draft.revision, ordinal: draft.nextOrdinal }) : null;
-  for (const leaf of ordered) {
-    const definition = definitionOf(catalog, { id: leaf.id, version: leaf.version });
-    const material = definition === undefined ? undefined : renderableMaterial(definition);
-    if (definition === undefined || material === undefined) {
-      return worldIssue("material-missing", `${leaf.id}@${leaf.version} has no renderable material`, index);
-    }
-    const created = { revision: draft.revision, ordinal: draft.nextOrdinal };
-    draft.nextOrdinal += 1;
-    const entity: Entity = {
-      id: entityIdOf(created),
-      created,
-      definition: { id: definition.id, version: definition.version },
-      material,
-      quantity: 1,
-      group,
-      fold: Object.fromEntries(definition.geometry.creases.map((crease) => [crease.id, crease.restAngle])),
-      owner: { kind: "placed", anchor: leaf.anchor, rotation: leaf.rotation },
-    };
-    draft.entities.set(entity.id, entity);
-    draft.lineage.push({ kind: "instantiated", at: draft.revision, entity: entity.id, source: `${op.ref.kind}:${op.ref.id}@${op.ref.kind === "foldon" ? leaf.version : String(op.ref.version ?? "latest")}` });
-  }
-  return undefined;
-}
-
-function applyOp(catalog: Catalog, draft: Draft, op: WorldOp, index: number): WorldIssue | undefined {
-  switch (op.op) {
-    case "annotate":
-      return typeof op.note === "string" && op.note.length > 0 && op.note.length <= MAX_NOTE_LENGTH
-        ? undefined
-        : worldIssue("op-invalid", `annotate needs a note of 1..${MAX_NOTE_LENGTH} characters`, index);
-    case "instantiate":
-      return instantiate(catalog, draft, op, index);
-  }
-}
 
 function patchShapeIssue(patch: Patch): WorldIssue | undefined {
   if (!Number.isSafeInteger(patch.baseRevision) || patch.baseRevision < 0) return worldIssue("patch-invalid", "baseRevision must be an integer >= 0");
@@ -162,7 +56,7 @@ export function applyPatch(catalog: Catalog, state: WorldState, patch: Patch): R
     structuredClone({
       header: { ...state.header, revision: draft.revision },
       entities: [...draft.entities.values()],
-      bonds: draft.bonds,
+      bonds: sortBonds(draft.bonds, [...draft.entities.values()]),
       lineage: draft.lineage,
       conservation: draft.conservation,
     }),

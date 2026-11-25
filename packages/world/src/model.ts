@@ -9,7 +9,7 @@ import {
   type SocketDefinition,
   type SocketMismatch,
 } from "@eschaton/foldon";
-import type { DefinitionRef, Entity, EntityId, Owner } from "./state";
+import type { Bond, DefinitionRef, Entity, EntityId, Owner } from "./state";
 
 export type Placed = Entity & Readonly<{ owner: Extract<Owner, { kind: "placed" }> }>;
 
@@ -82,4 +82,44 @@ export function contacts(catalog: Catalog, entities: readonly Entity[]): readonl
 export function renderableMaterial(definition: FoldonDefinition): MaterialId | undefined {
   for (const component of definition.components) if (component.kind === "renderable") return component.material;
   return undefined;
+}
+
+function structuralStrength(definition: FoldonDefinition | undefined): number {
+  for (const component of definition?.components ?? []) if (component.kind === "structural") return component.strength;
+  return 0;
+}
+
+export function matedBonds(catalog: Catalog, entities: readonly Entity[], only?: ReadonlySet<EntityId>): readonly Bond[] {
+  return contacts(catalog, entities)
+    .filter((contact) => contact.mismatches.length === 0)
+    .filter((contact) => only === undefined || only.has(contact.a.entity.id) || only.has(contact.b.entity.id))
+    .map((contact) => ({
+      a: { entity: contact.a.entity.id, cell: contact.a.socket.cell, face: contact.a.socket.face },
+      b: { entity: contact.b.entity.id, cell: contact.b.socket.cell, face: contact.b.socket.face },
+      strength: Math.min(
+        structuralStrength(definitionOf(catalog, contact.a.entity.definition)),
+        structuralStrength(definitionOf(catalog, contact.b.entity.definition)),
+      ),
+    }));
+}
+
+
+export function sortBonds(bonds: readonly Bond[], entities: readonly Entity[]): readonly Bond[] {
+  const order = new Map(entities.map((entity, i) => [entity.id, i]));
+  const key = (bond: Bond): readonly (number | string)[] => [
+    order.get(bond.a.entity) ?? -1,
+    cellKey(bond.a.cell),
+    bond.a.face,
+    order.get(bond.b.entity) ?? -1,
+    cellKey(bond.b.cell),
+    bond.b.face,
+  ];
+  return [...bonds].sort((x, y) => {
+    const [kx, ky] = [key(x), key(y)];
+    for (let i = 0; i < kx.length; i++) {
+      const [p, q] = [kx[i] ?? 0, ky[i] ?? 0];
+      if (p !== q) return p < q ? -1 : 1;
+    }
+    return 0;
+  });
 }
