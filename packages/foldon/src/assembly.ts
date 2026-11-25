@@ -3,7 +3,6 @@ import {
   cellKey,
   faceNormal,
   oppositeFace,
-  socketsCompatible,
   type Rotation,
   type SocketDefinition,
   type FoldonDefinition,
@@ -14,6 +13,7 @@ import type { AssemblyId, FoldonId, PlacementId } from "./ids";
 import { socketId } from "./ids";
 import { issue, type ValidationIssue } from "./issues";
 import { err, ok, type Result } from "./result";
+import { socketMismatches, type SocketTable } from "./sockets";
 import { placeFootprint, placeSockets } from "./transform";
 import { add, type Cell } from "./vec";
 
@@ -188,7 +188,11 @@ function overlapIssues(placed: readonly PlacedPart[]): { owners: Map<string, num
 
 const socketSlot = (cell: Cell, face: SocketDefinition["face"]): string => `${cellKey(cell)}${face}`;
 
-function facingIssues(placed: readonly PlacedPart[], owners: ReadonlyMap<string, number>): ValidationIssue[] {
+function facingIssues(
+  placed: readonly PlacedPart[],
+  owners: ReadonlyMap<string, number>,
+  table: SocketTable,
+): ValidationIssue[] {
   const slots = new Map<string, SocketDefinition>();
   for (const part of placed) for (const socket of part.sockets) slots.set(socketSlot(socket.cell, socket.face), socket);
   const issues: ValidationIssue[] = [];
@@ -198,12 +202,14 @@ function facingIssues(placed: readonly PlacedPart[], owners: ReadonlyMap<string,
       const otherIndex = owners.get(cellKey(across));
       if (otherIndex === undefined || otherIndex <= part.index) continue;
       const mate = slots.get(socketSlot(across, oppositeFace[socket.face]));
-      if (mate !== undefined && !socketsCompatible(socket, mate)) {
+      if (mate === undefined) continue;
+      const reasons = socketMismatches(table, socket, mate);
+      if (reasons.length > 0) {
         issues.push(
           issue(
             "socket-incompatible",
             `parts[${part.index}]`,
-            `${socket.profile} face ${socket.face} at ${cellKey(socket.cell)} does not mate with ${mate.profile} of parts[${otherIndex}]`,
+            `${socket.profile} face ${socket.face} at ${cellKey(socket.cell)} does not mate with ${mate.profile} of parts[${otherIndex}] (${reasons.join(", ")})`,
           ),
         );
       }
@@ -241,11 +247,12 @@ function summarize(recipe: AssemblyRecipe, resolve: RefResolver): AssemblyDefini
 export function compileAssembly(
   recipe: AssemblyRecipe,
   resolve: RefResolver,
+  table: SocketTable,
 ): Result<AssemblyDefinition, readonly ValidationIssue[]> {
   const issues = metaIssues(recipe);
   const placed = placeParts(recipe, resolve, issues);
   const overlap = overlapIssues(placed);
-  issues.push(...overlap.issues, ...facingIssues(placed, overlap.owners));
+  issues.push(...overlap.issues, ...facingIssues(placed, overlap.owners, table));
   if (issues.length > 0) return err(issues);
 
   const footprint = placed

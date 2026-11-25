@@ -9,13 +9,15 @@ export const palette = {
   vermilion: "#A84335",
 } as const;
 
-export const socketProfileColor: Readonly<Record<SocketProfile, string>> = {
-  ground: "#1b1b1a",
-  base: "#2d2c2a",
-  deck: "#3f3e3a",
-  wall: "#55524c",
-  beam: "#6b675f",
-  eave: "#817c72",
-  open: "#9a9488",
-  empty: "#b2ab9c",
-};
+const knownProfileColors: ReadonlyMap<SocketProfile, string> = new Map([
+  ["ground", "#1b1b1a"],
+  ["base", "#2d2c2a"],
+  ["deck", "#3f3e3a"],
+  ["wall", "#55524c"],
+  ["beam", "#6b675f"],
+  ["eave", "#817c72"],
+  ["open", "#9a9488"],
+  ["empty", "#b2ab9c"],
+]);
+
+export const socketProfileColor = (profile: SocketProfile): string => knownProfileColors.get(profile) ?? palette.vermilion;
