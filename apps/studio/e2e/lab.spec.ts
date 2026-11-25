@@ -120,7 +120,7 @@ test("never labels a software rasteriser as a physical GPU", async ({ page }) =>
 test("selecting every catalog item updates the inspector title", async ({ page }) => {
   await openLab(page);
   const items = page.locator("[data-item]");
-  await expect(items).toHaveCount(14);
+  await expect(items).toHaveCount(15);
   for (const item of await items.all()) {
     const name = await item.getAttribute("data-name");
     await item.click();
