@@ -83,11 +83,11 @@ function placementIssues(catalog: Catalog, state: WorldState): WorldIssue[] {
     if (occupants.length > 1) issues.push(worldIssue("cell-occupied", `cell ${cell} is occupied by ${occupants.join(", ")}`));
   }
   for (const contact of contacts(catalog, state.entities)) {
-    if (!contact.compatible) {
+    if (contact.mismatches.length > 0) {
       issues.push(
         worldIssue(
           "socket-incompatible",
-          `${contact.a.entity.id} ${contact.a.socket.profile} at ${contact.a.socket.cell.join(",")}${contact.a.socket.face} does not mate with ${contact.b.entity.id} ${contact.b.socket.profile}`,
+          `${contact.a.entity.id} ${contact.a.socket.profile} at ${contact.a.socket.cell.join(",")}${contact.a.socket.face} does not mate with ${contact.b.entity.id} ${contact.b.socket.profile} (${contact.mismatches.join(", ")})`,
         ),
       );
     }

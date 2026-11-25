@@ -20,13 +20,13 @@ export function catalogFingerprint(catalog: Catalog): string {
     .map((d) => ({ recipe: d.recipe, hash: d.hash }))
     .sort(byKey((d) => `${d.recipe.id}@${d.recipe.version}`));
   const contracts = [...catalog.contracts()].sort(byKey((c) => `${c.id}@${c.version}`));
-  return fnv1a64(canonicalJson({ foldons, assemblies, contracts }));
+  return fnv1a64(canonicalJson({ foldons, assemblies, contracts, sockets: catalog.sockets() }));
 }
 
-export const rulesVersion = (): string => `invariants@${INVARIANT_SET_VERSION}`;
+export const rulesVersion = (catalog: Catalog): string => `sockets@${catalog.sockets().version}+invariants@${INVARIANT_SET_VERSION}`;
 
 export function versionsOf(catalog: Catalog): Versions {
-  return { catalog: catalogFingerprint(catalog), rules: rulesVersion(), engine: ENGINE_VERSION };
+  return { catalog: catalogFingerprint(catalog), rules: rulesVersion(catalog), engine: ENGINE_VERSION };
 }
 
 export type WorldOptions = Readonly<{ catalog: Catalog; seed: number }>;

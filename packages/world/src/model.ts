@@ -1,12 +1,13 @@
 import {
   placeFootprint,
   placeSockets,
-  socketsCompatible,
+  socketMismatches,
   type Catalog,
   type Cell,
   type FoldonDefinition,
   type MaterialId,
   type SocketDefinition,
+  type SocketMismatch,
 } from "@eschaton/foldon";
 import type { DefinitionRef, Entity, EntityId, Owner } from "./state";
 
@@ -44,7 +45,7 @@ export function occupancy(catalog: Catalog, entities: readonly Entity[]): Readon
 }
 
 export type ContactEnd = Readonly<{ entity: Placed; socket: SocketDefinition }>;
-export type Contact = Readonly<{ a: ContactEnd; b: ContactEnd; compatible: boolean }>;
+export type Contact = Readonly<{ a: ContactEnd; b: ContactEnd; mismatches: readonly SocketMismatch[] }>;
 
 const NEIGHBOUR_TOLERANCE = 1e-6;
 
@@ -72,7 +73,7 @@ export function contacts(catalog: Catalog, entities: readonly Entity[]): readonl
           Math.abs(other.position[2] - socket.position[2]) < NEIGHBOUR_TOLERANCE,
       );
       if (facing === undefined) continue;
-      found.push({ a: { entity, socket }, b: { entity: neighbour, socket: facing }, compatible: socketsCompatible(socket, facing) });
+      found.push({ a: { entity, socket }, b: { entity: neighbour, socket: facing }, mismatches: socketMismatches(catalog.sockets(), socket, facing) });
     }
   }
   return found;

@@ -1,4 +1,4 @@
-import { createCatalog, defaultCatalog, primitiveCatalog, type Catalog } from "@eschaton/foldon";
+import { assemblyCatalog, createCatalog, defaultCatalog, defaultSocketTable, moduleContracts, primitiveCatalog, type Catalog } from "@eschaton/foldon";
 import {
   applyPatch,
   checkInvariants,
@@ -83,4 +83,18 @@ test("replay against a different catalog version is refused", () => {
   if (!other.ok) throw new Error("primitive catalog must build");
   const replayed = replay(other.value, initial, [a.record]);
   expect(replayed.ok ? undefined : replayed.error.reason).toBe("version-mismatch");
+});
+
+test("replay against a different rules version is refused", () => {
+  const initial = emptyWorld();
+  const a = commit(initial, box(0, 0));
+  const rulesV2 = createCatalog({
+    foldons: primitiveCatalog,
+    assemblies: assemblyCatalog,
+    contracts: moduleContracts,
+    sockets: { ...defaultSocketTable, version: 2 },
+  });
+  if (!rulesV2.ok) throw new Error("catalog with socket table v2 must build");
+  const replayed = replay(rulesV2.value, initial, [a.record]);
+  expect(replayed.ok ? [] : replayed.error.issues.map((i) => i.code)).toContain("rules-mismatch");
 });
