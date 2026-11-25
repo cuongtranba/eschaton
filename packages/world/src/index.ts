@@ -14,6 +14,7 @@ export {
   type WorldOp,
 } from "./patch";
 export { logicalTransform } from "./ops";
+export { assemble, planAssembly, type AssemblyFailure, type AssemblyOutcome, type AssemblyRequest } from "./assemble";
 export { checkInvariants } from "./invariants";
 export {
   runSystem,
