@@ -1,6 +1,7 @@
 import { err, ok, presetCatalog, type Catalog, type Pose, type Result } from "@eschaton/foldon";
 import {
   applyPatch,
+  applyProposal,
   createWorld,
   findEntity,
   hashState,
@@ -16,6 +17,7 @@ import {
   type WorldState,
 } from "@eschaton/world";
 import { buildRebuild, REBUILD_CELL_SIZE, type RebuildReport } from "../rebuild/layout";
+import { prepareRegion, proposalOf, type JobOutcome, type RegionJob, type TileSpec, type WavePlacement, type WaveProgress } from "@eschaton/wave";
 import { DEFAULT_SEED } from "../state";
 import type { InkScale, ViewPreset } from "../viewModel";
 import { compositionView } from "../composition/view";
@@ -32,7 +34,51 @@ export type WorldSession = Readonly<{
   wind: number;
   replay: string;
   presentation: Presentation;
+  wave: WaveSession;
 }>;
+
+export const WAVE_SIZES = { small: [6, 4, 6], medium: [10, 5, 10], large: [16, 8, 16], huge: [28, 8, 28] } as const;
+export type WaveSize = keyof typeof WAVE_SIZES;
+
+export const WAVE_TILES: readonly TileSpec[] = [
+  { ref: { kind: "foldon", id: "P08" }, weight: 6 },
+  { ref: { kind: "foldon", id: "P03" }, weight: 3 },
+  { ref: { kind: "foldon", id: "P07" }, weight: 1 },
+  { ref: { kind: "assembly", id: "roof-module" }, weight: 2 },
+  { ref: { kind: "assembly", id: "column-3" }, weight: 2 },
+  { ref: { kind: "assembly", id: "l-block" }, weight: 2 },
+  { ref: { kind: "assembly", id: "roof-house" }, weight: 1 },
+];
+
+export type WaveStatus = "idle" | "solving" | "committed" | "refused" | "unsatisfiable" | "budget-exceeded" | "cancelled" | "conflict" | "failed";
+
+export type WaveSession = Readonly<{
+  status: WaveStatus;
+  detail: string;
+  run: number;
+  job: RegionJob | undefined;
+  cancelRequested: boolean;
+  preview: readonly WavePlacement[];
+  progress: string;
+  x: number;
+  z: number;
+  size: WaveSize;
+  seed: number;
+}>;
+
+const IDLE_WAVE: WaveSession = {
+  status: "idle",
+  detail: "",
+  run: 0,
+  job: undefined,
+  cancelRequested: false,
+  preview: [],
+  progress: "",
+  x: -2,
+  z: -3,
+  size: "medium",
+  seed: 1,
+};
 
 export type Presentation = Readonly<{ cellSize: number; view: ViewPreset; inkScale: InkScale; study: RebuildReport | undefined }>;
 
@@ -51,7 +97,12 @@ export type WorldCommand =
   | Readonly<{ type: "setWind"; strength: number }>
   | Readonly<{ type: "applyWind" }>
   | Readonly<{ type: "replay" }>
-  | Readonly<{ type: "setOffsets"; enabled: boolean }>;
+  | Readonly<{ type: "setOffsets"; enabled: boolean }>
+  | Readonly<{ type: "waveSet"; x?: number; z?: number; size?: WaveSize; seed?: number }>
+  | Readonly<{ type: "waveStart" }>
+  | Readonly<{ type: "waveCancel" }>
+  | Readonly<{ type: "waveProgress"; run: number; progress: WaveProgress }>
+  | Readonly<{ type: "waveDone"; run: number; outcome: JobOutcome }>;
 
 export const INITIAL_OPS: readonly WorldOp[] = [
   { op: "instantiate", ref: { kind: "assembly", id: "roof-module" }, anchor: [0, 0, 0], rotation: 0 },
@@ -89,6 +140,7 @@ export function createWorldSession(seed: number = DEFAULT_SEED): Result<WorldSes
     wind: 0.1,
     replay: "",
     presentation: WORLD_PRESENTATION,
+    wave: IDLE_WAVE,
   });
 }
 
@@ -114,6 +166,7 @@ export function createRebuildSession(seed: number = DEFAULT_SEED): Result<WorldS
       inkScale: { hazeStart: 120, hazeEnd: 620, hatchFrequency: 0.9, grainFrequency: 0.45 },
       study: rebuild.report,
     },
+    wave: IDLE_WAVE,
   });
 }
 
@@ -174,6 +227,50 @@ function replayLog(session: WorldSession): WorldSession {
   return { ...session, replay: hash === live ? `match ${hash}` : `diverged at ${session.state.header.revision}` };
 }
 
+const integer = (value: number | undefined, fallback: number): number => (value !== undefined && Number.isSafeInteger(value) ? value : fallback);
+
+function waveStart(session: WorldSession): WorldSession {
+  const { wave } = session;
+  if (wave.status === "solving") return session;
+  const [sx, sy, sz] = WAVE_SIZES[wave.size];
+  const prepared = prepareRegion(session.catalog, session.state, {
+    region: { min: [wave.x, 0, wave.z], max: [wave.x + sx - 1, sy - 1, wave.z + sz - 1] },
+    seed: wave.seed,
+    airWeight: 8,
+    ground: { y: 0, profile: "ground" },
+    budget: { maxNodes: 200_000, maxBacktracks: 20_000 },
+  });
+  if (!prepared.ok) return { ...session, wave: { ...wave, status: "refused", detail: prepared.error.join("; "), job: undefined, preview: [] } };
+  return { ...session, wave: { ...wave, status: "solving", detail: "", run: wave.run + 1, job: prepared.value, cancelRequested: false, preview: [], progress: "" } };
+}
+
+function waveDone(session: WorldSession, outcome: JobOutcome): WorldSession {
+  const { wave } = session;
+  const ended = (status: WaveStatus, detail: string): WorldSession => ({ ...session, wave: { ...wave, status, detail, job: undefined, cancelRequested: false, preview: [] } });
+  if (wave.job === undefined) return session;
+  switch (outcome.kind) {
+    case "solved": {
+      const result = applyProposal(session.catalog, session.state, proposalOf(wave.job, outcome, { kind: "job", id: `wave-${wave.run}` }));
+      if (!result.ok) {
+        return ended(result.error.kind === "conflict" ? "conflict" : "failed", result.error.kind === "conflict" ? "the region changed while it was being solved; nothing was committed" : describeRejection(result.error));
+      }
+      const detail = `${outcome.placements.length} pieces, ${outcome.airCells} air cells, ${outcome.stats.nodes} decisions, ${outcome.stats.backtracks} backtracks`;
+      const next = ended("committed", detail);
+      return { ...next, state: result.value.state, log: [...session.log, result.value.record], rejection: "", replay: "" };
+    }
+    case "unsatisfiable":
+      return ended("unsatisfiable", outcome.reason);
+    case "budget-exceeded":
+      return ended("budget-exceeded", `stopped after ${outcome.stats.nodes} decisions and ${outcome.stats.backtracks} backtracks`);
+    case "cancelled":
+      return ended("cancelled", `cancelled after ${outcome.stats.nodes} decisions; nothing was committed`);
+    case "invalid":
+      return ended("failed", outcome.issues.join("; "));
+    case "failed":
+      return ended("failed", outcome.reason);
+  }
+}
+
 export function worldReducer(session: WorldSession, change: WorldCommand): WorldSession {
   switch (change.type) {
     case "selectEntity":
@@ -190,5 +287,35 @@ export function worldReducer(session: WorldSession, change: WorldCommand): World
       return replayLog(session);
     case "setOffsets":
       return { ...session, offsets: change.enabled };
+    case "waveSet":
+      return session.wave.status === "solving"
+        ? session
+        : {
+            ...session,
+            wave: {
+              ...session.wave,
+              x: integer(change.x, session.wave.x),
+              z: integer(change.z, session.wave.z),
+              seed: Math.max(0, integer(change.seed, session.wave.seed)),
+              size: change.size ?? session.wave.size,
+            },
+          };
+    case "waveStart":
+      return waveStart(session);
+    case "waveCancel":
+      return session.wave.status === "solving" ? { ...session, wave: { ...session.wave, cancelRequested: true } } : session;
+    case "waveProgress":
+      return change.run === session.wave.run && session.wave.status === "solving"
+        ? {
+            ...session,
+            wave: {
+              ...session.wave,
+              preview: change.progress.placements,
+              progress: `${change.progress.decided} of ${change.progress.stats.cells} cells decided, ${change.progress.stats.nodes} decisions, ${change.progress.stats.backtracks} backtracks`,
+            },
+          }
+        : session;
+    case "waveDone":
+      return change.run === session.wave.run && session.wave.status === "solving" ? waveDone(session, change.outcome) : session;
   }
 }

@@ -8,7 +8,7 @@ import {
   type PosedGeometry,
   type Vec3,
 } from "@eschaton/foldon";
-import type { ContinuousTransform, Entity } from "@eschaton/world";
+import { resolvePlacement, type ContinuousTransform, type Entity } from "@eschaton/world";
 import { basisOf } from "../basis";
 import { createRandom } from "../composition/random";
 import { ridgeBatch } from "../composition/ridges";
@@ -118,6 +118,34 @@ function groupFor(
   return created;
 }
 
+const PREVIEW: Ink = { tone: -0.25 };
+
+/** Tentative placements of a running solve. They are drawn, never stored: the world changes only on commit. */
+function previewBatches(session: WorldSession): readonly LeafBatch[] {
+  const { job, preview } = session.wave;
+  if (job === undefined || preview.length === 0) return [];
+  const groups = new Map<string, { geometry: PosedGeometry; bases: Basis[] }>();
+  for (const placement of preview) {
+    const anchor: Cell = [placement.anchor[0] + job.region.min[0], placement.anchor[1] + job.region.min[1], placement.anchor[2] + job.region.min[2]];
+    const resolved = resolvePlacement(session.catalog, placement.ref, { anchor, rotation: placement.rotation });
+    if (!resolved.ok) continue;
+    for (const leaf of resolved.value.leaves) {
+      const definition = session.catalog.foldon(leaf.id, leaf.version);
+      if (definition === undefined) continue;
+      const key = `preview|${leaf.id}@${leaf.version}`;
+      let group = groups.get(key);
+      if (group === undefined) {
+        const posed = poseGeometry(definition.geometry, {});
+        if (!posed.ok) continue;
+        group = { geometry: posed.value, bases: [] };
+        groups.set(key, group);
+      }
+      group.bases.push(scaleBasis(basisOf(leaf), session.presentation.cellSize));
+    }
+  }
+  return [...groups].map(([key, group]) => ({ key, poseKey: "rest", geometry: group.geometry, bases: group.bases, inks: group.bases.map(() => PREVIEW), authority: "none" }));
+}
+
 export function worldViewModel(session: WorldSession, state: LabState): ViewModel {
   const groups = new Map<string, Group>();
   const errors: ScenePoseError[] = [];
@@ -148,8 +176,13 @@ export function worldViewModel(session: WorldSession, state: LabState): ViewMode
     inks: group.inks,
     authority: group.authority,
   }));
-  const batches = [...entityBatches, ...backdropBatches(session.state.header.seed, session.presentation.view)];
+  const preview = previewBatches(session);
+  const backdrop = session.wave.run > 0 ? [] : backdropBatches(session.state.header.seed, session.presentation.view);
+  const batches = [...entityBatches, ...preview, ...backdrop];
   const cell = session.presentation.cellSize;
+  const solving = session.wave.job?.region;
+  if (solving !== undefined) extentCells.push(solving.min, solving.max);
+  const framed = session.wave.run > 0;
   const extent = cellBounds(extentCells.length === 0 ? [[0, 0, 0]] : extentCells);
   const bounds: Bounds = {
     min: [(extent.min[0] - FRAME_MARGIN) * cell, 0, (extent.min[2] - FRAME_MARGIN) * cell],
@@ -162,17 +195,18 @@ export function worldViewModel(session: WorldSession, state: LabState): ViewMode
     `offsets:${session.offsets ? "look-dev" : "zero"}`,
     `selected:${session.selected ?? "none"}`,
     ...entityBatches.map((batch) => `${batch.key}x${batch.bases.length}`),
+    ...preview.map((batch) => `${batch.key}x${batch.bases.length}`),
   ].join("|");
 
   return {
-    itemKey: WORLD_ITEM_KEY,
+    itemKey: framed ? `${WORLD_ITEM_KEY}#wave-${session.wave.run}-${session.wave.status === "solving" ? "solving" : "settled"}` : WORLD_ITEM_KEY,
     layoutKey,
     layoutHash: undefined,
     cameraMode: state.cameraMode,
     overlays: state.overlays,
     look: state.look,
     inkScale: session.presentation.inkScale,
-    view: session.presentation.view,
+    view: framed ? undefined : session.presentation.view,
     motion: !state.reducedMotion,
     batches,
     sockets,

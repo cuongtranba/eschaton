@@ -4,7 +4,8 @@ import { loadLibrary, resolveItem, type Library } from "./lab/library";
 import { buildViewModel } from "./lab/scene";
 import { shortcutCommand } from "./lab/shortcuts";
 import { initialLabState, labReducer, type LabCommand } from "./lab/state";
-import { createRebuildSession, createWorldSession, worldReducer, type WorldCommand, type WorldSession } from "./lab/world/session";
+import { createRebuildSession, createWorldSession, WAVE_TILES, worldReducer, type WorldCommand, type WorldSession } from "./lab/world/session";
+import { createWaveClient, type WaveClient } from "./worker/client";
 import type { RendererStats } from "./renderer/labRenderer";
 import { CatalogPanel } from "./ui/CatalogPanel";
 import { Inspector } from "./ui/Inspector";
@@ -44,6 +45,25 @@ function Lab({ library, initialWorld }: Readonly<{ library: Library; initialWorl
     () => (item === undefined ? undefined : buildViewModel(library, item, state, world, { stress: flags.stress })),
     [library, item, state, world, flags.stress],
   );
+
+  const waveClient = useRef<WaveClient | undefined>(undefined);
+  useEffect(() => {
+    const client = createWaveClient();
+    waveClient.current = client;
+    return () => { client.dispose(); };
+  }, []);
+  const { run: waveRun, job: waveJob, cancelRequested } = world.wave;
+  const worldCatalog = world.catalog;
+  useEffect(() => {
+    if (waveJob === undefined) return;
+    waveClient.current?.solve(`wave-${waveRun}`, worldCatalog, WAVE_TILES, waveJob.problem, {
+      onProgress: (progress) => { worldDispatch({ type: "waveProgress", run: waveRun, progress }); },
+      onDone: (outcome) => { worldDispatch({ type: "waveDone", run: waveRun, outcome }); },
+    });
+  }, [waveRun, waveJob, worldCatalog]);
+  useEffect(() => {
+    if (cancelRequested) waveClient.current?.cancel(`wave-${waveRun}`);
+  }, [cancelRequested, waveRun]);
 
   const stateRef = useRef(state);
   useEffect(() => {

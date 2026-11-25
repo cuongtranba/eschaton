@@ -1,0 +1,50 @@
+import type { Catalog } from "@eschaton/foldon";
+import type { HostRequest, HostResponse, JobOutcome, TileSpec, WaveProblem, WaveProgress } from "@eschaton/wave";
+
+export type WaveHandlers = Readonly<{ onProgress: (progress: WaveProgress) => void; onDone: (outcome: JobOutcome) => void }>;
+
+export type WaveClient = Readonly<{
+  solve: (job: string, catalog: Catalog, tiles: readonly TileSpec[], problem: WaveProblem, handlers: WaveHandlers) => void;
+  cancel: (job: string) => void;
+  dispose: () => void;
+}>;
+
+const SLICE_NODES = 16;
+const PREVIEW_INTERVAL_MS = 150;
+
+/** Owns the solver worker. Results come back as messages; nothing here touches world state. */
+export function createWaveClient(): WaveClient {
+  const worker = new Worker(new URL("./wave.worker.ts", import.meta.url), { type: "module" });
+  const jobs = new Map<string, WaveHandlers>();
+  let lastPreview = 0;
+  const send = (message: HostRequest): void => { worker.postMessage(message); };
+  worker.onmessage = (event: MessageEvent<HostResponse>) => {
+    const message = event.data;
+    const handlers = jobs.get(message.job);
+    if (handlers === undefined) return;
+    if (message.type === "progress") {
+      const now = performance.now();
+      if (now - lastPreview >= PREVIEW_INTERVAL_MS) {
+        lastPreview = now;
+        handlers.onProgress(message.progress);
+      }
+      return;
+    }
+    jobs.delete(message.job);
+    handlers.onDone(message.outcome);
+  };
+  worker.onerror = (event) => {
+    for (const [job, handlers] of jobs) {
+      jobs.delete(job);
+      handlers.onDone({ kind: "failed", reason: event.message });
+    }
+  };
+  return {
+    solve: (job, catalog, tiles, problem, handlers) => {
+      jobs.set(job, handlers);
+      send({ type: "solve", job, source: catalog.source(), fingerprint: catalog.fingerprint, tiles, problem, sliceNodes: SLICE_NODES });
+    },
+    cancel: (job) => { send({ type: "cancel", job }); },
+    dispose: () => { worker.terminate(); },
+  };
+}

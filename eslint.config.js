@@ -114,6 +114,7 @@ const importAreas = [
   { dir: "packages/wave/src/solver", rules: [...libraryRules, pureGeneration, solverCore] },
   { dir: "apps/studio", rules: [...studioRules, noThree] },
   { dir: "apps/studio/src/renderer", rules: [...studioRules, noReact, noUiLayer] },
+  { dir: "apps/studio/src/worker", rules: [...studioRules, noThree, noReact, noUiLayer, noRendererLayer] },
   { dir: "apps/studio/src/lab", rules: [...studioRules, noThree, noReact, noUiLayer, noRendererLayer] },
   { dir: "experiments", rules: [entryPointsOnly, forbid("Experiments never import apps.", ...apps)] },
   { dir: "benchmarks", rules: [entryPointsOnly, forbid("Benchmarks never import apps.", ...apps)] },

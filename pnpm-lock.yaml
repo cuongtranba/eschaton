@@ -35,6 +35,9 @@ importers:
       '@eschaton/foldon':
         specifier: workspace:*
         version: link:../../packages/foldon
+      '@eschaton/wave':
+        specifier: workspace:*
+        version: link:../../packages/wave
       '@eschaton/world':
         specifier: workspace:*
         version: link:../../packages/world

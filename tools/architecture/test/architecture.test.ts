@@ -93,6 +93,10 @@ const cases: readonly Case[] = [
   imports("rejects the renderer importing ui", RENDERER, `import { Viewport } from "../ui/Viewport";`, "rejected"),
   imports("accepts the renderer importing lab", RENDERER, `import { palette } from "../lab/palette";`, "accepted"),
   imports("accepts ui importing lab and the renderer", UI, `import { createLabRenderer } from "../renderer/labRenderer";`, "accepted"),
+  imports("rejects the solver worker importing three", "apps/studio/src/worker/probe.ts", `import { Vector3 } from "three";`, "rejected"),
+  imports("rejects the solver worker importing react", "apps/studio/src/worker/probe.ts", `import { useState } from "react";`, "rejected"),
+  imports("rejects the solver worker importing the renderer", "apps/studio/src/worker/probe.ts", `import { createLabRenderer } from "../renderer/labRenderer";`, "rejected"),
+  imports("accepts the solver worker importing the wave entry point", "apps/studio/src/worker/probe.ts", `import { createWaveHost } from "@eschaton/wave";`, "accepted"),
   imports("rejects the studio importing an experiment", UI, `import { solvePlacement } from "@eschaton/exp-wfc-placement";`, "rejected"),
 
   imports("rejects an experiment importing the studio", EXPERIMENT, `import { App } from "@eschaton/studio";`, "rejected"),
