@@ -85,6 +85,18 @@ const pureGeneration = {
     { group: ["@eschaton/*", "!@eschaton/foldon", "!@eschaton/world", "!@eschaton/wave"], message: "packages/wave imports only @eschaton/foldon and @eschaton/world among workspace packages (ADR 0015)." },
   ],
 };
+const pureGenesis = {
+  paths: [
+    ...["three", "react", "react-dom", ...builtinModules].map((name) => ({ name, message: "packages/genesis is pure generation: no renderer, UI or Node built-ins." })),
+  ],
+  patterns: [
+    { group: ["three/*", "react/*", "react-dom/*", "node:*"], message: "packages/genesis is pure generation: no renderer, UI or Node built-ins." },
+    {
+      group: ["@eschaton/*", "!@eschaton/foldon", "!@eschaton/world", "!@eschaton/wave", "!@eschaton/genesis"],
+      message: "packages/genesis imports only @eschaton/foldon, @eschaton/world and @eschaton/wave among workspace packages (ADR 0017).",
+    },
+  ],
+};
 const solverCore = {
   paths: [{ name: "@eschaton/world", message: "The wave solver core knows no world state: it imports @eschaton/foldon only (ADR 0015)." }],
   patterns: [{ group: ["../*", "!../solver", "!../solver/*"], message: "The wave solver core does not import the region glue or the job host." }],
@@ -112,6 +124,7 @@ const importAreas = [
   { dir: "packages/world", rules: [...libraryRules, pureRuntime] },
   { dir: "packages/wave", rules: [...libraryRules, pureGeneration] },
   { dir: "packages/wave/src/solver", rules: [...libraryRules, pureGeneration, solverCore] },
+  { dir: "packages/genesis", rules: [...libraryRules, pureGenesis] },
   { dir: "apps/studio", rules: [...studioRules, noThree] },
   { dir: "apps/studio/src/renderer", rules: [...studioRules, noReact, noUiLayer] },
   { dir: "apps/studio/src/worker", rules: [...studioRules, noThree, noReact, noUiLayer, noRendererLayer] },
