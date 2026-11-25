@@ -13,3 +13,5 @@ export {
 export { prepareRegion, proposalOf, type RegionJob, type RegionRequest } from "./region";
 export { createWaveHost, type HostOptions, type HostRequest, type HostResponse, type JobOutcome, type JobTiming, type WaveHost } from "./host";
 export { goldenDigest, goldenPresetDigest, placementDigest } from "./golden";
+export { verifyPlacements } from "./verify";
+export { settleJob, type SettleOptions, type SettleStatus, type Settlement } from "./commit";

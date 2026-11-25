@@ -2,8 +2,8 @@ import { err, fnv1a64, placeFootprint, type Catalog, type Cell, type Result, typ
 import { canonicalJson, deepFreeze } from "./canonical";
 import { worldIssue, type WorldIssue } from "./issues";
 import { cellsOf, definitionOf, isPlaced, resolvePlacement } from "./model";
-import type { WorldOp } from "./ops";
-import { applyPatch, type Committed, type Origin, type Rejection } from "./patch";
+import { opShapeIssue, type WorldOp } from "./ops";
+import { applyPatch, patchShapeIssue, type Committed, type Origin, type Rejection } from "./patch";
 import type { DefinitionRef, EntityId, Revision, WorldState } from "./state";
 import { versionIssues } from "./world";
 
@@ -102,8 +102,10 @@ export function applyProposal(catalog: Catalog, state: WorldState, proposal: Pro
   if (mismatch.length > 0) return err({ kind: "invalid", issues: mismatch });
   const badRegion = regionIssue(proposal.region);
   if (badRegion !== undefined) return err({ kind: "invalid", issues: [badRegion] });
+  const shape = patchShapeIssue({ baseRevision: state.header.revision, ops: proposal.ops, origin: proposal.origin });
+  if (shape !== undefined) return err({ kind: "invalid", issues: [shape] });
   for (const [index, op] of proposal.ops.entries()) {
-    const issue = writeIssue(catalog, state, proposal.region, op, index);
+    const issue = opShapeIssue(op, index) ?? writeIssue(catalog, state, proposal.region, op, index);
     if (issue !== undefined) return err({ kind: "invalid", issues: [issue] });
   }
   const now = readRegion(catalog, state, proposal.region);

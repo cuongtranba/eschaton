@@ -28,11 +28,12 @@ export type CommitRecord = Readonly<{
 
 export type Committed = Readonly<{ state: WorldState; record: CommitRecord }>;
 
-function patchShapeIssue(patch: Patch): WorldIssue | undefined {
-  if (!Number.isSafeInteger(patch.baseRevision) || patch.baseRevision < 0) return worldIssue("patch-invalid", "baseRevision must be an integer >= 0");
-  if (!Array.isArray(patch.ops) || patch.ops.length === 0) return worldIssue("patch-invalid", "a patch needs at least one op");
-  if (typeof patch.origin.id !== "string" || patch.origin.id.length === 0) return worldIssue("patch-invalid", "a patch needs an origin id");
-  return undefined;
+export function patchShapeIssue(patch: Readonly<{ baseRevision: unknown; ops: unknown; origin: unknown }>): WorldIssue | undefined {
+  const { baseRevision, ops, origin } = patch;
+  if (typeof baseRevision !== "number" || !Number.isSafeInteger(baseRevision) || baseRevision < 0) return worldIssue("patch-invalid", "baseRevision must be an integer >= 0");
+  if (!Array.isArray(ops) || ops.length === 0) return worldIssue("patch-invalid", "a patch needs at least one op");
+  const named = typeof origin === "object" && origin !== null && "id" in origin && typeof origin.id === "string" && origin.id.length > 0;
+  return named ? undefined : worldIssue("patch-invalid", "a patch needs an origin id");
 }
 
 export type PatchOptions = Readonly<{

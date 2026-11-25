@@ -126,3 +126,27 @@ test("a rebased proposal is replayed from the commit log to the same state hash"
   const replayed = replay(catalog, created.value, [...log, result.value.record]);
   expect(replayed.ok ? hashState(replayed.value) : "diverged").toBe(hashState(result.value.state));
 });
+
+test("a proposal with malformed ops is rejected as invalid instead of throwing", () => {
+  const base = start();
+  const read = readRegion(catalog, base, region);
+  const malformed = [
+    [{ op: "instantiate", ref: { kind: "foldon", id: "P08" }, anchor: [10, 0, 10], rotation: 7 }],
+    [{ op: "instantiate", ref: { kind: "foldon", id: "P08" }, rotation: 0 }],
+    [{ op: "instantiate", anchor: [10, 0, 10], rotation: 0 }],
+    [{ op: "bogus" }],
+    "not a list",
+  ].map((ops) => {
+    const proposal = JSON.parse(JSON.stringify({ region, read: { revision: read.revision, digest: read.digest }, ops, origin })) as Proposal;
+    const result = applyProposal(catalog, base, proposal);
+    return result.ok ? "committed" : result.error.kind;
+  });
+  expect(malformed).toEqual(["invalid", "invalid", "invalid", "invalid", "invalid"]);
+});
+
+test("a patch with an unknown op is rejected instead of committing an empty revision", () => {
+  const base = start();
+  const patch = JSON.parse(JSON.stringify({ baseRevision: base.header.revision, ops: [{ op: "bogus" }], origin })) as Parameters<typeof applyPatch>[2];
+  const result = applyPatch(catalog, base, patch);
+  expect(result.ok ? "committed" : result.error.kind).toBe("invalid");
+});

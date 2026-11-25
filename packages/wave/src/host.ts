@@ -20,6 +20,8 @@ export type HostRequest =
       /** Decisions per solver step. A slice is one step, or as many steps as fit in `sliceMs`. */
       sliceNodes: number;
       sliceMs?: number;
+      /** Minimum time between progress previews. Without it every unfinished slice posts one. */
+      progressMs?: number;
     }>
   | Readonly<{ type: "cancel"; job: string }>;
 
@@ -66,7 +68,6 @@ export function createWaveHost(options: HostOptions): WaveHost {
   const start = (message: Extract<HostRequest, { type: "solve" }>): JobOutcome | undefined => {
     const { job } = message;
     const failed = (reason: string): JobOutcome => ({ kind: "failed", reason });
-    if (running.has(job)) return failed(`job ${job} is already running`);
     if (!Number.isSafeInteger(message.sliceNodes) || message.sliceNodes < 1) return failed("sliceNodes must be an integer >= 1");
     const budget = message.sliceMs ?? 0;
     if (!Number.isFinite(budget) || budget < 0) return failed("sliceMs must be a number >= 0");
@@ -84,27 +85,32 @@ export function createWaveHost(options: HostOptions): WaveHost {
       cancelled.delete(job);
       options.post({ type: "done", job, outcome, timing: { compileMs, solveMs, slices, tilesCached } });
     };
+    const interval = message.progressMs ?? 0;
+    let lastProgress = now();
     const slice = (): void => {
-      if (cancelled.has(job)) {
-        finish({ kind: "cancelled", stats: solve.progress().stats });
-        return;
-      }
-      const sliceStart = now();
-      slices += 1;
       let outcome: JobOutcome | undefined;
+      const sliceStart = now();
       try {
-        do outcome = solve.step(message.sliceNodes);
-        while (outcome === undefined && now() - sliceStart < budget);
+        if (cancelled.has(job)) {
+          outcome = { kind: "cancelled", stats: solve.progress().stats };
+        } else {
+          slices += 1;
+          do outcome = solve.step(message.sliceNodes);
+          while (outcome === undefined && now() - sliceStart < budget);
+          solveMs += now() - sliceStart;
+          if (outcome === undefined && now() - lastProgress >= interval) {
+            lastProgress = now();
+            options.post({ type: "progress", job, progress: solve.progress() });
+          }
+        }
       } catch (error) {
-        outcome = failed(`the solver failed: ${describe(error)}`);
+        outcome = failed(`the job failed: ${describe(error)}`);
       }
-      solveMs += now() - sliceStart;
-      if (outcome !== undefined) {
-        finish(outcome);
+      if (outcome === undefined) {
+        options.schedule(slice);
         return;
       }
-      options.post({ type: "progress", job, progress: solve.progress() });
-      options.schedule(slice);
+      finish(outcome);
     };
     options.schedule(slice);
     return undefined;
@@ -116,6 +122,7 @@ export function createWaveHost(options: HostOptions): WaveHost {
         if (running.has(message.job)) cancelled.add(message.job);
         return;
       }
+      if (running.has(message.job)) return;
       let refused: JobOutcome | undefined;
       try {
         refused = start(message);

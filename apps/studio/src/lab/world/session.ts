@@ -1,7 +1,6 @@
 import { err, ok, presetCatalog, type Catalog, type Pose, type Result } from "@eschaton/foldon";
 import {
   applyPatch,
-  applyProposal,
   createWorld,
   findEntity,
   hashState,
@@ -17,7 +16,7 @@ import {
   type WorldState,
 } from "@eschaton/world";
 import { buildRebuild, REBUILD_CELL_SIZE, type RebuildReport } from "../rebuild/layout";
-import { prepareRegion, proposalOf, type JobOutcome, type RegionJob, type TileSpec, type WavePlacement, type WaveProgress } from "@eschaton/wave";
+import { prepareRegion, settleJob, type RegionJob, type SettleStatus, type TileSpec, type WavePlacement, type WaveProgress } from "@eschaton/wave";
 import { DEFAULT_SEED } from "../state";
 import type { InkScale, ViewPreset } from "../viewModel";
 import { compositionView } from "../composition/view";
@@ -50,7 +49,7 @@ export const WAVE_TILES: readonly TileSpec[] = [
   { ref: { kind: "assembly", id: "roof-house" }, weight: 1 },
 ];
 
-export type WaveStatus = "idle" | "solving" | "committed" | "refused" | "unsatisfiable" | "budget-exceeded" | "cancelled" | "conflict" | "failed";
+export type WaveStatus = "idle" | "solving" | "refused" | SettleStatus;
 
 export type WaveSession = Readonly<{
   status: WaveStatus;
@@ -102,7 +101,7 @@ export type WorldCommand =
   | Readonly<{ type: "waveStart" }>
   | Readonly<{ type: "waveCancel" }>
   | Readonly<{ type: "waveProgress"; run: number; progress: WaveProgress }>
-  | Readonly<{ type: "waveDone"; run: number; outcome: JobOutcome }>;
+  | Readonly<{ type: "waveDone"; run: number; outcome: unknown }>;
 
 export const INITIAL_OPS: readonly WorldOp[] = [
   { op: "instantiate", ref: { kind: "assembly", id: "roof-module" }, anchor: [0, 0, 0], rotation: 0 },
@@ -244,31 +243,16 @@ function waveStart(session: WorldSession): WorldSession {
   return { ...session, wave: { ...wave, status: "solving", detail: "", run: wave.run + 1, job: prepared.value, cancelRequested: false, preview: [], progress: "" } };
 }
 
-function waveDone(session: WorldSession, outcome: JobOutcome): WorldSession {
+function waveDone(session: WorldSession, outcome: unknown): WorldSession {
   const { wave } = session;
-  const ended = (status: WaveStatus, detail: string): WorldSession => ({ ...session, wave: { ...wave, status, detail, job: undefined, cancelRequested: false, preview: [] } });
   if (wave.job === undefined) return session;
-  switch (outcome.kind) {
-    case "solved": {
-      const result = applyProposal(session.catalog, session.state, proposalOf(wave.job, outcome, { kind: "job", id: `wave-${wave.run}` }));
-      if (!result.ok) {
-        return ended(result.error.kind === "conflict" ? "conflict" : "failed", result.error.kind === "conflict" ? "the region changed while it was being solved; nothing was committed" : describeRejection(result.error));
-      }
-      const detail = `${outcome.placements.length} pieces, ${outcome.airCells} air cells, ${outcome.stats.nodes} decisions, ${outcome.stats.backtracks} backtracks`;
-      const next = ended("committed", detail);
-      return { ...next, state: result.value.state, log: [...session.log, result.value.record], rejection: "", replay: "" };
-    }
-    case "unsatisfiable":
-      return ended("unsatisfiable", outcome.reason);
-    case "budget-exceeded":
-      return ended("budget-exceeded", `stopped after ${outcome.stats.nodes} decisions and ${outcome.stats.backtracks} backtracks`);
-    case "cancelled":
-      return ended("cancelled", `cancelled after ${outcome.stats.nodes} decisions; nothing was committed`);
-    case "invalid":
-      return ended("failed", outcome.issues.join("; "));
-    case "failed":
-      return ended("failed", outcome.reason);
-  }
+  const settled = settleJob(session.catalog, session.state, wave.job, WAVE_TILES, outcome, {
+    origin: { kind: "job", id: `wave-${wave.run}` },
+    cancelRequested: wave.cancelRequested,
+  });
+  const next: WorldSession = { ...session, wave: { ...wave, status: settled.status, detail: settled.detail, job: undefined, cancelRequested: false, preview: [] } };
+  if (settled.status !== "committed") return next;
+  return { ...next, state: settled.committed.state, log: [...session.log, settled.committed.record], rejection: "", replay: "" };
 }
 
 export function worldReducer(session: WorldSession, change: WorldCommand): WorldSession {

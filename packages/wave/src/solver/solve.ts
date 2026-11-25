@@ -1,5 +1,5 @@
 import { socketId, type Cell, type Face, type Rotation, type SocketDefinition } from "@eschaton/foldon";
-import { DIRECTIONS, OPPOSITE, STEP, type CompiledTiles, type TileRef } from "./compile";
+import { DIRECTIONS, MAX_WEIGHT, OPPOSITE, STEP, type CompiledTiles, type TileRef } from "./compile";
 
 export type BoundaryFace = Readonly<{ cell: Cell; face: Face; socket: SocketDefinition }>;
 
@@ -50,7 +50,7 @@ function problemIssues(problem: WaveProblem): string[] {
     issues.push(`size must be positive integers with at most ${MAX_CELLS} cells`);
   }
   if (!Number.isSafeInteger(problem.seed) || problem.seed < 0 || problem.seed > 0xffffffff) issues.push("seed must be an integer in 0..2^32-1");
-  if (!Number.isSafeInteger(problem.airWeight) || problem.airWeight < 1) issues.push("airWeight must be an integer >= 1");
+  if (!Number.isSafeInteger(problem.airWeight) || problem.airWeight < 1 || problem.airWeight > MAX_WEIGHT) issues.push(`airWeight must be an integer in 1..${MAX_WEIGHT}`);
   const { maxNodes, maxBacktracks } = problem.budget;
   if (!Number.isSafeInteger(maxNodes) || maxNodes < 1 || !Number.isSafeInteger(maxBacktracks) || maxBacktracks < 0) {
     issues.push("budget needs maxNodes >= 1 and maxBacktracks >= 0");
@@ -395,6 +395,7 @@ export function createSolve(tiles: CompiledTiles, problem: WaveProblem): WaveSol
         continue;
       }
       const k = (covering[index] ?? []).indexOf(id);
+      if (k < 0 || alive[id] === 0 || cellsOf(id).some((cell) => decided[cell] !== id)) return `cell ${index} holds a placement that is not whole`;
       for (let direction = 0; direction < 6; direction++) {
         const signature = sideOf(index, k, direction);
         if (signature < 0) continue;
@@ -470,8 +471,9 @@ export function createSolve(tiles: CompiledTiles, problem: WaveProblem): WaveSol
   }
   propagate();
 
-  const step = (limit: number): WaveOutcome | undefined => {
+  const step = (requested: number): WaveOutcome | undefined => {
     if (finished !== undefined) return finished;
+    const limit = Number.isFinite(requested) && requested >= 1 ? Math.floor(requested) : 1;
     if (contradiction && frames.length === 0) {
       finished = { kind: "unsatisfiable", reason: "the constraints contradict before any choice", stats: stats() };
       return finished;

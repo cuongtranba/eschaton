@@ -36,6 +36,15 @@ function solveSeed(worldSeed: number, request: RegionRequest): number {
  */
 export function prepareRegion(catalog: Catalog, state: WorldState, request: RegionRequest): Result<RegionJob, readonly string[]> {
   const { region } = request;
+  const shape: string[] = [];
+  const integers = [...region.min, ...region.max].every((value) => Number.isSafeInteger(value));
+  if (!integers || region.min.some((low, axis) => low > (region.max[axis] ?? low))) shape.push("a region needs integer cells with min <= max on every axis");
+  if (!Number.isSafeInteger(request.seed) || request.seed < 0) shape.push("the request seed must be an integer >= 0");
+  if (request.ground !== undefined) {
+    if (!catalog.sockets().profiles.some((profile) => profile.id === request.ground?.profile)) shape.push(`ground profile ${request.ground.profile} is not in the socket table`);
+    if (region.min[1] < request.ground.y) shape.push(`the region starts below the ground plane y=${request.ground.y}`);
+  }
+  if (shape.length > 0) return err(shape);
   const read: RegionRead = readRegion(catalog, state, region);
   if (read.closed) return err(["generation mints new entities and is refused while conservation is closed"]);
   const clear = new Set(request.clear ?? []);

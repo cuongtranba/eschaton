@@ -1,7 +1,5 @@
 import {
-  assemblyId,
   err,
-  foldonId,
   ok,
   placeFootprint,
   placeSockets,
@@ -15,9 +13,9 @@ import {
   type Rotation,
   type SocketDefinition,
 } from "@eschaton/foldon";
+import { MAX_WEIGHT, shapeOf, type TileRef, type TileSpec } from "./shape";
 
-export type TileRef = Readonly<{ kind: "foldon" | "assembly"; id: string; version: number }>;
-export type TileSpec = Readonly<{ ref: Readonly<{ kind: "foldon" | "assembly"; id: string; version?: number }>; weight: number }>;
+export { MAX_WEIGHT, type TileRef, type TileSpec } from "./shape";
 
 export const DIRECTIONS: readonly Face[] = ["+x", "-x", "+y", "-y", "+z", "-z"];
 export const OPPOSITE: readonly number[] = [1, 0, 3, 2, 5, 4];
@@ -51,22 +49,7 @@ export type CompiledTiles = Readonly<{
   needsMate: (signature: number) => boolean;
 }>;
 
-const ROTATIONS: readonly Rotation[] = [0, 1, 2, 3];
 const key = (cell: Cell): string => `${cell[0]},${cell[1]},${cell[2]}`;
-
-type Shape = Readonly<{ ref: TileRef; footprint: readonly Cell[]; sockets: readonly SocketDefinition[]; rotations: readonly Rotation[] }>;
-
-function shapeOf(catalog: Catalog, spec: TileSpec): Shape | string {
-  const { ref } = spec;
-  if (ref.kind === "foldon") {
-    const found = catalog.foldon(foldonId(ref.id), ref.version);
-    if (found === undefined) return `foldon ${ref.id} is not in the catalog`;
-    return { ref: { kind: "foldon", id: found.id, version: found.version }, footprint: found.footprint, sockets: found.sockets, rotations: found.rotations };
-  }
-  const found = catalog.assembly(assemblyId(ref.id), ref.version);
-  if (found === undefined) return `assembly ${ref.id} is not in the catalog`;
-  return { ref: { kind: "assembly", id: found.recipe.id, version: found.recipe.version }, footprint: found.footprint, sockets: found.sockets, rotations: ROTATIONS };
-}
 
 export function compileTiles(catalog: Catalog, tiles: readonly TileSpec[]): Result<CompiledTiles, readonly string[]> {
   const table = catalog.sockets();
@@ -101,8 +84,8 @@ export function compileTiles(catalog: Catalog, tiles: readonly TileSpec[]): Resu
   const variants: Variant[] = [];
   const seenIds = new Set<string>();
   tiles.forEach((spec, tile) => {
-    if (!Number.isSafeInteger(spec.weight) || spec.weight < 1) issues.push(`tile ${spec.ref.id}: weight must be an integer >= 1`);
-    const shape = shapeOf(catalog, spec);
+    if (!Number.isSafeInteger(spec.weight) || spec.weight < 1 || spec.weight > MAX_WEIGHT) issues.push(`tile ${spec.ref.id}: weight must be an integer in 1..${MAX_WEIGHT}`);
+    const shape = shapeOf(catalog, spec.ref);
     if (typeof shape === "string") {
       issues.push(shape);
       return;

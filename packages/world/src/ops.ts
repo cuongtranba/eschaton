@@ -282,7 +282,33 @@ const annotate: Handler<"annotate"> = (_catalog, _draft, op, index) =>
     ? undefined
     : worldIssue("op-invalid", `annotate needs a note of 1..${MAX_NOTE_LENGTH} characters`, index);
 
+const OP_TAGS: readonly string[] = ["annotate", "instantiate", "detach", "attach", "store", "retrieve", "split", "merge", "consume", "conserve", "fold"];
+const ENTITY_OPS: readonly string[] = ["detach", "attach", "store", "retrieve", "split", "consume", "fold"];
+
+/** Shape checks that must hold before an op is interpreted at all. Ops arrive as data, also from workers. */
+export function opShapeIssue(op: unknown, index: number): WorldIssue | undefined {
+  const invalid = (message: string): WorldIssue => worldIssue("op-invalid", message, index);
+  if (typeof op !== "object" || op === null || !("op" in op) || typeof op.op !== "string" || !OP_TAGS.includes(op.op)) {
+    return invalid("an op needs a known `op` tag");
+  }
+  if (ENTITY_OPS.includes(op.op) && !("entity" in op && typeof op.entity === "string")) return invalid(`${op.op} needs an entity id`);
+  if (op.op === "instantiate" || op.op === "attach") {
+    if (!("anchor" in op && isCell(op.anchor)) || !("rotation" in op && isRotation(op.rotation))) {
+      return invalid(`${op.op} needs an integer anchor cell and a rotation 0..3`);
+    }
+  }
+  if (op.op === "instantiate") {
+    const ref: unknown = "ref" in op ? op.ref : undefined;
+    const valid =
+      typeof ref === "object" && ref !== null && "kind" in ref && (ref.kind === "foldon" || ref.kind === "assembly") && "id" in ref && typeof ref.id === "string";
+    if (!valid) return invalid("instantiate needs a ref with kind foldon or assembly and an id");
+  }
+  return undefined;
+}
+
 export function applyOp(catalog: Catalog, draft: Draft, op: WorldOp, index: number): WorldIssue | undefined {
+  const shape = opShapeIssue(op, index);
+  if (shape !== undefined) return shape;
   switch (op.op) {
     case "annotate":
       return annotate(catalog, draft, op, index);
