@@ -102,6 +102,7 @@ const cases: readonly Case[] = [
   imports("rejects the solver worker importing three", "apps/studio/src/worker/probe.ts", `import { Vector3 } from "three";`, "rejected"),
   imports("rejects the solver worker importing react", "apps/studio/src/worker/probe.ts", `import { useState } from "react";`, "rejected"),
   imports("rejects the solver worker importing the renderer", "apps/studio/src/worker/probe.ts", `import { createLabRenderer } from "../renderer/labRenderer";`, "rejected"),
+  imports("accepts the generation worker importing the genesis entry point", "apps/studio/src/worker/probe.ts", `import { createGenesisHost } from "@eschaton/genesis";`, "accepted"),
   imports("accepts the solver worker importing the wave entry point", "apps/studio/src/worker/probe.ts", `import { createWaveHost } from "@eschaton/wave";`, "accepted"),
   imports("rejects the studio importing an experiment", UI, `import { solvePlacement } from "@eschaton/exp-wfc-placement";`, "rejected"),
 

@@ -24,7 +24,8 @@ export type DistrictMetrics = Readonly<{
   bridgeCells: number;
   lots: Readonly<Record<Role, number>>;
   emptyLots: number;
-  pieces: number;
+  /** Instantiate operations. An assembly placement mints several entities, so this is not the entity count. */
+  placements: number;
   ops: number;
   solverDecisions: number;
   solverBacktracks: number;
@@ -170,7 +171,7 @@ export function createDistrictJob(catalog: Catalog, state: WorldState, request: 
         bridgeCells: count("bridge"),
         lots,
         emptyLots: empty,
-        pieces: ops.length,
+        placements: ops.length,
         ops: ops.length + 1,
         solverDecisions: decisions,
         solverBacktracks: backtracks,

@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { hashState } from "@eschaton/world";
 import { canAttach, canDetach, selectedEntity, WAVE_SIZES, type WaveSize, type WorldCommand, type WorldSession } from "../lab/world/session";
+import { GenesisPanel } from "./GenesisPanel";
 import { Row } from "./Row";
 
 const SIZE_NAMES: readonly WaveSize[] = ["small", "medium", "large", "huge"];
@@ -148,7 +149,7 @@ export function WorldDetails({ session, dispatch }: WorldDetailsProps) {
           </label>
         </div>
         <div className="world__actions">
-          <button type="button" data-testid="wave-solve" disabled={solving} onClick={() => { dispatch({ type: "waveStart" }); }}>
+          <button type="button" data-testid="wave-solve" disabled={solving || session.genesis.status === "generating"} onClick={() => { dispatch({ type: "waveStart" }); }}>
             Solve region
           </button>
           <button type="button" data-testid="wave-cancel" disabled={!solving} onClick={() => { dispatch({ type: "waveCancel" }); }}>
@@ -161,6 +162,8 @@ export function WorldDetails({ session, dispatch }: WorldDetailsProps) {
         </p>
         <p className="muted">Existing pieces in the region are pins. The result is committed once, atomically, only if the region did not change meanwhile.</p>
       </section>
+
+      <GenesisPanel session={session} dispatch={dispatch} />
 
       <section aria-label="Replay" className="inspector__section">
         <h4>Replay</h4>

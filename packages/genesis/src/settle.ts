@@ -5,7 +5,7 @@ import type { DistrictOutcome } from "./district";
 import { planIssues } from "./validate";
 
 export type DistrictSettlement =
-  | Readonly<{ status: "committed"; detail: string; committed: Committed }>
+  | Readonly<{ status: "committed"; detail: string; committed: Committed; district: Extract<DistrictOutcome, { kind: "generated" }> }>
   | Readonly<{ status: "cancelled" | "conflict" | "failed"; detail: string }>;
 
 const isOutcome = (value: unknown): value is DistrictOutcome =>
@@ -18,7 +18,10 @@ const wellFormed = (value: DistrictOutcome): value is Extract<DistrictOutcome, {
   Array.isArray(value.plan.lots) &&
   Array.isArray(value.at) &&
   typeof value.proposal === "object" &&
-  Array.isArray(value.proposal.ops);
+  Array.isArray(value.proposal.ops) &&
+  typeof value.metrics === "object" &&
+  typeof value.metrics.lots === "object" &&
+  Array.isArray(value.diagnostics);
 
 /**
  * The only way a generated district reaches the world. The result may come from another thread and is not trusted:
@@ -43,7 +46,8 @@ export function settleDistrict(catalog: Catalog, state: WorldState, outcome: unk
   const { metrics } = outcome;
   return {
     status: "committed",
-    detail: `${metrics.pieces} pieces; ${metrics.roadCells} road, ${metrics.waterCells} water, ${metrics.bridgeCells} bridge cells; lots ${metrics.lots.tower} tower, ${metrics.lots.house} house, ${metrics.lots.ruin} ruin, ${metrics.lots.garden} garden`,
+    detail: `${metrics.placements} placements; ${metrics.roadCells} road, ${metrics.waterCells} water, ${metrics.bridgeCells} bridge cells; lots ${metrics.lots.tower} tower, ${metrics.lots.house} house, ${metrics.lots.ruin} ruin, ${metrics.lots.garden} garden`,
     committed: applied.value,
+    district: outcome,
   };
 }

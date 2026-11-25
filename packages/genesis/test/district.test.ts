@@ -40,9 +40,9 @@ function committedDistrict(seed: number): { before: WorldState; after: WorldStat
 }
 
 test("a generated district commits as one revision that passes the world invariants and keeps existing entities identical", () => {
-  const { before, after, outcome } = committedDistrict(1);
+  const { before, after } = committedDistrict(1);
   expect(checkInvariants(catalog, after)).toEqual([]);
-  expect([after.header.revision, after.entities[0], outcome.metrics.pieces > 800]).toEqual([before.header.revision + 1, before.entities[0], true]);
+  expect([after.header.revision, after.entities[0], after.entities.length - before.entities.length > 800]).toEqual([before.header.revision + 1, before.entities[0], true]);
 });
 
 test("ten seeds give ten distinct districts that all pass the plan validators, the world invariants and the audit", { timeout: 120_000 }, () => {
