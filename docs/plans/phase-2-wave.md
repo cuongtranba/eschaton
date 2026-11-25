@@ -55,6 +55,12 @@ Every milestone ends green on lint, typecheck, unit, build and e2e, in CI. Tests
 | W7 | Corpus, benchmarks, transaction-cost profile at 100, 1,000 and district scale | Recorded on a clean SHA |
 | W8 | Exit report; stop at the gate | Owner visual review and decision |
 
+### Milestone status (2026-11-25)
+
+W0–W8 are done. Phase 2 is **at its exit gate, awaiting the owner**: see [`../phase-2-exit.md`](../phase-2-exit.md) for the criteria mapping, commits, benchmarks, visual evidence, flagged choices and limitations. Deviations from this plan:
+- W0's "table round trip" is covered by the catalog-source fingerprint test.
+- W7's transaction profile used 100, 1,000 and 10,000 entities; no optimisation followed (by instruction).
+
 ## 4. Out of scope
 
 - Phase 3: hierarchical districts, semantic roles, roads, terrain, shape grammar.

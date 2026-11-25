@@ -1,0 +1,69 @@
+{
+  "provenance": {
+    "commit": "2d83d97c8fd2739753fe73c321b35c6717529b06",
+    "shortCommit": "2d83d97c8",
+    "commitDate": "2026-11-25",
+    "dirty": false,
+    "mode": "record",
+    "generatedAt": "2026-11-25T07:23:44.557Z"
+  },
+  "machine": {
+    "os": "Darwin 25.5.0 (darwin arm64)",
+    "cpu": "Apple M5 Pro",
+    "logicalCores": 18,
+    "totalMemoryGiB": 48,
+    "node": "v24.20.0"
+  },
+  "startedAt": "2026-11-25T07:23:45.097Z",
+  "rows": [
+    {
+      "name": "commit instantiate watchtower (27 entities) into an empty world",
+      "opsPerSecond": 894.0373988667513,
+      "p50Us": 1214.5000000000437,
+      "p99Us": 1839.772000000158,
+      "samples": 1253
+    },
+    {
+      "name": "commit one detach in a 100-entity world",
+      "opsPerSecond": 267.97152642431735,
+      "p50Us": 3971.2499999996,
+      "p99Us": 4789.684999999989,
+      "samples": 393
+    },
+    {
+      "name": "hashState of a 1,000-entity world",
+      "opsPerSecond": 107.08228402842711,
+      "p50Us": 10821.125000000393,
+      "p99Us": 12474.770499999067,
+      "samples": 151
+    },
+    {
+      "name": "commit one detach in a 1,000-entity world",
+      "opsPerSecond": 23.17636678343444,
+      "p50Us": 45232.91700000027,
+      "p99Us": 56525.790119999736,
+      "samples": 64
+    },
+    {
+      "name": "runSystem windFold over a roof-module and a leaf",
+      "opsPerSecond": 9924.633099046183,
+      "p50Us": 87.04099999886239,
+      "p99Us": 416.38046000065503,
+      "samples": 12030
+    },
+    {
+      "name": "assemble a watchtower from inventory (27 patches)",
+      "opsPerSecond": 44.09235746569647,
+      "p50Us": 24575.81250000021,
+      "p99Us": 32570.777330000532,
+      "samples": 64
+    },
+    {
+      "name": "replay a 50-commit log",
+      "opsPerSecond": 27.61674549281625,
+      "p50Us": 38533.791500000916,
+      "p99Us": 74573.30249999932,
+      "samples": 64
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "provenance": {
+    "commit": "2d83d97c8fd2739753fe73c321b35c6717529b06",
+    "shortCommit": "2d83d97c8",
+    "commitDate": "2026-11-25",
+    "dirty": false,
+    "mode": "record",
+    "generatedAt": "2026-11-25T07:24:02.012Z"
+  },
+  "machine": {
+    "os": "Darwin 25.5.0 (darwin arm64)",
+    "cpu": "Apple M5 Pro",
+    "logicalCores": 18,
+    "totalMemoryGiB": 48,
+    "node": "v24.20.0"
+  },
+  "startedAt": "2026-11-25T07:24:02.538Z",
+  "rows": [
+    {
+      "name": "pack 6x3x6 completely with L-blocks and columns (backtracking), a new seed each run",
+      "opsPerSecond": 1298.633912309923,
+      "p50Us": 733.8339999987511,
+      "p99Us": 4325.133280003507,
+      "samples": 1685
+    },
+    {
+      "name": "compile the town tile set (7 tiles)",
+      "opsPerSecond": 954.7107300924978,
+      "p50Us": 1052.1244999999908,
+      "p99Us": 1491.9212300000977,
+      "samples": 1398
+    },
+    {
+      "name": "solve town 8x4x8 (256 cells), a new seed each run",
+      "opsPerSecond": 54.37148742462959,
+      "p50Us": 22650.250000000142,
+      "p99Us": 76310.14353999954,
+      "samples": 64
+    },
+    {
+      "name": "solve town 16x8x16 (2,048 cells, Local WFC target size), a new seed each run",
+      "opsPerSecond": 7.4493303408602145,
+      "p50Us": 127451.47900000028,
+      "p99Us": 500194.0019999986,
+      "samples": 64
+    },
+    {
+      "name": "solve town 28x8x28 (6,272 cells), a new seed each run",
+      "opsPerSecond": 2.012139049230026,
+      "p50Us": 481372.02100000286,
+      "p99Us": 1304897.3709199978,
+      "samples": 64
+    },
+    {
+      "name": "readRegion 8x4x8 in a 100-entity world",
+      "opsPerSecond": 20786.964675634856,
+      "p50Us": 45.250000002852175,
+      "p99Us": 106.13465999835168,
+      "samples": 27978
+    },
+    {
+      "name": "readRegion 8x4x8 in a 1000-entity world",
+      "opsPerSecond": 2372.2344285557706,
+      "p50Us": 365.8959999993385,
+      "p99Us": 1140.757499998363,
+      "samples": 3132
+    },
+    {
+      "name": "readRegion 8x4x8 in a 10000-entity world",
+      "opsPerSecond": 173.86885841283407,
+      "p50Us": 6005.0629999968805,
+      "p99Us": 7733.878409997778,
+      "samples": 252
+    },
+    {
+      "name": "applyProposal (8x4x8 solved region) into a 100-entity world",
+      "opsPerSecond": 79.78397720991443,
+      "p50Us": 12543.562499999098,
+      "p99Us": 17013.595220002822,
+      "samples": 118
+    },
+    {
+      "name": "applyProposal (8x4x8 solved region) into a 1000-entity world",
+      "opsPerSecond": 31.70420731817703,
+      "p50Us": 35685.874999999214,
+      "p99Us": 54410.79708000096,
+      "samples": 64
+    },
+    {
+      "name": "applyProposal (8x4x8 solved region) into a 10000-entity world",
+      "opsPerSecond": 3.7596150299868207,
+      "p50Us": 261849.1040000008,
+      "p99Us": 361840.457830005,
+      "samples": 64
+    }
+  ]
+}

@@ -1,0 +1,260 @@
+{
+  "provenance": {
+    "commit": "2d83d97c8fd2739753fe73c321b35c6717529b06",
+    "shortCommit": "2d83d97c8",
+    "commitDate": "2026-11-25",
+    "dirty": false,
+    "mode": "record",
+    "generatedAt": "2026-11-25T07:22:21.502Z"
+  },
+  "machine": {
+    "os": "Darwin 25.5.0 (darwin arm64)",
+    "cpu": "Apple M5 Pro",
+    "logicalCores": 18,
+    "totalMemoryGiB": 48,
+    "node": "v24.20.0"
+  },
+  "corpusSize": 100,
+  "warmupRuns": 5,
+  "budget": {
+    "maxNodes": 5000,
+    "maxBacktracks": 500
+  },
+  "sizes": [
+    8,
+    12,
+    16
+  ],
+  "summaries": [
+    {
+      "scenario": "open",
+      "size": 8,
+      "encoding": "placement",
+      "solved": 100,
+      "unsatisfiable": 0,
+      "budgetExceeded": 0,
+      "p50Ms": 9.344124999999963,
+      "p95Ms": 45.29254100000003,
+      "maxMs": 63.29737499999999,
+      "meanNodes": 53.71,
+      "meanBacktracks": 0,
+      "meanPropagationSteps": 8515.29,
+      "maxBacktracks": 0,
+      "maxBacktracksSeed": 1
+    },
+    {
+      "scenario": "open",
+      "size": 8,
+      "encoding": "offset-state",
+      "solved": 100,
+      "unsatisfiable": 0,
+      "budgetExceeded": 0,
+      "p50Ms": 7.867917000000034,
+      "p95Ms": 22.900458999999955,
+      "maxMs": 51.32054100000005,
+      "meanNodes": 53.71,
+      "meanBacktracks": 0,
+      "meanPropagationSteps": 457.94,
+      "maxBacktracks": 0,
+      "maxBacktracksSeed": 1
+    },
+    {
+      "scenario": "open",
+      "size": 12,
+      "encoding": "placement",
+      "solved": 100,
+      "unsatisfiable": 0,
+      "budgetExceeded": 0,
+      "p50Ms": 32.07304199999999,
+      "p95Ms": 181.9223750000001,
+      "maxMs": 276.21137499999986,
+      "meanNodes": 110.51,
+      "meanBacktracks": 0,
+      "meanPropagationSteps": 24658.19,
+      "maxBacktracks": 0,
+      "maxBacktracksSeed": 1
+    },
+    {
+      "scenario": "open",
+      "size": 12,
+      "encoding": "offset-state",
+      "solved": 100,
+      "unsatisfiable": 0,
+      "budgetExceeded": 0,
+      "p50Ms": 19.346042000001034,
+      "p95Ms": 25.955958000000464,
+      "maxMs": 47.18587500000103,
+      "meanNodes": 110.49,
+      "meanBacktracks": 0,
+      "meanPropagationSteps": 1126.09,
+      "maxBacktracks": 0,
+      "maxBacktracksSeed": 1
+    },
+    {
+      "scenario": "open",
+      "size": 16,
+      "encoding": "placement",
+      "solved": 100,
+      "unsatisfiable": 0,
+      "budgetExceeded": 0,
+      "p50Ms": 90.68983300000036,
+      "p95Ms": 254.75816599999962,
+      "maxMs": 639.0037080000002,
+      "meanNodes": 186.88,
+      "meanBacktracks": 0,
+      "meanPropagationSteps": 48552.65,
+      "maxBacktracks": 0,
+      "maxBacktracksSeed": 1
+    },
+    {
+      "scenario": "open",
+      "size": 16,
+      "encoding": "offset-state",
+      "solved": 100,
+      "unsatisfiable": 0,
+      "budgetExceeded": 0,
+      "p50Ms": 51.62537499999962,
+      "p95Ms": 188.80516700000226,
+      "maxMs": 230.97920800000065,
+      "meanNodes": 186.88,
+      "meanBacktracks": 0,
+      "meanPropagationSteps": 2071.9,
+      "maxBacktracks": 0,
+      "maxBacktracksSeed": 1
+    },
+    {
+      "scenario": "constrained",
+      "size": 8,
+      "encoding": "placement",
+      "solved": 100,
+      "unsatisfiable": 0,
+      "budgetExceeded": 0,
+      "p50Ms": 5.786499999998341,
+      "p95Ms": 11.828750000000582,
+      "maxMs": 27.882207999999082,
+      "meanNodes": 49.82,
+      "meanBacktracks": 4.41,
+      "meanPropagationSteps": 4651.65,
+      "maxBacktracks": 170,
+      "maxBacktracksSeed": 32
+    },
+    {
+      "scenario": "constrained",
+      "size": 8,
+      "encoding": "offset-state",
+      "solved": 100,
+      "unsatisfiable": 0,
+      "budgetExceeded": 0,
+      "p50Ms": 6.516708000002836,
+      "p95Ms": 39.36750000000029,
+      "maxMs": 68.59429100000125,
+      "meanNodes": 49.82,
+      "meanBacktracks": 4.41,
+      "meanPropagationSteps": 449.13,
+      "maxBacktracks": 170,
+      "maxBacktracksSeed": 32
+    },
+    {
+      "scenario": "constrained",
+      "size": 12,
+      "encoding": "placement",
+      "solved": 100,
+      "unsatisfiable": 0,
+      "budgetExceeded": 0,
+      "p50Ms": 146.5799160000024,
+      "p95Ms": 269.85983300000225,
+      "maxMs": 434.65141700000095,
+      "meanNodes": 103.7,
+      "meanBacktracks": 1.3,
+      "meanPropagationSteps": 18207.09,
+      "maxBacktracks": 8,
+      "maxBacktracksSeed": 16
+    },
+    {
+      "scenario": "constrained",
+      "size": 12,
+      "encoding": "offset-state",
+      "solved": 100,
+      "unsatisfiable": 0,
+      "budgetExceeded": 0,
+      "p50Ms": 70.29462500000227,
+      "p95Ms": 170.76650000000518,
+      "maxMs": 213.4059169999964,
+      "meanNodes": 103.67,
+      "meanBacktracks": 1.36,
+      "meanPropagationSteps": 1115.05,
+      "maxBacktracks": 8,
+      "maxBacktracksSeed": 16
+    },
+    {
+      "scenario": "constrained",
+      "size": 16,
+      "encoding": "placement",
+      "solved": 100,
+      "unsatisfiable": 0,
+      "budgetExceeded": 0,
+      "p50Ms": 119.08108400000492,
+      "p95Ms": 569.6128749999989,
+      "maxMs": 649.2538339999955,
+      "meanNodes": 174.04,
+      "meanBacktracks": 1.63,
+      "meanPropagationSteps": 37831.19,
+      "maxBacktracks": 13,
+      "maxBacktracksSeed": 75
+    },
+    {
+      "scenario": "constrained",
+      "size": 16,
+      "encoding": "offset-state",
+      "solved": 100,
+      "unsatisfiable": 0,
+      "budgetExceeded": 0,
+      "p50Ms": 37.972083000000566,
+      "p95Ms": 130.65004199999385,
+      "maxMs": 177.69891700000153,
+      "meanNodes": 173.87,
+      "meanBacktracks": 1.59,
+      "meanPropagationSteps": 2047.86,
+      "maxBacktracks": 13,
+      "maxBacktracksSeed": 75
+    }
+  ],
+  "agreement": [
+    {
+      "scenario": "open",
+      "size": 8,
+      "bothSolved": 100,
+      "sameHash": 100
+    },
+    {
+      "scenario": "open",
+      "size": 12,
+      "bothSolved": 100,
+      "sameHash": 98
+    },
+    {
+      "scenario": "open",
+      "size": 16,
+      "bothSolved": 100,
+      "sameHash": 100
+    },
+    {
+      "scenario": "constrained",
+      "size": 8,
+      "bothSolved": 100,
+      "sameHash": 100
+    },
+    {
+      "scenario": "constrained",
+      "size": 12,
+      "bothSolved": 100,
+      "sameHash": 98
+    },
+    {
+      "scenario": "constrained",
+      "size": 16,
+      "bothSolved": 100,
+      "sameHash": 97
+    }
+  ]
+}
