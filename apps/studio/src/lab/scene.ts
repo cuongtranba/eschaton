@@ -14,10 +14,12 @@ import {
 import { basisOf } from "./basis";
 import { composeReferenceScene, type Composition } from "./composition/referenceScene";
 import type { AssemblyLeaves, PlacedFoldon } from "./composition/district";
-import { cellBounds, type Library, type ResolvedItem } from "./library";
+import { cellBounds, WORLD_SCENE_ID, type Library, type ResolvedItem } from "./library";
 import { scatterSpots, stressSpots } from "./scatter";
 import type { LabState } from "./state";
 import type { Basis, Bounds, InkScale, Ink, LeafBatch, ScenePoseError, SocketMarker, ViewModel } from "./viewModel";
+import type { WorldSession } from "./world/session";
+import { worldViewModel } from "./world/view";
 
 const SCATTER_COUNT = 5;
 const SCATTER_FRAGMENT = "P09";
@@ -239,7 +241,9 @@ export function buildViewModel(
   library: Library,
   item: ResolvedItem,
   state: LabState,
+  world: WorldSession,
   options: ViewOptions = { stress: 0 },
 ): ViewModel {
-  return item.kind === "scene" ? sceneViewModel(library, state) : labViewModel(library, item, state, options.stress);
+  if (item.kind !== "scene") return labViewModel(library, item, state, options.stress);
+  return item.definition.id === WORLD_SCENE_ID ? worldViewModel(world, state) : sceneViewModel(library, state);
 }

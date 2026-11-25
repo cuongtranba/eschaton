@@ -6,11 +6,14 @@ import {
   type FoldonDefinition,
   type PosedCrease,
 } from "@eschaton/foldon";
-import { cellBounds, footprintSize, type Library, type ResolvedItem } from "../lab/library";
+import { cellBounds, footprintSize, WORLD_SCENE_ID, type Library, type ResolvedItem } from "../lab/library";
 import { creaseTargets } from "../lab/scene";
 import type { LabCommand, LabState } from "../lab/state";
 import type { ViewModel } from "../lab/viewModel";
+import type { WorldCommand, WorldSession } from "../lab/world/session";
 import { LookPanel } from "./LookPanel";
+import { Row } from "./Row";
+import { WorldDetails } from "./WorldInspector";
 
 type InspectorProps = Readonly<{
   item: ResolvedItem;
@@ -18,20 +21,13 @@ type InspectorProps = Readonly<{
   state: LabState;
   viewModel: ViewModel;
   dispatch: (command: LabCommand) => void;
+  world: WorldSession;
+  worldDispatch: (command: WorldCommand) => void;
 }>;
 
 const toDegrees = (radians: number): number => (radians * 180) / Math.PI;
 const toRadians = (degrees: number): number => (degrees * Math.PI) / 180;
 export const formatDegrees = (radians: number): string => `${(Math.round(toDegrees(radians) * 10) / 10 + 0).toFixed(1)}°`;
-
-function Row({ label, children }: Readonly<{ label: string; children: React.ReactNode }>) {
-  return (
-    <div className="inspector__row">
-      <dt>{label}</dt>
-      <dd>{children}</dd>
-    </div>
-  );
-}
 
 function describeComponent(component: ComponentSpec): string {
   switch (component.kind) {
@@ -266,7 +262,7 @@ const titleOf = (item: ResolvedItem): string => {
   }
 };
 
-export function Inspector({ item, library, state, viewModel, dispatch }: InspectorProps) {
+export function Inspector({ item, library, state, viewModel, dispatch, world, worldDispatch }: InspectorProps) {
   const title = titleOf(item);
   return (
     <aside className="panel panel--right" aria-label="Inspector">
@@ -282,7 +278,8 @@ export function Inspector({ item, library, state, viewModel, dispatch }: Inspect
         <PrimitiveDetails definition={item.definition} state={state} viewModel={viewModel} dispatch={dispatch} />
       )}
       {item.kind === "assembly" && <AssemblyDetails definition={item.definition} library={library} />}
-      {item.kind === "scene" && <SceneDetails state={state} viewModel={viewModel} />}
+      {item.kind === "scene" && item.definition.id !== WORLD_SCENE_ID && <SceneDetails state={state} viewModel={viewModel} />}
+      {item.kind === "scene" && item.definition.id === WORLD_SCENE_ID && <WorldDetails session={world} dispatch={worldDispatch} />}
     </aside>
   );
 }

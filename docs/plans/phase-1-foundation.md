@@ -49,6 +49,9 @@ The owner asked for gaps to be flagged rather than silently decided. Each entry 
 | Bond semantics beyond P1-D11 (ADR 0014) | Interpretation; ADR 0014 names it | Bonds are created for every mated socket pair whenever an entity becomes placed (`instantiate` or `attach`), so the same structure has the same bonds however it was built |
 | Studio offset toggle (M7 test) | Interpretation of P1-D12 | Default envelope zero; the toggle switches to the illustrative ADR 0013 envelope, labelled look-dev, off by default |
 | Tombstone compaction (ADR 0010 Q5) | Open, later phases | Tombstones are kept |
+| Studio "re-attach at previous pose" (M7) | Interpretation; UI only | The Studio session keeps a `homes` map (entity id → pose it was detached from). It is UI convenience, not domain truth: never hashed, never replayed; the re-attach is an ordinary `attach` op in the log |
+| Decorative offset details (M7, ADR 0013 layer B) | Interpretation of P1-D12 | Seed = the world's header seed (not the Studio toolbar seed); applied about the base centre of the definition footprint, in the entity's local frame; placed entities only. With the toggle off the envelope is zero |
+| M7 undo test | Dropped as the plan allows | No replay-to-revision or undo is exposed: rewinding and re-committing would re-mint ids, and ADR 0010 forbids history branching in Phase 1 |
 
 ## 3. Milestones (dependency-ordered vertical slices)
 
