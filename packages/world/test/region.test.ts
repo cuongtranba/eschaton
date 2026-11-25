@@ -150,3 +150,21 @@ test("a patch with an unknown op is rejected instead of committing an empty revi
   const result = applyPatch(catalog, base, patch);
   expect(result.ok ? "committed" : result.error.kind).toBe("invalid");
 });
+
+test("a proposal with a nonlocal dependency conflicts when that region changes and commits when something unrelated changes", () => {
+  const base = start();
+  const far: Region = { min: [0, 0, 0], max: [0, 0, 0] };
+  const read = readRegion(catalog, base, region);
+  const proposal: Proposal = {
+    region,
+    read: { revision: read.revision, digest: read.digest },
+    depends: [{ region: far, digest: readRegion(catalog, base, far).digest }],
+    ops: [box(10, 0, 10)],
+    origin,
+  };
+  const dependency = base.entities[0];
+  if (dependency === undefined) throw new Error("the far box must exist");
+  const unrelated = commit(base, box(40, 0, 40));
+  const broken = commit(base, { op: "detach", entity: dependency.id });
+  expect([verdict(applyProposal(catalog, unrelated, proposal)), verdict(applyProposal(catalog, broken, proposal))]).toEqual(["committed@3", "conflict"]);
+});

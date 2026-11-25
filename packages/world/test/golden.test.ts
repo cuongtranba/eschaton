@@ -1,4 +1,4 @@
-import { canonicalJson, fnv1a64, presetCatalog, type Catalog } from "@eschaton/foldon";
+import { assemblyCatalog, canonicalJson, createCatalog, fnv1a64, moduleContracts, presetAssemblies, presetFoldons, primitiveCatalog, type Catalog } from "@eschaton/foldon";
 import {
   applyPatch,
   checkInvariants,
@@ -15,9 +15,15 @@ import {
 } from "@eschaton/world";
 import { expect, test } from "vitest";
 
+/** The exact catalog content the recorded hashes were made with: a catalog change changes every state hash. */
 const catalog: Catalog = (() => {
-  if (!presetCatalog.ok) throw new Error("the preset catalog must build");
-  return presetCatalog.value;
+  const built = createCatalog({
+    foldons: [...primitiveCatalog, ...presetFoldons.filter((foldon) => foldon.id === "leaf")],
+    assemblies: [...assemblyCatalog, ...presetAssemblies.filter((recipe) => recipe.id === "column-3" || recipe.id === "l-block")],
+    contracts: moduleContracts,
+  });
+  if (!built.ok) throw new Error("the pinned catalog must build");
+  return built.value;
 })();
 
 const origin = { kind: "command", id: "golden" } as const;

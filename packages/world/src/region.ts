@@ -22,6 +22,8 @@ export type RegionRead = Readonly<{
 export type Proposal = Readonly<{
   region: Region;
   read: Readonly<{ revision: Revision; digest: string }>;
+  /** Further regions the job relied on, each with the digest it had then (ADR 0016: nonlocal read dependencies). */
+  depends?: readonly Readonly<{ region: Region; digest: string }>[];
   ops: readonly WorldOp[];
   origin: Origin;
 }>;
@@ -109,6 +111,12 @@ export function applyProposal(catalog: Catalog, state: WorldState, proposal: Pro
     if (issue !== undefined) return err({ kind: "invalid", issues: [issue] });
   }
   const now = readRegion(catalog, state, proposal.region);
-  if (now.digest !== proposal.read.digest) return err({ kind: "conflict", base: proposal.read.revision, current: state.header.revision });
+  const conflict: ProposalRejection = { kind: "conflict", base: proposal.read.revision, current: state.header.revision };
+  if (now.digest !== proposal.read.digest) return err(conflict);
+  for (const dependency of proposal.depends ?? []) {
+    const bad = regionIssue(dependency.region);
+    if (bad !== undefined) return err({ kind: "invalid", issues: [bad] });
+    if (readRegion(catalog, state, dependency.region).digest !== dependency.digest) return err(conflict);
+  }
   return applyPatch(catalog, state, { baseRevision: state.header.revision, ops: proposal.ops, origin: proposal.origin });
 }

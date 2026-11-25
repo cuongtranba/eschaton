@@ -39,10 +39,39 @@ function leaf(): Result<FoldonDefinition, readonly ValidationIssue[] | string> {
   });
 }
 
-const built = leaf();
-if (!built.ok) throw new Error(`leaf preset is malformed: ${JSON.stringify(built.error)}`);
+/** A flat single-cell ground piece at the given height: paving, water or a bridge deck. Not a building mesh. */
+function groundPiece(id: string, name: string, height: number, inset: number, material: string, tags: readonly string[]): Result<FoldonDefinition, readonly ValidationIssue[] | string> {
+  const [low, high] = [inset, 1 - inset];
+  const geometry = foldedNet({
+    panels: [makePanel(panelId("surface"), [v3(low, height, low), v3(low, height, high), v3(high, height, high), v3(high, height, low)], up)],
+    root: panelId("surface"),
+    hinges: [],
+  });
+  if (!geometry.ok) return err(geometry.error);
+  const footprint = rectangularFootprint(1, 1, 1);
+  return defineFoldon({
+    id: foldonId(id),
+    name,
+    footprint,
+    geometry: geometry.value,
+    sockets: faceSockets(footprint, { default: "open", "+y": "empty", "-y": "base" }),
+    components: [renderable({ material: materialId(material) })],
+    tags: ["preset", "ground", ...tags],
+    weight: 1,
+  });
+}
 
-export const presetFoldons: readonly FoldonDefinition[] = [built.value];
+const authored = [
+  leaf(),
+  groundPiece("paving", "Paving (preset)", 0.06, 0.02, "ash-paper", ["road"]),
+  groundPiece("water", "Water (preset)", 0.02, 0.02, "ink-paper", ["water"]),
+  groundPiece("bridge", "Bridge deck (preset)", 0.34, 0.02, "paper", ["road", "bridge"]),
+];
+
+export const presetFoldons: readonly FoldonDefinition[] = authored.map((built) => {
+  if (!built.ok) throw new Error(`a preset foldon is malformed: ${JSON.stringify(built.error)}`);
+  return built.value;
+});
 
 const box = (id: string, x: number, y: number, z: number): AssemblyRecipe["parts"][number] => ({
   id: placementId(id),
