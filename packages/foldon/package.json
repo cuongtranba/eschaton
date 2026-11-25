@@ -1,0 +1,20 @@
+{
+  "name": "@eschaton/foldon",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json",
+    "bench": "node ../../benchmarks/src/foldon.ts"
+  },
+  "devDependencies": {
+    "vitest": "5.1.1"
+  }
+}

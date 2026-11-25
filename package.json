@@ -1,0 +1,27 @@
+{
+  "name": "eschaton",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.33.4",
+  "engines": { "node": ">=22.12.0" },
+  "scripts": {
+    "dev": "pnpm --filter @eschaton/studio dev",
+    "build": "pnpm -r --if-present build",
+    "test": "pnpm -r --if-present test",
+    "lint": "eslint .",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "e2e": "pnpm --filter @eschaton/studio e2e",
+    "bench": "node benchmarks/src/cli.ts",
+    "screenshots": "pnpm --filter @eschaton/studio screenshots",
+    "bench:studio": "pnpm --filter @eschaton/studio bench:studio"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/node": "26.6.6",
+    "eslint": "10.15.0",
+    "globals": "17.14.0",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.74.0",
+    "vitest": "5.1.1"
+  }
+}

@@ -1,0 +1,111 @@
+{
+  "provenance": {
+    "commit": "e9e50c52794812cc553b70df378d4a6ddadfcbb9",
+    "shortCommit": "e9e50c527",
+    "commitDate": "2026-11-24",
+    "dirty": false,
+    "mode": "record",
+    "generatedAt": "2026-11-24T10:22:40.714Z"
+  },
+  "machine": {
+    "os": "Linux 6.18.58.1-microsoft-standard-WSL2 (linux x64)",
+    "cpu": "AMD Ryzen 7 7800X3D 8-Core Processor",
+    "logicalCores": 8,
+    "totalMemoryGiB": 19.5,
+    "node": "v24.5.0"
+  },
+  "startedAt": "2026-11-24T10:22:41.106Z",
+  "rows": [
+    {
+      "name": "poseGeometry P02 Triangular facet",
+      "opsPerSecond": 934599.8823200059,
+      "p50Us": 1.028000000587781,
+      "p99Us": 2.733000000262109,
+      "samples": 707190
+    },
+    {
+      "name": "poseGeometry P01 Planar panel",
+      "opsPerSecond": 888760.4405070713,
+      "p50Us": 1.0929999998552375,
+      "p99Us": 2.0370000002003508,
+      "samples": 685361
+    },
+    {
+      "name": "poseGeometry P03 Hinged two-panel crease",
+      "opsPerSecond": 232989.2597357143,
+      "p50Us": 4.205000000183645,
+      "p99Us": 8.021479999806626,
+      "samples": 180853
+    },
+    {
+      "name": "poseGeometry P05 Valley fold",
+      "opsPerSecond": 230474.50794844673,
+      "p50Us": 4.224000000249362,
+      "p99Us": 8.845999999721244,
+      "samples": 177919
+    },
+    {
+      "name": "poseGeometry P04 Mountain fold",
+      "opsPerSecond": 222042.1689990634,
+      "p50Us": 4.269999999451102,
+      "p99Us": 12.57969000042067,
+      "samples": 164932
+    },
+    {
+      "name": "poseGeometry P09 Irregular fragment",
+      "opsPerSecond": 97788.97188060093,
+      "p50Us": 9.724999999889405,
+      "p99Us": 24.50453000044943,
+      "samples": 74284
+    },
+    {
+      "name": "poseGeometry P07 Pyramid",
+      "opsPerSecond": 80986.0043246396,
+      "p50Us": 12.096999998902902,
+      "p99Us": 25.527110000202818,
+      "samples": 63422
+    },
+    {
+      "name": "poseGeometry P06 Triangular prism",
+      "opsPerSecond": 78870.34706538531,
+      "p50Us": 12.375000000247383,
+      "p99Us": 26.2808899997708,
+      "samples": 61580
+    },
+    {
+      "name": "poseGeometry P08 Box shell",
+      "opsPerSecond": 61144.87951970343,
+      "p50Us": 15.89599999897473,
+      "p99Us": 31.175039999870915,
+      "samples": 47723
+    },
+    {
+      "name": "flatten watchtower",
+      "opsPerSecond": 265222.75181627367,
+      "p50Us": 3.689999999551219,
+      "p99Us": 7.304999999178108,
+      "samples": 205475
+    },
+    {
+      "name": "flatten roof-house",
+      "opsPerSecond": 217319.3700584296,
+      "p50Us": 4.523999999946682,
+      "p99Us": 8.52900000045338,
+      "samples": 169311
+    },
+    {
+      "name": "foldProgress(P08, 0.5) + poseGeometry",
+      "opsPerSecond": 30402.325286274805,
+      "p50Us": 31.864000000496162,
+      "p99Us": 61.041160000022515,
+      "samples": 23777
+    },
+    {
+      "name": "createCatalog(default inputs)",
+      "opsPerSecond": 578.1159239515052,
+      "p50Us": 1705.0540000000183,
+      "p99Us": 2208.3170000005325,
+      "samples": 461
+    }
+  ]
+}
