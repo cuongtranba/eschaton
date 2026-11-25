@@ -4,7 +4,7 @@ import { canonicalJson, deepFreeze } from "./canonical";
 import { worldIssue, type WorldIssue } from "./issues";
 import { SNAPSHOT_SCHEMA, type Conservation, type Versions, type WorldState } from "./state";
 
-const INVARIANT_SET_VERSION = 1;
+const INVARIANT_SET_VERSION = 2;
 
 export const ENGINE_VERSION = `@eschaton/world@${packageJson.version}`;
 

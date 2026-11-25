@@ -1,10 +1,12 @@
-import { defaultCatalog, getPrimitive, foldonId, placeSockets, type Catalog, type Vec3 } from "@eschaton/foldon";
+import { createCatalog, defaultCatalog, defaultSocketTable, getPrimitive, foldonId, placeSockets, primitiveCatalog, type Catalog, type Vec3 } from "@eschaton/foldon";
 import {
   applyPatch,
+  assemble,
   cellOccupant,
   checkInvariants,
   createWorld,
   findEntity,
+  storeId,
   type ContinuousTransform,
   type Entity,
   type WorldOp,
@@ -108,4 +110,42 @@ test("attaching an entity that is already placed is rejected", () => {
   const roof = roofPiece(world);
   const result = apply(world, { op: "attach", entity: roof.id, anchor: [20, 0, 20], rotation: 0 });
   expect(result.ok ? [] : result.error.kind === "invalid" ? result.error.issues.map((i) => i.code) : []).toEqual(["owner-invalid"]);
+});
+
+function fresh(using: Catalog = catalog): WorldState {
+  const created = createWorld({ catalog: using, seed: 5 });
+  if (!created.ok) throw new Error("world must build");
+  return created.value;
+}
+
+function place(using: Catalog, ...pieces: readonly (readonly [string, number])[]): WorldState {
+  const ops = pieces.map(([id, x]): WorldOp => ({ op: "instantiate", ref: { kind: "foldon", id }, anchor: [x, 0, 0], rotation: 0 }));
+  const result = applyPatch(using, fresh(using), { baseRevision: 0, ops, origin: { kind: "command", id: "test" } });
+  if (!result.ok) throw new Error(JSON.stringify(result.error));
+  expect(checkInvariants(using, result.value.state)).toEqual([]);
+  return result.value.state;
+}
+
+test("touching empty faces are a legal contact and never a structural bond", () => {
+  expect(place(catalog, ["P06", 0], ["P06", 1]).bonds).toEqual([]);
+});
+
+test("a wildcard open face against a wall is a legal contact and no bond by default", () => {
+  expect(place(catalog, ["P01", 0], ["P08", 1]).bonds).toEqual([]);
+});
+
+test("an explicit bonding rule for a wildcard pair creates the bond", () => {
+  const table = { ...defaultSocketTable, mates: [...defaultSocketTable.mates, { a: "open", b: "wall", relation: 0, bond: true } as const] };
+  const bonding = createCatalog({ foldons: primitiveCatalog, assemblies: [], sockets: table });
+  if (!bonding.ok) throw new Error(JSON.stringify(bonding.error));
+  expect(place(bonding.value, ["P01", 0], ["P08", 1]).bonds).toHaveLength(1);
+});
+
+test("a structure rebuilt by attach has exactly the bonds it had when instantiated", () => {
+  const world = roofWorld();
+  const bin = storeId("bin");
+  const stored = commit(world, ...world.entities.map((e): WorldOp => ({ op: "store", entity: e.id, store: bin })));
+  expect(stored.bonds).toEqual([]);
+  const rebuilt = assemble(catalog, stored, { target: { id: "roof-module" }, anchor: [0, 0, 0], rotation: 1, from: bin });
+  expect(rebuilt.ok ? rebuilt.value.state.bonds : []).toEqual(world.bonds);
 });

@@ -63,6 +63,7 @@ export {
 } from "./definition";
 export {
   defaultSocketTable,
+  bondEligible,
   socketMismatches,
   socketsCompatible,
   validateSocketTable,

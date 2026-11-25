@@ -9,9 +9,10 @@ export type ProfileSpec = Readonly<{
   symmetry: 1 | 2 | 4;
   handed: boolean;
   wildcard: boolean;
+  structural: boolean;
 }>;
 
-export type MateSpec = Readonly<{ a: SocketProfile; b: SocketProfile; relation: Turn }>;
+export type MateSpec = Readonly<{ a: SocketProfile; b: SocketProfile; relation: Turn; bond: boolean }>;
 
 export type SocketTable = Readonly<{
   version: number;
@@ -21,7 +22,7 @@ export type SocketTable = Readonly<{
 
 export type SocketMismatch = "position" | "normal" | "profile" | "turn" | "hand";
 
-const plain = (id: SocketProfile): ProfileSpec => ({ id, symmetry: 4, handed: false, wildcard: false });
+const plain = (id: SocketProfile): ProfileSpec => ({ id, symmetry: 4, handed: false, wildcard: false, structural: true });
 
 function frozen<T>(value: T): T {
   canonicalizeAndFreeze(value);
@@ -29,25 +30,25 @@ function frozen<T>(value: T): T {
 }
 
 export const defaultSocketTable: SocketTable = frozen({
-  version: 1,
+  version: 2,
   profiles: [
-    plain("empty"),
+    { id: "empty", symmetry: 4, handed: false, wildcard: false, structural: false },
     plain("ground"),
     plain("deck"),
     plain("base"),
     plain("wall"),
     plain("eave"),
     plain("beam"),
-    { id: "open", symmetry: 4, handed: false, wildcard: true },
+    { id: "open", symmetry: 4, handed: false, wildcard: true, structural: true },
   ],
   mates: [
-    { a: "empty", b: "empty", relation: 0 },
-    { a: "deck", b: "base", relation: 0 },
-    { a: "ground", b: "base", relation: 0 },
-    { a: "wall", b: "wall", relation: 0 },
-    { a: "eave", b: "eave", relation: 0 },
-    { a: "beam", b: "beam", relation: 0 },
-    { a: "beam", b: "wall", relation: 0 },
+    { a: "empty", b: "empty", relation: 0, bond: false },
+    { a: "deck", b: "base", relation: 0, bond: true },
+    { a: "ground", b: "base", relation: 0, bond: true },
+    { a: "wall", b: "wall", relation: 0, bond: true },
+    { a: "eave", b: "eave", relation: 0, bond: true },
+    { a: "beam", b: "beam", relation: 0, bond: true },
+    { a: "beam", b: "wall", relation: 0, bond: true },
   ],
 });
 
@@ -102,6 +103,17 @@ export function socketMismatches(table: SocketTable, a: SocketDefinition, b: Soc
   return handsMatch(a, b, specA.handed || specB.handed) ? reasons : [...reasons, "hand"];
 }
 
+/**
+ * Contact, legal adjacency and bond eligibility are three different facts. Two sockets are in contact when their
+ * faces coincide; the adjacency is legal when `socketMismatches` is empty; the pair is bond-eligible only when it is
+ * legal AND the table lists that profile pair explicitly with `bond: true`. A wildcard makes an adjacency legal but
+ * never bonds by itself.
+ */
+export function bondEligible(table: SocketTable, a: SocketDefinition, b: SocketDefinition): boolean {
+  const listed = table.mates.find((mate) => (mate.a === a.profile && mate.b === b.profile) || (mate.a === b.profile && mate.b === a.profile));
+  return listed?.bond === true && socketMismatches(table, a, b).length === 0;
+}
+
 export function socketsCompatible(a: SocketDefinition, b: SocketDefinition): boolean {
   return socketMismatches(defaultSocketTable, a, b).length === 0;
 }
@@ -140,6 +152,9 @@ function mateIssues(table: SocketTable): ValidationIssue[] {
       found.push(issue("socket-table-invalid", `${path}.relation`, "relation must be 0, 1, 2 or 3"));
     } else if (mate.a === mate.b && mate.relation % 2 !== 0) {
       found.push(issue("socket-table-invalid", `${path}.relation`, "a profile mating with itself needs relation 0 or 2"));
+    }
+    if (mate.bond && [mate.a, mate.b].some((id) => profileSpec(table, id)?.structural === false)) {
+      found.push(issue("socket-table-invalid", `${path}.bond`, `pair ${mate.a}-${mate.b} names a non-structural profile and can never bond`));
     }
     return found;
   });

@@ -26,18 +26,18 @@ import {
 const fixtureTable: SocketTable = {
   version: 1,
   profiles: [
-    { id: "empty", symmetry: 4, handed: false, wildcard: false },
-    { id: "road", symmetry: 1, handed: false, wildcard: false },
-    { id: "door", symmetry: 1, handed: false, wildcard: false },
-    { id: "plinth", symmetry: 4, handed: false, wildcard: false },
-    { id: "rail", symmetry: 2, handed: false, wildcard: false },
-    { id: "hinge", symmetry: 4, handed: true, wildcard: false },
+    { id: "empty", symmetry: 4, handed: false, wildcard: false, structural: false },
+    { id: "road", symmetry: 1, handed: false, wildcard: false, structural: true },
+    { id: "door", symmetry: 1, handed: false, wildcard: false, structural: true },
+    { id: "plinth", symmetry: 4, handed: false, wildcard: false, structural: true },
+    { id: "rail", symmetry: 2, handed: false, wildcard: false, structural: true },
+    { id: "hinge", symmetry: 4, handed: true, wildcard: false, structural: true },
   ],
   mates: [
-    { a: "empty", b: "empty", relation: 0 },
-    { a: "road", b: "door", relation: 1 },
-    { a: "plinth", b: "rail", relation: 0 },
-    { a: "hinge", b: "hinge", relation: 0 },
+    { a: "empty", b: "empty", relation: 0, bond: false },
+    { a: "road", b: "door", relation: 1, bond: true },
+    { a: "plinth", b: "rail", relation: 0, bond: true },
+    { a: "hinge", b: "hinge", relation: 0, bond: true },
   ],
 };
 
@@ -162,8 +162,8 @@ test("handed side faces mate only left-to-right", () => {
 test("a table with an illegal self-pair relation is rejected", () => {
   const result = validateSocketTable({
     version: 1,
-    profiles: [{ id: "rail", symmetry: 2, handed: false, wildcard: false }],
-    mates: [{ a: "rail", b: "rail", relation: 1 }],
+    profiles: [{ id: "rail", symmetry: 2, handed: false, wildcard: false, structural: true }],
+    mates: [{ a: "rail", b: "rail", relation: 1, bond: true }],
   });
   expect(result.ok ? [] : result.error.map((found) => `${found.code} ${found.path}`)).toEqual([
     "socket-table-invalid mates[0].relation",
@@ -173,4 +173,14 @@ test("a table with an illegal self-pair relation is rejected", () => {
 test("a catalog socket whose profile is not in the socket table is rejected", () => {
   const result = createCatalog({ foldons: [door], assemblies: [] });
   expect(result.ok ? [] : result.error.map((found) => found.code)).toEqual(["socket-profile-unknown"]);
+});
+
+test("a socket table that lets a non-structural profile carry a bond is rejected", () => {
+  const table: SocketTable = {
+    version: 1,
+    profiles: [{ id: "empty", symmetry: 4, handed: false, wildcard: false, structural: false }],
+    mates: [{ a: "empty", b: "empty", relation: 0, bond: true }],
+  };
+  const result = validateSocketTable(table);
+  expect(result.ok ? [] : result.error.map((i) => i.code)).toEqual(["socket-table-invalid"]);
 });

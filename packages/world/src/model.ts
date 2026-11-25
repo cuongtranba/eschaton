@@ -4,6 +4,7 @@ import {
   err,
   foldonId,
   ok,
+  bondEligible,
   placeFootprint,
   placeSockets,
   socketMismatches,
@@ -95,7 +96,7 @@ function structuralStrength(definition: FoldonDefinition | undefined): number {
 
 export function bondsFromContacts(catalog: Catalog, touching: readonly Contact[]): readonly Bond[] {
   return touching
-    .filter((contact) => contact.mismatches.length === 0)
+    .filter((contact) => bondEligible(catalog.sockets(), contact.a.socket, contact.b.socket))
     .map((contact) => ({
       a: { entity: contact.a.entity.id, cell: contact.a.socket.cell, face: contact.a.socket.face },
       b: { entity: contact.b.entity.id, cell: contact.b.socket.cell, face: contact.b.socket.face },

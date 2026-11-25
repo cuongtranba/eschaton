@@ -92,7 +92,7 @@ test("replay against a different rules version is refused", () => {
     foldons: primitiveCatalog,
     assemblies: assemblyCatalog,
     contracts: moduleContracts,
-    sockets: { ...defaultSocketTable, version: 2 },
+    sockets: { ...defaultSocketTable, version: defaultSocketTable.version + 1 },
   });
   if (!rulesV2.ok) throw new Error("catalog with socket table v2 must build");
   const replayed = replay(rulesV2.value, initial, [a.record]);
