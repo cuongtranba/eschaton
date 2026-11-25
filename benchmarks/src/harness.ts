@@ -24,7 +24,9 @@ export type Machine = Readonly<{
 
 export type Run = Readonly<{ directory: string; provenance: Provenance }>;
 
-const EVIDENCE_DIRECTORY = "benchmarks/phase-0";
+const EVIDENCE_ROOT = "benchmarks";
+const EVIDENCE_PHASE = "phase-1";
+const EVIDENCE_DIRECTORY = `${EVIDENCE_ROOT}/${EVIDENCE_PHASE}`;
 const SCRATCH_DIRECTORY = "benchmarks/runs";
 
 export const repositoryRoot = (): string => resolve(import.meta.dirname, "..", "..");
@@ -35,7 +37,7 @@ const flag = (name: string): boolean => process.env[name] === "1";
 
 function captureProvenance(root: string, now: Date): Provenance {
   const commit = git(root, "rev-parse", "HEAD");
-  const dirtyEntries = git(root, "status", "--porcelain", "--untracked-files=all", "--", ".", `:(exclude)${EVIDENCE_DIRECTORY}`);
+  const dirtyEntries = git(root, "status", "--porcelain", "--untracked-files=all", "--", ".", `:(exclude,glob)${EVIDENCE_ROOT}/phase-*/**`);
   return {
     commit,
     shortCommit: commit.slice(0, 9),

@@ -1,4 +1,5 @@
 export { err, ok, type Result } from "./result";
+export { fnv1a64 } from "./hash";
 export {
   assemblyId,
   contractId,

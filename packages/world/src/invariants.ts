@@ -1,8 +1,7 @@
 import { poseGeometry, type Catalog } from "@eschaton/foldon";
 import { worldIssue, type WorldIssue } from "./issues";
-import { canonicalJson } from "./canonical";
-import { contacts, definitionOf, matedBonds, occupancy, renderableMaterial, sortBonds } from "./model";
-import { entityIdOf, type ContinuousTransform, type Entity, type EntityId, type Stamp, type WorldState } from "./state";
+import { bondsFromContacts, cellKey, contacts, definitionOf, occupancy, renderableMaterial, sortBonds, type Contact } from "./model";
+import { entityIdOf, type Bond, type ContinuousTransform, type Entity, type EntityId, type Stamp, type WorldState } from "./state";
 
 const QUATERNION_TOLERANCE = 1e-9;
 
@@ -28,6 +27,7 @@ export function materialTotals(entities: readonly Entity[]): Readonly<Record<str
 
 function entityIssues(catalog: Catalog, state: WorldState): WorldIssue[] {
   const issues: WorldIssue[] = [];
+  const validPoses = new Map<string, boolean>();
   let previous: Stamp | undefined;
   for (const entity of state.entities) {
     const label = `entity ${entity.id}`;
@@ -51,8 +51,10 @@ function entityIssues(catalog: Catalog, state: WorldState): WorldIssue[] {
     }
     const creases = definition.geometry.creases.map((crease) => crease.id as string).sort();
     const folded = Object.keys(entity.fold).sort();
-    const posed = poseGeometry(definition.geometry, entity.fold);
-    if (creases.join("|") !== folded.join("|") || !posed.ok) {
+    const poseKey = `${definition.id}@${definition.version}|${folded.map((key) => `${key}=${entity.fold[key] ?? Number.NaN}`).join(",")}`;
+    const valid = validPoses.get(poseKey) ?? poseGeometry(definition.geometry, entity.fold).ok;
+    validPoses.set(poseKey, valid);
+    if (creases.join("|") !== folded.join("|") || !valid) {
       issues.push(worldIssue("fold-invalid", `${label} fold angles do not form a valid pose`));
     }
     const { owner } = entity;
@@ -78,12 +80,12 @@ function entityIssues(catalog: Catalog, state: WorldState): WorldIssue[] {
   return issues;
 }
 
-function placementIssues(catalog: Catalog, state: WorldState): WorldIssue[] {
+function placementIssues(catalog: Catalog, state: WorldState, touching: readonly Contact[]): WorldIssue[] {
   const issues: WorldIssue[] = [];
   for (const [cell, occupants] of occupancy(catalog, state.entities)) {
     if (occupants.length > 1) issues.push(worldIssue("cell-occupied", `cell ${cell} is occupied by ${occupants.join(", ")}`));
   }
-  for (const contact of contacts(catalog, state.entities)) {
+  for (const contact of touching) {
     if (contact.mismatches.length > 0) {
       issues.push(
         worldIssue(
@@ -138,20 +140,23 @@ function conservationIssues(state: WorldState): WorldIssue[] {
     .map((key) => worldIssue("conservation-violated", `material ${key} totals ${totals[key] ?? 0}; the closed baseline is ${baseline[key] ?? 0}`));
 }
 
-function bondIssues(catalog: Catalog, state: WorldState): WorldIssue[] {
-  const expected = sortBonds(matedBonds(catalog, state.entities), state.entities);
-  return canonicalJson(state.bonds) === canonicalJson(expected)
+const bondKey = (bond: Bond): string =>
+  `${bond.a.entity}|${cellKey(bond.a.cell)}|${bond.a.face}|${bond.b.entity}|${cellKey(bond.b.cell)}|${bond.b.face}|${bond.strength}`;
+
+function bondIssues(catalog: Catalog, state: WorldState, touching: readonly Contact[]): WorldIssue[] {
+  const expected = sortBonds(bondsFromContacts(catalog, touching), state.entities);
+  return state.bonds.map(bondKey).join(";") === expected.map(bondKey).join(";")
     ? []
     : [worldIssue("bond-invalid", `stored bonds (${state.bonds.length}) differ from the mated socket pairs between placed entities (${expected.length})`)];
 }
 
-export { sortBonds };
 
 export function checkInvariants(catalog: Catalog, state: WorldState): readonly WorldIssue[] {
+  const touching = contacts(catalog, state.entities);
   return [
     ...entityIssues(catalog, state),
-    ...placementIssues(catalog, state),
-    ...bondIssues(catalog, state),
+    ...placementIssues(catalog, state, touching),
+    ...bondIssues(catalog, state, touching),
     ...lineageIssues(state),
     ...conservationIssues(state),
   ];

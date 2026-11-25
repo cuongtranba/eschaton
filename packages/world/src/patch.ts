@@ -1,8 +1,9 @@
 import { err, ok, type Catalog, type Result } from "@eschaton/foldon";
 import { deepFreeze } from "./canonical";
-import { checkInvariants, sortBonds } from "./invariants";
+import { checkInvariants } from "./invariants";
+import { sortBonds } from "./model";
 import { worldIssue, type WorldIssue } from "./issues";
-import { applyOp, type Draft, type WorldOp } from "./ops";
+import { applyOp, settleBonds, type Draft, type WorldOp } from "./ops";
 import type { Revision, WorldState } from "./state";
 import { hashState, versionIssues } from "./world";
 
@@ -43,6 +44,7 @@ export function applyPatch(catalog: Catalog, state: WorldState, patch: Patch): R
     revision: current + 1,
     entities: new Map(state.entities.map((entity) => [entity.id, entity])),
     lineage: [...state.lineage],
+    moved: new Set(),
     bonds: [...state.bonds],
     conservation: state.conservation,
     nextOrdinal: 0,
@@ -51,6 +53,7 @@ export function applyPatch(catalog: Catalog, state: WorldState, patch: Patch): R
     const failure = applyOp(catalog, draft, op, index);
     if (failure !== undefined) return err({ kind: "invalid", issues: [failure] });
   }
+  settleBonds(catalog, draft);
 
   const next: WorldState = deepFreeze(
     structuredClone({

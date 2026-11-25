@@ -1,6 +1,6 @@
-import { err, ok, type Catalog, type Result } from "@eschaton/foldon";
+import { err, fnv1a64, ok, type Catalog, type Result } from "@eschaton/foldon";
 import packageJson from "../package.json";
-import { canonicalJson, deepFreeze, fnv1a64 } from "./canonical";
+import { canonicalJson, deepFreeze } from "./canonical";
 import { worldIssue, type WorldIssue } from "./issues";
 import { SNAPSHOT_SCHEMA, type Conservation, type Versions, type WorldState } from "./state";
 

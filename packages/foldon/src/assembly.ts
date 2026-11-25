@@ -8,6 +8,7 @@ import {
   type FoldonDefinition,
 } from "./definition";
 import { canonicalizeAndFreeze } from "./define";
+import { fnv1a64 } from "./hash";
 import type { ContractRef } from "./contract";
 import type { AssemblyId, FoldonId, PlacementId } from "./ids";
 import { socketId } from "./ids";
@@ -57,17 +58,6 @@ export type ResolvedPart =
 export type RefResolver = (ref: PartRef) => Result<ResolvedPart, "ref-unknown" | "ref-version-unknown">;
 
 const LEVELS: readonly number[] = [1, 2, 3];
-const FNV_OFFSET = 0xcbf29ce484222325n;
-const FNV_PRIME = 0x100000001b3n;
-const MASK_64 = 0xffffffffffffffffn;
-
-function fnv1a64(text: string): string {
-  let hash = FNV_OFFSET;
-  for (const byte of new TextEncoder().encode(text)) {
-    hash = ((hash ^ BigInt(byte)) * FNV_PRIME) & MASK_64;
-  }
-  return hash.toString(16).padStart(16, "0");
-}
 
 const compareNumbers = (a: readonly number[], b: readonly number[]): number => {
   for (let i = 0; i < Math.max(a.length, b.length); i++) {

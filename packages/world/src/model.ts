@@ -47,33 +47,28 @@ export function occupancy(catalog: Catalog, entities: readonly Entity[]): Readon
 export type ContactEnd = Readonly<{ entity: Placed; socket: SocketDefinition }>;
 export type Contact = Readonly<{ a: ContactEnd; b: ContactEnd; mismatches: readonly SocketMismatch[] }>;
 
-const NEIGHBOUR_TOLERANCE = 1e-6;
+const OPPOSITE: Readonly<Record<string, string>> = { "+x": "-x", "-x": "+x", "+y": "-y", "-y": "+y", "+z": "-z", "-z": "+z" };
 
 export function contacts(catalog: Catalog, entities: readonly Entity[]): readonly Contact[] {
   const placed = entities.filter(isPlaced);
   const order = new Map(placed.map((entity, i) => [entity.id, i]));
-  const byCell = new Map<string, Placed>();
-  for (const entity of placed) for (const cell of cellsOf(catalog, entity)) byCell.set(cellKey(cell), entity);
+  const sockets = new Map(placed.map((entity) => [entity.id, socketsOf(catalog, entity)]));
+  const byFace = new Map<string, ContactEnd>();
+  for (const entity of placed) {
+    for (const socket of sockets.get(entity.id) ?? []) byFace.set(`${cellKey(socket.cell)}${socket.face}`, { entity, socket });
+  }
   const found: Contact[] = [];
   for (const entity of placed) {
     const own = order.get(entity.id) ?? 0;
-    for (const socket of socketsOf(catalog, entity)) {
+    for (const socket of sockets.get(entity.id) ?? []) {
       const neighbourCell: Cell = [
         socket.cell[0] + Math.round(socket.normal[0]),
         socket.cell[1] + Math.round(socket.normal[1]),
         socket.cell[2] + Math.round(socket.normal[2]),
       ];
-      const neighbour = byCell.get(cellKey(neighbourCell));
-      if (neighbour === undefined || (order.get(neighbour.id) ?? 0) <= own) continue;
-      const facing = socketsOf(catalog, neighbour).find(
-        (other) =>
-          cellKey(other.cell) === cellKey(neighbourCell) &&
-          Math.abs(other.position[0] - socket.position[0]) < NEIGHBOUR_TOLERANCE &&
-          Math.abs(other.position[1] - socket.position[1]) < NEIGHBOUR_TOLERANCE &&
-          Math.abs(other.position[2] - socket.position[2]) < NEIGHBOUR_TOLERANCE,
-      );
-      if (facing === undefined) continue;
-      found.push({ a: { entity, socket }, b: { entity: neighbour, socket: facing }, mismatches: socketMismatches(catalog.sockets(), socket, facing) });
+      const facing = byFace.get(`${cellKey(neighbourCell)}${OPPOSITE[socket.face] ?? ""}`);
+      if (facing === undefined || facing.entity.id === entity.id || (order.get(facing.entity.id) ?? 0) <= own) continue;
+      found.push({ a: { entity, socket }, b: facing, mismatches: socketMismatches(catalog.sockets(), socket, facing.socket) });
     }
   }
   return found;
@@ -89,10 +84,9 @@ function structuralStrength(definition: FoldonDefinition | undefined): number {
   return 0;
 }
 
-export function matedBonds(catalog: Catalog, entities: readonly Entity[], only?: ReadonlySet<EntityId>): readonly Bond[] {
-  return contacts(catalog, entities)
+export function bondsFromContacts(catalog: Catalog, touching: readonly Contact[]): readonly Bond[] {
+  return touching
     .filter((contact) => contact.mismatches.length === 0)
-    .filter((contact) => only === undefined || only.has(contact.a.entity.id) || only.has(contact.b.entity.id))
     .map((contact) => ({
       a: { entity: contact.a.entity.id, cell: contact.a.socket.cell, face: contact.a.socket.face },
       b: { entity: contact.b.entity.id, cell: contact.b.socket.cell, face: contact.b.socket.face },
@@ -103,6 +97,12 @@ export function matedBonds(catalog: Catalog, entities: readonly Entity[], only?:
     }));
 }
 
+export function matedBonds(catalog: Catalog, entities: readonly Entity[], only?: ReadonlySet<EntityId>): readonly Bond[] {
+  const touching = contacts(catalog, entities).filter(
+    (contact) => only === undefined || only.has(contact.a.entity.id) || only.has(contact.b.entity.id),
+  );
+  return bondsFromContacts(catalog, touching);
+}
 
 export function sortBonds(bonds: readonly Bond[], entities: readonly Entity[]): readonly Bond[] {
   const order = new Map(entities.map((entity, i) => [entity.id, i]));

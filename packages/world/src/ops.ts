@@ -52,6 +52,7 @@ export type Draft = {
   readonly revision: Revision;
   readonly entities: Map<EntityId, Entity>;
   readonly lineage: LineageRecord[];
+  readonly moved: Set<EntityId>;
   bonds: Bond[];
   conservation: Conservation;
   nextOrdinal: number;
@@ -135,13 +136,12 @@ const update = (draft: Draft, entity: Entity, change: Partial<Pick<Entity, "owne
   draft.entities.set(entity.id, { ...entity, ...change });
 };
 
-function unbond(draft: Draft, id: EntityId): void {
-  draft.bonds = draft.bonds.filter((bond) => bond.a.entity !== id && bond.b.entity !== id);
-}
-
-function bondPlaced(catalog: Catalog, draft: Draft, ids: ReadonlySet<EntityId>): void {
-  for (const id of ids) unbond(draft, id);
-  draft.bonds = [...draft.bonds, ...matedBonds(catalog, [...draft.entities.values()], ids)];
+export function settleBonds(catalog: Catalog, draft: Draft): void {
+  if (draft.moved.size === 0) return;
+  draft.bonds = [
+    ...draft.bonds.filter((bond) => !draft.moved.has(bond.a.entity) && !draft.moved.has(bond.b.entity)),
+    ...matedBonds(catalog, [...draft.entities.values()], draft.moved),
+  ];
 }
 
 type Handler<K extends WorldOp["op"]> = (catalog: Catalog, draft: Draft, op: Extract<WorldOp, { op: K }>, index: number) => WorldIssue | undefined;
@@ -175,7 +175,7 @@ const instantiate: Handler<"instantiate"> = (catalog, draft, op, index) => {
     placed.add(entity.id);
     draft.lineage.push({ kind: "instantiated", at: draft.revision, entity: entity.id, source: `${op.ref.kind}:${op.ref.id}@${op.ref.version ?? "latest"}` });
   }
-  bondPlaced(catalog, draft, placed);
+  for (const id of placed) draft.moved.add(id);
   return undefined;
 };
 
@@ -184,19 +184,19 @@ const detach: Handler<"detach"> = (_catalog, draft, op, index) => {
   if (isIssue(entity)) return entity;
   if (entity.owner.kind !== "placed") return worldIssue("owner-invalid", `entity ${op.entity} is not placed`, index);
   update(draft, entity, { owner: { kind: "detached", transform: logicalTransform(entity.owner.anchor, entity.owner.rotation) } });
-  unbond(draft, entity.id);
+  draft.moved.add(entity.id);
   draft.lineage.push({ kind: "detached", at: draft.revision, entity: entity.id });
   return undefined;
 };
 
-const attach: Handler<"attach"> = (catalog, draft, op, index) => {
+const attach: Handler<"attach"> = (_catalog, draft, op, index) => {
   const entity = live(draft, op.entity, index);
   if (isIssue(entity)) return entity;
   if (entity.owner.kind === "placed") return worldIssue("owner-invalid", `entity ${op.entity} is already placed`, index);
   if (!isCell(op.anchor) || !isRotation(op.rotation)) return worldIssue("op-invalid", "attach needs an integer anchor cell and a rotation 0..3", index);
   update(draft, entity, { owner: { kind: "placed", anchor: op.anchor, rotation: op.rotation } });
   draft.lineage.push({ kind: "reattached", at: draft.revision, entity: entity.id });
-  bondPlaced(catalog, draft, new Set([entity.id]));
+  draft.moved.add(entity.id);
   return undefined;
 };
 
@@ -206,7 +206,7 @@ const store: Handler<"store"> = (_catalog, draft, op, index) => {
   if (entity.owner.kind === "inventory") return worldIssue("owner-invalid", `entity ${op.entity} is already in a store`, index);
   if (typeof op.store !== "string" || op.store.length === 0) return worldIssue("op-invalid", "store needs a store id", index);
   update(draft, entity, { owner: { kind: "inventory", store: op.store } });
-  unbond(draft, entity.id);
+  draft.moved.add(entity.id);
   draft.lineage.push({ kind: "stored", at: draft.revision, entity: entity.id });
   return undefined;
 };
@@ -279,7 +279,7 @@ const consume: Handler<"consume"> = (_catalog, draft, op, index) => {
   const closed = closedIssue(draft, "destroying material", index);
   if (closed !== undefined) return closed;
   update(draft, entity, { owner: { kind: "consumed", by: draft.revision, reason: "destroyed" } });
-  unbond(draft, entity.id);
+  draft.moved.add(entity.id);
   draft.lineage.push({ kind: "consumed", at: draft.revision, entity: entity.id, reason: "destroyed" });
   return undefined;
 };
