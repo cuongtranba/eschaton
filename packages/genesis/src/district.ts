@@ -1,6 +1,6 @@
 import type { Catalog, Cell } from "@eschaton/foldon";
 import { compileTiles, prepareRegion, proposalOf, solve, type CompiledTiles } from "@eschaton/wave";
-import { applyProposal, readRegion, type Origin, type Proposal, type Region, type WorldOp, type WorldState } from "@eschaton/world";
+import { applyPatch, applyProposal, createWorld, readRegion, type Origin, type Proposal, type Region, type WorldOp, type WorldState } from "@eschaton/world";
 import { planDistrict, type DistrictPlan, type Gate, type Lot, type Role } from "./plan";
 import type { DistrictPreset } from "./presets";
 import { scopedSeed } from "./seed";
@@ -52,7 +52,10 @@ export function districtRegion(preset: DistrictPreset, at: Cell): Region {
 }
 
 /**
- * Generates one district as a job that advances one stage or one lot per step. It works on a private scratch state
+ * Generates one district as a job that advances one stage or one lot per step. It works on a private scratch world
+ * that holds only the district and copies of the pieces in its one-cell shell, so the cost of a district does not
+ * grow with the size of the world around it. The scratch world is never the result: the job returns one proposal
+ * against the real world, which validates it again at commit.
  * and never touches the world: the result is a single inert proposal, or an explicit failure.
  */
 export function createDistrictJob(catalog: Catalog, state: WorldState, request: DistrictRequest): DistrictJob {
@@ -63,6 +66,7 @@ export function createDistrictJob(catalog: Catalog, state: WorldState, request: 
   const compiled = new Map<Role, CompiledTiles>();
   let plan: DistrictPlan | undefined;
   let scratch = state;
+  let scratchRead = { revision: 0, digest: "" };
   let stage: DistrictProgress["stage"] = "planning";
   let lotIndex = 0;
   let finished: DistrictOutcome | undefined;
@@ -91,6 +95,17 @@ export function createDistrictJob(catalog: Catalog, state: WorldState, request: 
       if (!tiles.ok) return fail("tiles", `${role}: ${tiles.error.join("; ")}`);
       compiled.set(role, tiles.value);
     }
+    const fresh = createWorld({ catalog, seed: state.header.seed });
+    if (!fresh.ok) return fail("scratch", fresh.error.map((issue) => issue.code).join(", "));
+    scratch = fresh.value;
+    if (base.entities.length > 0) {
+      const shell: WorldOp[] = base.entities.map((entity) => ({ op: "instantiate", ref: { kind: "foldon", id: entity.definition.id, version: entity.definition.version }, anchor: entity.anchor, rotation: entity.rotation }));
+      const copied = applyPatch(catalog, scratch, { baseRevision: 0, ops: shell, origin: JOB_ORIGIN });
+      if (!copied.ok) return fail("scratch", "the pieces around the district could not be copied into the scratch world");
+      scratch = copied.value.state;
+    }
+    const read = readRegion(catalog, scratch, region);
+    scratchRead = { revision: read.revision, digest: read.digest };
     plan = planned.value;
     stage = "network";
     return undefined;
@@ -103,7 +118,7 @@ export function createDistrictJob(catalog: Catalog, state: WorldState, request: 
       if (kind === "open" || kind === "lot") return;
       network.push({ op: "instantiate", ref: { kind: "foldon", id: GROUND_PIECE[kind] }, anchor: [at[0] + (index % width), at[1], at[2] + Math.floor(index / width)], rotation: 0 });
     });
-    const laid = applyProposal(catalog, scratch, { region, read: { revision: base.revision, digest: base.digest }, ops: network, origin: JOB_ORIGIN });
+    const laid = applyProposal(catalog, scratch, { region, read: scratchRead, ops: network, origin: JOB_ORIGIN });
     if (!laid.ok) return fail("network", laid.error.kind === "invalid" ? laid.error.issues.map((issue) => issue.code).join(", ") : laid.error.kind);
     scratch = laid.value.state;
     ops.push(...network);
