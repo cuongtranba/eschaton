@@ -1,6 +1,6 @@
 # ADR 0009: Socket compatibility
 
-- Status: Proposed — awaiting owner approval (Phase 0 code already follows it)
+- Status: **Accepted with amendments** — owner decision D3 (2026-11-25, recorded in [`../review/phase-0-owner-review.md`](../review/phase-0-owner-review.md) §0) approved this ADR on condition that the independent-review amendments ([`../review/adr-review.md`](../review/adr-review.md)) are applied. They are applied in the section "Amendments (owner D3, 2026-11-25)" below; the Phase 0 code follows it. It is an accurate record of Phase 0 behaviour, **amended by [ADR 0012](0012-directional-sockets.md)** in Phase 1.
 - Date: 2026-11-24
 - Master plan: §4.2
 
@@ -27,7 +27,7 @@ Option 3 (`socketsCompatible` in `packages/foldon/src/definition.ts`).
 ## Consequences
 
 - `open` is a wildcard and weakens the check wherever it is used (P01, P02, P05, P07, P09 side faces). The overlay and tests show profile colours, but a wildcard face never produces an incompatible reason.
-- **P06 (triangular prism) and P07 (pyramid) expose an `empty` top profile, so nothing but `empty` can sit on them.** That limits nesting and stacking, which the look-dev composition works around by placing ridges and beams off-grid.
+- **P06 (triangular prism) and P07 (pyramid) expose an `empty` top profile, so nothing but `empty` or the `open` wildcard can sit on them** (moot today, because every −y face in the catalog is `base`). That limits nesting and stacking, which the look-dev composition works around by placing ridges and beams off-grid.
 - No test targets the tangent rule directly (a search of `packages/foldon/test` for "tangent" finds nothing), and no test could currently observe it rejecting anything, because it never does (see the correction above). Stacking a quarter-turned piece is exercised only indirectly through assembly compilation (the watchtower band beam). Tests for orientation-sensitive mating belong with ADR 0012 in Phase 1; adding a Phase 0 test for an inert clause would only pin accidental behaviour.
 - Compatibility is symmetric; it does not say who supports whom. Support direction and load come with the Phase 4 support graph.
 - The profile table is data in code, not a catalog input; adding a profile means editing the package.
@@ -37,3 +37,8 @@ Option 3 (`socketsCompatible` in `packages/foldon/src/definition.ts`).
 - `packages/foldon/src/definition.ts` (`socketProfiles`, `allowedProfilePairs`, `socketsCompatible`), `validate.ts`.
 - Tests: "two box shells stacked vertically have compatible touching sockets", "a box shell beside a roof's eave side is incompatible", "touching parts with incompatible sockets are rejected", "every rotation keeps placed sockets on external face centres of the placed footprint".
 - Screenshot `docs/screenshots/p0.4-roof-house-sockets.png`; commit `45576a8`.
+
+## Amendments (owner D3, 2026-11-25)
+
+- **Amended by ADR 0012** once its Phase 1 milestone (M3) lands. The orientation-free behaviour recorded here stays the behaviour of every current profile, because all of them migrate as fourfold-symmetric.
+- **Runtime profile membership:** `validateFoldon` does not check that a socket's `profile` is a known profile, so a JSON-loaded unknown profile is simply never compatible. ADR 0012's table validation closes this: `createCatalog` rejects a socket whose profile is not in the socket table.

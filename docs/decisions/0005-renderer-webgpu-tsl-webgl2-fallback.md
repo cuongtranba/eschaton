@@ -1,6 +1,6 @@
 # ADR 0005: Renderer — `WebGPURenderer` with TSL node materials and automatic WebGL2 fallback
 
-- Status: Proposed — awaiting owner approval (Phase 0 code already follows it); **the WebGPU backend has never been exercised**
+- Status: **Accepted with amendments** — owner decision D3 (2026-11-25, recorded in [`../review/phase-0-owner-review.md`](../review/phase-0-owner-review.md) §0) approved this ADR on condition that the independent-review amendments ([`../review/adr-review.md`](../review/adr-review.md)) are applied. They are applied in the section "Amendments (owner D3, 2026-11-25)" below. **The WebGPU backend has never been exercised on a physical GPU.** Owner decision D5 conditionally waived that test for the Phase 0 gate only and moved it to the start of Phase 1. The waiver is not a verification and does not waive any later gate.
 - Date: 2026-11-24
 - Master plan: §2.3, §9; research R8, R9, R10
 
@@ -81,3 +81,8 @@ Readouts seen in this environment:
 | WebGL2 on a physical GPU | **No** | Pending: manual test check C3 | **PENDING.** |
 
 The status of this ADR is unchanged. Closing the two pending rows is part of the Phase 0 owner review, not a precondition for the Phase 0 decisions recorded above.
+
+## Amendments (owner D3 and D5, 2026-11-25)
+
+- **Accepted conditionally on D5.** The owner waived the physical-GPU WebGPU test for the Phase 0 gate and deferred a real-GPU smoke test to the start of Phase 1. Both "physical GPU" rows in the capability matrix stay **PENDING** until a run on real hardware is recorded. A run on a software adapter (SwiftShader, `GPU class: software`) never counts. Owner-run instructions: [`../testing/webgpu-manual-test.md`](../testing/webgpu-manual-test.md).
+- This ADR does not block Phase 1 domain code. Any Phase 1 milestone criterion that depends on the GPU is reported as unresolved until the physical run exists.

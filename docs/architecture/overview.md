@@ -21,7 +21,7 @@ Four projects. Only the first two are product code.
 | foldon | **Exists** | `packages/foldon/src/` | Catalog, geometry recipes, assembly validation, canonical hashing. Owns definitions; does not own placement in a world. |
 | generation | **Experiment only** | `experiments/wfc-placement` | 2D throwaway; the Phase 2 solver will be new code. |
 | simulation | **Absent** | none | Component *data* exists on definitions; no system reads it ([ADR 0007](../decisions/0007-component-data-and-system-order.md)). |
-| world | **Absent** | none | The only mutable state is `LabState`, a UI reducer (`apps/studio/src/lab/state.ts`). There are no transactions, revisions or clock. |
+| world | **Absent in Phase 0; Phase 1 adds `@eschaton/world`** | none yet | The only mutable state is `LabState`, a UI reducer (`apps/studio/src/lab/state.ts`). There are no transactions, revisions or clock. Owner decision D4 approved the new package (ADR 0001 and ADR 0011 amendments). |
 | renderer | **Inside the Studio** | `apps/studio/src/renderer/` | Adapter from `ViewModel` to three.js; the only code that imports `three`. ([ADR 0005](../decisions/0005-renderer-webgpu-tsl-webgl2-fallback.md)) |
 | presets | **Absent** | none | The look palette and scene constants are code (`lab/look.ts`, `lab/palette.ts`, `lab/composition/`). |
 | studio | **Exists** | `apps/studio/src/{App,ui,lab}` | Sends commands to the reducer; never mutates domain definitions. |
@@ -52,9 +52,11 @@ flowchart TD
   F -. "never" .-> X
 ```
 
+`foldon` is the bottom of the graph: it may not import any other `@eschaton/*` package. This is enforced before Phase 1 adds `@eschaton/world` (which will import `foldon`), so the reverse import, which would create a cycle, can never land ([ADR 0001](../decisions/0001-package-layout.md) amendment).
+
 | Importer | May import | Must not import |
 |---|---|---|
-| `packages/foldon` | its own modules | `three`, `react`, `react-dom`, Node built-ins (bare or `node:`), any app, experiment, tool or benchmark package |
+| `packages/foldon` | its own modules | `three`, `react`, `react-dom`, Node built-ins (bare or `node:`), **any other workspace package** (`@eschaton/*` except itself), any app, experiment, tool or benchmark package |
 | `apps/studio/src/lab` | `@eschaton/foldon` entry | `three`, `react`, `react-dom`, `renderer`, `ui`, `App`, `main` |
 | `apps/studio/src/renderer` | `three`, `lab`, `@eschaton/foldon` entry | `react`, `react-dom`, `ui`, `App`, `main` |
 | `apps/studio/src/ui`, `App`, `main` | `react`, `lab`, `renderer`, `@eschaton/foldon` entry | `three` |

@@ -392,7 +392,7 @@ Durations are planning estimates for a small developer/agent team, not delivery 
 |---|---|---|---|
 | 0 — Laboratory closure | v1.0 estimate 1–2 weeks; closure tasks to be re-estimated | v1.0 Phase 0 (primitive viewer, hinge experiment, ink look-dev, research ADRs) plus closure tasks T0–T6: **T0** owner review package; **T1** benchmarks on a clean committed SHA; **T2** JS heap growth investigation; **T3** documentation corrections plus fold and footprint tests; **T4** CI; **T5** WebGPU test on a physical GPU; **T6** Phase 1 design ADRs 0010–0013 | Nine draft primitives or justified reduced set; three distinct assemblies from shared pieces; socket/footprint overlays; continuous fold demo; one visual reference scene approved; baseline metrics recorded; T0–T6 each done or explicitly waived by the owner; the Phase 1 design ADRs decided by the owner |
 | 1 — Foundation | v1.0 estimate 1–2 weeks; re-estimate at the Phase 0 gate | Versioned catalog, placement, bonds, composition systems, **runtime identity and ownership, fragment lineage, atomic transactions and revisions (rollback and replay contract), directional sockets, logical-versus-rendered placement model** | Valid/invalid connections, transform, occupancy and identity invariants; attach/detach and round-trip serialization; roof/leaf share behavior without inheritance; **identity/ownership invariants (no duplicate ownership, stable ids, acyclic lineage); transaction atomicity and rollback; directional socket compatibility tests** |
-| 2 — Wave | v1.0 estimate 2–3 weeks; re-estimate at the Phase 1 gate | Production 3D multi-cell WFC in a worker, with **pinned placements, frozen boundaries (local region solve under an exterior contract) and cancellation**, backtracking and diagnostics | Same seed/version/input same logical result; multi-cell atomicity; zero overlap; explicit unsat/budget/cancel results; fixed regression corpus; no main-thread solver block; **solve inside a frozen boundary; cancellation observable; cross-browser determinism scope documented** |
+| 2 — Wave | v1.0 estimate 2–3 weeks; re-estimate at the Phase 1 gate | Production 3D multi-cell WFC in a worker, with **pinned placements, frozen boundaries (local region solve under an exterior contract) and cancellation**, backtracking and diagnostics; **region-aware commit validation (rebase by read set, the frozen boundary being the read set)** | Same seed/version/input same logical result; multi-cell atomicity; zero overlap; explicit unsat/budget/cancel results; fixed regression corpus; no main-thread solver block; **solve inside a frozen boundary; cancellation observable; cross-browser determinism scope documented; a proposal whose read region was untouched by intervening commits still commits** |
 | 3 — Genesis | 2–3 weeks | Hierarchical district and semantic scene generation | Roads/river contracts and boundaries valid; recognizable architecture and terrain; ≥10 distinct valid seeds for one preset; no finished building meshes in core catalog; **the scene look is reached through validated logical placements, bounded decorative offsets and a separate backdrop (ADR 0013)** |
 | 4 — Collapse | 2–4 weeks | Fixed tick, fields, support graph, topology change and local re-solve | Reproducible event sequence; local repair protects exterior; damaged pieces detach; failed solve rolls back; no duplicate ownership |
 | 5 — Atmosphere | 2–3 weeks | Origami particles, water, atmosphere, lighting (v1.0 "Ink & effects") | Consistent style with reference; stable hatching across motion; one cinematic collapse scene; accessible motion toggle and capability fallback |
@@ -400,7 +400,7 @@ Durations are planning estimates for a small developer/agent team, not delivery 
 | 7 — The Last District | 1–3 weeks | Bounded integrated release: usable controls, save/replay/export, docs, the §11.1 vertical slice | End-to-end Genesis→Collapse→Rebirth demo; no known critical invariant violations; visual approval and documented performance/capability limits; the §11.1 vertical slice runs end to end |
 | 8 — Infinite Universe (research track) | Not scheduled | Streaming, chunks, seams and load order, LOD, persisted modifications across reload | Seam/load-order tests; persisted modifications survive reload; Stress and Research benchmark targets (§9.1) assessed. Separate research track, **not on the release path**; starts only on measured evidence from the earlier phases |
 
-Phase 1 milestone slicing (proposed, not started; subordinate to this section): [`plans/phase-1-foundation.md`](plans/phase-1-foundation.md).
+Phase 1 milestone slicing (approved by the owner, D4 and D7 on 2026-11-25; subordinate to this section): [`plans/phase-1-foundation.md`](plans/phase-1-foundation.md).
 
 ### 11.1 First vertical slice — The Last District
 
@@ -414,6 +414,7 @@ A single bounded terrain region contains a winding pale corridor, towers, pitche
 |---|---|---|---|
 | 1.0 | 2026-11-24 | Baseline: phases 0–7 as first proposed ("Proposed engineering baseline") | Engineering proposal |
 | 1.1 | 2026-11-24 | Phases 0–7 restructured and a research phase 8 added; mapping below | Approved by the project owner on 2026-11-24 |
+| 1.1, amendment 1 | 2026-11-25 | Phase 2 gains region-aware commit validation (read-set rebase) as a deliverable and an exit criterion. Strict base-revision equality would starve every solve once Phase 4 ticks commit revisions (ADR 0011 amendment) | Owner decision D3, 2026-11-25 |
 
 | v1.0 phase | v1.1 phase | What moved and why |
 |---|---|---|
@@ -455,7 +456,7 @@ Use deterministic real fixtures and generated seed corpora; report number of suc
 | Cubic grid creates a toy-like world | Compare silhouette quality with off-grid continuous geometry and sparse multi-cell footprints |
 | WFC catalog too permissive or contradictory | Small curated catalogs, explicit semantic roles, debug domains, bounded backtracking and seed corpus |
 | Beautiful but disconnected districts | Plan global network first; validate reachability after local solves |
-| Closed crease system cannot fold | Start with open hinges; isolate advanced rigid/compliant solver research |
+| Closed crease system cannot fold | Start with open hinges; isolate advanced rigid/compliant solver research; closed-loop research gate before the Phase 4 gate ([ADR 0003](decisions/0003-crease-representation.md) amendment) |
 | Composition turns into generic framework | Explicit capabilities and systems; extract abstractions only for observed reuse |
 | Simulation becomes chaotic/unreadable | Scenario constraints, visual pacing, failure rate budget and protected landmarks |
 | Async solves break determinism | Revision checking, stable scheduler, recorded commit outcomes |
@@ -464,11 +465,11 @@ Use deterministic real fixtures and generated seed corpora; report number of suc
 | Recursive catalog explosion | Canonical recipe hashes, validation, quotas, bounded levels and deliberate promotion |
 | Reference artwork usage rights unknown | Keep internal reference; obtain clearance before external distribution |
 
-Initial ADRs: grid vs irregular topology; multi-cell encoding; component data and system order; world transaction/replay semantics; renderer capability/fallback; ink visual strategy; crease representation/FOLD adapter; catalog promotion; local solve (Phase 2) and seam ownership (Phase 8). The Phase 1 design ADRs 0010–0013 (identity and ownership, transaction and revision contract, directional sockets, logical versus rendered geometry) are drafted and await owner approval. Record actual experiments and alternatives, not just preferences.
+Initial ADRs: grid vs irregular topology; multi-cell encoding; component data and system order; world transaction/replay semantics; renderer capability/fallback; ink visual strategy; crease representation/FOLD adapter; catalog promotion; local solve (Phase 2) and seam ownership (Phase 8). The Phase 1 design ADRs 0010–0013 (identity and ownership, transaction and revision contract, directional sockets, logical versus rendered geometry) were approved with the independent-review amendments by owner decisions D3 and D4 on 2026-11-25; the bond model is ADR 0014 (Phase 1). Record actual experiments and alternatives, not just preferences.
 
 ## 14. Coding-agent handoff — Phase 0 — Laboratory closure only
 
-Scope of this handoff is **Phase 0 — Laboratory closure** (§11): steps 1–7 below are the v1.0 Phase 0 work, and closure tasks T0–T6 in the §11 table complete the phase. No later phase starts before the owner approves the Phase 0 gate.
+Scope of this handoff is **Phase 0 — Laboratory closure** (§11): steps 1–7 below are the v1.0 Phase 0 work, and closure tasks T0–T6 in the §11 table complete the phase. No later phase starts before the owner approves the Phase 0 gate. (2026-11-25: owner decision D6 conditionally closes Phase 0 once the recorded closure evidence is green, and D7 authorizes Phase 1 milestones M0–M9 from that point; Phase 2 is not authorized. See [`phase-0-exit.md`](phase-0-exit.md).)
 
 **Mission:** prove the smallest meaningful version of a self-constructing origami-inspired universe while honoring the supplied monochrome apocalypse reference and composition-over-inheritance rule.
 

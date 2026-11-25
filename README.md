@@ -2,7 +2,7 @@
 
 A web-based procedural world engine and laboratory: a small vocabulary of origami-inspired geometric pieces (**Foldons**) composed, folded and collapsed under explicit rules, rendered as a living woodcut print. See [`docs/master-plan.md`](docs/master-plan.md) for the full design and [`AGENTS.md`](AGENTS.md) for contributor rules.
 
-Status: **Phase 0 — Laboratory closure (research & geometry lab plus closure tasks), awaiting the owner's gate decision.** The roadmap is in [`docs/master-plan.md`](docs/master-plan.md) §11. See [`docs/phase-0-exit.md`](docs/phase-0-exit.md).
+Status: **Phase 0 — Laboratory closure, conditionally closed by owner decision D6 (2026-11-25) on the evidence in [`docs/phase-0-exit.md`](docs/phase-0-exit.md) §9; Phase 1 (Foundation) is authorized by D7 and runs on branch `phase-1`.** The roadmap is in [`docs/master-plan.md`](docs/master-plan.md) §11.
 
 ## What Phase 0 delivers
 
@@ -11,7 +11,7 @@ Status: **Phase 0 — Laboratory closure (research & geometry lab plus closure t
 - **Research and decisions**: reference notes, look-dev notes, a throwaway WFC placement experiment and nine ADRs.
 - **Measurements**: benchmarks recorded with their limits. They come from a software-rendered WebGL2 fallback and are **not** the master plan's §9.1 targets.
 
-Nothing here is an approved visual direction or a passed performance gate. The owner decision is pending: read [`docs/phase-0-exit.md`](docs/phase-0-exit.md).
+Nothing here is final art or a passed performance gate. The owner accepted the reference composition only as a research and look-development prototype (D1). The original artwork stays the anchor, and the Genesis, Atmosphere and The Last District visual gates remain. Read [`docs/phase-0-exit.md`](docs/phase-0-exit.md).
 
 ## Run the lab
 
@@ -28,7 +28,7 @@ Open the URL, pick items in the left catalog, drag the **Fold** slider or press 
 | What | Where |
 |---|---|
 | Master plan (authoritative design) | [`docs/master-plan.md`](docs/master-plan.md) |
-| Phase 0 exit report (draft, pending owner) | [`docs/phase-0-exit.md`](docs/phase-0-exit.md) |
+| Phase 0 exit report (conditional closure, owner D6) | [`docs/phase-0-exit.md`](docs/phase-0-exit.md) |
 | Owner review package (Phase 0) | [`docs/review/phase-0-owner-review.md`](docs/review/phase-0-owner-review.md) |
 | Physical WebGPU manual test (pending) | [`docs/testing/webgpu-manual-test.md`](docs/testing/webgpu-manual-test.md) |
 | Architecture overview with data-flow diagram | [`docs/architecture/overview.md`](docs/architecture/overview.md) |

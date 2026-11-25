@@ -1,6 +1,6 @@
 # ADR 0001: Phase 0 package layout
 
-- Status: Proposed — awaiting owner approval (Phase 0 code already follows it)
+- Status: **Accepted with amendments** — owner decision D3 (2026-11-25, recorded in [`../review/phase-0-owner-review.md`](../review/phase-0-owner-review.md) §0) approved this ADR on condition that the independent-review amendments ([`../review/adr-review.md`](../review/adr-review.md)) are applied. They are applied in the section "Amendments (owner D3, 2026-11-25)" below; the Phase 0 code follows it.
 - Date: 2026-11-24
 - Master plan: §8 (architecture and ownership), §14 step 1 ("do not scaffold every future package")
 
@@ -35,3 +35,10 @@ Option 3.
 - Layout and import direction: [`../architecture/overview.md`](../architecture/overview.md).
 - Bootstrap commit `e6f45fe`; core `5a94304`; assemblies `45576a8`; Studio `4afa9f0`; look-dev `279e8c8`.
 - `AGENTS.md` records the "do not scaffold future packages" rule.
+
+## Amendments (owner D3, 2026-11-25)
+
+- **Superseded in part for Phase 1: `@eschaton/world`.** Owner decision D4 approved plan decision P1-D2 (ADR 0011 question 7, option A): runtime state, transactions, revisions and systems live in a new package `packages/world` (`@eschaton/world`) that imports `@eschaton/foldon`. `foldon` stays definitions-only. This follows this ADR's own rule ("split when a second consumer needs it").
+- **Import direction is lint-enforced, not "checked by reading".** Since commit `04bd36b` (A2), `eslint.config.js` enforces entry-point-only imports, `three` only in the Studio renderer, React only in the Studio UI shell, a pure `foldon`, and "nothing imports apps or experiments". `tools/architecture` proves every rule rejects a violation.
+- **`foldon` imports no other workspace package** (review question 1 for this ADR; closure fix). The `packages/foldon` area forbids every `@eschaton/*` import except its own entry point, so a future `foldon → world` import, which would create a cycle, fails lint before `world` exists. Tests: "rejects foldon importing a sibling workspace package" and "rejects foldon tests importing a sibling workspace package" (`tools/architecture/test/architecture.test.ts`).
+- **A contracts-only package is still not split out.** The review lists it as a missing option. It becomes worth doing when a worker bundle needs the contracts without the primitive data (Phase 2 at the earliest). Until then, contracts stay in `foldon`, including the typed module contracts from A1 (`contract.ts`).

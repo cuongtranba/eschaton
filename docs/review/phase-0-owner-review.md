@@ -1,8 +1,22 @@
 # Phase 0 owner review package (T0)
 
-- Status: **PENDING owner review.** Nothing in this package is an approval, acceptance or waiver. The visual reference scene, ADRs 0001–0013 and the Phase 0 gate are all awaiting your decision.
+- Status: **Owner decisions D1–D7 recorded on 2026-11-25 (§0).** Sections 1–5 are the package as it was presented, kept unchanged for traceability. Where they say "pending", §0 records what the owner decided.
 - Prepared: 2026-11-24, branch `phase-0`, PR #1. The code reviewed is the tree at the PR head; screenshots and benchmarks name the commit they came from.
 - Gate report: [`../phase-0-exit.md`](../phase-0-exit.md). Roadmap: [`../master-plan.md`](../master-plan.md) §11 (v1.1).
+
+## 0. Owner decisions (2026-11-25)
+
+The owner gave these decisions in writing on 2026-11-25 ("OWNER AUTHORIZATION — Eschaton D1–D7"). They are recorded here as given. Where a decision is conditional, the condition and its evidence are named, and nothing beyond the decision is inferred.
+
+| # | Decision | Condition and evidence |
+|---|---|---|
+| D1 | **Accepts the existing reference scene only as a research and look-development prototype, and accepts the narrowed Phase 0 visual criteria V1–V5** ([`../phase-0-exit.md`](../phase-0-exit.md) §1a). It is not final art and not evidence of procedural generation. The original Japanese origami/woodcut artwork (`assets/reference/visual-direction.png`) remains the anchor. The Genesis, Atmosphere and The Last District visual gates remain. | None beyond the statement. No later visual gate is waived. |
+| D2 | **Approves the implemented typed 2×2/4×4 module contracts**: footprint span plus allowed external boundary socket profiles (commit `ffd2cc4`). Their orientation-free limitation is documented. | Limitation documented in ADR 0008 (addendum and amendments) and ADR 0012 (Q9: "later"). |
+| D3 | **Approves ADRs 0001–0013, conditional on applying the independent-review amendments** ([`adr-review.md`](adr-review.md)), read in full, not only the headline findings. | Each ADR now has an "Amendments" section with the source of every answer. Code fixes at closure: the unreachable depth guard and boundary-hole check were removed (ADR 0008), and `foldon` is barred from importing other workspace packages (ADR 0001). The ADR index, architecture overview, master plan (§11 Phase 2 row, change log, §13, §14), this package, the exit report and the Phase 1 plan are synchronised. Questions that D3 and D4 do not answer are marked **open owner question** in their ADR; none blocks Phase 1. |
+| D4 | **Approves the Phase 1 design recommendations** in [`../plans/phase-1-foundation.md`](../plans/phase-1-foundation.md). These cover stable identity on detach and attach, ownership and lineage, atomic revisions, transactions and replay, directional sockets, composable data plus systems, the new `@eschaton/world` package, logical projection with zero decorative offsets initially, and conservation as proposed. ADR 0014 (bond model) is to be drafted within the approved M4 scope. | If ADR 0014 introduces a material new decision outside the approved design, it needs owner approval before M4. This is not a blanket approval. Gaps not covered by an approved recommendation are flagged in the plan §2 and in the ADRs. |
+| D5 | **Explicit conditional waiver of the physical WebGPU test for the Phase 0 gate**; a real-GPU smoke test is deferred to the start of Phase 1. | No verification is claimed. The test stays **PENDING** ([`../testing/webgpu-manual-test.md`](../testing/webgpu-manual-test.md)). Software adapters never count. Later gates are not waived. |
+| D6 | **Conditionally closes Phase 0**, only when the amendments, documentation sync, required tests and CI are green at the exact final Phase 0 SHA. | Evidence: [`../phase-0-exit.md`](../phase-0-exit.md) §9 and the PR #1 description. If anything is red or pending, Phase 0 is not passed and Phase 1 does not start. |
+| D7 | **Authorizes Phase 1 milestones M0–M9** after D6's conditions hold, without a further general go/no-go. | Phase 1 exit approval stays with the owner. No Phase 2, no final visual approval, and no merge of any PR without separate explicit authorization. |
 
 ## 1. Hands-on review (local; no public tunnel)
 

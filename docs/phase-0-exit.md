@@ -1,9 +1,9 @@
-# Phase 0 exit report: Laboratory closure (draft for the owner's decision)
+# Phase 0 exit report: Laboratory closure
 
 - Phase: **0 — Laboratory closure** (master plan v1.1 §11; v1.0 "Research & geometry lab" plus closure tasks T0–T6)
 - Branch / PR: `phase-0`, PR #1 (not merged)
-- Date: 2026-11-24
-- Status: **OPEN — awaiting owner decisions. Nothing in this document is an approval.** Visual acceptance, ADR approval and the gate decision belong to the owner and are not inferred from tests. Phase 1 must not start until the owner decides.
+- Date: 2026-11-24; owner decisions 2026-11-25
+- Status: **CONDITIONALLY CLOSED by owner decision D6 (2026-11-25), subject to the evidence in §9.** D6 closes the phase only if the review amendments, the documentation sync, the required tests and CI are green at the exact final Phase 0 SHA. §9 records that evidence. If any item there is red or missing, the phase is not passed and Phase 1 does not start. The owner's decisions D1–D7 are recorded in [`review/phase-0-owner-review.md`](review/phase-0-owner-review.md) §0. Nothing here is inferred beyond them.
 - Owner review package: [`review/phase-0-owner-review.md`](review/phase-0-owner-review.md)
 
 ## 1. Exit criteria (master plan §11, Phase 0 row)
@@ -11,17 +11,17 @@
 | # | Criterion | Status | Evidence |
 |---|---|---|---|
 | 1 | Nine draft primitives or a justified reduced set | **Met (drafts)** | P01–P09 in `packages/foldon/src/catalog.ts`; test "every catalog primitive passes validation" (`packages/foldon/test/foldon.test.ts`). Draft limits: P06 and P07 expose an `empty` top so nothing can stack on them; sockets have no orientation (ADR 0009 correction). |
-| 2 | Three distinct assemblies from shared pieces | **Met; typed 2×2/4×4 contracts implemented, owner acceptance pending (D2)** | `watchtower`, `roof-house`, `ruined-gate` and the nested `roof-module` (`packages/foldon/src/assemblies.ts`). Tests: "watchtower, roof-house and ruined-gate reuse shared pieces but are distinct recipes" and the nesting/flatten tests (`assembly.test.ts`). Typed module contracts `module-2x2` / `module-4x4` (commit `ffd2cc4`, ADR 0008 addendum) are validated by `createCatalog` against the compiled footprint and external sockets. Tests cover: the valid contract, a wrong footprint, an incompatible boundary, quarter-turn fits against symmetric and asymmetric contracts, nested 2×2 modules inside a 4×4, an unknown contract, and a JSON round trip (`packages/foldon/test/assembly.test.ts`). Contract boundaries are orientation-free, like sockets. |
+| 2 | Three distinct assemblies from shared pieces | **Met; typed 2×2/4×4 contracts approved by the owner (D2)** with the orientation-free limitation documented | `watchtower`, `roof-house`, `ruined-gate` and the nested `roof-module` (`packages/foldon/src/assemblies.ts`). Tests: "watchtower, roof-house and ruined-gate reuse shared pieces but are distinct recipes" and the nesting/flatten tests (`assembly.test.ts`). Typed module contracts `module-2x2` / `module-4x4` (commit `ffd2cc4`, ADR 0008 addendum) are validated by `createCatalog` against the compiled footprint and external sockets. Tests cover: the valid contract, a wrong footprint, an incompatible boundary, quarter-turn fits against symmetric and asymmetric contracts, nested 2×2 modules inside a 4×4, an unknown contract, and a JSON round trip (`packages/foldon/test/assembly.test.ts`). Contract boundaries are orientation-free, like sockets. |
 | 3 | Socket and footprint overlays | **Met** | Studio overlay toggles and socket legend. e2e: "the sockets overlay shows a legend and adds a draw call"; "the footprint overlay of a multi-cell assembly adds one draw call and removes it again" (added in closure, commit `9595fef`). |
 | 4 | Continuous fold demo | **Met** | Fold slider, Play fold (`F`), per-crease sliders. Domain: hinge coincidence, measured dihedral, range refusal, rest-pose reproduction (`foldon.test.ts`). e2e (closure, `9595fef`): "play fold animates through intermediate creases before reaching the flat end", "setting one crease angle moves only that crease", "moving the fold slider discards a per-crease override"; plus "moving the fold slider to zero flattens every crease readout to 0°" and the reduced-motion jump. Limits: tree hinges only, no panel collision (ADR 0003). |
-| 5 | One visual reference scene approved | **Not met — owner decision pending.** A narrower Phase 0 reading of this criterion is proposed in §1a; it is not adopted until the owner accepts it. | Scene, side-by-side comparisons with the original artwork and a list of visible gaps: [`review/phase-0-owner-review.md`](review/phase-0-owner-review.md) §2. All views so far are software-rendered (SwiftShader). No approval or waiver has been given or is implied. |
-| 6 | Baseline metrics recorded | **Met for this environment; physical-GPU numbers pending** | Recorded on clean commit `e9e50c5`: [`../benchmarks/phase-0/2026-11-24-e9e50c527/report.md`](../benchmarks/phase-0/2026-11-24-e9e50c527/report.md) with `foldon.json`, `wfc.json`, `studio.json` (each carries commit, `dirty: false`, machine). No §9.1 gate is claimed (software rasteriser). The physical WebGPU run is a pending manual test (§3). |
+| 5 | One visual reference scene approved | **Met under the narrowed criterion V1–V5, accepted by the owner (D1).** The scene is accepted **only** as a research and look-development prototype: not final art, not evidence of procedural generation. | Scene, side-by-side comparisons with the original artwork and a list of visible gaps: [`review/phase-0-owner-review.md`](review/phase-0-owner-review.md) §2. All views are software-rendered (SwiftShader). The original artwork stays the anchor; the Genesis, Atmosphere and The Last District visual gates remain. |
+| 6 | Baseline metrics recorded | **Met for this environment; physical-GPU numbers pending** (the test is waived for this gate only, D5) | Recorded on clean commit `e9e50c5`: [`../benchmarks/phase-0/2026-11-24-e9e50c527/report.md`](../benchmarks/phase-0/2026-11-24-e9e50c527/report.md) with `foldon.json`, `wfc.json`, `studio.json` (each carries commit, `dirty: false`, machine). No §9.1 gate is claimed (software rasteriser). The physical WebGPU run is a pending manual test (§3). |
 
-Summary: criteria 1–4 met, 6 met with the stated limit, **5 open (owner)**, plus the owner decisions in §8. The gate cannot pass without the owner.
+Summary: criteria 1–4 met; 5 met under the owner-accepted narrowed criterion (D1); 6 met with the stated limit. T0–T6 are each done, decided or explicitly waived (§2). The Phase 1 design ADRs were decided by the owner (D3, D4). The gate is conditionally closed by D6, subject to §9.
 
-## 1a. Proposed narrowing of the Phase 0 visual criterion (PENDING owner decision)
+## 1a. Narrowed Phase 0 visual criterion (accepted by the owner, D1, 2026-11-25)
 
-**Status: proposal only.** The master plan's Phase 0 row still reads "one visual reference scene approved"; nothing below changes it until the owner accepts this proposal (decision D1 in the review package). Accepting it is an owner acceptance of a narrower criterion, not an approval of the scene as art, and not a waiver of later visual gates.
+**Status: accepted by the owner (D1)** as the Phase 0 reading of "one visual reference scene approved". This is an acceptance of a narrower criterion. It is not an approval of the scene as art and does not waive any later visual gate. The text below is the proposal as accepted.
 
 **What the existing reference scene is.** "Reference composition" in the Studio is a **look-development prototype**:
 - It is not final art.
@@ -53,19 +53,19 @@ The owner judges V1–V5 by eye. Tests prove the behaviour behind V2 and V3, not
 
 The original artwork (`assets/reference/visual-direction.png`) stays the art-direction anchor. None of the listed gaps is closed by this proposal; it only schedules where each is judged.
 
-**Physical WebGPU** remains unverified. The test needs the owner's hardware ([`testing/webgpu-manual-test.md`](testing/webgpu-manual-test.md)), or the owner may explicitly waive it. Neither has happened, and this proposal implies neither.
+**Physical WebGPU** remains unverified. The owner waived it for the Phase 0 gate only (D5) and deferred a real-GPU smoke test to the start of Phase 1 ([`testing/webgpu-manual-test.md`](testing/webgpu-manual-test.md)). No verification is claimed.
 
 ## 2. Closure tasks (owner-authorised T0–T6)
 
 | Task | Status | Evidence |
 |---|---|---|
-| T0 Owner review package | **Prepared; owner review pending** | [`review/phase-0-owner-review.md`](review/phase-0-owner-review.md); comparisons `review/p0-reference-vs-scene-*.png`; screenshots regenerated in `d3e7c8e`. No public tunnel started for it. |
+| T0 Owner review package | **Done; owner decisions D1–D7 recorded (§0 of the package)** | [`review/phase-0-owner-review.md`](review/phase-0-owner-review.md); comparisons `review/p0-reference-vs-scene-*.png`; screenshots regenerated in `d3e7c8e`. No public tunnel started for it. |
 | T1 Clean-SHA benchmarks | **Done** | Recorded from a detached clean checkout of `e9e50c5` (`BENCH_RECORD=1 pnpm bench`, `BENCH_RECORD=1 STUDIO_PORT=5190 pnpm bench:studio`); evidence committed in `af863be`. Scripts no longer touch tracked files by default (`9ec0527`): output goes to gitignored `benchmarks/runs/`, record mode refuses a dirty tree. Superseded dirty-tree files and the 14.6k-line duplicate WFC JSON removed (`af863be`; history keeps them). Methodology and commands: [`../benchmarks/README.md`](../benchmarks/README.md). |
 | T2 Heap growth | **Root cause fixed and verified** | Lines (`LineSegments`) were never disposed, so three r187 kept one `RenderObject` per drawn line, retaining every old scene group (retainer path and constructor deltas in [`research/heap-investigation.md`](research/heap-investigation.md)). Fix `e72e4c2` (4 lines in `labRenderer.ts`). Regression test `apps/studio/e2e/heap.spec.ts` fails without the fix (2.69–2.86 MB growth, re-verified by the orchestrator twice) and passes with it. Recorded heap after 20 reset cycles: 11.2 → 11.9 MB (was 12.1 → 24.9 MB). |
 | T3 Doc corrections and missing tests | **Done** | ADR 0009 records the inert side-face tangent check (`756945a`); ADRs 0001–0009 relabelled "Proposed — awaiting owner approval" (they had said "Accepted" without an owner decision). Footprint overlay, animated fold and per-crease tests added (`9595fef`). This report rewritten. |
 | T4 CI | **Done; remote green** | `.github/workflows/ci.yml` (`04d93e8`): lint, typecheck, unit, build, Playwright e2e on `ubuntu-24.04`. The first runs failed on two motion-dependent e2e specs and the heap spec timing out on the slow software-rendered runner; fixed by isolating tests that are not about motion with reduced motion and giving the animation test a software-rendering timeout (`9595fef`, `e9e50c5`). Run 45374198783 on `e9e50c5`: success, 21/21 e2e. Status of the final head is reported in the PR. |
-| T5 Physical WebGPU | **Pending — no physical GPU reachable here** | WSL2 probe: Chrome's only WebGPU adapter is SwiftShader (`isFallbackAdapter: true`); no Vulkan driver reaches the GPU. Studio now reports backend, GPU name and GPU class (`physical`/`software`/`unknown`), with an e2e guard that SwiftShader is never labelled physical (`cf4fb67`). Owner instructions for Windows Chrome + RTX 5070: [`testing/webgpu-manual-test.md`](testing/webgpu-manual-test.md). ADR 0005 has the capability matrix. |
-| T6 Phase 1 design ADRs | **Drafted; owner approval pending** | [ADR 0010](decisions/0010-runtime-identity-ownership-lineage.md) identity/ownership/lineage, [0011](decisions/0011-atomic-transactions-and-revisions.md) atomic transactions and revisions, [0012](decisions/0012-directional-sockets.md) directional sockets, [0013](decisions/0013-logical-vs-rendered-geometry.md) logical vs rendered geometry. Design only; no Phase 1 code. Roadmap v1.1 (owner-approved) adopted in [`master-plan.md`](master-plan.md) §11 with a change log. |
+| T5 Physical WebGPU | **Waived for this gate by the owner (D5, conditional); deferred to the start of Phase 1; not verified** | WSL2 probe: Chrome's only WebGPU adapter is SwiftShader (`isFallbackAdapter: true`); no Vulkan driver reaches the GPU. Studio now reports backend, GPU name and GPU class (`physical`/`software`/`unknown`), with an e2e guard that SwiftShader is never labelled physical (`cf4fb67`). Owner instructions for Windows Chrome + RTX 5070: [`testing/webgpu-manual-test.md`](testing/webgpu-manual-test.md). ADR 0005 has the capability matrix. |
+| T6 Phase 1 design ADRs | **Decided: accepted with the independent-review amendments (D3, D4)** | [ADR 0010](decisions/0010-runtime-identity-ownership-lineage.md) identity/ownership/lineage, [0011](decisions/0011-atomic-transactions-and-revisions.md) atomic transactions and revisions, [0012](decisions/0012-directional-sockets.md) directional sockets, [0013](decisions/0013-logical-vs-rendered-geometry.md) logical vs rendered geometry. Design only at Phase 0; amendments applied in each ADR's "Amendments" section. Roadmap v1.1 (owner-approved) adopted in [`master-plan.md`](master-plan.md) §11 with a change log; amendment 1 (Phase 2 read-set rebase) recorded on 2026-11-25. |
 
 ## 3. Baseline measurements (headline)
 
@@ -89,11 +89,12 @@ Source: [`../benchmarks/phase-0/2026-11-24-e9e50c527/report.md`](../benchmarks/p
 
 | Scope | Command | Result (final tree, see §9) |
 |---|---|---|
-| `@eschaton/foldon` | `pnpm test` | 31 passed (`foldon.test.ts` 18, `assembly.test.ts` 13) |
+| `@eschaton/foldon` | `pnpm test` | 39 passed (`foldon.test.ts` 18, `assembly.test.ts` 21) |
+| Architecture rules | `pnpm test` (`tools/architecture`) | 43 passed |
 | WFC experiment | `pnpm test` | 13 passed |
 | Studio Playwright | `pnpm e2e` | 21 passed (incl. heap regression, footprint overlay, animated fold, per-crease control, GPU-class guard) |
 | Lint / typecheck / build | `pnpm lint`, `pnpm typecheck`, `pnpm build` | exit 0 |
-| CI | GitHub Actions `CI` | success on `e9e50c5` (run 45374198783) |
+| CI | GitHub Actions `CI` | on the closure SHA: see §9 |
 
 All behavioural tests go through public seams (`@eschaton/foldon` entry point, the experiment entry point, or the Studio UI in a real browser); no mocks, spies or sleeps. The Studio has no unit tests. Tests prove behaviour, not visual quality.
 
@@ -112,15 +113,15 @@ All behavioural tests go through public seams (`@eschaton/foldon` entry point, t
 - Sockets have **no orientation sensitivity**: the remaining side-face tangent check is inert (ADR 0009 correction). Proposed fix: ADR 0012.
 - P06/P07 empty tops limit stacking; `open` wildcard profiles weaken checks.
 - Creases are tree-only; no closed networks or panel collision (ADR 0003).
-- Assembly hashes cover `id@version` references, not referenced geometry (ADR 0008).
+- Assembly hashes cover `id@version` references, not referenced geometry (ADR 0008). In Phase 1 the world's catalog fingerprint covers definition content, so an unversioned edit is detected (ADR 0008 amendment).
 - **Logical vs rendered divergence:** the reference composition places Foldons with free yaw/pitch/roll and non-uniform scale outside Foldon validation (`apps/studio/src/lab/composition/affine.ts`, `district.ts`). Proposed resolution: ADR 0013.
-- Inheritance ban is enforced in `packages/**` only; no dependency-direction lint.
+- Inheritance ban and dependency direction are lint-enforced in every first-party source (A2, `04bd36b`); `foldon` may import no other workspace package (closure). Dynamic `import()` and intra-folder cycles are not covered (`architecture/overview.md`).
 
 **Generation**
 - The WFC experiment is 2D, main thread, no worker or cancellation, on a catalog where `ground` always fills; no unsatisfiable or budget case in the benchmark corpus. Cross-browser determinism (`Math.log` in entropy) untested.
 
 **Runtime model (Phase 1 scope)**
-- No runtime entities, ownership, bonds, transactions, revisions or replay exist; flattened instance ids are recipe paths, not world identities. Proposed: ADRs 0010–0011.
+- No runtime entities, ownership, bonds, transactions, revisions or replay exist; flattened instance ids are recipe paths, not world identities. Designed in ADRs 0010–0013 (accepted with amendments) and implemented in Phase 1.
 
 **Process**
 - Research notes R2–R4 partly unverified (publisher blocks, binary PDF). Reference artwork usage rights unknown; internal only.
@@ -132,26 +133,32 @@ All behavioural tests go through public seams (`@eschaton/foldon` entry point, t
 | TypeScript 7 usable | Blocked by the type-aware lint gate; pinned 6.0.3 | `README.md` |
 | Socket tangents protect orientation | Relaxed to side faces in P0.3; the remaining side check can never fail | ADR 0009 |
 | GPU-side counters prove no resource growth | Counters were flat while disposed scenes stayed reachable through three's `RenderObject` map | `research/heap-investigation.md` |
-| Phase 0 ADRs could be marked "Accepted" | Not without the owner; relabelled Proposed | ADRs 0001–0009 |
+| Phase 0 ADRs could be marked "Accepted" | Not without the owner; relabelled Proposed, then accepted with amendments by owner decision D3 on 2026-11-25 | ADRs 0001–0013 |
+| Defensive guards protect the catalog | Two guards (assembly depth, contract boundary holes) could never fire; removed at closure | ADR 0008 amendments |
 | Local e2e timings transfer to CI | Motion-dependent specs starved on a 2-vCPU software-rendered runner | `9595fef`, `e9e50c5` |
 | Benchmarks can write tracked files | Produced a dirty-tree baseline; now scratch by default with a record guard | `benchmarks/README.md` |
 | A WebGPU run is possible in this environment | Only SwiftShader adapters | ADR 0005, `testing/webgpu-manual-test.md` |
 | Encoding choice would change solver search | It did not; constant factors only | ADR 0004 |
 
-## 7. Recommendation (pending the owner's decision)
+## 7. Decision (owner, 2026-11-25)
 
-**Keep the Phase 0 gate open until the owner decides; recommend a conditional GO for Phase 1 (Foundation) once these are answered:**
+The recommendation in the previous revision (conditional GO once D1–D5 are answered) was decided by the owner as follows:
+- D1–D5 are answered (review package §0).
+- D6 conditionally closes Phase 0, subject to §9.
+- D7 authorizes Phase 1 milestones M0–M9 from that point, without a further general go/no-go.
 
-1. Owner decision D1 on the visual criterion: accept the narrower Phase 0 reading in §1a (recommended), keep the original criterion, or reject the look direction. Under §1a the owner still judges V1–V5 by eye, and the remaining gaps are scheduled to the Genesis, Atmosphere and The Last District gates.
-2. Owner decision on the 2×2/4×4 assembly-contract form (D2).
-3. Owner approval or amendment of ADRs 0001–0009 and of the Phase 1 designs 0010–0013 (Phase 1 code depends on 0010–0012).
-4. Physical WebGPU manual test run, or an explicit owner waiver moving it to the first week of Phase 1.
+The no-go triggers listed before did not occur:
+- D1 did not reject the look direction.
+- D5 waived, rather than failed, the physical-GPU run.
+- D3 approved placement as the public contract (ADR 0004).
 
-No-go triggers: the owner rejects the look direction in a way that changes the material approach (reopens ADR 0006); the physical WebGPU run fails in a way TSL cannot absorb (reopens ADR 0005); the owner rejects placement as the public contract (reopens ADR 0004 and the Phase 2 plan).
+## 8. Owner decisions
 
-## 8. What the owner needs to decide
-
-The full list with context is in [`review/phase-0-owner-review.md`](review/phase-0-owner-review.md) §5: D1 reference scene; D2 2×2/4×4 contract form; D3 ADRs 0001–0009; D4 ADRs 0010–0013 approval questions; D5 physical WebGPU test or waiver; D6 Phase 0 gate; D7 Phase 1 go/no-go.
+D1–D7 are recorded with their conditions in [`review/phase-0-owner-review.md`](review/phase-0-owner-review.md) §0. The questions still open after them are not Phase 1 blockers:
+- cross-engine generation determinism (ADR 0004, Phase 2 scope);
+- hatching on moving pieces (ADR 0006, Phase 5 scope);
+- tombstone compaction, the conservation key and the group on detach (ADR 0010 Q5, Q9, Q10);
+- the socket-table placement interpretation (ADR 0012 Q5), to be confirmed at the Phase 1 gate.
 
 ## 9. Validation of this report's tree
 

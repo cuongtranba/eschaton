@@ -1,6 +1,6 @@
 # ADR 0002: Cubic integer grid with yaw-only quarter-turn rotations
 
-- Status: Proposed — awaiting owner approval (Phase 0 code already follows it); the "toy-like world" risk from master plan §13 is **not retired**
+- Status: **Accepted with amendments** — owner decision D3 (2026-11-25, recorded in [`../review/phase-0-owner-review.md`](../review/phase-0-owner-review.md) §0) approved this ADR on condition that the independent-review amendments ([`../review/adr-review.md`](../review/adr-review.md)) are applied. They are applied in the section "Amendments (owner D3, 2026-11-25)" below; the Phase 0 code follows it. The "toy-like world" risk from master plan §13 is **accepted as open** and is not retired.
 - Date: 2026-11-24
 - Master plan: §4, §13 ("Cubic grid creates a toy-like world")
 
@@ -32,3 +32,9 @@ Geometry inside a cell is not restricted to the cube. Panels may be any planar c
 - `packages/foldon/src/transform.ts`, `packages/foldon/src/definition.ts` (`externalFaces`, `allRotations`).
 - `apps/studio/src/lab/composition/affine.ts`, `district.ts`; screenshots `docs/screenshots/p0.5-reference-composition.png`, `p0.4-watchtower-composition.png`.
 - WFC experiment tiles with sparse footprints: `experiments/wfc-placement/src/tiles.ts`.
+
+## Amendments (owner D3, 2026-11-25)
+
+- **The toy-cube risk stays open until the ADR 0013 rebuild experiment reports.** The cubic yaw-only grid is the Phase 1 logical model. The experiment runs at the end of Phase 1, before the Phase 2 solver fixes cell size and catalog. The owner's visual verdict on it is the gate for the master plan §13 "toy-like world" risk.
+- **Levers the experiment may use** (review, cross-cutting "Cubic grid vs origami aesthetic"): group-level offsets, suppressing outlines on internal edges within a group, larger-footprint primitives, and a non-unit vertical cell size (for example 1×2×1). All are data or render choices, not new abstractions. Using one as a result, for example changing the cell size, needs the owner's verdict on the experiment first.
+- **Consequence recorded:** the look under review depends on per-instance non-uniform scale and on arbitrary pitch and roll (`district.ts:87`, `:102-113`, `:169`, `:229`; `beamBasis` in `affine.ts`). This model forbids all three, so rebuilding slabs from unit cells will look worse unless one of the levers above changes something (look-dev already records that stacked outlined P08s read as window grids).

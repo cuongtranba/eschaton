@@ -1,6 +1,6 @@
 # ADR 0013: Logical versus rendered geometry
 
-- Status: **Proposed — awaiting owner approval**
+- Status: **Accepted with amendments** — owner decisions D3 and D4 (2026-11-25, recorded in [`../review/phase-0-owner-review.md`](../review/phase-0-owner-review.md) §0). D3 approved this ADR on condition that the independent-review amendments ([`../review/adr-review.md`](../review/adr-review.md)) are applied; D4 approved the Phase 1 plan recommendations that answer its questions. Both are applied in the section "Amendments (owner D3 and D4, 2026-11-25)" below. Phase 1 design; implemented on branch `phase-1`
 - Date: 2026-11-24
 - Master plan: §2.2 (sky by a dedicated system, not WFC), §4 ("footprints represent logical occupancy, not visible geometry"; moving fragments are not forced onto the grid), §9 (separate logical cells, render instances, visible triangles), §11 Phase 1 and Phase 3 (roadmap v1.1), §13 ("cubic grid creates a toy-like world")
 - Related: [ADR 0002](0002-cubic-grid-and-yaw-rotations.md) (grid and yaw-only rotations; its open risk), [ADR 0010](0010-runtime-identity-ownership-lineage.md) (fragments are entities), [ADR 0011](0011-atomic-transactions-and-revisions.md) (floating-point outcomes are recorded, not recomputed)
@@ -9,7 +9,7 @@
 
 The look that the owner is reviewing at the Phase 0 gate is produced by code that bypasses the logical model.
 
-- **The logical model is a cubic grid with four rotations.** A placement is `{ anchor: Cell, rotation: 0..3 }` (`packages/foldon/src/transform.ts:6-13`, `definition.ts:6`), validated for occupancy and sockets when an assembly is compiled (`assembly.ts:165-211`).
+- **The logical model is a cubic grid with four rotations.** A placement is `{ anchor: Cell, rotation: 0..3 }` (`packages/foldon/src/transform.ts:6-13`, `definition.ts:6`), validated for occupancy and sockets when an assembly is compiled (`assembly.ts:167-213`).
 - **The reference composition does not use it.** Each Foldon is placed with `Placement3 = { position, yaw?, pitch?, roll?, scale?: Vec3 }` (`apps/studio/src/lab/composition/affine.ts:4-10`), applied as non-uniform scale, then roll, pitch and yaw (`linear`, `affine.ts:27-36`). Beams are built from two arbitrary end points and a thickness (`beamBasis`, `affine.ts:60-70`).
 - **The deviations are large, not decorative.** The hero tower is the `watchtower` assembly (2×2×6 cells plus a roof band) scaled by `[4.4, 7.4, 4.4]` with a random yaw of ±0.15 rad (`district.ts:87`); ruined towers use scales up to 3.8 × 6.4 and yaw ±0.4 (`:91-98`); houses use uniform scale of about 3.35–5.43 and yaw ±0.25 around a corridor normal (`:136`); debris rotates with free yaw, pitch ±0.4 and roll ±0.5 (`:169`), dust with pitch and roll ±1 (`:229`); the tree is 4-level recursive beams at arbitrary directions (`tree`, `:183-203`); the distant skyline is P08 boxes with free width and height at z −196…−184 (`skyline`, `:205-219`).
 - **None of it is validated.** The composition consumes `catalog.flatten` leaf placements only as shapes (`LeafPlacement`, `district.ts:5-8`). Occupancy, sockets and bonds are not checked; the footprint and socket overlays would show the unscaled grid cells, not what is drawn. ADR 0002 records the same fact ("not a logical placement and nothing validates sockets for it").
@@ -72,7 +72,7 @@ type Envelope = Readonly<{
 
 ### Layer C — dynamic fragments (authoritative, continuous)
 
-Detached fragments are separate runtime entities (`owner.kind === "detached"`, ADR 0010) with a continuous transform (position, orientation, optional velocity), free of the grid and of the envelope. Their initial transform at the moment of detaching equals the rendered transform of the placed entity (pose plus its offset), recorded in the patch, so nothing visibly jumps. Their settled transform is an **authoritative outcome** stored by the commit and not recomputed on replay (ADR 0011). Reassembly is an `attach` with a logical pose; the continuous transform is dropped because the owner field changes (one owner). Debris, rubble, loose beams and dust-like pieces in the current scene (free-angle P09, P02, P06) belong to this layer when they matter to simulation, and to the backdrop when they are only decoration (see C′ below).
+Detached fragments are separate runtime entities (`owner.kind === "detached"`, ADR 0010) with a continuous transform (position, orientation as a unit quaternion, uniform scale; velocity is Phase 4), free of the grid and of the envelope. (Amended:) their initial transform at the moment of detaching is the entity's **logical** pose, never the pose plus its decorative offset, so a look preset can never leak into authoritative state. The renderer may ease the visual offset out over a few frames; that is drawing, not state. Their settled transform is an **authoritative outcome** stored by the commit and not recomputed on replay (ADR 0011). Reassembly is an `attach` with a logical pose; the continuous transform is dropped because the owner field changes (one owner). Debris, rubble, loose beams and dust-like pieces in the current scene (free-angle P09, P02, P06) belong to this layer when they matter to simulation, and to the backdrop when they are only decoration (see C′ below).
 
 ### Layer C′ — backdrop systems (non-authoritative, labelled)
 
@@ -96,11 +96,12 @@ Visual approval is the owner's alone and is not inferred from the counts (master
 2. **Offsets are bounded.** For any seed and entity id, every component of the derived offset lies inside the envelope for that entity's definition and inside the global hard limit.
 3. **Offsets are pure.** The offset for `(seed, entityId)` is identical on every call and does not depend on the other entities or on enumeration order.
 4. **Offsets are not state.** A snapshot and a state hash are identical with and without a look preset.
-5. **Rendered shape stays near the logical shape.** Every vertex of a placed entity, after its offset, is within `margin` of the logical footprint bounds.
+5. **Rendered shape stays near the logical shape.** (Amended: at the rest pose.) Every vertex of a placed entity at its rest pose, after its offset, is within `margin` of the logical footprint bounds. Fold poses may leave the footprint (ADR 0003 amendment); occupancy stays the footprint.
 6. **No non-uniform per-instance scale outside the envelope.** The renderer accepts no instance transform that is not (pose × cell size × offset within the envelope), or a fragment transform, or a backdrop layer.
 7. **Fragments never occupy cells.** A detached entity contributes nothing to occupancy and has no pose; a placed entity has no continuous transform.
 8. **Backdrop is outside the world.** Backdrop layers have no entity id; deleting them changes no state hash and no query; generating them twice from the same seed gives identical layers.
 9. **Picking returns logical ids.** Selecting a rendered instance returns an `EntityId` or nothing, never a render-instance index.
+10. **Fragments start from logic.** (Amended.) A fragment's initial transform is computed from the logical pose only, never from a look preset.
 
 ## Public API sketch
 
@@ -148,7 +149,8 @@ test("a snapshot saved with and without a look preset is identical")
 test("no vertex of an offset entity moves further than the margin from its logical footprint")
 test("a detached fragment contributes no occupied cell")
 test("attaching a fragment drops its continuous transform and gives it a logical pose")
-test("a fragment detached from a placed entity starts at that entity's rendered transform")
+test("a fragment detached from a placed entity starts at that entity's logical transform")
+test("detaching an entity yields the same state hash with and without a look preset")
 test("generating the backdrop twice from one seed yields identical layers with no entity ids")
 test("removing the backdrop changes no query result and no state hash")
 test("picking a rendered instance returns the logical entity id")
@@ -183,3 +185,35 @@ The rebuild experiment is not a unit test: its acceptance is the owner's recorde
 6. Debris, loose beams and rubble that matter to simulation are detached fragment entities with authoritative transforms, and purely decorative scatter is backdrop? (yes/no)
 7. Distant skyline buildings are backdrop layers that reuse Foldon shapes (**A**, recommended) or logical entities in a far region (**B**)?
 8. Run the rebuild experiment at the end of Phase 1 (**recommended**) or at the start of Phase 3?
+
+## Amendments (owner D3 and D4, 2026-11-25)
+
+The inline edits above apply the review: layer C starts from the logical transform, invariant 5 is scoped to the rest pose, invariant 10 is new, and the tests are corrected. The review's conflicts are resolved as follows:
+
+- **(a) Look leaking into state:** resolved by the logical start transform. Removing every look preset leaves every snapshot and state hash unchanged, including after detaching.
+- **(b) Scale at detach:** `ContinuousTransform` carries **uniform** scale only (plan decision P1-D9). Non-uniform scale exists only inside the decorative envelope, which is never state, so nothing in state jumps at detach.
+- **(c) Fold poses versus invariant 5:** invariant 5 holds at the rest pose; fold angles are authoritative runtime state and never change occupancy (P1-D8).
+- **(d) Hatching on moving geometry:** recorded in ADR 0006 as an open Phase 5 owner question.
+
+Answers:
+
+| Question | Answer | Source |
+|---|---|---|
+| Q1 three layers | Yes | D4 ("logical projection") |
+| Q2 offsets derived, never stored | Yes | D4 |
+| Q3 envelope source | A look preset with a global engine cap (option A) | D4 (plan M7) |
+| Q4 envelope bounds | Phase 1 default is **zero offsets**. Bounds are set after the rebuild experiment. The Studio may show the illustrative envelope from this ADR as an explicitly labelled look-dev toggle that is off by default; it is not a decided bound | D4, P1-D12 |
+| Q5 one cell size, no per-instance non-uniform scale | Yes | D4 |
+| Q6 simulated debris = fragments, decorative scatter = backdrop | Yes | D4 |
+| Q7 skyline | Backdrop layers reusing Foldon shapes (option A) | D4 |
+| Q8 rebuild experiment | End of Phase 1, as M9 evidence for the owner's visual review | D4 (plan M9) |
+| Q9 group-level offsets | Allowed later, keyed by `(seed, groupId)`; zero in Phase 1 | D4, P1-D12 |
+| Q10 fragment start transform | The logical pose | D3, D4, P1-D9 |
+| Q11 scale in `ContinuousTransform` | Uniform scale only | D4, P1-D9 |
+
+Context the original draft omitted. The rebuild experiment must also cover the largest deviations of the current scene:
+- eight P08 slabs of about 8–14 × 34–62 units (`district.ts:102-113`);
+- ground slabs about 620 units wide (`:41-50`);
+- P04 mounds (`:173-179`).
+
+Suppressing outlines on internal faces within a group (against the "window grid" read, ADR 0002) is an allowed experiment lever.

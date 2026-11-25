@@ -1,9 +1,9 @@
-# Phase 1 — Foundation: implementation plan (PROPOSED, not started)
+# Phase 1 — Foundation: implementation plan
 
-- Status: **Proposed plan. No Phase 1 code exists or may be written until the owner approves the Phase 0 gate and the Phase 1 go decision (D6, D7 in [`../review/phase-0-owner-review.md`](../review/phase-0-owner-review.md)).**
+- Status: **Approved by the owner on 2026-11-25.** D4 approved the design recommendations in §2. D7 authorizes milestones M0–M9 once Phase 0 is conditionally closed (D6; evidence in [`../phase-0-exit.md`](../phase-0-exit.md) §9). Decisions are recorded in [`../review/phase-0-owner-review.md`](../review/phase-0-owner-review.md) §0. Work runs on branch `phase-1`, stacked on `phase-0`. Phase 1 exit approval stays with the owner; Phase 2 is not authorized.
 - Date: 2026-11-24
 - Scope and exit criteria: [`../master-plan.md`](../master-plan.md) §11, Phase 1 "Foundation" (roadmap v1.1). That section is canonical. This document only slices that scope into ordered milestones; if the two disagree, the master plan wins and this plan is corrected.
-- Designs it builds on: ADRs [0010](../decisions/0010-runtime-identity-ownership-lineage.md) identity/ownership/lineage, [0011](../decisions/0011-atomic-transactions-and-revisions.md) transactions/revisions, [0012](../decisions/0012-directional-sockets.md) directional sockets, [0013](../decisions/0013-logical-vs-rendered-geometry.md) logical vs rendered geometry. All four are **Proposed**. The independent review [`../review/adr-review.md`](../review/adr-review.md) recommends "amend, then approve" for each.
+- Designs it builds on: ADRs [0010](../decisions/0010-runtime-identity-ownership-lineage.md) identity/ownership/lineage, [0011](../decisions/0011-atomic-transactions-and-revisions.md) transactions/revisions, [0012](../decisions/0012-directional-sockets.md) directional sockets, [0013](../decisions/0013-logical-vs-rendered-geometry.md) logical vs rendered geometry. All four are **accepted with the amendments** of the independent review [`../review/adr-review.md`](../review/adr-review.md) (owner D3, D4). Bonds: ADR 0014, drafted before M4.
 
 ## 1. What exists after Phase 0 (code) vs what this plan proposes (design)
 
@@ -20,11 +20,11 @@
 
 ## 2. Decisions that block Phase 1 code
 
-Code for a milestone cannot start until the decisions it lists are answered. All of them are owner decisions. Each has an agent recommendation, which is not a decision.
+Code for a milestone cannot start until the decisions it lists are answered. **Owner decision D4 (2026-11-25) approved every recommendation in this table**, and D6/D7 answer P1-D1. The recommendation column is kept as the text the owner approved.
 
-| # | Decision | Blocks | Recommendation |
+| # | Decision | Blocks | Recommendation (approved by D4) |
 |---|---|---|---|
-| P1-D1 | Phase 0 gate (D6) and Phase 1 go (D7) | everything | Decide after D1–D5 |
+| P1-D1 | Phase 0 gate (D6) and Phase 1 go (D7) | everything | Decided: D6 conditional closure (evidence in the exit report §9), D7 authorizes M0–M9 |
 | P1-D2 | New package `@eschaton/world` (ADR 0011 Q7; amends ADR 0001) | M1+ | Yes: one package for runtime state, transactions and systems; foldon stays definitions-only |
 | P1-D3 | Id scheme: mint on commit from `(revision, ordinal)`, ordinal = committed op order (ADR 0010 Q1, review amendment) | M2+ | Yes. Reword "independent of arrival order" to "deterministic given the commit log" |
 | P1-D4 | **Detach keeps the entity id; only splits, merges and newly created pieces mint ids** (ADR 0010 invariant 5) | M4, M5 | Yes; it keeps lineage and conservation simple |
@@ -36,6 +36,19 @@ Code for a milestone cannot start until the decisions it lists are answered. All
 | P1-D10 | Systems in Phase 1 without a tick: systems run on explicit invocation and return patches; the tick and system order belong to Phase 4 (ADR 0007/0011 conflict, review) | M6 | Yes; amend ADR 0007 accordingly |
 | P1-D11 | Bond model: an explicit bond record per mated socket pair, created by `attach`, removed by `detach`; strength is data only until Phase 4 | M4 | Yes; needs a short ADR (0014) before M4 |
 | P1-D12 | Decorative offset envelope bounds and group-level offsets (ADR 0013 Q4/Q9) | M7 | Default to zero offsets in Phase 1; set bounds after the ADR 0013 rebuild experiment |
+
+### 2a. Interpretations and gaps not covered by an approved recommendation
+
+The owner asked for gaps to be flagged rather than silently decided. Each entry below is either the narrowest reading of approved text that the code needs, or an open question. None of them blocks a milestone. All are reported at the Phase 1 gate for confirmation.
+
+| Item | Status | What Phase 1 does |
+|---|---|---|
+| Conservation key (ADR 0010 Q9) | Open owner question | Implements "per material" as ADR 0010 proposed: the definition's `renderable` `MaterialId`, derived in one function |
+| Group on detach, store and attach (ADR 0010 Q10) | Open owner question | Provisional: ownership ops leave `group` unchanged |
+| Socket table placement (ADR 0012 Q5) | Interpretation of the approved M3 tests | The table is data passed to the matcher; `CatalogInput.sockets` is optional with the shipped default; `SocketProfile` becomes a validated string id |
+| Bond semantics beyond P1-D11 (ADR 0014) | Interpretation; ADR 0014 names it | Bonds are created for every mated socket pair whenever an entity becomes placed (`instantiate` or `attach`), so the same structure has the same bonds however it was built |
+| Studio offset toggle (M7 test) | Interpretation of P1-D12 | Default envelope zero; the toggle switches to the illustrative ADR 0013 envelope, labelled look-dev, off by default |
+| Tombstone compaction (ADR 0010 Q5) | Open, later phases | Tombstones are kept |
 
 ## 3. Milestones (dependency-ordered vertical slices)
 
@@ -77,12 +90,14 @@ M3 depends only on Phase 0 foldon code and can run in parallel with M0–M2.
   - Strict stale check, revision +1 per commit, and a `CommitRecord` holding the patch and a state hash.
   - `replay(initial, log)` reports the first divergence.
   - A single no-op op kind (`annotate`) is enough to build and test the machinery before entities exist.
-- **Invariants:** ADR 0011 #1–#6 and #8.
+- **Invariants:** ADR 0011 #1–#6, #8 and the amended #10 (sequential preconditions, final-state invariants) and #11 (version mismatch refused).
 - **Acceptance tests:**
   - "a patch with an invalid op leaves the previous state object unchanged (`toBe`)".
   - "a stale patch is rejected and consumes no revision".
   - "replaying the commit log reproduces the live state hash".
   - "a corrupted commit record is reported as a divergence at its revision".
+  - "a proposal whose read region was untouched by an intervening commit is still rejected under strict equality" (pins P1-D6 for Phase 2).
+  - "replay against a different rules version is refused".
 
 ### M2 — Identity, placement and derived occupancy (P1-D3)
 - **Scope:**
@@ -95,6 +110,7 @@ M3 depends only on Phase 0 foldon code and can run in parallel with M0–M2.
   - "instantiating the same assembly twice at overlapping anchors rejects the second patch".
   - "entity ids do not depend on recipe part ids" (two recipes differing only in part ids mint equal ids).
   - "ids are never reused after an entity is consumed" (lands with M5's consume op; listed here as the invariant).
+  - "instantiating the same assembly at two world poses yields disjoint occupied cells" (review).
 
 ### M3 — Directional sockets in `@eschaton/foldon` (P1-D7; parallel with M0–M2)
 - **Scope:** ADR 0012 as amended.
@@ -106,7 +122,7 @@ M3 depends only on Phase 0 foldon code and can run in parallel with M0–M2.
 - **Acceptance tests:**
   - "migrating the profile table changes no primitive, assembly or hash".
   - "a C1 door profile mates with a road only at its relation turn".
-  - "a quarter-turned C4 piece mates exactly where the unturned one does" (catches gcd vs lcm).
+  - "a quarter-turned C4 piece mates exactly where the unturned one does" (catches gcd vs lcm; ADR 0012 amended to lcm).
   - "handed side faces mate only left-to-right".
   - "a table with an illegal self-pair relation is rejected".
 
@@ -125,6 +141,7 @@ M3 depends only on Phase 0 foldon code and can run in parallel with M0–M2.
   - "re-attaching a fragment where its sockets do not mate is rejected and the fragment stays detached".
   - "a detached entity never appears in occupancy".
   - "attach creates a bond for each mated socket pair and detach removes exactly those".
+  - "detaching an entity yields the same state hash with and without a look preset" (ADR 0013 amendment).
 
 ### M5 — Lineage, inventory and conservation (P1-D5)
 - **Scope:**
@@ -204,7 +221,8 @@ M3 depends only on Phase 0 foldon code and can run in parallel with M0–M2.
 - **Pinned placements** are existing placed entities inside the region. They are passed to the solver as fixed cells.
 - **Frozen boundary:** the exposed sockets of placed entities around the region, read with the M3 table. This uses the same boundary-signature idea as the A1 module contract, which may gain orientation then.
 - **Cancellation** is dropping a proposal, because proposals are inert (M1).
-- **Staleness:** Phase 2 must add rebase by read region (P1-D6), because strict equality will starve solves once ticks commit revisions (Phase 4).
+- **Staleness:** Phase 2 must add rebase by read region (P1-D6; master plan §11 Phase 2 row, amendment 1), because strict equality will starve solves once ticks commit revisions (Phase 4).
+- **Identity:** unchanged placements in a re-solved region keep their `EntityId` (the solver reports "keep"); removed placements become `detach` or `consume` by scenario policy (ADR 0004 and ADR 0010 amendments).
 - **Determinism:** solver seed is `(world seed, revision, region)`. Replay applies the recorded patches, so it does not depend on cross-browser `Math.log`. Generation-equality across engines is a separate, documented Phase 2 scope item.
 
 ## 5. Out of scope for Phase 1
@@ -240,5 +258,5 @@ Phase 1 passes only with the owner's decision on all of the following:
 4. The roof/leaf demonstration runs.
 5. The self-assembly precursor runs.
 6. The owner's visual review of the world mode and the ADR 0013 rebuild experiment is recorded.
-7. ADRs 0010–0014 have been decided by the owner.
+7. ADR 0014 and the flagged interpretations in §2a have been decided by the owner (ADRs 0010–0013 were decided by D3/D4).
 8. Known limitations are listed.

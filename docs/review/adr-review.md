@@ -2,6 +2,7 @@
 
 - Date: 2026-11-24
 - Status: **Independent review — recommendations only; owner approval pending.** Nothing here approves, accepts or rejects an ADR. Every ADR stays "Proposed — awaiting owner approval" until the owner decides.
+- Outcome (2026-11-25): owner decision D3 approved ADRs 0001–0013 on condition that these recommendations are applied. They are applied in each ADR's "Amendments" section (see [`phase-0-owner-review.md`](phase-0-owner-review.md) §0). This review is kept unchanged as the source of those amendments.
 - Scope: `docs/decisions/0001`–`0013` against `docs/master-plan.md` (roadmap v1.1, §11), `AGENTS.md`, `packages/foldon/src` and `test`, `apps/studio/src`, `experiments/wfc-placement/src`.
 - Tree reviewed: the ADRs were written at `ae696c5`. During this review, commits `ffd2cc4` ("A1 Typed module contracts") and `04bd36b` ("A2 Enforce dependency direction, entry points and no-inheritance across first-party sources", which rewrites `eslint.config.js` and adds `tools/architecture`) landed on `phase-0`. Both are reviewed as **in flux**. Line numbers for `assembly.ts` and `registry.ts` are given at `ae696c5` (A1 shifts them by a few lines). Line numbers for `eslint.config.js` are at `ae696c5` unless marked A2. All other cited files are unchanged by A1 and A2.
 - Labels: **[fact]** = verified by reading code at the cited line; **[inference]** = reasoning from code or spec, not executed. No check (lint, test, build, bench) was run for this review, and none is claimed.

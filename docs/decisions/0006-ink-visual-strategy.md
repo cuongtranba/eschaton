@@ -1,6 +1,6 @@
 # ADR 0006: Ink visual strategy
 
-- Status: Proposed; **aesthetic acceptance is the owner's decision and has not been given**
+- Status: **Accepted with amendments** — owner decision D3 (2026-11-25, recorded in [`../review/phase-0-owner-review.md`](../review/phase-0-owner-review.md) §0) approved this ADR on condition that the independent-review amendments ([`../review/adr-review.md`](../review/adr-review.md)) are applied. They are applied in the section "Amendments (owner D3, 2026-11-25)" below. Accepted as the **technical direction only**. Aesthetic acceptance is **not** given here: under owner decision D1 the current scene is accepted only as a research and look-development prototype.
 - Date: 2026-11-24
 - Master plan: §2, §2.3, §13 ("Hatching flickers or obscures silhouettes")
 
@@ -39,3 +39,9 @@ Option 3 for hatching, with the other techniques from `docs/research/look-dev.md
 - [`../research/look-dev.md`](../research/look-dev.md); screenshots `docs/screenshots/p0.5-*.png`; commit `279e8c8`.
 - `apps/studio/src/renderer/materials.ts`, `apps/studio/src/lab/look.ts`.
 - e2e: value-split check ("the reference composition shows both near-black masses and pale paper"), reduced-motion pixel-identity check, compare-mode check.
+
+## Amendments (owner D3, 2026-11-25)
+
+- **Aesthetics are decided through D1, not through this ADR.** D1 accepted the reference composition only as a research and look-development prototype, together with the narrowed Phase 0 criteria V1–V5. It is not final art and not evidence of procedural generation. The original artwork (`assets/reference/visual-direction.png`) stays the anchor, and the Genesis, Atmosphere and The Last District visual gates remain.
+- **Consequence on moving geometry:** hatching and grain sample `positionWorld` (`apps/studio/src/renderer/materials.ts`). On geometry that moves relative to the world (folding panels per ADR 0003, detached fragments per ADR 0013 layer C), the pattern therefore slides across the surface. The projection plane also switches abruptly when a folding panel's dominant normal axis changes. **Object-space (instance-local) anchoring**, which master plan §2.1 allows ("world/object anchored"), is the recorded alternative.
+- **Open owner question, Phase 5 scope** (the "stable hatching across motion" exit criterion): should hatching on moving pieces be world-anchored (it slides) or object-anchored (it moves with the piece)? Phase 1 keeps the existing material unchanged, so the folding panels and fragments in the world mode show the sliding behaviour described above. This question does not block Phase 1.

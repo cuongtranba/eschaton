@@ -1,6 +1,6 @@
 # Manual test: Studio on a physical WebGPU GPU (Windows Chrome, RTX 5070)
 
-- Status: **PENDING** — not run. Nothing in this repository has ever exercised the WebGPU backend on a physical GPU.
+- Status: **PENDING** — not run. Nothing in this repository has ever exercised the WebGPU backend on a physical GPU. The owner waived this test for the Phase 0 gate only (D5, 2026-11-25) and deferred a real-GPU smoke test to the start of Phase 1. The waiver is not a verification.
 - Owner: the repository owner (Windows 11, NVIDIA GeForce RTX 5070).
 - Related: [ADR 0005](../decisions/0005-renderer-webgpu-tsl-webgl2-fallback.md), capability matrix in its "Capability evidence" section.
 

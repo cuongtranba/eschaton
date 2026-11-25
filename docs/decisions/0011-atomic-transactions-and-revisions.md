@@ -1,6 +1,6 @@
 # ADR 0011: Minimal atomic transaction and revision contract
 
-- Status: **Proposed — awaiting owner approval**
+- Status: **Accepted with amendments** — owner decisions D3 and D4 (2026-11-25, recorded in [`../review/phase-0-owner-review.md`](../review/phase-0-owner-review.md) §0). D3 approved this ADR on condition that the independent-review amendments ([`../review/adr-review.md`](../review/adr-review.md)) are applied; D4 approved the Phase 1 plan recommendations that answer its questions. Both are applied in the section "Amendments (owner D3 and D4, 2026-11-25)" below. Phase 1 design; implemented on branch `phase-1`
 - Date: 2026-11-24
 - Master plan: §5.4 (commit only if the base revision matches), §6.1 (workers return proposals; record authoritative outcomes), §7.2, §8.1 (revision, header, replay), §12 (transactionality, replay), §11 Phase 1 and Phase 2 (roadmap v1.1)
 - Related: [ADR 0010](0010-runtime-identity-ownership-lineage.md) (the entity state a patch changes), [ADR 0012](0012-directional-sockets.md) (socket rules version in the header)
@@ -10,10 +10,10 @@
 Phase 0 has no authoritative world, so there is no transaction.
 
 - **The only mutable state is a UI reducer.** `labReducer(state, command)` (`apps/studio/src/lab/state.ts:90-115`) always returns a state. It clamps bad values (`clampUnit`, `:55`) instead of rejecting them, has no revision, and cannot fail.
-- **The catalog is the one all-or-nothing commit that exists.** `createCatalog` collects every issue, then returns `err(issues)` if any exist and builds nothing (`packages/foldon/src/registry.ts:74-161`, the gate at `:161`). `compileAssembly` validates before it builds (`assembly.ts:239-269`). Expected failures are `Result` values, not exceptions (`result.ts`, `AGENTS.md`).
-- **Definition data is already frozen** by `canonicalizeAndFreeze` (`define.ts`, `assembly.ts:267`), so immutable-by-construction is an existing convention.
+- **The catalog is the one all-or-nothing commit that exists.** `createCatalog` collects every issue, then returns `err(issues)` if any exist and builds nothing (`packages/foldon/src/registry.ts:80-170`, the gate at `:170`). `compileAssembly` validates before it builds (`assembly.ts:241-271`). Expected failures are `Result` values, not exceptions (`result.ts`, `AGENTS.md`).
+- **Definition data is already frozen** by `canonicalizeAndFreeze` (`define.ts`, `assembly.ts:269`), so immutable-by-construction is an existing convention.
 - **Seeded derivation exists.** `createRandom(seed, salt)` derives independent streams from one seed (`apps/studio/src/lab/composition/random.ts`); the lab seed is normalised in `state.ts:57-59`.
-- **Hashing exists** as FNV-1a 64 over a canonical string (`assembly.ts:62-92`), explicitly not a security boundary (ADR 0008).
+- **Hashing exists** as FNV-1a 64 over a canonical string (`assembly.ts:64-94`), explicitly not a security boundary (ADR 0008).
 - The plan wants worker proposals that never mutate the world, a commit only if the base revision still matches, a save header (schema, seed, catalog/rules/engine versions, tick) and replay from snapshot plus authoritative outcomes (§6.1, §8.1). The WFC experiment never reached a worker or cancellation (ADR 0004), so no proposal has existed yet.
 
 Roadmap v1.1 pulls the transaction contract into Phase 1 because attach/detach and the ownership invariants of ADR 0010 are meaningless without an atomic commit, and because Phase 2's frozen-boundary solve and Phase 4's rollback depend on it.
@@ -60,7 +60,7 @@ worker result ─────────▶ Patch(baseRevision, ops) ─┤─�
 - A **command** is intent from the UI or a system (`instantiate`, `attach`, `detach`). `plan` is a pure function from `(command, state)` to a patch or a rejection, so commands and worker proposals share one commit path.
 - A **patch** carries `baseRevision` and an ordered list of ops (ADR 0010 `EntityOp`s for Phase 1). It describes the whole change; there is no "apply then fix".
 - `applyPatch` builds the next state on a draft, validates each op, runs the full invariant check (ADR 0010 invariants plus occupancy and socket compatibility from ADR 0012), and either returns the new state or an error. The store swaps its reference only on success. **Rollback is never applying a failed patch.**
-- **Stale base is rejected.** A patch with `baseRevision !== state.header.revision` fails with `stale` and reports the current revision. Phase 1 uses strict equality; rebasing by read-set is left to Phase 2 if livelock appears.
+- **Stale base is rejected.** A patch with `baseRevision !== state.header.revision` fails with `stale` and reports the current revision. Phase 1 uses strict equality. (Amended:) **region-aware validation (rebase by read set, where the frozen boundary is the read set) is a Phase 2 requirement**, not a fallback for observed livelock. Once Phase 4 ticks commit at 30 Hz, a 250 ms solve (§9.1) would always find a newer revision under strict equality.
 - **Revision** is an integer that increases by exactly 1 per committed patch. Rejected and stale patches consume nothing.
 - **Worker proposals never mutate.** The worker receives a frozen snapshot (or a structural clone), returns a `Patch`, and the world applies it through the same function. New entities in a proposal use proposal-local refs; the world mints `EntityId`s on commit (ADR 0010).
 
@@ -83,6 +83,8 @@ worker result ─────────▶ Patch(baseRevision, ops) ─┤─�
 7. **Snapshot round trip.** Serialising and parsing a snapshot returns an equal state and an equal hash; an unknown newer schema or a mismatched catalog version is rejected, not loaded.
 8. **Invariants hold after commit.** Every committed state passes `checkInvariants` (ADR 0010 invariants, occupancy, socket compatibility).
 9. **States are immutable.** Mutating a committed state object (including nested arrays and maps) is impossible or throws in tests.
+10. **Op preconditions are sequential; invariants are final.** (Amended.) Each op's preconditions are checked in order against the draft as modified by the earlier ops of the same patch. The invariants (ADR 0010, occupancy, sockets, bonds, conservation) are checked once, on the final state. So a patch that swaps two placed entities is legal.
+11. **Replay and loading refuse a version mismatch.** (Amended.) `replay` and `parseSnapshot` compare the header's catalog fingerprint and rules version with those of the running catalog and rules, and refuse a mismatch instead of reinterpreting the log.
 
 ## Public API sketch
 
@@ -187,3 +189,26 @@ test("dispatching an attach command on an occupied cell is rejected and the worl
 5. Phase 1 may leave `tick` at 0 and defer tick-versus-revision semantics to the Phase 4 ADR? (yes/no)
 6. Divergence detection by FNV-1a 64 over the canonical serialisation is acceptable (non-cryptographic)? (yes/no)
 7. Put entities, transactions and revisions in a new `@eschaton/world` package that imports `@eschaton/foldon` (**A**, recommended) or inside `@eschaton/foldon` (**B**)?
+
+## Amendments (owner D3 and D4, 2026-11-25)
+
+The inline edits above (the strict-stale paragraph and invariants 10–11) apply the review. Answers:
+
+| Question | Answer | Source |
+|---|---|---|
+| Q1 architecture | Immutable snapshot truth plus an outcome commit log (options 1 and 4) | D4 ("atomic revisions/transactions/replay") |
+| Q2 revision rule | +1 per committed patch; rejected and stale patches consume nothing | D4 |
+| Q3 stale rule | Strict equality in Phase 1; read-region rebase is a **Phase 2 requirement** | D3, D4, P1-D6 |
+| Q4 log content | Committed patches (outcomes); the origin is audit metadata only | D4 |
+| Q5 tick | `tick` stays 0 in Phase 1. No idle-tick revisions. Stepping, idle-tick semantics and system order belong to the Phase 4 ADR (ADR 0007 amendment) | D3, D4, P1-D10 |
+| Q6 FNV-1a 64 divergence detection | Accepted (non-cryptographic) | D4 |
+| Q7 package | New `@eschaton/world` importing `@eschaton/foldon` | D4, P1-D2 |
+| Q8 tick revisions / rebase | Read-set rebase is a Phase 2 exit requirement (master plan §11, Phase 2 row) | D3 |
+| Q9 replay across versions | Refused on mismatch (invariant 11) | D3 |
+
+Further amendments:
+
+- **Header versions.** `versions.catalog` is the catalog fingerprint over canonical definition content and `id@version` (ADR 0008 amendment, "Versioned definitions"). `versions.rules` is the socket-table version (ADR 0012) plus the invariant-set version. `versions.engine` is the `@eschaton/world` package version.
+- **Job outcomes are not commit outcomes.** `cancelled`, `unsatisfiable` and `budget-exceeded` (master plan §8.1) are results of a solver job. A job that ends that way produces no patch, so `Rejection` stays `invalid | stale`.
+- **Systems commit through this path.** `runSystem` (ADR 0007 amendment) is `plan` followed by `applyPatch`; it is the only write path for systems.
+- **Tests added by the review:** "a patch that swaps two placed entities commits"; "replay against a different rules version is refused"; "a proposal whose read region was untouched by an intervening commit is still rejected under strict equality". The last one pins the Phase 1 rule so that Phase 2 changes it deliberately.

@@ -1,6 +1,6 @@
 # Eschaton — agent rules
 
-Procedural origami-inspired world engine (TypeScript + Three.js). Authoritative design: `docs/master-plan.md`. Visual anchor: `assets/reference/visual-direction.png`. Current phase: **Phase 0 — Laboratory closure** (roadmap v1.1, `docs/master-plan.md` §11); do not start later phases without approval.
+Procedural origami-inspired world engine (TypeScript + Three.js). Authoritative design: `docs/master-plan.md`. Visual anchor: `assets/reference/visual-direction.png`. Current phase: **Phase 1 — Foundation**, authorized by owner decision D7 (2026-11-25) after the conditional Phase 0 closure (D6; evidence in `docs/phase-0-exit.md` §9). Scope: `docs/plans/phase-1-foundation.md` M0–M9 and roadmap v1.1 (`docs/master-plan.md` §11). Phase 2 is **not** authorized; Phase 1 exit approval belongs to the owner.
 
 ## Commands (pnpm only)
 
@@ -42,7 +42,7 @@ Run lint, typecheck, test and build before declaring work done. Never report a c
 
 ## Git
 
-Work on a task branch/worktree (`.worktrees/phase-0`, branch `phase-0`). Never commit on the default branch; never stash, reset, rebase or force-push shared work. One commit per plan step.
+Work on a task branch/worktree per phase (`phase-0` for Phase 0 closure, `phase-1` for Phase 1, stacked on `phase-0`). Never commit on the default branch; never merge a PR without the owner's explicit merge authorization; never stash, reset, rebase or force-push shared work. One commit per plan step.
 
 ## Fold-angle convention (Foldon geometry)
 
