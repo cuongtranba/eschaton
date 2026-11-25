@@ -33,6 +33,7 @@ export type CatalogInput = Readonly<{
 
 export type Catalog = Readonly<{
   fingerprint: string;
+  source: () => Required<CatalogInput>;
   foldon: (id: FoldonId, version?: number) => FoldonDefinition | undefined;
   assembly: (id: AssemblyId, version?: number) => AssemblyDefinition | undefined;
   foldons: () => readonly FoldonDefinition[];
@@ -88,12 +89,12 @@ const byVersionKey = (a: Versioned, b: Versioned): number => {
 };
 
 export function createCatalog(given: CatalogInput): Result<Catalog, readonly ValidationIssue[]> {
-  const input = {
+  const input = Object.freeze({
     foldons: immutable([...given.foldons]),
     assemblies: immutable([...given.assemblies]),
     contracts: immutable([...(given.contracts ?? [])]),
     sockets: immutable(given.sockets ?? defaultSocketTable),
-  };
+  });
   const contractList = input.contracts;
   const contractIndex = indexVersions(contractList);
   const table = input.sockets;
@@ -220,6 +221,7 @@ export function createCatalog(given: CatalogInput): Result<Catalog, readonly Val
 
   return ok(Object.freeze<Catalog>({
     fingerprint,
+    source: () => input,
     foldon: (id, version) => lookup(foldonIndex, id, version),
     assembly: (id, version) => lookup(assemblyIndex, id, version)?.definition,
     foldons: () => foldons,

@@ -15,6 +15,7 @@ import {
   type AssemblyPart,
   type AssemblyRecipe,
   type Catalog,
+  type CatalogInput,
   type Cell,
   type ContractRef,
   type ModuleContract,
@@ -314,4 +315,10 @@ test("a catalog cannot be changed through its inputs or its returned collections
   ];
   expect(attempts).toEqual([false, false, false, false]);
   expect([built.value.contracts().length, built.value.sockets().version, built.value.fingerprint]).toEqual([moduleContracts.length, defaultSocketTable.version, before]);
+});
+
+test("a catalog rebuilt from its own source has the same fingerprint", () => {
+  if (!defaultCatalog.ok) throw new Error("catalog must build");
+  const rebuilt = createCatalog(JSON.parse(JSON.stringify(defaultCatalog.value.source())) as CatalogInput);
+  expect(rebuilt.ok ? rebuilt.value.fingerprint : "failed").toBe(defaultCatalog.value.fingerprint);
 });
