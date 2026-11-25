@@ -160,6 +160,25 @@ D1–D7 are recorded with their conditions in [`review/phase-0-owner-review.md`]
 - tombstone compaction, the conservation key and the group on detach (ADR 0010 Q5, Q9, Q10);
 - the socket-table placement interpretation (ADR 0012 Q5), to be confirmed at the Phase 1 gate.
 
-## 9. Validation of this report's tree
+## 9. Validation of this report's tree (D6 evidence)
 
-Filled in from commands run on the final closure commit; see the PR description for the exact SHA and CI run.
+**Closure content SHA: `20d4e39`.** It is `831c5dd` plus two closure commits:
+- `af1e09d`: code fixes (ADR 0008 unreachable checks removed; `foldon` may not import other workspace packages).
+- `20d4e39`: owner decisions recorded, review amendments applied, documentation synchronised.
+
+Before any write, the remote `phase-0` was fetched and was still `831c5dd`, the last verified head, so the closure is a fast-forward with no competing remote changes. Work done on the Home machine that was never pushed is unknown and was not inspected (Home was unreachable). Nothing here claims it.
+
+| Check | Where | Result on `20d4e39` |
+|---|---|---|
+| `pnpm lint`, `pnpm typecheck`, `pnpm build` | local (macOS 26.5.1, Apple M5 Pro, Node v24.20.0, pnpm 10.33.4) | exit 0 |
+| `pnpm test` | local | `@eschaton/foldon` 39 passed, `tools/architecture` 43 passed, WFC experiment 13 passed |
+| `pnpm e2e` | local, Playwright headless Chromium (chrome-headless-shell 159, build 1255) | 21 passed |
+| GitHub Actions `CI`, job "lint · typecheck · unit · build · e2e" | [run 45545455009](https://github.com/cuongtranba/eschaton/actions/runs/45545455009), job 138973860633 | **success**: unit 39 + 43 + 13 = 95 passed; e2e 21 passed (2.6 min); 116 tests in total |
+| GitGuardian Security Checks | PR #1 | pass |
+
+**Condition verdict (D6):**
+- The review amendments are applied (each ADR's "Amendments" section, ADR 0008 code fixes).
+- The documentation is synchronised: index, overview, master plan, owner review §0, this report, the Phase 1 plan, `AGENTS.md`, `README.md`.
+- The required tests and CI are green on `20d4e39`.
+
+The commit that adds this section changes only this section. Its own CI run on the final `phase-0` head is recorded in the PR #1 description. **Phase 0 counts as conditionally closed only once that final-head run is green.** Physical WebGPU is still unverified: it is waived for this gate (D5), not passed.
