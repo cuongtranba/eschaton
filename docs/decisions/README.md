@@ -24,6 +24,8 @@ Questions that were not answered by D3 or D4 are marked **open owner question** 
 | [0012](0012-directional-sockets.md) | Orientation-aware sockets: in-face turn, per-profile symmetry (lcm rule) and side-face hand in one table | Accepted with amendments (D3, D4); the Q5 table placement is an interpretation for the owner to confirm |
 | [0013](0013-logical-vs-rendered-geometry.md) | Logical placements, decorative offsets (zero in Phase 1), fragments starting from the logical pose, and a separate backdrop | Accepted with amendments (D3, D4); regular-lattice direction confirmed after the rebuild study (R4) |
 | [0014](0014-bond-model.md) | Bond record per bond-eligible socket pair (explicit `bond` rule in the socket table; `empty` never bonds, the `open` wildcard only by explicit rule), created when an entity becomes placed and removed when it leaves; strength is data only until Phase 4 | Accepted with amendments (R3) |
+| [0015](0015-wave-solver.md) | Wave solver: placement-based 3D multi-cell WFC, explicit air, integer-only deterministic search, steppable with budgets | Accepted for Phase 2 (R7); three choices flagged for the Phase 2 gate |
+| [0016](0016-region-proposals.md) | Region proposals: content-compared read set (region plus one-cell shell), write set, rebase through `applyProposal` | Accepted for Phase 2 (R7) |
 
 ## Pending (not written yet)
 
@@ -32,7 +34,6 @@ These come from the master plan §13 list and need evidence that Phase 0 did not
 | Topic | Why pending | Earliest phase |
 |---|---|---|
 | Tick pipeline, system order and simulation replay semantics | The transaction and revision contract is [ADR 0011](0011-atomic-transactions-and-revisions.md); Phase 1 systems run only on explicit invocation ([ADR 0007](0007-component-data-and-system-order.md) amendment); stepping, idle ticks and system order need the Phase 4 tick ADR | 4 |
-| Read-region rebase (region-aware frozen-boundary validation) | Strict base-revision equality in Phase 1 ([ADR 0011](0011-atomic-transactions-and-revisions.md) amendment); required by the Phase 2 exit criteria | 2 |
 | Generic undo | Deferred (R5). Future undo is a compensating transaction, never history branching ([ADR 0011](0011-atomic-transactions-and-revisions.md)); semantics for `split`, `merge` and `consume` need an owner decision | not scheduled |
 | Broken bonds, force and damage | [ADR 0014](0014-bond-model.md) records how a broken bond will differ from contact; the model itself is the Phase 4 ADR | 4 |
 | Closed-loop crease networks | Research gate before the Phase 4 gate ([ADR 0003](0003-crease-representation.md) amendment) | before 4 |

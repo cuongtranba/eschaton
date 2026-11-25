@@ -53,7 +53,8 @@ export function Viewport({ viewModel, forceWebGL, continuous, onFrame }: Viewpor
   }, [renderer, viewModel]);
 
   const profiles = [...new Set(viewModel.sockets.map((socket) => socket.profile))].sort();
-  const backdrop = viewModel.batches.some((batch) => batch.authority === "none");
+  const preview = viewModel.batches.some((batch) => batch.key.startsWith("preview|"));
+  const backdrop = viewModel.batches.some((batch) => batch.authority === "none" && !batch.key.startsWith("preview|"));
 
   return (
     <div className="viewport" ref={hostRef}>
@@ -65,6 +66,11 @@ export function Viewport({ viewModel, forceWebGL, continuous, onFrame }: Viewpor
       {backdrop && (
         <p className="backdrop-label" data-testid="world-backdrop-label">
           Backdrop — not part of the world
+        </p>
+      )}
+      {preview && (
+        <p className="backdrop-label" data-testid="wave-preview-label">
+          Solver preview — not part of the world
         </p>
       )}
       {viewModel.look.compare && (

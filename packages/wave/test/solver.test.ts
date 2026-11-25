@@ -1,5 +1,5 @@
 import { fnv1a64, foldonId, placeSockets, presetCatalog, type Catalog, type Cell } from "@eschaton/foldon";
-import { compileTiles, solve, type CompiledTiles, type TileSpec, type WaveOutcome, type WaveProblem } from "@eschaton/wave";
+import { compileTiles, goldenDigest, solve, type CompiledTiles, type TileSpec, type WaveOutcome, type WaveProblem } from "@eschaton/wave";
 import { applyPatch, cellOccupant, checkInvariants, createWorld, type WorldOp } from "@eschaton/world";
 import { expect, test } from "vitest";
 
@@ -145,4 +145,8 @@ test("a search that must backtrack still ends in a valid, completely filled regi
   expect(outcomes.map((outcome) => (outcome.kind === "solved" ? outcome.airCells : outcome.kind))).toEqual(outcomes.map(() => 0));
   expect(outcomes.reduce((sum, outcome) => sum + (outcome.kind === "solved" ? outcome.stats.backtracks : 0), 0)).toBeGreaterThan(0);
   expect(outcomes.map(worldIssues)).toEqual(outcomes.map(() => []));
+});
+
+test("a fixed set of solves has the recorded golden digest", () => {
+  expect(goldenDigest(catalog)).toBe("69cd859eaf36a48f-9d3ff649a9a17f0d-5d4abb4866979287-2b72687a6cf860ae");
 });

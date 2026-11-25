@@ -64,3 +64,11 @@ The read set is compared **by content, not by revision**. If the region changes 
 - Phase 4 local re-solves can commit while ticks commit elsewhere.
 - The read set is geometric. A constraint that reaches further than one cell (for example connectivity) needs a larger read set; Phase 3 must extend it when it adds such constraints.
 - Computing the digest scans the entity table once per proposal, the same order of cost as a commit.
+
+## Implementation (Phase 2)
+
+- **World:** `packages/world/src/region.ts` (`readRegion`, `applyProposal`, `cellInRegion`). Tests: `packages/world/test/region.test.ts` (10), including the shell rule (mutation-checked), the A → B → A case and replay of a rebased commit.
+- **Glue:** `packages/wave/src/region.ts` (`prepareRegion`, `proposalOf`). Tests: `packages/wave/test/region.test.ts` (8).
+- **Proposal ops** are `annotate` (an audit note with the region and solve seed), `consume` for cleared entities and `instantiate` for placements. Anything else is refused.
+- **Solve seed** is derived from the world seed, the request seed and the region, not from the revision, so a rebased result is the same result.
+- **Cost:** see the transaction profile in [`../phase-2-exit.md`](../phase-2-exit.md). `readRegion` and `applyProposal` scan the entity table once each; the commit itself is still O(world) (ADR 0011).

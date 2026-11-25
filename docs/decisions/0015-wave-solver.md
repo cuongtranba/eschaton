@@ -32,7 +32,8 @@ ADR 0004 recommended the placement encoding from a 2D throwaway experiment. Phas
 ### Determinism scope
 
 - The solver uses only integers, `Math.imul`, comparisons and array order. It never uses `Math.log`, `Math.random`, floating-point accumulation, `Date`, or object key order. So the same compiled tiles and problem give the same result on any conforming ECMAScript engine **by construction**.
-- **Tested:** V8, in Node and in Chromium (the same seeds give the same placement hash in the worker and in Node). **Not tested:** SpiderMonkey and JavaScriptCore. No claim is made for them beyond the argument above.
+- **Tested (2026-11-25, macOS arm64):** one golden digest over four fixed 12×6×12 solves (`goldenDigest`) is identical on V8 (Node v24.20 and Playwright Chromium 159), SpiderMonkey (Playwright Firefox 159) and JavaScriptCore (Playwright WebKit 27.2). The Node check is a unit test in CI; the three-browser check is `pnpm --filter @eschaton/studio engines`, run locally and **not** in CI.
+- **Not tested:** other engine versions, other CPU architectures, and real Safari or Firefox release builds. No claim is made for them beyond the argument above.
 - "Same result" means the same placements for the same catalog fingerprint, tile list, weights, seed, region size and constraints. Entity ids additionally depend on the commit revision (ADR 0010).
 
 ## Choices to confirm at the Phase 2 gate
@@ -46,3 +47,12 @@ ADR 0004 recommended the placement encoding from a 2D throwaway experiment. Phas
 - The solver does not know entities, ids, bonds or revisions. Region extraction and the proposal are ADR 0016.
 - Soft preferences are weights only. Semantic roles, connectivity and hierarchy are Phase 3.
 - Chronological backtracking can thrash on hard catalogs; the budget turns that into an explicit `budget-exceeded`. Smarter backtracking waits for evidence.
+
+## Implementation (Phase 2)
+
+- **Code:** `packages/wave/src/solver/compile.ts` (`compileTiles`), `packages/wave/src/solver/solve.ts` (`createSolve`, `solve`), `packages/wave/src/golden.ts`. The solver folder imports `@eschaton/foldon` only; lint forbids `@eschaton/world`, the region glue and the job host there.
+- **Propagation was rewritten once, on a measurement.** The first version revised every neighbouring candidate on each change and took about 2.5 s for 16×8×16 with the town tile set. Face queues (only the faces whose support changed) plus signature bitmasks took the same solves to about 70 ms, with identical placements.
+- **Weights.** A tile's weight applies per candidate. A large tile covers a cell from many anchors, so it is drawn more often than its weight alone suggests; the tile list is where that is tuned.
+- **Job host:** `packages/wave/src/host.ts` (`createWaveHost`) runs a job in slices through an injected scheduler, posts progress previews and one `done` message (`solved`, `unsatisfiable`, `budget-exceeded`, `invalid`, `cancelled`, `failed`). It rebuilds the catalog from `catalog.source()` and refuses a fingerprint mismatch. The Studio owns the actual `Worker` (`apps/studio/src/worker/`).
+- **Tests:** `packages/wave/test/solver.test.ts` (12) and `host.test.ts` (3); Studio `e2e/wave.spec.ts` (5) against the real worker.
+- **Benchmarks:** `benchmarks/phase-2/`; summary in [`../phase-2-exit.md`](../phase-2-exit.md).

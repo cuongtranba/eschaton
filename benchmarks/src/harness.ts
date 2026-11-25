@@ -25,7 +25,7 @@ export type Machine = Readonly<{
 export type Run = Readonly<{ directory: string; provenance: Provenance }>;
 
 const EVIDENCE_ROOT = "benchmarks";
-const EVIDENCE_PHASE = "phase-1";
+const EVIDENCE_PHASE = "phase-2";
 const EVIDENCE_DIRECTORY = `${EVIDENCE_ROOT}/${EVIDENCE_PHASE}`;
 const SCRATCH_DIRECTORY = "benchmarks/runs";
 
