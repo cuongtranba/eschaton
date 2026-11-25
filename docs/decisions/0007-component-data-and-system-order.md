@@ -44,3 +44,10 @@ Resolves the conflict between this ADR, ADR 0011 (question 5) and the README "Pe
 - **Tick and system order are Phase 4.** The Phase 4 (Collapse) ADR decides the fixed tick, idle-tick semantics and the order of systems. Until then the header's `tick` stays 0.
 - **Bonds get their own ADR (0014)** before the Phase 1 bond milestone (M4). It is written on the Phase 1 branch and scoped by plan decision P1-D11.
 - **First consumer of component data:** the Phase 1 `windFold` system reads `foldable` and `wind-responsive` to set fold angles. It provides the test for the exit criterion "roof and leaf share behaviour without inheritance".
+
+## Implementation (Phase 1)
+
+- `runSystem(catalog, state, system, input)`, `systemView` and `windFold` live in `packages/world/src/systems.ts`.
+- A system that emits an op for an entity outside its view is rejected.
+- The roof is the shipped `roof-module` (two P03). The leaf is the `leaf` preset (`packages/foldon/src/presets.ts`), built with `foldedNet`; it is not a primitive.
+- **Tests:** `packages/world/test/systems.test.ts`. "wind folds both a roof and a leaf through the same system" is the Phase 1 exit criterion "roof/leaf share behaviour without inheritance".

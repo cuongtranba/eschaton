@@ -231,3 +231,17 @@ Further amendments:
 - **Closed conservation** forbids `instantiate` and `consume` with reason `destroyed`; both follow from invariant 8. Backdrop debris (ADR 0013 C′) is never counted and never reusable. A Phase 2/6 re-solve in closed mode cannot instantiate, so it needs inventory-bounded candidates; that is a Phase 6 research item, not a Phase 1 change.
 - **Solver integration (Phase 2):** unchanged placements keep their `EntityId` (the solver reports "keep"); removed placements become `detach` or `consume` according to the scenario policy (ADR 0004 amendment).
 - **Tests added by the review:** "a split child created in the same patch as its parent gets a later stamp"; "detaching keeps the group" (pins the provisional Q10 rule); "instantiating the same assembly at two world poses yields disjoint occupied cells".
+
+## Implementation (Phase 1, `@eschaton/world`)
+
+- **Code:** `packages/world/src/{state,ops,patch,invariants,model}.ts`. The entry point exports `Entity`, `Owner`, `LineageRecord`, `checkInvariants`, `cellOccupant` and `findEntity`.
+- **Ids:** `e<revision>.<ordinal>` and `g<revision>.<ordinal>` (`entityIdOf`, `groupIdOf`). Inside an `instantiate`, leaves are ordered by anchor, rotation and definition, never by part id. "entity ids do not depend on recipe part ids" fails when that sort is removed.
+- **Ownership ops:** `instantiate`, `detach`, `attach`, `store`, `retrieve`, `split`, `merge`, `consume`. `conserve` closes the world at the current per-material totals.
+- **Fold state:** `fold` sets authoritative crease angles on placed entities only; they are validated by `poseGeometry`.
+- **Conservation key:** the definition's `renderable` material. Q9 is still an open owner question.
+- **Group:** unchanged by ownership ops (provisional Q10).
+- **Tests:**
+  - M2: `packages/world/test/identity.test.ts`.
+  - M4: `packages/world/test/bonds.test.ts`.
+  - M5: `packages/world/test/lineage.test.ts`, including the seeded random split/merge sequence.
+- **Invariants checked on every commit and on every snapshot load:** ids match stamps and creation order; definitions exist and the material matches; fold angles form a valid pose; rotations are allowed; transforms are finite with a unit quaternion and positive scale; no double occupancy; touching sockets mate; stored bonds equal mated pairs; lineage edges point forward; closed totals equal the baseline.

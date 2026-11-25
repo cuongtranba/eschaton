@@ -12,7 +12,7 @@ Procedural origami-inspired world engine (TypeScript + Three.js). Authoritative 
 | `pnpm typecheck` | `tsc` per workspace project |
 | `pnpm build` | Production build of every buildable project |
 | `pnpm e2e` | Playwright against the Studio |
-| `pnpm bench` | Foldon micro-benchmarks, then the WFC experiment (serially). Writes only to gitignored `benchmarks/runs/`; never changes `git status`. `BENCH_RECORD=1` writes tracked evidence to `benchmarks/phase-0/<date>-<sha>/` and refuses a dirty tree. See `benchmarks/README.md` |
+| `pnpm bench` | Foldon and world micro-benchmarks, then the WFC experiment (serially). Writes only to gitignored `benchmarks/runs/`; never changes `git status`. `BENCH_RECORD=1` writes tracked evidence to `benchmarks/phase-1/<date>-<sha>/` (Phase 0 evidence stays in `benchmarks/phase-0/`) and refuses a dirty tree. See `benchmarks/README.md` |
 | `pnpm bench:studio` | Builds the Studio, serves the production bundle on `STUDIO_PORT`, measures it in headless Chromium (software rendering here) and joins the latest `pnpm bench` run directory. Same record/dirty rules; always set `STUDIO_PORT` |
 | `pnpm screenshots` | Regenerate `docs/screenshots/p0.4-*.png` and `p0.5-*.png` via Playwright (not part of `pnpm e2e`) |
 
@@ -20,7 +20,7 @@ Run lint, typecheck, test and build before declaring work done. Never report a c
 
 ## Layout
 
-`apps/studio` (Vite + React UI) · `packages/foldon` (`@eschaton/foldon`, geometry/definitions/placement) · `tools/architecture` (dependency-rule tests) · `experiments/` (throwaway) · `docs/` (plan, research, `decisions/` ADRs, `architecture/`, `phase-0-exit.md`) · `benchmarks/` (measured results). Do not scaffold future packages before they are needed. Packages are consumed as TypeScript source (`exports` → `src/index.ts`); no build step.
+`apps/studio` (Vite + React UI) · `packages/foldon` (`@eschaton/foldon`, geometry/definitions/placement/socket table) · `packages/world` (`@eschaton/world`, runtime state: entities, patches, replay, bonds, lineage, systems, self-assembly; imports only foldon) · `tools/architecture` (dependency-rule tests) · `experiments/` (throwaway) · `docs/` (plan, research, `decisions/` ADRs, `architecture/`, `phase-0-exit.md`) · `benchmarks/` (measured results). Do not scaffold future packages before they are needed. Packages are consumed as TypeScript source (`exports` → `src/index.ts`); no build step.
 
 ## Coding rules (master-plan §7.3)
 
@@ -35,7 +35,7 @@ Run lint, typecheck, test and build before declaring work done. Never report a c
 
 ## Tests
 
-- Vitest; TDD at public seams. Behavioral tests import **only** the package entry point (`@eschaton/foldon`), never internal modules (lint-enforced via relative-import ban).
+- Vitest; TDD at public seams. Behavioral tests import **only** package entry points (`@eschaton/foldon`, `@eschaton/world`), never internal modules (lint-enforced via relative-import ban).
 - No mocks/spies (`vi.*`), no sleeps. Real lightweight inputs, seeds, explicit clocks.
 - Flat `test("does x")` titles that state behavior; one cause → one decisive outcome. Regression tests name the original defect. Cover promises, not lines; delete tests that would not catch a realistic bug.
 - Never weaken, skip or delete a valid test to make code pass.

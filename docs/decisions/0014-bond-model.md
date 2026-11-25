@@ -58,3 +58,10 @@ If the owner rejects either interpretation, the change is local to the bond deri
 - "attach creates a bond for each mated socket pair and detach removes exactly those"
 - "instantiating an assembly bonds its touching parts" (pins interpretation 1)
 - "the invariant check finds no issue after every commit in the bond scenarios" (invariants 1–4)
+
+## Implementation (Phase 1)
+
+- **Code:** `packages/world/src/model.ts` (`contacts`, `bondsFromContacts`, `matedBonds`, `sortBonds`) and `ops.ts` (`settleBonds`).
+- **Settling:** after all ops of a patch, the bonds of every entity whose placement changed are removed and re-derived from its mated pairs. This gives the same final bonds as per-op creation and removal, because Phase 1 bonds depend only on final placement, and it keeps large patches linear.
+- **Tests:** `packages/world/test/bonds.test.ts`.
+- **Status:** unchanged. The two interpretations above still await owner confirmation.

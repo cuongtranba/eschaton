@@ -8,7 +8,7 @@ All commands run from the repository root. `pnpm bench` writes **only** to an un
 
 | Command | What it does |
 |---|---|
-| `pnpm bench` | Creates one run directory, then runs the Foldon benchmark and the WFC experiment **serially** (`--workspace-concurrency=1`; running them in parallel makes the timings noisy). Writes `foldon.json`, `wfc.json`, `wfc.md`. |
+| `pnpm bench` | Creates one run directory, then runs the Foldon benchmark, the world benchmark and the WFC experiment **serially** (`--workspace-concurrency=1`; running them in parallel makes the timings noisy). Writes `foldon.json`, `world.json`, `wfc.json`, `wfc.md`. |
 | `STUDIO_PORT=5183 pnpm bench:studio` | `vite build`, serves the production bundle on `STUDIO_PORT` with `vite preview --strictPort`, measures it in headless Chromium, writes `studio.json` and `report.md`. It joins the newest scratch run for the same commit and dirty state, so run `pnpm bench` first for the report to include Foldon and WFC. Always set `STUDIO_PORT`. |
 
 ### Where output goes
@@ -16,22 +16,22 @@ All commands run from the repository root. `pnpm bench` writes **only** to an un
 | Mode | Directory | Tracked? |
 |---|---|---|
 | Default (scratch) | `benchmarks/runs/<UTC timestamp>-<short SHA>[-dirty]/` | No, gitignored |
-| `BENCH_RECORD=1` | `benchmarks/phase-0/<commit date>-<short SHA>/` | Yes, this is the recorded evidence |
+| `BENCH_RECORD=1` | `benchmarks/phase-1/<commit date>-<short SHA>/` (Phase 0 evidence is kept in `benchmarks/phase-0/`) | Yes, this is the recorded evidence |
 
 `BENCH_RUN_DIR=<path>` overrides both; `pnpm bench` sets it for its children so Foldon and WFC share a directory.
 
 ### Recording evidence
 
-1. Work from a **clean checkout of the SHA you want to record** (`git status` empty). `benchmarks/phase-0/` and `benchmarks/runs/` are excluded from the dirty check, so the output of the first command does not make the second refuse.
+1. Work from a **clean checkout of the SHA you want to record** (`git status` empty). every `benchmarks/phase-*/` directory and `benchmarks/runs/` are excluded from the dirty check, so the output of the first command does not make the second refuse.
 2. `BENCH_RECORD=1 pnpm bench`
 3. `BENCH_RECORD=1 STUDIO_PORT=5183 pnpm bench:studio`
-4. Commit `benchmarks/phase-0/<date>-<sha>/` in a commit **after** the measured one (the files cannot be part of the SHA they describe), and link the report from the docs that cite it.
+4. Commit `benchmarks/phase-1/<date>-<sha>/` in a commit **after** the measured one (the files cannot be part of the SHA they describe), and link the report from the docs that cite it.
 
 Recording from a dirty working tree is refused with exit code 1: the numbers would not match any commit. `BENCH_ALLOW_DIRTY=1` overrides this; the output is then still marked `"dirty": true` in every JSON file and in the report. Do not commit dirty evidence as the baseline.
 
 ### Provenance in every output
 
-Each of `foldon.json`, `wfc.json`, `studio.json` carries `provenance` (`commit`, `shortCommit`, `commitDate`, `dirty`, `mode` = `scratch` or `record`, `generatedAt`) and the Node machine (`os`, `cpu`, `logicalCores`, `totalMemoryGiB`, `node`). `dirty` comes from `git status --porcelain --untracked-files=all` excluding `benchmarks/phase-0/`. The Studio's `machine` block adds the browser, viewport, and the Studio's own GPU readout: `backend`, `gpu`, `gpuClass` (`physical`, `software` or `unknown`), `forceWebGL`, `gpuDetail` (every adapter field and where it came from), `userAgent`. `report.md` bases its banner on `gpuClass`.
+Each of `foldon.json`, `wfc.json`, `studio.json` carries `provenance` (`commit`, `shortCommit`, `commitDate`, `dirty`, `mode` = `scratch` or `record`, `generatedAt`) and the Node machine (`os`, `cpu`, `logicalCores`, `totalMemoryGiB`, `node`). `dirty` comes from `git status --porcelain --untracked-files=all` excluding every `benchmarks/phase-*/` directory. The Studio's `machine` block adds the browser, viewport, and the Studio's own GPU readout: `backend`, `gpu`, `gpuClass` (`physical`, `software` or `unknown`), `forceWebGL`, `gpuDetail` (every adapter field and where it came from), `userAgent`. `report.md` bases its banner on `gpuClass`.
 
 ## Methodology
 
@@ -40,6 +40,17 @@ Each of `foldon.json`, `wfc.json`, `studio.json` carries `provenance` (`commit`,
 - vitest bench (tinybench). Per case: 200 warm-up iterations and 300 ms of warm-up, then 800 ms of timed iterations (`OPTIONS` in the bench file).
 - The recorded p50 and p99 are the latency percentiles tinybench computes over every timed iteration; `samples` is the iteration count. The runner keeps ops/s (mean throughput), p50, p99 and samples per case and discards vitest's raw report.
 - No GC control: pure functions that allocate little; a GC pause shows up in p99, not p50.
+
+### World (`packages/world/bench/world.bench.ts`, Node, no browser)
+
+- Same vitest-bench runner as Foldon (`benchmarks/src/vitestBench.ts`). Per case: 20 warm-up iterations and 300 ms of warm-up, then 1,500 ms of timed iterations.
+- Cases:
+  - commits: a 27-entity watchtower into an empty world; one detach in 100- and 1,000-entity worlds of P08 boxes;
+  - `hashState` of the 1,000-entity world;
+  - `replay` of a 50-commit log;
+  - `assemble` of a watchtower from inventory (27 patches);
+  - `runSystem(windFold)` over a roof-module and a leaf.
+- Every commit includes the full invariant check and the state hash. That is the Phase 1 contract, so the numbers are the cost of a validated commit, not of a raw mutation.
 
 ### WFC placement experiment (`experiments/wfc-placement/bench/run.ts`)
 

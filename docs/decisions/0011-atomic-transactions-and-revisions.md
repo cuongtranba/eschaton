@@ -212,3 +212,22 @@ Further amendments:
 - **Job outcomes are not commit outcomes.** `cancelled`, `unsatisfiable` and `budget-exceeded` (master plan §8.1) are results of a solver job. A job that ends that way produces no patch, so `Rejection` stays `invalid | stale`.
 - **Systems commit through this path.** `runSystem` (ADR 0007 amendment) is `plan` followed by `applyPatch`; it is the only write path for systems.
 - **Tests added by the review:** "a patch that swaps two placed entities commits"; "replay against a different rules version is refused"; "a proposal whose read region was untouched by an intervening commit is still rejected under strict equality". The last one pins the Phase 1 rule so that Phase 2 changes it deliberately.
+
+## Implementation (Phase 1, `@eschaton/world`)
+
+- **Commit path:**
+  - `applyPatch(catalog, state, patch)` checks the strict base revision, then runs ops in order on a draft (sequential preconditions, invariant 10).
+  - Bonds are settled once per patch for entities whose placement changed (ADR 0014).
+  - All invariants are checked on the final state.
+  - It returns `Committed { state, record }` (with `stateHash`) or `Rejected { stale | invalid }`.
+- **Replay and snapshots:**
+  - `replay(catalog, initial, log)` refuses a catalog or rules mismatch (invariant 11) and reports the first divergence with its revision.
+  - `serializeSnapshot` and `parseSnapshot` use canonical JSON (keys sorted, `-0` written as `0`, non-finite numbers refused). Parsing validates every field and runs the invariants.
+- **Hashing:** `hashState` is FNV-1a 64 over the canonical JSON, using the shared `fnv1a64` from `@eschaton/foldon`.
+- **Header versions:**
+  - `catalog` is the fingerprint over canonical foldon, assembly, contract and socket-table content.
+  - `rules` is `sockets@<table version>+invariants@1`.
+  - `engine` is `@eschaton/world@<package version>`.
+- **No store object.** Callers (the Studio's World mode, the self-assembly planner) hold `{ state, log }` themselves. A `World` store with `dispatch`/`submit` was not needed, so it was not built.
+- **Tests:** `packages/world/test/patch.test.ts` (M1) and `snapshot.test.ts` (M0, plus populated round trip and tamper rejection).
+- **Cost:** measured in `benchmarks/phase-1/` (M9). Reaching the measured cost took four changes: a 16-bit-limb FNV; native canonical JSON; indexed contacts computed once per check; per-patch bond settling.
