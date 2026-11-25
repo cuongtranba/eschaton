@@ -8,7 +8,7 @@ All commands run from the repository root. `pnpm bench` writes **only** to an un
 
 | Command | What it does |
 |---|---|
-| `pnpm bench` | Creates one run directory, then runs the Foldon benchmark, the world benchmark and the WFC experiment **serially** (`--workspace-concurrency=1`; running them in parallel makes the timings noisy). Writes `foldon.json`, `world.json`, `wfc.json`, `wfc.md`. |
+| `pnpm bench` | Creates one run directory, then runs the Foldon benchmark, the world benchmark and the WFC experiment **serially** (`--workspace-concurrency=1`; running them in parallel makes the timings noisy). Writes `foldon.json`, `world.json`, `wave.json`, `wfc.json`, `wfc.md`. |
 | `STUDIO_PORT=5183 pnpm bench:studio` | `vite build`, serves the production bundle on `STUDIO_PORT` with `vite preview --strictPort`, measures it in headless Chromium, writes `studio.json` and `report.md`. It joins the newest scratch run for the same commit and dirty state, so run `pnpm bench` first for the report to include Foldon and WFC. Always set `STUDIO_PORT`. |
 
 ### Where output goes
@@ -16,7 +16,7 @@ All commands run from the repository root. `pnpm bench` writes **only** to an un
 | Mode | Directory | Tracked? |
 |---|---|---|
 | Default (scratch) | `benchmarks/runs/<UTC timestamp>-<short SHA>[-dirty]/` | No, gitignored |
-| `BENCH_RECORD=1` | `benchmarks/phase-1/<commit date>-<short SHA>/` (Phase 0 evidence is kept in `benchmarks/phase-0/`) | Yes, this is the recorded evidence |
+| `BENCH_RECORD=1` | `benchmarks/phase-2/<commit date>-<short SHA>/` (earlier evidence is kept in `benchmarks/phase-0/` and `benchmarks/phase-1/`) | Yes, this is the recorded evidence |
 
 `BENCH_RUN_DIR=<path>` overrides both; `pnpm bench` sets it for its children so Foldon and WFC share a directory.
 
@@ -25,7 +25,7 @@ All commands run from the repository root. `pnpm bench` writes **only** to an un
 1. Work from a **clean checkout of the SHA you want to record** (`git status` empty). every `benchmarks/phase-*/` directory and `benchmarks/runs/` are excluded from the dirty check, so the output of the first command does not make the second refuse.
 2. `BENCH_RECORD=1 pnpm bench`
 3. `BENCH_RECORD=1 STUDIO_PORT=5183 pnpm bench:studio`
-4. Commit `benchmarks/phase-1/<date>-<sha>/` in a commit **after** the measured one (the files cannot be part of the SHA they describe), and link the report from the docs that cite it.
+4. Commit `benchmarks/phase-2/<date>-<sha>/` in a commit **after** the measured one (the files cannot be part of the SHA they describe), and link the report from the docs that cite it.
 
 Recording from a dirty working tree is refused with exit code 1: the numbers would not match any commit. `BENCH_ALLOW_DIRTY=1` overrides this; the output is then still marked `"dirty": true` in every JSON file and in the report. Do not commit dirty evidence as the baseline.
 
@@ -51,6 +51,24 @@ Each of `foldon.json`, `wfc.json`, `studio.json` carries `provenance` (`commit`,
   - `assemble` of a watchtower from inventory (27 patches);
   - `runSystem(windFold)` over a roof-module and a leaf.
 - Every commit includes the full invariant check and the state hash. That is the Phase 1 contract, so the numbers are the cost of a validated commit, not of a raw mutation.
+
+### Wave (`packages/wave/bench/wave.bench.ts`, Node, main thread)
+
+- Same runner as Foldon and world. Per case: 5 warm-up iterations and 200 ms, then 1,500 ms timed.
+- Solve cases use the seven-tile town set (1×1 boxes, 1×1×2 roofs, pyramids, a 2×2 roof module, a 1×3×1 column, an irregular L block and the 4×3×4 house) with air weight 8 on a ground plane. **Every iteration uses a new seed**, so the numbers cover a spread of arrangements, not one grid. A packing case (L blocks and columns that must fill 6×3×6 completely) exercises backtracking.
+- Transaction cases apply one solved 8×4×8 proposal (about 100 placements) to worlds that already hold 100, 1,000 and 10,000 entities, and time `readRegion` on the same worlds.
+- The solver runs on the main thread of Node here. In the Studio it runs in a worker, sliced 16 decisions at a time; that adds scheduling overhead not measured here.
+
+### Wave in the production worker (`apps/studio/bench/wave.spec.ts`)
+
+- `pnpm --filter @eschaton/studio bench:wave` builds the Studio, serves the production bundle and opens `bench.html`, which uses the same worker client and worker entry as the Studio. Set `STUDIO_PORT`. `BENCH_CHANNEL=chrome` runs installed Google Chrome instead of Playwright's Chromium.
+- 10 unrecorded warm-up solves, then fixed seeds 1..120 per series (40 for the 28×8×28 stress case, 100 for each hard case). Every sample starts from the same world.
+- Per sample it records: prepare (main thread), per-solve setup and search (measured inside the worker), transport and scheduling (round trip minus the two), world commit, and end to end. `wave-worker.json` holds every raw sample; `wave-worker.md` the p50 / p95 / p99 summary, the load average before and after, hardware and browser.
+- The file is written as `wave-worker.{json,md}`; rename it per browser when recording more than one.
+
+### Commit profile (`benchmarks/profile/commit.test.ts`)
+
+- `pnpm --filter @eschaton/benchmarks profile:commit` runs world commits under `--cpu-prof` and writes timings to `benchmarks/runs/profile/commit-<n>.txt`; `node benchmarks/src/profileSummary.ts <dir> <function names>` prints inclusive and self time from the `.cpuprofile`. Recorded comparisons are in `benchmarks/phase-2/commit-profile/`.
 
 ### WFC placement experiment (`experiments/wfc-placement/bench/run.ts`)
 

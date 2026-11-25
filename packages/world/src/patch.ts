@@ -1,10 +1,11 @@
 import { err, ok, type Catalog, type Result } from "@eschaton/foldon";
 import { deepFreeze } from "./canonical";
-import { checkInvariants } from "./invariants";
+import { indexOf, remember, settleTouched, trust } from "./delta";
+import { checkInvariants, conservationIssues, lineageIssues } from "./invariants";
 import { sortBonds } from "./model";
 import { worldIssue, type WorldIssue } from "./issues";
 import { applyOp, settleBonds, type Draft, type WorldOp } from "./ops";
-import type { Revision, WorldState } from "./state";
+import type { Bond, Entity, Revision, WorldState } from "./state";
 import { hashState, versionIssues } from "./world";
 
 export type { InstanceRef, SplitChild, WorldOp } from "./ops";
@@ -27,14 +28,32 @@ export type CommitRecord = Readonly<{
 
 export type Committed = Readonly<{ state: WorldState; record: CommitRecord }>;
 
-function patchShapeIssue(patch: Patch): WorldIssue | undefined {
-  if (!Number.isSafeInteger(patch.baseRevision) || patch.baseRevision < 0) return worldIssue("patch-invalid", "baseRevision must be an integer >= 0");
-  if (!Array.isArray(patch.ops) || patch.ops.length === 0) return worldIssue("patch-invalid", "a patch needs at least one op");
-  if (typeof patch.origin.id !== "string" || patch.origin.id.length === 0) return worldIssue("patch-invalid", "a patch needs an origin id");
-  return undefined;
+export function patchShapeIssue(patch: Readonly<{ baseRevision: unknown; ops: unknown; origin: unknown }>): WorldIssue | undefined {
+  const { baseRevision, ops, origin } = patch;
+  if (typeof baseRevision !== "number" || !Number.isSafeInteger(baseRevision) || baseRevision < 0) return worldIssue("patch-invalid", "baseRevision must be an integer >= 0");
+  if (!Array.isArray(ops) || ops.length === 0) return worldIssue("patch-invalid", "a patch needs at least one op");
+  const named = typeof origin === "object" && origin !== null && "id" in origin && typeof origin.id === "string" && origin.id.length > 0;
+  return named ? undefined : worldIssue("patch-invalid", "a patch needs an origin id");
 }
 
-export function applyPatch(catalog: Catalog, state: WorldState, patch: Patch): Result<Committed, Rejection> {
+export type PatchOptions = Readonly<{
+  /**
+   * "incremental" (default) validates only what the patch touched when the base state is one this package has
+   * already validated. "full" always runs the complete invariant audit. Both give the same result; "full" is the
+   * reference the incremental path is tested against.
+   */
+  audit?: "incremental" | "full";
+}>;
+
+function assemble(state: WorldState, draft: Draft, bonds: readonly Bond[]): WorldState {
+  const entities: Entity[] = [];
+  for (const entity of draft.entities.values()) entities.push(draft.touched.has(entity.id) ? structuredClone(entity) : entity);
+  const lineage = [...state.lineage, ...structuredClone(draft.lineage.slice(state.lineage.length))];
+  const conservation = draft.conservation === state.conservation ? state.conservation : structuredClone(draft.conservation);
+  return deepFreeze({ header: { ...state.header, revision: draft.revision }, entities, bonds: [...bonds], lineage, conservation });
+}
+
+export function applyPatch(catalog: Catalog, state: WorldState, patch: Patch, options: PatchOptions = {}): Result<Committed, Rejection> {
   const mismatch = versionIssues(catalog, state.header.versions);
   if (mismatch.length > 0) return err({ kind: "invalid", issues: mismatch });
   const current = state.header.revision;
@@ -46,7 +65,7 @@ export function applyPatch(catalog: Catalog, state: WorldState, patch: Patch): R
     revision: current + 1,
     entities: new Map(state.entities.map((entity) => [entity.id, entity])),
     lineage: [...state.lineage],
-    moved: new Set(),
+    touched: new Map(),
     bonds: [...state.bonds],
     conservation: state.conservation,
     nextOrdinal: 0,
@@ -55,19 +74,25 @@ export function applyPatch(catalog: Catalog, state: WorldState, patch: Patch): R
     const failure = applyOp(catalog, draft, op, index);
     if (failure !== undefined) return err({ kind: "invalid", issues: [failure] });
   }
-  settleBonds(catalog, draft);
 
-  const next: WorldState = deepFreeze(
-    structuredClone({
-      header: { ...state.header, revision: draft.revision },
-      entities: [...draft.entities.values()],
-      bonds: sortBonds(draft.bonds, [...draft.entities.values()]),
-      lineage: draft.lineage,
-      conservation: draft.conservation,
-    }),
-  );
-  const broken = checkInvariants(catalog, next);
-  if (broken.length > 0) return err({ kind: "invalid", issues: broken });
+  const baseIndex = options.audit === "full" ? undefined : indexOf(state);
+  const settled = baseIndex === undefined ? undefined : settleTouched(catalog, state, baseIndex, draft);
+  let next: WorldState | undefined;
+  if (settled !== undefined) {
+    const candidate = assemble(state, draft, settled.bonds);
+    if (lineageIssues(candidate).length === 0 && conservationIssues(candidate).length === 0) {
+      next = candidate;
+      remember(next, settled.index);
+    }
+  }
+  if (next === undefined) {
+    settleBonds(catalog, draft);
+    const audited = assemble(state, draft, sortBonds(draft.bonds, [...draft.entities.values()]));
+    const broken = checkInvariants(catalog, audited);
+    if (broken.length > 0) return err({ kind: "invalid", issues: broken });
+    next = audited;
+    trust(catalog, next);
+  }
   const record: CommitRecord = deepFreeze(
     structuredClone({ revision: draft.revision, tick: next.header.tick, origin: patch.origin, patch, stateHash: hashState(next) }),
   );

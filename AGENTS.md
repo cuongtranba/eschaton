@@ -1,6 +1,6 @@
 # Eschaton — agent rules
 
-Procedural origami-inspired world engine (TypeScript + Three.js). Authoritative design: `docs/master-plan.md`. Visual anchor: `assets/reference/visual-direction.png`. Current phase: **Phase 2 — Wave**, authorized by owner decision R7 (2026-11-25) after the conditional closures of Phase 0 (D6) and Phase 1 (R6; evidence in `docs/phase-1-exit.md` §8). Scope: roadmap v1.1 (`docs/master-plan.md` §11) and the Phase 2 plan in `docs/plans/`. Phase 3 is **not** authorized; no Phase 2 PR is merged without the owner's explicit approval.
+Procedural origami-inspired world engine (TypeScript + Three.js). Authoritative design: `docs/master-plan.md`. Visual anchor: `assets/reference/visual-direction.png`. Current phase: **Phase 3 — Genesis**, authorized by owner decision W7 (2026-11-25) after the conditional closure of Phase 2 (W6; evidence in `docs/phase-2-exit.md` §9). Scope: roadmap v1.1 (`docs/master-plan.md` §11) and the Phase 3 plan in `docs/plans/`. Phase 4 is **not** authorized; no Phase 3 PR is merged without the owner's explicit approval.
 
 ## Commands (pnpm only)
 
@@ -12,7 +12,10 @@ Procedural origami-inspired world engine (TypeScript + Three.js). Authoritative 
 | `pnpm typecheck` | `tsc` per workspace project |
 | `pnpm build` | Production build of every buildable project |
 | `pnpm e2e` | Playwright against the Studio |
-| `pnpm bench` | Foldon and world micro-benchmarks, then the WFC experiment (serially). Writes only to gitignored `benchmarks/runs/`; never changes `git status`. `BENCH_RECORD=1` writes tracked evidence to `benchmarks/phase-1/<date>-<sha>/` (Phase 0 evidence stays in `benchmarks/phase-0/`) and refuses a dirty tree. See `benchmarks/README.md` |
+| `pnpm --filter @eschaton/studio engines` | Solver golden digest and real-worker solve/cancel on Chromium, Firefox and WebKit (needs `playwright install firefox webkit`; a CI job) |
+| `pnpm --filter @eschaton/studio bench:wave` | Wave solver through the production worker: raw samples and p50/p95/p99 per phase. `BENCH_CHANNEL=chrome` uses installed Chrome |
+| `pnpm --filter @eschaton/benchmarks profile:commit` | CPU profile of world commits (`PROFILE_ENTITIES`, default 10000); summarise with `node benchmarks/src/profileSummary.ts` |
+| `pnpm bench` | Foldon and world micro-benchmarks, then the WFC experiment (serially). Writes only to gitignored `benchmarks/runs/`; never changes `git status`. `BENCH_RECORD=1` writes tracked evidence to `benchmarks/phase-2/<date>-<sha>/` (earlier evidence stays in `benchmarks/phase-0/` and `phase-1/`) and refuses a dirty tree. See `benchmarks/README.md` |
 | `pnpm bench:studio` | Builds the Studio, serves the production bundle on `STUDIO_PORT`, measures it in headless Chromium (software rendering here) and joins the latest `pnpm bench` run directory. Same record/dirty rules; always set `STUDIO_PORT` |
 | `pnpm screenshots` | Regenerate `docs/screenshots/p0.4-*`, `p0.5-*`, `p1-world-*` and the ADR 0013 rebuild study `p1-rebuild-*` (plus `docs/review/p1-rebuild-study.json`) via Playwright (not part of `pnpm e2e`). The study opens with `?study=rebuild` |
 
@@ -20,13 +23,13 @@ Run lint, typecheck, test and build before declaring work done. Never report a c
 
 ## Layout
 
-`apps/studio` (Vite + React UI) · `packages/foldon` (`@eschaton/foldon`, geometry/definitions/placement/socket table) · `packages/world` (`@eschaton/world`, runtime state: entities, patches, replay, bonds, lineage, systems, self-assembly; imports only foldon) · `tools/architecture` (dependency-rule tests) · `experiments/` (throwaway) · `docs/` (plan, research, `decisions/` ADRs, `architecture/`, `phase-0-exit.md`) · `benchmarks/` (measured results). Do not scaffold future packages before they are needed. Packages are consumed as TypeScript source (`exports` → `src/index.ts`); no build step.
+`apps/studio` (Vite + React UI) · `packages/foldon` (`@eschaton/foldon`, geometry/definitions/placement/socket table) · `packages/world` (`@eschaton/world`, runtime state: entities, patches, region proposals, replay, bonds, lineage, systems, self-assembly; imports only foldon) · `packages/wave` (`@eschaton/wave`, generation: pure WFC solver in `src/solver` importing only foldon, region glue using world, job host; no renderer, no world state of its own) · `tools/architecture` (dependency-rule tests) · `experiments/` (throwaway) · `docs/` (plan, research, `decisions/` ADRs, `architecture/`, `phase-0-exit.md`) · `benchmarks/` (measured results). Do not scaffold future packages before they are needed. Packages are consumed as TypeScript source (`exports` → `src/index.ts`); no build step.
 
 ## Coding rules (master-plan §7.3)
 
 - Strict TypeScript. No `any`, no unchecked `as` casts to bypass validation. Prefer discriminated unions, exhaustive switches, branded IDs.
 - **Composition over inheritance.** No class `extends` in any first-party `.ts`/`.tsx` (ESLint-enforced). Prefer plain data + pure functions; classes only to encapsulate state behind a small API. Interface `extends` is fine.
-- **Dependency direction (ESLint-enforced, `docs/architecture/overview.md`):** `foldon` is pure (no three/react/Node); Studio `ui → renderer → lab → foldon`, `three` only in `renderer`, React only in `ui`/`App`/`main`; packages are imported only through their entry point; nothing imports `apps/` or `experiments/`.
+- **Dependency direction (ESLint-enforced, `docs/architecture/overview.md`):** `foldon` is pure (no three/react/Node); Studio `ui → renderer → lab → packages`, `three` only in `renderer`, React only in `ui`/`App`/`main`, the solver `Worker` only in `src/worker`; `wave → world → foldon`, and the wave solver core imports foldon only; packages are imported only through their entry point; nothing imports `apps/` or `experiments/`.
 - Definition data is immutable, versioned, serializable (no functions or renderer objects inside). Runtime state is stored separately.
 - One authoritative state; derived caches are not truth. UI sends commands, never mutates domain state. Acyclic, one-way dependencies.
 - Deep modules with behavior-level APIs; no shallow pass-through layers or premature abstractions. Avoid explanatory inline comments; record rationale in docs/ADRs.
@@ -35,7 +38,7 @@ Run lint, typecheck, test and build before declaring work done. Never report a c
 
 ## Tests
 
-- Vitest; TDD at public seams. Behavioral tests import **only** package entry points (`@eschaton/foldon`, `@eschaton/world`), never internal modules (lint-enforced via relative-import ban).
+- Vitest; TDD at public seams. Behavioral tests import **only** package entry points (`@eschaton/foldon`, `@eschaton/world`, `@eschaton/wave`), never internal modules (lint-enforced via relative-import ban).
 - No mocks/spies (`vi.*`), no sleeps. Real lightweight inputs, seeds, explicit clocks.
 - Flat `test("does x")` titles that state behavior; one cause → one decisive outcome. Regression tests name the original defect. Cover promises, not lines; delete tests that would not catch a realistic bug.
 - Never weaken, skip or delete a valid test to make code pass.

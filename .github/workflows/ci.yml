@@ -38,3 +38,32 @@ jobs:
           path: apps/studio/test-results
           if-no-files-found: ignore
           retention-days: 7
+
+  engines:
+    name: solver determinism and worker transport · chromium · firefox · webkit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - id: playwright
+        run: echo "version=$(pnpm --filter @eschaton/studio exec playwright --version | tr -d ' ')" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}-all
+      - run: pnpm --filter @eschaton/studio exec playwright install --with-deps chromium firefox webkit
+      - run: pnpm --filter @eschaton/studio engines
+      - if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-engines-results
+          path: apps/studio/test-results
+          if-no-files-found: ignore
+          retention-days: 7
+

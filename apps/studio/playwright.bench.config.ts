@@ -16,7 +16,17 @@ export default defineConfig({
     deviceScaleFactor: 1,
     launchOptions: { args: ["--enable-precise-memory-info", "--js-flags=--expose-gc"] },
   },
-  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 860 }, deviceScaleFactor: 1 } }],
+  projects: [
+    {
+      name: "chromium",
+      use: {
+        ...devices["Desktop Chrome"],
+        viewport: { width: 1440, height: 860 },
+        deviceScaleFactor: 1,
+        ...(process.env.BENCH_CHANNEL === undefined ? {} : { channel: process.env.BENCH_CHANNEL }),
+      },
+    },
+  ],
   webServer: {
     command: `pnpm exec vite preview --port ${port} --strictPort`,
     url: origin,

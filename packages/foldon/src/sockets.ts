@@ -10,6 +10,7 @@ export type ProfileSpec = Readonly<{
   handed: boolean;
   wildcard: boolean;
   structural: boolean;
+  needsMate: boolean;
 }>;
 
 export type MateSpec = Readonly<{ a: SocketProfile; b: SocketProfile; relation: Turn; bond: boolean }>;
@@ -22,7 +23,7 @@ export type SocketTable = Readonly<{
 
 export type SocketMismatch = "position" | "normal" | "profile" | "turn" | "hand";
 
-const plain = (id: SocketProfile): ProfileSpec => ({ id, symmetry: 4, handed: false, wildcard: false, structural: true });
+const plain = (id: SocketProfile): ProfileSpec => ({ id, symmetry: 4, handed: false, wildcard: false, structural: true, needsMate: false });
 
 function frozen<T>(value: T): T {
   canonicalizeAndFreeze(value);
@@ -30,16 +31,16 @@ function frozen<T>(value: T): T {
 }
 
 export const defaultSocketTable: SocketTable = frozen({
-  version: 2,
+  version: 3,
   profiles: [
-    { id: "empty", symmetry: 4, handed: false, wildcard: false, structural: false },
+    { id: "empty", symmetry: 4, handed: false, wildcard: false, structural: false, needsMate: false },
     plain("ground"),
     plain("deck"),
-    plain("base"),
+    { ...plain("base"), needsMate: true },
     plain("wall"),
     plain("eave"),
     plain("beam"),
-    { id: "open", symmetry: 4, handed: false, wildcard: true, structural: true },
+    { id: "open", symmetry: 4, handed: false, wildcard: true, structural: true, needsMate: false },
   ],
   mates: [
     { a: "empty", b: "empty", relation: 0, bond: false },
@@ -127,6 +128,9 @@ function profileIssues(table: SocketTable): ValidationIssue[] {
       found.push(issue("socket-table-invalid", `profiles[${i}].id`, `profile ${profile.id} is listed more than once`));
     }
     seen.add(profile.id);
+    if (profile.wildcard && profile.needsMate) {
+      found.push(issue("socket-table-invalid", `profiles[${i}].needsMate`, "a wildcard profile cannot require a mate"));
+    }
     if (!SYMMETRIES.includes(profile.symmetry)) {
       found.push(issue("socket-table-invalid", `profiles[${i}].symmetry`, "symmetry must be 1, 2 or 4"));
     }

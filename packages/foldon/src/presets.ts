@@ -1,9 +1,10 @@
+import type { AssemblyRecipe } from "./assembly";
 import { assemblyCatalog, moduleContracts } from "./assemblies";
 import { primitiveCatalog } from "./catalog";
 import { faceSockets, foldable, rectangularFootprint, renderable, windResponsive, type FoldonDefinition } from "./definition";
 import { defineFoldon } from "./define";
 import { foldedNet, makePanel } from "./geometry";
-import { creaseId, foldonId, materialId, panelId } from "./ids";
+import { assemblyId, creaseId, foldonId, materialId, panelId, placementId } from "./ids";
 import type { ValidationIssue } from "./issues";
 import { createCatalog, type Catalog } from "./registry";
 import { err, type Result } from "./result";
@@ -43,8 +44,34 @@ if (!built.ok) throw new Error(`leaf preset is malformed: ${JSON.stringify(built
 
 export const presetFoldons: readonly FoldonDefinition[] = [built.value];
 
+const box = (id: string, x: number, y: number, z: number): AssemblyRecipe["parts"][number] => ({
+  id: placementId(id),
+  ref: { kind: "foldon", id: foldonId("P08"), version: 1 },
+  anchor: [x, y, z],
+  rotation: 0,
+});
+
+export const presetAssemblies: readonly AssemblyRecipe[] = [
+  {
+    id: assemblyId("column-3"),
+    version: 1,
+    name: "Column (1x3x1, preset)",
+    level: 1,
+    tags: ["preset", "column"],
+    parts: [box("low", 0, 0, 0), box("mid", 0, 1, 0), box("high", 0, 2, 0)],
+  },
+  {
+    id: assemblyId("l-block"),
+    version: 1,
+    name: "L block (irregular 2x1x2 mask, preset)",
+    level: 1,
+    tags: ["preset", "irregular"],
+    parts: [box("corner", 0, 0, 0), box("east", 1, 0, 0), box("south", 0, 0, 1)],
+  },
+];
+
 export const presetCatalog: Result<Catalog, readonly ValidationIssue[]> = createCatalog({
   foldons: [...primitiveCatalog, ...presetFoldons],
-  assemblies: assemblyCatalog,
+  assemblies: [...assemblyCatalog, ...presetAssemblies],
   contracts: moduleContracts,
 });

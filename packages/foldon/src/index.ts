@@ -95,4 +95,4 @@ export {
 export { type ContractRef, type ModuleContract, type ModuleSpan } from "./contract";
 export { createCatalog, type Catalog, type CatalogInput, type FlatInstance } from "./registry";
 export { assemblyCatalog, defaultCatalog, moduleContracts } from "./assemblies";
-export { presetCatalog, presetFoldons } from "./presets";
+export { presetAssemblies, presetCatalog, presetFoldons } from "./presets";

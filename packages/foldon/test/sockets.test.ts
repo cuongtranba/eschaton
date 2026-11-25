@@ -26,12 +26,12 @@ import {
 const fixtureTable: SocketTable = {
   version: 1,
   profiles: [
-    { id: "empty", symmetry: 4, handed: false, wildcard: false, structural: false },
-    { id: "road", symmetry: 1, handed: false, wildcard: false, structural: true },
-    { id: "door", symmetry: 1, handed: false, wildcard: false, structural: true },
-    { id: "plinth", symmetry: 4, handed: false, wildcard: false, structural: true },
-    { id: "rail", symmetry: 2, handed: false, wildcard: false, structural: true },
-    { id: "hinge", symmetry: 4, handed: true, wildcard: false, structural: true },
+    { id: "empty", symmetry: 4, handed: false, wildcard: false, structural: false, needsMate: false },
+    { id: "road", symmetry: 1, handed: false, wildcard: false, structural: true, needsMate: false },
+    { id: "door", symmetry: 1, handed: false, wildcard: false, structural: true, needsMate: false },
+    { id: "plinth", symmetry: 4, handed: false, wildcard: false, structural: true, needsMate: false },
+    { id: "rail", symmetry: 2, handed: false, wildcard: false, structural: true, needsMate: false },
+    { id: "hinge", symmetry: 4, handed: true, wildcard: false, structural: true, needsMate: false },
   ],
   mates: [
     { a: "empty", b: "empty", relation: 0, bond: false },
@@ -162,7 +162,7 @@ test("handed side faces mate only left-to-right", () => {
 test("a table with an illegal self-pair relation is rejected", () => {
   const result = validateSocketTable({
     version: 1,
-    profiles: [{ id: "rail", symmetry: 2, handed: false, wildcard: false, structural: true }],
+    profiles: [{ id: "rail", symmetry: 2, handed: false, wildcard: false, structural: true, needsMate: false }],
     mates: [{ a: "rail", b: "rail", relation: 1, bond: true }],
   });
   expect(result.ok ? [] : result.error.map((found) => `${found.code} ${found.path}`)).toEqual([
@@ -178,7 +178,7 @@ test("a catalog socket whose profile is not in the socket table is rejected", ()
 test("a socket table that lets a non-structural profile carry a bond is rejected", () => {
   const table: SocketTable = {
     version: 1,
-    profiles: [{ id: "empty", symmetry: 4, handed: false, wildcard: false, structural: false }],
+    profiles: [{ id: "empty", symmetry: 4, handed: false, wildcard: false, structural: false, needsMate: false }],
     mates: [{ a: "empty", b: "empty", relation: 0, bond: true }],
   };
   const result = validateSocketTable(table);

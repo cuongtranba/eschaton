@@ -9,11 +9,14 @@
     "preview": "vite preview",
     "typecheck": "tsc -p tsconfig.json",
     "e2e": "playwright test",
+    "engines": "playwright test -c playwright.engines.config.ts",
     "screenshots": "playwright test -c playwright.screenshots.config.ts",
-    "bench:studio": "vite build && playwright test -c playwright.bench.config.ts"
+    "bench:studio": "vite build && playwright test -c playwright.bench.config.ts bench/studio.spec.ts",
+    "bench:wave": "vite build && playwright test -c playwright.bench.config.ts bench/wave.spec.ts"
   },
   "dependencies": {
     "@eschaton/foldon": "workspace:*",
+    "@eschaton/wave": "workspace:*",
     "@eschaton/world": "workspace:*",
     "react": "19.3.1",
     "react-dom": "19.3.1",
