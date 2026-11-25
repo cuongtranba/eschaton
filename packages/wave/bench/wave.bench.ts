@@ -58,7 +58,7 @@ const worlds = [100, 1_000, 10_000].map((count) => {
 
 let seed = 0;
 
-test("solve", async ({ bench }) => {
+test("solve", { timeout: 900_000 }, async ({ bench }) => {
   await bench.compare(
     bench("compile the town tile set (7 tiles)", () => {
       compileTiles(catalog, TOWN);
@@ -79,7 +79,7 @@ test("solve", async ({ bench }) => {
   );
 });
 
-test("transactions at scale", async ({ bench }) => {
+test("transactions at scale", { timeout: 900_000 }, async ({ bench }) => {
   await bench.compare(
     ...worlds.flatMap(({ count, state, proposal }) => [
       bench(`readRegion 8x4x8 in a ${count}-entity world`, () => {
