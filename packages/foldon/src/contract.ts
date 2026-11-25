@@ -103,9 +103,8 @@ function boundaryIssues(contract: ModuleContract, sockets: readonly SocketDefini
     if (allowed === undefined) return [];
     return sidePositions(contract, side).flatMap(([x, z]): ValidationIssue[] => {
       const path = `boundary.${side}`;
-      const exposed = sockets.filter((socket) => socket.face === side && socket.cell[0] === x && socket.cell[2] === z);
-      if (exposed.length === 0) return [issue("contract-boundary-incompatible", path, `no exposed ${side} socket at column ${x},${z}`)];
-      return exposed
+      return sockets
+        .filter((socket) => socket.face === side && socket.cell[0] === x && socket.cell[2] === z)
         .filter((socket) => !allowed.includes(socket.profile))
         .map((socket) =>
           issue(

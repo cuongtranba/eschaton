@@ -51,6 +51,8 @@ const cases: readonly Case[] = [
   imports("rejects foldon importing the studio app", FOLDON, `import { App } from "@eschaton/studio";`, "rejected"),
   imports("rejects foldon importing an experiment", FOLDON, `import { solvePlacement } from "@eschaton/exp-wfc-placement";`, "rejected"),
   imports("rejects foldon reaching into apps by relative path", FOLDON, `import { App } from "../../../apps/studio/src/App";`, "rejected"),
+  imports("rejects foldon importing a sibling workspace package", FOLDON, `import { createWorld } from "@eschaton/world";`, "rejected"),
+  imports("rejects foldon tests importing a sibling workspace package", "packages/foldon/test/probe.test.ts", `import { createWorld } from "@eschaton/world";`, "rejected"),
   imports("accepts foldon importing its own modules relatively", FOLDON, `import { add } from "./vec";`, "accepted"),
   imports("rejects foldon tests importing three", "packages/foldon/test/probe.test.ts", `import { Vector3 } from "three";`, "rejected"),
   imports("rejects foldon tests importing internals relatively", "packages/foldon/test/probe.test.ts", `import { add } from "../src/vec";`, "rejected"),

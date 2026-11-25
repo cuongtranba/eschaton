@@ -79,5 +79,5 @@ export {
   type PartRef,
 } from "./assembly";
 export { type ContractRef, type ModuleContract, type ModuleSpan } from "./contract";
-export { MAX_ASSEMBLY_DEPTH, createCatalog, type Catalog, type CatalogInput, type FlatInstance } from "./registry";
+export { createCatalog, type Catalog, type CatalogInput, type FlatInstance } from "./registry";
 export { assemblyCatalog, defaultCatalog, moduleContracts } from "./assemblies";

@@ -14,8 +14,6 @@ import { composePose, identityPose, type Pose } from "./transform";
 import type { Cell } from "./vec";
 import { validateFoldon } from "./validate";
 
-export const MAX_ASSEMBLY_DEPTH = 4;
-
 export type FlatInstance = Readonly<{
   path: string;
   definitionId: FoldonId;
@@ -79,8 +77,6 @@ function duplicateIssues(items: readonly Versioned[], collection: string): Valid
 const prefixed = (prefix: string, found: readonly ValidationIssue[]): ValidationIssue[] =>
   found.map((item) => issue(item.code, `${prefix}.${item.path}`, item.message));
 
-type Compiled = Readonly<{ definition: AssemblyDefinition; depth: number }>;
-
 export function createCatalog(input: CatalogInput): Result<Catalog, readonly ValidationIssue[]> {
   const contractList = input.contracts ?? [];
   const contractIndex = indexVersions(contractList);
@@ -97,7 +93,7 @@ export function createCatalog(input: CatalogInput): Result<Catalog, readonly Val
 
   const foldonIndex = indexVersions(input.foldons);
   const recipeByKey = new Map(input.assemblies.map((recipe) => [versionKey(recipe), recipe]));
-  const compiled = new Map<string, Compiled | "failed" | "visiting">();
+  const compiled = new Map<string, AssemblyDefinition | "failed" | "visiting">();
 
   const resolve: RefResolver = (ref: PartRef) => {
     if (ref.kind === "foldon") {
@@ -107,7 +103,7 @@ export function createCatalog(input: CatalogInput): Result<Catalog, readonly Val
     }
     const entry = compiled.get(versionKey(ref));
     if (entry !== undefined && entry !== "failed" && entry !== "visiting") {
-      return ok({ kind: "assembly", definition: entry.definition });
+      return ok({ kind: "assembly", definition: entry });
     }
     const known = input.assemblies.some((recipe) => recipe.id === ref.id);
     return err(known ? "ref-version-unknown" : "ref-unknown");
@@ -152,26 +148,12 @@ export function createCatalog(input: CatalogInput): Result<Catalog, readonly Val
         return;
       }
     }
-    const depth =
-      1 +
-      Math.max(
-        0,
-        ...recipe.parts.map((part) => {
-          const child = part.ref.kind === "assembly" ? compiled.get(versionKey(part.ref)) : undefined;
-          return typeof child === "object" ? child.depth : 0;
-        }),
-      );
-    if (depth > MAX_ASSEMBLY_DEPTH) {
-      issues.push(issue("depth-exceeded", path, `${key} nests ${depth} assembly levels; the limit is ${MAX_ASSEMBLY_DEPTH}`));
-      compiled.set(key, "failed");
-      return;
-    }
-    compiled.set(key, { definition: result.value, depth });
+    compiled.set(key, result.value);
   }
 
   input.assemblies.forEach(build);
 
-  const definitions = [...compiled.values()].flatMap((entry) => (typeof entry === "object" ? [entry.definition] : []));
+  const definitions = [...compiled.values()].flatMap((entry) => (typeof entry === "object" ? [entry] : []));
   const firstWithHash = new Map<string, AssemblyDefinition>();
   for (const definition of definitions) {
     const original = firstWithHash.get(definition.hash);

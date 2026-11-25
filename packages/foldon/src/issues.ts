@@ -43,7 +43,6 @@ export type ValidationCode =
   | "ref-version-unknown"
   | "assembly-cycle"
   | "level-not-above-children"
-  | "depth-exceeded"
   | "part-overlap"
   | "socket-incompatible"
   | "duplicate-recipe"

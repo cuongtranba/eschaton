@@ -62,7 +62,10 @@ const pureDomain = {
   paths: [
     ...["three", "react", "react-dom", ...builtinModules].map((name) => ({ name, message: "packages/foldon is pure domain: no renderer, UI or Node built-ins." })),
   ],
-  patterns: [{ group: ["three/*", "react/*", "react-dom/*", "node:*"], message: "packages/foldon is pure domain: no renderer, UI or Node built-ins." }],
+  patterns: [
+    { group: ["three/*", "react/*", "react-dom/*", "node:*"], message: "packages/foldon is pure domain: no renderer, UI or Node built-ins." },
+    { group: ["@eschaton/*", "!@eschaton/foldon"], message: "packages/foldon is the bottom of the graph: it imports no other workspace package (ADR 0001)." },
+  ],
 };
 const behavioralTests = {
   patterns: [{ group: ["./*", "../*"], message: "Behavioral tests import only the package entry point." }],
