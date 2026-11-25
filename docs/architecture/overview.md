@@ -19,7 +19,7 @@ Five projects. The first three are product code.
 | §8 module | Phase 0 status | Where it lives | Notes |
 |---|---|---|---|
 | contracts | **Merged into foldon** | `packages/foldon/src/{ids,result,issues,vec}.ts` | Branded ids, `Result<T,E>`, `ValidationIssue`. No commands or transactions yet. ([ADR 0001](../decisions/0001-package-layout.md)) |
-| foldon | **Exists** | `packages/foldon/src/` | Catalog, geometry recipes, assembly validation, canonical hashing. Owns definitions; does not own placement in a world. |
+| foldon | **Exists** | `packages/foldon/src/` | Catalog, geometry recipes, assembly validation, canonical hashing, and (Phase 1 M3) the versioned socket table with the directional matcher `socketMismatches` ([ADR 0012](../decisions/0012-directional-sockets.md)). Owns definitions; does not own placement in a world. |
 | generation | **Experiment only** | `experiments/wfc-placement` | 2D throwaway; the Phase 2 solver will be new code. |
 | simulation | **Absent** | none | Component *data* exists on definitions; no system reads it ([ADR 0007](../decisions/0007-component-data-and-system-order.md)). |
 | world | **Exists (Phase 1)** | `packages/world/src/` | The only mutable state is `LabState`, a UI reducer (`apps/studio/src/lab/state.ts`). There are no transactions, revisions or clock. Owner decision D4 approved the new package (ADR 0001 and ADR 0011 amendments). |

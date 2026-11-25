@@ -43,21 +43,33 @@ export {
   foldable,
   rectangularFootprint,
   renderable,
-  socketProfiles,
-  socketsCompatible,
   structural,
   thermal,
+  turnOf,
   windResponsive,
   type ComponentSpec,
   type Face,
   type FaceProfiles,
+  type FaceSocketSpec,
   type FoldonDefinition,
   type FoldonInput,
+  type Hand,
   type Rotation,
   type SocketDefinition,
   type SocketProfile,
   type SocketRole,
+  type Turn,
 } from "./definition";
+export {
+  defaultSocketTable,
+  socketMismatches,
+  socketsCompatible,
+  validateSocketTable,
+  type MateSpec,
+  type ProfileSpec,
+  type SocketMismatch,
+  type SocketTable,
+} from "./sockets";
 export { defineFoldon } from "./define";
 export { validateFoldon } from "./validate";
 export {

@@ -74,7 +74,7 @@ export function Viewport({ viewModel, forceWebGL, continuous, onFrame }: Viewpor
           <ul>
             {profiles.map((profile) => (
               <li key={profile}>
-                <span className="legend__swatch" style={{ background: socketProfileColor[profile] }} />
+                <span className="legend__swatch" style={{ background: socketProfileColor(profile) }} />
                 {profile}
               </li>
             ))}

@@ -1,6 +1,7 @@
-import { faces, socketProfiles, type Face, type Rotation, type SocketDefinition, type SocketProfile } from "./definition";
+import { faces, type Face, type Rotation, type SocketDefinition, type SocketProfile } from "./definition";
 import type { ContractId } from "./ids";
 import { issue, type ValidationIssue } from "./issues";
+import { profileSpec, type SocketTable } from "./sockets";
 import { placeFootprint, placeSockets } from "./transform";
 import type { Cell } from "./vec";
 
@@ -25,7 +26,7 @@ type ContractTarget = Readonly<{
 
 const SPANS: readonly number[] = [2, 4];
 
-export function contractIssues(contract: ModuleContract): ValidationIssue[] {
+export function contractIssues(contract: ModuleContract, table: SocketTable): ValidationIssue[] {
   const issues: ValidationIssue[] = [];
   if (contract.id.length === 0) issues.push(issue("id-invalid", "id", "id must not be empty"));
   if (!Number.isInteger(contract.version) || contract.version < 1) {
@@ -41,7 +42,7 @@ export function contractIssues(contract: ModuleContract): ValidationIssue[] {
   for (const side of faces) {
     const allowed = contract.boundary[side];
     if (allowed === undefined) continue;
-    if (allowed.length === 0 || !allowed.every((profile) => socketProfiles.includes(profile))) {
+    if (allowed.length === 0 || !allowed.every((profile) => profileSpec(table, profile) !== undefined)) {
       issues.push(issue("contract-invalid", `boundary.${side}`, "boundary needs at least one known socket profile"));
     }
   }
