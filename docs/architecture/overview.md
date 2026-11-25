@@ -4,13 +4,14 @@ This describes the code as it is at the end of Phase 0, plus the Phase 1 runtime
 
 ## What exists
 
-Six projects. The first four are product code.
+Seven projects. The first five are product code.
 
 | Project | Package name | Role |
 |---|---|---|
 | `packages/foldon` | `@eschaton/foldon` | Pure TypeScript domain library: ids, `Result`, definitions, validation, geometry recipes and hinge posing, placement transforms, the P01–P09 catalog, assembly recipes, the catalog registry. No DOM, no three.js, no runtime dependencies. |
 | `packages/world` | `@eschaton/world` | Phase 1 runtime state: an immutable `WorldState` (header, entities, bonds, lineage, conservation), the only write path `applyPatch` (atomic, strict base revision), replay from the commit log, canonical snapshots and hashes, invariant checks, and derived queries (occupancy, contacts). Imports only `@eschaton/foldon`. ADRs 0010–0014. |
 | `packages/wave` | `@eschaton/wave` | Phase 2 generation: `src/solver` (pure placement-based WFC, imports foldon only), `src/region.ts` (world region → solver problem → inert proposal), `src/host.ts` (sliced, cancellable jobs). Holds no world state. ADRs 0015–0016. |
+| `packages/genesis` | `@eschaton/genesis` | Phase 3 hierarchical generation: seeded semantic plan (`plan.ts`) with independent validators (`validate.ts`), district job over a private scratch world (`district.ts`), audit and single settlement (`audit.ts`, `settle.ts`), neighbour continuation, job host. Imports foldon, world and wave. Holds no world state. ADR 0017. |
 | `apps/studio` | `@eschaton/studio` | Vite + React 19 laboratory: lab state, view-model building, the reference-scene generators, the renderer adapter, UI panels, and (Phase 1 M7) World mode, which renders a `WorldState` from `@eschaton/world`. |
 | `experiments/wfc-placement` | `@eschaton/exp-wfc-placement` | Throwaway solver comparison. Nothing imports it. See [ADR 0004](../decisions/0004-multi-cell-encoding.md). |
 | `tools/architecture` | `@eschaton/architecture` | Architecture test: lints virtual files against the repository ESLint config to prove each dependency rule rejects a violation. |
@@ -177,3 +178,26 @@ flowchart LR
 - The worker never sees or changes world state. It gets plain data and returns placements.
 - Previews are drawn and labelled "Solver preview — not part of the world". They are not entities, are not hashed and are not replayed.
 - The world changes exactly once per successful solve, through `applyProposal`, and only if the region and its one-cell shell still hold what the solver was given.
+
+## Phase 3: district generation data flow
+
+```mermaid
+flowchart LR
+  UI["Genesis panel (ui)"] -- "genesisStart" --> SES["World session reducer (lab)"]
+  SES -- "request + base state" --> CLI["genesis client (src/worker)"]
+  CLI -- "catalog source, world snapshot, request" --> WRK["genesis.worker: createGenesisHost"]
+  WRK --> PLAN["planDistrict + planIssues"]
+  PLAN --> LOTS["per lot: prepareRegion, solve, draftProposal on a scratch world"]
+  LOTS -- "one proposal + plan + metrics" --> WRK
+  WRK -- "progress: plan preview, lots done" --> CLI
+  WRK -- "done: one outcome" --> CLI
+  CLI -- "genesisProgress / genesisDone" --> SES
+  SES -- "settleDistrict: re-validate, applyProposal once, audit" --> WLD["WorldState (@eschaton/world)"]
+  WLD --> VM["ViewModel"]
+  SES -- "plan map (semantic layer, not world state)" --> UI
+```
+
+- The worker gets a snapshot of the world and only reads it. Its scratch world is private and is discarded with the job.
+- The result is not trusted: `settleDistrict` re-validates the plan, applies the proposal to a candidate state and audits that state against the plan before it is adopted.
+- The plan is kept in the Studio session beside the committed district for inspection. The world does not store it.
+- The world changes exactly once per district, or not at all (failure, cancel, conflict).

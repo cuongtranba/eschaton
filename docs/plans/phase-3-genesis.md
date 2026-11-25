@@ -1,6 +1,6 @@
 # Phase 3 — Genesis: implementation plan
 
-- Status: **Authorized by owner decision W7 (2026-11-25)** ([`../review/phase-2-owner-review.md`](../review/phase-2-owner-review.md)): design and execute Phase 3 within this scope, stopping at the Phase 3 exit gate. No Phase 3 PR merge and no Phase 4 work without separate authorization.
+- Status: **Implemented; waiting at the Phase 3 exit gate** ([`../phase-3-exit.md`](../phase-3-exit.md)). Authorized by owner decision W7 (2026-11-25) ([`../review/phase-2-owner-review.md`](../review/phase-2-owner-review.md)): design and execute Phase 3 within this scope, stopping at the Phase 3 exit gate. No Phase 3 PR merge and no Phase 4 work without separate authorization.
 - Scope and exit criteria: [`../master-plan.md`](../master-plan.md) §11, Phase 3 row (roadmap v1.1, amendments 1–2), and §5.3. That text is canonical.
 - Builds on: ADR 0013 (regular lattice, logical placements), 0015 (wave solver), 0016 (region proposals; Phase 3 must extend the read set). New: [0017](../decisions/0017-hierarchical-generation.md).
 - Base: `main` @ `d673f84`, which contains Phases 0–2 (PR #3 merged as `d673f84`, pinned to `a5746f2`, CI run 45575897725 green; `main`'s tree equals the `phase-2` tree). Branch `phase-3`.
@@ -51,5 +51,5 @@ Every milestone ends green on lint, typecheck, unit, build, e2e and the engines 
 |---|---|
 | Plans look arbitrary rather than like a district | Roles by distance to the plaza and road frontage; metrics reported; the owner judges the look |
 | A lot cannot be filled next to its neighbours | Air is always allowed; an empty lot is retried with a new scoped seed and then reported, not hidden |
-| District commits get slow | Measured in G6 against the Phase 2 commit profile |
+| District commits get slow | Measured in G6. The profile led to the small scratch world and `draftProposal` (ADR 0017, Implementation) |
 | Semantic plan drifts from the committed world | The audit re-derives road, river and lot occupancy from the candidate state and compares |

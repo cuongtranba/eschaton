@@ -33,3 +33,11 @@ test("genesis: a second district continuing the first one to the east", async ({
   await page.getByTestId("genesis-map").scrollIntoViewIfNeeded();
   await page.screenshot({ path: output("p3", "genesis-two-districts") });
 });
+
+test("genesis: a district with the look-dev decorative offsets switched on", async ({ page }) => {
+  await openWorld(page);
+  await generate(page, 1);
+  await page.getByTestId("world-offsets").check();
+  await settled(page);
+  await page.screenshot({ path: output("p3", "genesis-district-offsets") });
+});

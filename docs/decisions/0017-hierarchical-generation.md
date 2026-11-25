@@ -30,7 +30,7 @@ The solver handles local compatibility only. Connectivity and boundaries are gra
 
 ### One atomic change, no second world
 
-- The generator works on a **scratch state**: an immutable value of the ordinary world type, advanced with the ordinary `applyProposal`, never published. Each lot is solved against it, so it sees the network pieces and earlier lots as frozen neighbours.
+- The generator works on a **scratch state**: an immutable value of the ordinary world type, validated by the world for every step, never published (see "The scratch world is small" below for its final form). Each lot is solved against it, so it sees the network pieces and earlier lots as frozen neighbours.
 - The result is **one proposal** for the whole district box, read against the real state the job started from. The world applies it once or rejects it. Intermediate scratch states, previews and the plan are not world state.
 - The plan is kept beside the result for inspection (semantic layers, routes, diagnostics). It is derived data: the world does not store it.
 
@@ -59,3 +59,35 @@ The solver handles local compatibility only. Connectivity and boundaries are gra
 
 - Hierarchical backtracking (revising the plan when a lot cannot be filled) is not implemented. A lot that stays empty is reported.
 - Multi-district worlds need a persistent semantic layer and seam ownership; that is beyond this phase.
+
+## Implementation (Phase 3)
+
+- **Code:** `packages/genesis/src/` — `seed.ts` (scoped seeds, integer streams), `plan.ts` (river, plaza, roads with bridges, side streets, lots, roles), `validate.ts` (`planIssues`, written independently of the planner), `district.ts` (`createDistrictJob`, `generateDistrict`), `audit.ts` (`auditDistrict`), `settle.ts` (`settleDistrict`), `continuation.ts` (`continueFrom`), `host.ts` (`createGenesisHost`: sliced, cancellable, snapshot in, inert outcome out), `presets.ts` (`lastDistrict`, 40×40).
+- **Imports:** `@eschaton/foldon`, `@eschaton/world`, `@eschaton/wave` only (lint area and architecture tests). No renderer, no UI, no Node built-ins.
+- **Studio:** `apps/studio/src/worker/genesis.worker.ts` and `genesisClient.ts`; session commands `genesisSet`, `genesisStart`, `genesisCancel`, `genesisProgress`, `genesisDone` in `lab/world/session.ts`; `ui/GenesisPanel.tsx` (seed, generate, cancel, progress, plan map with role and route layers, metrics, diagnostics). The viewport draws committed entities only; the plan map is labelled as the generator's semantic layer.
+- **Tests:** `packages/genesis/test/{plan,district,host}.test.ts`, `packages/world/test/region.test.ts` (dependencies, `draftProposal`), `apps/studio/e2e/genesis.spec.ts`, `apps/studio/engines/{genesis,determinism}.spec.ts`.
+
+### The scratch world is small (changed during implementation)
+
+The first implementation advanced the real world value as its scratch state, committing once per lot. The district workload profile showed generation time growing with the world around the district (474 ms, 923 ms, 2,959 ms for the first three chained districts under load), because every scratch commit read and hashed the whole world.
+
+- The job now builds a **private scratch world**: an empty world with the same seed and catalog, plus copies of the pieces that touch the district's one-cell shell. Copies are legal because they are a subset of a valid world's contacts and `needsMate` is a generation-only rule (ADR 0015 amendment). If the copy is refused, the job fails with stage `scratch`.
+- Scratch steps use **`draftProposal`** (`@eschaton/world`): the same validation as `applyProposal`, returning the candidate state without a commit record and therefore without hashing it. A drafted state cannot be logged or replayed.
+- Nothing about the result changes: the job still returns one proposal read against the real world, and the world validates it again. The corpus state hashes were identical before and after both changes.
+- Measured effect (Node main thread, same machine, load 17–29): generate p50 650 ms → 314 ms with `draftProposal`; chained districts stay flat (136–247 ms at load 19–20) from 1,591 to 9,158 world entities. Evidence: `benchmarks/phase-3/`.
+
+### Stored recipe numbers are engine independent (defect found in Phase 3)
+
+The cross-engine Genesis test found that Chromium, Firefox and WebKit gave **different catalog fingerprints**, so the same district had a different state hash on each. The plan, the placements and the solver decisions were identical. The cause predates Phase 3: `foldedNet` stored rest angles from `atan2` and, for P09, vertices posed with `sin` and `cos`, and those functions may differ in the last bits between engines. The Phase 2 golden corpus could not see it because the solver digest does not include the fingerprint.
+
+- `foldedNet` now rounds every stored vertex coordinate and rest angle to a multiple of 1e-9 (`packages/foldon/src/geometry.ts`). Authored decimals with up to nine places are unchanged. `windFold` computes wind strength with `sqrt` instead of `hypot`.
+- **Compatibility consequence, stated plainly:** the fingerprint of every catalog containing P03 or P09 changed (the preset catalog is now `e77d898a9014df16` on all three engines and Node). A snapshot or commit log written before this change is refused with `catalog-mismatch`, exactly as after any catalog change. No such data is stored in the repository. The hash format (FNV-1a 64 over canonical JSON) is unchanged. Pinned test values in `packages/world/test/golden.test.ts` and `packages/foldon/test/sockets.test.ts` were re-recorded once, with a comment.
+- The rule is a rounding grid, not a proof: a value within about 1e-16 of a grid midpoint could still round differently. The engines job pins the fingerprint, so a regression fails in CI.
+- Adding the ground presets in G0 also changed the preset catalog's fingerprint, as any catalog addition does.
+
+### Further choices to confirm at the Phase 3 gate
+
+5. **`draftProposal` is a new public function of `@eschaton/world`.** It commits nothing and records nothing; it exists so a job can validate scratch steps without paying for a state hash.
+6. **The scratch world holds copies of shell pieces under new ids.** The ids never leave the job.
+7. **Stored recipe numbers lie on a 1e-9 grid**, with the fingerprint change described above.
+8. **The Studio places the first district at a fixed origin and each later one to the east of the previous**, through `continueFrom`. Other layouts are not offered.

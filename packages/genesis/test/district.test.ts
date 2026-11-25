@@ -71,6 +71,12 @@ test("generation is refused on ground that already holds entities", () => {
   expect(outcome.kind === "failed" ? outcome.stage : outcome.kind).toBe("world");
 });
 
+test("generation is refused before planning while conservation is closed", () => {
+  const closed = commit(emptyWorld(), { op: "conserve" });
+  const outcome = generateDistrict(catalog, closed, { preset: lastDistrict, seed: 1, at: [0, 0, 0] });
+  expect(outcome.kind === "failed" ? outcome.stage : outcome.kind).toBe("world");
+});
+
 test("a result whose world would not match its plan is refused by the audit", () => {
   const state = emptyWorld();
   const outcome = generated(state, 2);
