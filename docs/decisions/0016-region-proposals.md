@@ -1,6 +1,6 @@
 # ADR 0016: Region proposals — read-set validation and rebase
 
-- Status: **Accepted for Phase 2** under owner decision R7 (2026-11-25). It implements the Phase 2 requirement recorded in ADR 0011 (read-set rebase) and master plan §11 (roadmap v1.1, amendment 1).
+- Status: **Accepted with amendments** — owner decision W4 (2026-11-25, recorded in [`../review/phase-2-owner-review.md`](../review/phase-2-owner-review.md)), conditional on the amendments below.
 - Date: 2026-11-25
 - Related: ADR 0010 (identity), 0011 (atomic commit, strict base revision), 0015 (solver).
 
@@ -72,3 +72,20 @@ The read set is compared **by content, not by revision**. If the region changes 
 - **Proposal ops** are `annotate` (an audit note with the region and solve seed), `consume` for cleared entities and `instantiate` for placements. Anything else is refused.
 - **Solve seed** is derived from the world seed, the request seed and the region, not from the revision, so a rebased result is the same result.
 - **Cost:** see the transaction profile in [`../phase-2-exit.md`](../phase-2-exit.md). `readRegion` and `applyProposal` scan the entity table once each; the commit itself is still O(world) (ADR 0011).
+
+## Amendments (owner W4, 2026-11-25)
+
+- **Content-based comparison is accepted with its exact meaning.** A → B → A commits only if the relevant contents are equal again: the same entity ids, definitions and poses in the region and its shell, the same conservation mode, the same catalog and rules. An identical replacement with a new id is a conflict.
+- **The one-cell shell is valid only for local constraints.** It is sufficient for Phase 2 because every Phase 2 constraint is face-to-face. It is **not** sufficient for anything that reaches further.
+- **Phase 3 must extend the read set.** Networks, connectivity, district boundaries and other semantic constraints are nonlocal. A Phase 3 proposal has to declare every dependency it relied on (for example the route cells of a road, or a boundary contract of a neighbouring district) and the commit has to compare them. This is a Phase 3 requirement, recorded in the master plan.
+- **Closed inventory.** No minting in closed mode; reconstruction from inventory with a search is deferred to Phase 6.
+
+### Review corrections (W2)
+
+- `applyProposal` and `applyPatch` validate the shape of every op before interpreting it (`opShapeIssue`). Malformed ops and unknown op tags are rejected as `invalid`; before, they threw or committed an empty revision.
+- `prepareRegion` refuses inverted or fractional regions, non-integer seeds, unknown ground profiles and regions below the ground.
+- The stale `read.revision` field is informational only; the digest decides.
+
+### Commit cost (W3)
+
+The commit behind `applyProposal` now validates only what a patch touched and shares unchanged entities between states. Hashes and outcomes are unchanged, and `applyPatch(..., { audit: "full" })` is the reference path (ADR 0011). Numbers are in [`../phase-2-exit.md`](../phase-2-exit.md) §5.

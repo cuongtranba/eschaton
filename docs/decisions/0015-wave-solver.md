@@ -1,6 +1,6 @@
 # ADR 0015: Wave solver — placement-based 3D multi-cell WFC
 
-- Status: **Accepted for Phase 2** under owner decision R7 (2026-11-25), which authorizes the Phase 2 design within its stated scope. Three choices in "Choices to confirm at the Phase 2 gate" go beyond the letter of the master plan and are flagged for the owner.
+- Status: **Accepted with amendments** — owner decision W4 (2026-11-25, recorded in [`../review/phase-2-owner-review.md`](../review/phase-2-owner-review.md)), conditional on the amendments and review corrections applied in "Amendments (owner W4)" below, which override the text above where they differ.
 - Date: 2026-11-25
 - Master plan: §5.1, §5.2, §5.4, §11 Phase 2. Builds on ADR 0004, 0012, 0013.
 
@@ -26,7 +26,7 @@ ADR 0004 recommended the placement encoding from a 2D throwaway experiment. Phas
 - **Choice.** The next cell is the undecided cell with the fewest live options; ties go to the smaller total weight, then the lowest cell index. The option is drawn by weight from a local `mulberry32` stream. All of it is integer arithmetic.
 - **Backtracking** is chronological over a trail; the failed option is removed and propagated.
 - **Bounds.** `maxNodes` (decisions) and `maxBacktracks`. The solver is steppable (`step(nodes)`), which gives the worker host its cancellation points.
-- **Outcomes:** `solved` (placements and air cells), `unsatisfiable` (search space exhausted, with a bounded trace), `budget-exceeded`. `cancelled` is produced by the job host. Nothing partial is ever returned as a result.
+- **Outcomes:** `solved` (placements and air cells), `unsatisfiable` (search space exhausted, with a reason), `budget-exceeded`, `invalid` (malformed problem). `cancelled` is produced by the job host. Nothing partial is ever returned as a result.
 - **Self-check.** Before returning `solved`, the solver re-validates coverage and every face from scratch and fails loudly if its own result is invalid.
 
 ### Determinism scope
@@ -56,3 +56,38 @@ ADR 0004 recommended the placement encoding from a 2D throwaway experiment. Phas
 - **Job host:** `packages/wave/src/host.ts` (`createWaveHost`) runs a job in slices through an injected scheduler, posts progress previews and one `done` message (`solved`, `unsatisfiable`, `budget-exceeded`, `invalid`, `cancelled`, `failed`). It rebuilds the catalog from `catalog.source()` and refuses a fingerprint mismatch. The Studio owns the actual `Worker` (`apps/studio/src/worker/`).
 - **Tests:** `packages/wave/test/solver.test.ts` (12) and `host.test.ts` (3); Studio `e2e/wave.spec.ts` (5) against the real worker.
 - **Benchmarks:** `benchmarks/phase-2/`; summary in [`../phase-2-exit.md`](../phase-2-exit.md).
+
+## Amendments (owner W4, 2026-11-25)
+
+The three flagged choices are decided, with their scope made explicit.
+
+1. **Cell selection is MRV, integer-only. It is not Shannon entropy and must not be described as such.** The next cell is the undecided cell with the fewest live options (ties: smaller total weight, then lowest index). Master plan §5.1 is amended to say so. The placement itself is drawn by weight from a seeded integer stream.
+   - **Per-candidate weight bias.** A tile's weight applies to each candidate. A large tile covers a cell from many anchors, so it is drawn more often than its weight suggests, and more so the larger it is. This is a known bias, tuned through the tile list.
+   - **Future heuristic comparisons** (entropy with a fixed-point table, per-tile normalised weights, weighted MRV) are open work. Any replacement has to keep the integer-only property or re-establish the cross-engine evidence.
+2. **`needsMate` is a generation-only constraint.** It is not structural physics and says nothing about support, load or stability. The solver and `verifyPlacements` enforce it; the world's invariants do not. Support semantics are Phase 4.
+3. **The ground plane is a solve-request parameter in Phase 2.** Phase 3 (Genesis) revisits it when terrain gets semantics. A request whose region starts below the ground is refused.
+4. **Tested cross-engine scope, no universal promise.** The golden corpus is identical on V8 (Node 24, Chromium 159), SpiderMonkey (Firefox 159) and JavaScriptCore (WebKit 27.2), locally on macOS arm64 and in CI on Linux x64. That is arithmetic determinism of the solver. It is not a product promise for every browser, version or device, and worker portability is a separate property (below).
+5. **Closed conservation.** Generation never mints while conservation is closed. Rebuilding from finite inventory with a search is explicitly deferred to Phase 6.
+
+### Review corrections (W2)
+
+An independent read-only review found no soundness or completeness defect; its own exhaustive oracle agreed with the solver on 7,100 tiny instances. It found one major latent defect and several robustness gaps, all fixed with failing tests first (commit `fd6aaec`):
+
+- **Rotations:** an assembly is offered only at quarter turns that every leaf foldon allows. Before, the world could reject a "solved" result.
+- **Weights** are limited to 1–65,535 so the per-cell weight sum stays inside the 32-bit draw.
+- **`step`** treats a count below one as one. The self-check also requires every placement to be whole.
+- **Results are not trusted.** `verifyPlacements` re-checks a result from the rules alone, sharing only the catalog shape lookup with the solver. `settleJob` is the single way a job result reaches the world: shape check, cancel wins over a finished solve, verification, then `applyProposal`.
+- **Job host:** every accepted job gets exactly one `done`, also when the solver or the port throws; duplicate ids are ignored; setup is still one synchronous step (not sliced), which is a known limit for very large regions.
+- **Compiled tiles hold a memo.** `signatureOf` and `legal` cache lazily, so a compiled tile set is logically immutable but not frozen deep. Results do not depend on the cache.
+
+### Arithmetic determinism versus worker portability
+
+| Property | What is tested | Where |
+|---|---|---|
+| Arithmetic determinism | The same four fixed solves give one golden digest | Node (unit test) and Chromium, Firefox, WebKit (`engines/determinism.spec.ts`), in CI |
+| Worker transport | A real module worker solves a region, the result commits, and a cancelled job reports `cancelled` | Chromium, Firefox, WebKit (`engines/worker.spec.ts`), in CI |
+| Worker performance | Timings through the production worker | Chromium and installed Chrome only (`bench:wave`), locally |
+
+### Performance (W1)
+
+Measured through the production worker and bundle, not Node: see [`../phase-2-exit.md`](../phase-2-exit.md) §5. Setup (candidate enumeration and the first propagation) is about as expensive as the search itself for a 16×8×16 region and is not yet sliced.

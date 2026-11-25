@@ -59,6 +59,17 @@ Each of `foldon.json`, `wfc.json`, `studio.json` carries `provenance` (`commit`,
 - Transaction cases apply one solved 8×4×8 proposal (about 100 placements) to worlds that already hold 100, 1,000 and 10,000 entities, and time `readRegion` on the same worlds.
 - The solver runs on the main thread of Node here. In the Studio it runs in a worker, sliced 16 decisions at a time; that adds scheduling overhead not measured here.
 
+### Wave in the production worker (`apps/studio/bench/wave.spec.ts`)
+
+- `pnpm --filter @eschaton/studio bench:wave` builds the Studio, serves the production bundle and opens `bench.html`, which uses the same worker client and worker entry as the Studio. Set `STUDIO_PORT`. `BENCH_CHANNEL=chrome` runs installed Google Chrome instead of Playwright's Chromium.
+- 10 unrecorded warm-up solves, then fixed seeds 1..120 per series (40 for the 28×8×28 stress case, 100 for each hard case). Every sample starts from the same world.
+- Per sample it records: prepare (main thread), per-solve setup and search (measured inside the worker), transport and scheduling (round trip minus the two), world commit, and end to end. `wave-worker.json` holds every raw sample; `wave-worker.md` the p50 / p95 / p99 summary, the load average before and after, hardware and browser.
+- The file is written as `wave-worker.{json,md}`; rename it per browser when recording more than one.
+
+### Commit profile (`benchmarks/profile/commit.test.ts`)
+
+- `pnpm --filter @eschaton/benchmarks profile:commit` runs world commits under `--cpu-prof` and writes timings to `benchmarks/runs/profile/commit-<n>.txt`; `node benchmarks/src/profileSummary.ts <dir> <function names>` prints inclusive and self time from the `.cpuprofile`. Recorded comparisons are in `benchmarks/phase-2/commit-profile/`.
+
 ### WFC placement experiment (`experiments/wfc-placement/bench/run.ts`)
 
 - Corpus: seeds 1..100 for each scenario (`open`, `constrained`), size (8, 12, 16) and encoding (`placement`, `offset-state`): 1,200 timed solves. Five untimed warm-up solves per cell (seeds 100000..100004) before timing.

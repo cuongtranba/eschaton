@@ -255,3 +255,15 @@ Further amendments:
 - Generic undo is **deferred**. Phase 1 keeps deterministic replay and atomic patch rollback (a rejected patch changes nothing).
 - **Future undo is a compensating transaction, not history branching.** A compensating transaction is a new patch, committed at the next revision, whose ops reverse the effect of an earlier one (for example `attach` after `detach`). The log stays append-only, ids are never re-minted, and replay stays valid. History branching (rewinding the revision and committing again) stays forbidden, because it would reuse `(revision, ordinal)` stamps (ADR 0010).
 - Not every op has a compensation that restores identity: `split`, `merge` and `consume` retire ids permanently. A future undo feature must define what "undo" means for them, and needs the owner's decision.
+
+## Commit path after the Phase 2 profile (owner W3, 2026-11-25)
+
+- **What was measured.** At 10,000 entities a commit spent about 30% in canonical JSON and FNV, 22% in a whole-world contact scan done twice, 13% in `structuredClone` of the state and 11% in GC (`benchmarks/phase-2/commit-profile/`).
+- **What changed, without changing any outcome or hash.**
+  - `applyPatch` validates only the entities a patch touched: their own invariants, occupancy through a derived cell index kept per validated state, and the contacts and bonds of the touched entities. This path can accept; it never rejects by itself. On any doubt it falls back to the full audit, which also words every rejection.
+  - The next state shares unchanged frozen entities, bonds and lineage records with the previous one; only touched entities and new records are cloned and frozen.
+  - `hashState` and `serializeSnapshot` assemble the same canonical JSON from cached per-part fragments.
+- **Reference and tests.** `applyPatch(catalog, state, patch, { audit: "full" })` always runs the complete audit. Tests: a fixed history keeps the state hashes recorded before the change; the incremental and full paths return deep-equal results on 600 seeded valid and invalid patches, with a full audit after every commit; a state loaded from a snapshot commits exactly like the live state.
+- **Derived data is not truth.** The cell index lives in a `WeakMap` keyed by state objects this package validated (`createWorld`, `applyPatch`, `parseSnapshot`). A state without it is audited in full. It is never serialised or hashed.
+- **Hash format is unchanged.** `stateHash` is still FNV-1a 64 over the canonical JSON of the whole state, so historical hashes, logs and snapshots stay valid. No migration is needed.
+- **Residual limit.** That hash is O(world): about 36 ms at 10,000 entities, and now the dominant cost of a commit. Removing it means an incremental hash, which is a **hash format change** (new schema version, a migration rule for recorded logs). That is a new decision for the owner and was not taken.

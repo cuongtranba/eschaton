@@ -57,7 +57,7 @@ Every milestone ends green on lint, typecheck, unit, build and e2e, in CI. Tests
 
 ### Milestone status (2026-11-25)
 
-W0–W8 are done. Phase 2 is **at its exit gate, awaiting the owner**: see [`../phase-2-exit.md`](../phase-2-exit.md) for the criteria mapping, commits, benchmarks, visual evidence, flagged choices and limitations. Deviations from this plan:
+W0–W8 are done and Phase 2 is **conditionally closed by owner decision W6**, subject to the closure evidence in the exit report §9: see [`../phase-2-exit.md`](../phase-2-exit.md) for the criteria mapping, commits, benchmarks, visual evidence, flagged choices and limitations. Deviations from this plan:
 - W0's "table round trip" is covered by the catalog-source fingerprint test.
 - W7's transaction profile used 100, 1,000 and 10,000 entities; no optimisation followed (by instruction).
 

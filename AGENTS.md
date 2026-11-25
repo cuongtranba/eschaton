@@ -1,6 +1,6 @@
 # Eschaton — agent rules
 
-Procedural origami-inspired world engine (TypeScript + Three.js). Authoritative design: `docs/master-plan.md`. Visual anchor: `assets/reference/visual-direction.png`. Current phase: **Phase 2 — Wave**, authorized by owner decision R7 (2026-11-25) after the conditional closures of Phase 0 (D6) and Phase 1 (R6; evidence in `docs/phase-1-exit.md` §8). Scope: roadmap v1.1 (`docs/master-plan.md` §11) and `docs/plans/phase-2-wave.md`. Phase 2 is at its exit gate (`docs/phase-2-exit.md`). Phase 3 is **not** authorized; no Phase 2 PR is merged without the owner's explicit approval.
+Procedural origami-inspired world engine (TypeScript + Three.js). Authoritative design: `docs/master-plan.md`. Visual anchor: `assets/reference/visual-direction.png`. Current phase: **Phase 3 — Genesis**, authorized by owner decision W7 (2026-11-25) after the conditional closure of Phase 2 (W6; evidence in `docs/phase-2-exit.md` §9). Scope: roadmap v1.1 (`docs/master-plan.md` §11) and the Phase 3 plan in `docs/plans/`. Phase 4 is **not** authorized; no Phase 3 PR is merged without the owner's explicit approval.
 
 ## Commands (pnpm only)
 
@@ -12,7 +12,9 @@ Procedural origami-inspired world engine (TypeScript + Three.js). Authoritative 
 | `pnpm typecheck` | `tsc` per workspace project |
 | `pnpm build` | Production build of every buildable project |
 | `pnpm e2e` | Playwright against the Studio |
-| `pnpm --filter @eschaton/studio engines` | Solver golden digest on Chromium, Firefox and WebKit (needs `playwright install firefox webkit`; not in CI) |
+| `pnpm --filter @eschaton/studio engines` | Solver golden digest and real-worker solve/cancel on Chromium, Firefox and WebKit (needs `playwright install firefox webkit`; a CI job) |
+| `pnpm --filter @eschaton/studio bench:wave` | Wave solver through the production worker: raw samples and p50/p95/p99 per phase. `BENCH_CHANNEL=chrome` uses installed Chrome |
+| `pnpm --filter @eschaton/benchmarks profile:commit` | CPU profile of world commits (`PROFILE_ENTITIES`, default 10000); summarise with `node benchmarks/src/profileSummary.ts` |
 | `pnpm bench` | Foldon and world micro-benchmarks, then the WFC experiment (serially). Writes only to gitignored `benchmarks/runs/`; never changes `git status`. `BENCH_RECORD=1` writes tracked evidence to `benchmarks/phase-2/<date>-<sha>/` (earlier evidence stays in `benchmarks/phase-0/` and `phase-1/`) and refuses a dirty tree. See `benchmarks/README.md` |
 | `pnpm bench:studio` | Builds the Studio, serves the production bundle on `STUDIO_PORT`, measures it in headless Chromium (software rendering here) and joins the latest `pnpm bench` run directory. Same record/dirty rules; always set `STUDIO_PORT` |
 | `pnpm screenshots` | Regenerate `docs/screenshots/p0.4-*`, `p0.5-*`, `p1-world-*` and the ADR 0013 rebuild study `p1-rebuild-*` (plus `docs/review/p1-rebuild-study.json`) via Playwright (not part of `pnpm e2e`). The study opens with `?study=rebuild` |

@@ -31,6 +31,8 @@ export type ProblemSample = Readonly<{ seed: number; outcome: string; nodes: num
 export type WaveBench = Readonly<{
   region: (size: Cell, seed: number, pins: boolean) => Promise<RegionSample>;
   problem: (kind: "packing" | "unsat-search" | "unsat-propagation", seed: number) => Promise<ProblemSample>;
+  /** Starts a large solve and cancels it at once; resolves with the outcome kind the worker reports. */
+  cancelled: () => Promise<string>;
   restartWorker: () => void;
 }>;
 
@@ -134,9 +136,23 @@ async function problem(kind: "packing" | "unsat-search" | "unsat-propagation", s
   return { seed, outcome: outcome.kind, ...statsOf(outcome), roundTripMs: performance.now() - start, solveMs: timing.solveMs, compileMs: timing.compileMs };
 }
 
+function cancelled(): Promise<string> {
+  return new Promise((resolve) => {
+    job += 1;
+    const id = `bench-${job}`;
+    const size: Cell = [28, 8, 28];
+    client.solve(id, catalog, WAVE_TILES, { size, seed: 1, airWeight: 8, ground: { profile: "ground" }, budget: { maxNodes: 200_000, maxBacktracks: 20_000 } }, {
+      onProgress: () => undefined,
+      onDone: (outcome) => { resolve(outcome.kind); },
+    });
+    client.cancel(id);
+  });
+}
+
 const bench: WaveBench = {
   region,
   problem,
+  cancelled,
   restartWorker: () => {
     client.dispose();
     client = createWaveClient();
