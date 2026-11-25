@@ -15,7 +15,10 @@ import {
   type WorldOp,
   type WorldState,
 } from "@eschaton/world";
+import { buildRebuild, REBUILD_CELL_SIZE, type RebuildReport } from "../rebuild/layout";
 import { DEFAULT_SEED } from "../state";
+import type { InkScale, ViewPreset } from "../viewModel";
+import { compositionView } from "../composition/view";
 
 export type WorldSession = Readonly<{
   catalog: Catalog;
@@ -28,7 +31,18 @@ export type WorldSession = Readonly<{
   homes: ReadonlyMap<EntityId, Pose>;
   wind: number;
   replay: string;
+  presentation: Presentation;
 }>;
+
+export type Presentation = Readonly<{ cellSize: number; view: ViewPreset; inkScale: InkScale; study: RebuildReport | undefined }>;
+
+export const worldView: ViewPreset = { position: [3.2, 4.4, 11.5], target: [3, 0.5, 1], fov: 32 };
+const WORLD_PRESENTATION: Presentation = {
+  cellSize: 1,
+  view: worldView,
+  inkScale: { hazeStart: 120, hazeEnd: 620, hatchFrequency: 7, grainFrequency: 5 },
+  study: undefined,
+};
 
 export type WorldCommand =
   | Readonly<{ type: "selectEntity"; entity: EntityId }>
@@ -74,6 +88,32 @@ export function createWorldSession(seed: number = DEFAULT_SEED): Result<WorldSes
     homes: new Map(),
     wind: 0.1,
     replay: "",
+    presentation: WORLD_PRESENTATION,
+  });
+}
+
+export function createRebuildSession(seed: number = DEFAULT_SEED): Result<WorldSession, string> {
+  if (!presetCatalog.ok) return err(presetCatalog.error.map((issue) => `${issue.code} at ${issue.path}`).join("; "));
+  const catalog = presetCatalog.value;
+  const rebuild = buildRebuild(catalog, seed);
+  if (typeof rebuild === "string") return err(rebuild);
+  return ok({
+    catalog,
+    initial: rebuild.initial,
+    state: rebuild.state,
+    log: rebuild.log,
+    selected: undefined,
+    rejection: "",
+    offsets: false,
+    homes: new Map(),
+    wind: 0.1,
+    replay: "",
+    presentation: {
+      cellSize: REBUILD_CELL_SIZE,
+      view: compositionView,
+      inkScale: { hazeStart: 120, hazeEnd: 620, hatchFrequency: 0.9, grainFrequency: 0.45 },
+      study: rebuild.report,
+    },
   });
 }
 

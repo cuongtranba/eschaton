@@ -29,6 +29,24 @@ export function WorldDetails({ session, dispatch }: WorldDetailsProps) {
         <Row label="Commit log">{session.log.length === 1 ? "1 record" : `${session.log.length} records`}</Row>
       </dl>
 
+      {session.presentation.study === undefined ? null : (
+        <section aria-label="Rebuild study" className="inspector__section" data-testid="world-study">
+          <h4>Rebuild study (ADR 0013)</h4>
+          <dl className="inspector__list">
+            <Row label="Cell size">{session.presentation.study.cellSize} units</Row>
+            <Row label="Logical">{session.presentation.study.logical}</Row>
+            <Row label="Fragments">{session.presentation.study.fragments}</Row>
+            <Row label="Rejected">{session.presentation.study.rejected.length}</Row>
+            <Row label="Moved">{session.presentation.study.moved.length}</Row>
+          </dl>
+          <ul className="muted">
+            {session.presentation.study.notReproduced.map((line) => (
+              <li key={line}>Not reproduced: {line}</li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       <section aria-label="Entities" className="inspector__section">
         <h4>Entities</h4>
         <ul className="catalog">

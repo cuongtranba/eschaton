@@ -4,7 +4,7 @@ import { loadLibrary, resolveItem, type Library } from "./lab/library";
 import { buildViewModel } from "./lab/scene";
 import { shortcutCommand } from "./lab/shortcuts";
 import { initialLabState, labReducer, type LabCommand } from "./lab/state";
-import { createWorldSession, worldReducer, type WorldCommand, type WorldSession } from "./lab/world/session";
+import { createRebuildSession, createWorldSession, worldReducer, type WorldCommand, type WorldSession } from "./lab/world/session";
 import type { RendererStats } from "./renderer/labRenderer";
 import { CatalogPanel } from "./ui/CatalogPanel";
 import { Inspector } from "./ui/Inspector";
@@ -110,7 +110,7 @@ function Fatal({ title, lines }: Readonly<{ title: string; lines: readonly strin
 
 export function App() {
   const library = useMemo(() => loadLibrary(), []);
-  const world = useMemo(() => createWorldSession(), []);
+  const world = useMemo(() => (readLabFlags(window.location.search).study === "rebuild" ? createRebuildSession() : createWorldSession()), []);
   if (!library.ok) {
     return <Fatal title="Catalog failed validation" lines={library.error.map((issue) => `${issue.code} at ${issue.path}: ${issue.message}`)} />;
   }

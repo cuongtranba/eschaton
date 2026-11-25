@@ -14,7 +14,7 @@ Procedural origami-inspired world engine (TypeScript + Three.js). Authoritative 
 | `pnpm e2e` | Playwright against the Studio |
 | `pnpm bench` | Foldon and world micro-benchmarks, then the WFC experiment (serially). Writes only to gitignored `benchmarks/runs/`; never changes `git status`. `BENCH_RECORD=1` writes tracked evidence to `benchmarks/phase-1/<date>-<sha>/` (Phase 0 evidence stays in `benchmarks/phase-0/`) and refuses a dirty tree. See `benchmarks/README.md` |
 | `pnpm bench:studio` | Builds the Studio, serves the production bundle on `STUDIO_PORT`, measures it in headless Chromium (software rendering here) and joins the latest `pnpm bench` run directory. Same record/dirty rules; always set `STUDIO_PORT` |
-| `pnpm screenshots` | Regenerate `docs/screenshots/p0.4-*.png` and `p0.5-*.png` via Playwright (not part of `pnpm e2e`) |
+| `pnpm screenshots` | Regenerate `docs/screenshots/p0.4-*`, `p0.5-*`, `p1-world-*` and the ADR 0013 rebuild study `p1-rebuild-*` (plus `docs/review/p1-rebuild-study.json`) via Playwright (not part of `pnpm e2e`). The study opens with `?study=rebuild` |
 
 Run lint, typecheck, test and build before declaring work done. Never report a check as passed unless you ran it.
 

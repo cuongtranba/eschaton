@@ -16,15 +16,22 @@ import { cloudBatch, skyBatch } from "../composition/sky";
 import { frameOf } from "../composition/view";
 import { cellBounds } from "../library";
 import type { LabState } from "../state";
-import type { Basis, Bounds, Ink, InkScale, LeafBatch, ScenePoseError, SocketMarker, ViewModel, ViewPreset } from "../viewModel";
+import type { Basis, Bounds, Ink, LeafBatch, ScenePoseError, SocketMarker, ViewModel, ViewPreset } from "../viewModel";
 import { deriveOffset, LOOK_DEV_ENVELOPE, offsetBasis, ZERO_ENVELOPE } from "./offsets";
 import type { WorldSession } from "./session";
 
+const scaleBasis = (basis: Basis, s: number): Basis =>
+  s === 1
+    ? basis
+    : {
+        origin: [basis.origin[0] * s, basis.origin[1] * s, basis.origin[2] * s],
+        x: [basis.x[0] * s, basis.x[1] * s, basis.x[2] * s],
+        y: [basis.y[0] * s, basis.y[1] * s, basis.y[2] * s],
+        z: [basis.z[0] * s, basis.z[1] * s, basis.z[2] * s],
+      };
+
 export const WORLD_ITEM_KEY = "scene:world";
 
-export const worldView: ViewPreset = { position: [3.2, 4.4, 11.5], target: [3, 0.5, 1], fov: 32 };
-
-const WORLD_INK_SCALE: InkScale = { hazeStart: 120, hazeEnd: 620, hatchFrequency: 7, grainFrequency: 5 };
 const BACKDROP_STREAM = { sky: 8, clouds: 9, ridges: 10 } as const;
 const FRAME_MARGIN = 1;
 const PLAIN: Ink = { tone: 0 };
@@ -53,18 +60,18 @@ function footprintPivot(definition: FoldonDefinition): Vec3 {
 const foldKey = (fold: Entity["fold"]): string =>
   JSON.stringify(Object.entries(fold).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)));
 
-let cachedBackdrop: Readonly<{ seed: number; batches: readonly LeafBatch[] }> | undefined;
+let cachedBackdrop: Readonly<{ seed: number; view: ViewPreset; batches: readonly LeafBatch[] }> | undefined;
 
-export function backdropBatches(seed: number): readonly LeafBatch[] {
-  if (cachedBackdrop?.seed === seed) return cachedBackdrop.batches;
-  const frame = frameOf(worldView);
+export function backdropBatches(seed: number, view: ViewPreset): readonly LeafBatch[] {
+  if (cachedBackdrop?.seed === seed && cachedBackdrop.view === view) return cachedBackdrop.batches;
+  const frame = frameOf(view);
   const rng = (stream: number) => createRandom(seed, stream);
   const batches: readonly LeafBatch[] = [
     { ...skyBatch(frame, rng(BACKDROP_STREAM.sky)), authority: "none" },
     { ...cloudBatch(frame, rng(BACKDROP_STREAM.clouds)), authority: "none" },
     { ...ridgeBatch(frame, rng(BACKDROP_STREAM.ridges)), authority: "none" },
   ];
-  cachedBackdrop = { seed, batches };
+  cachedBackdrop = { seed, view, batches };
   return batches;
 }
 
@@ -129,7 +136,7 @@ export function worldViewModel(session: WorldSession, state: LabState): ViewMode
     }
     const group = groupFor(groups, entity, definition, drawn.authority, errors);
     if (group === undefined) continue;
-    group.bases.push(drawn.basis);
+    group.bases.push(scaleBasis(drawn.basis, session.presentation.cellSize));
     group.inks.push(entity.id === session.selected ? SELECTED : PLAIN);
   }
 
@@ -141,14 +148,16 @@ export function worldViewModel(session: WorldSession, state: LabState): ViewMode
     inks: group.inks,
     authority: group.authority,
   }));
-  const batches = [...entityBatches, ...backdropBatches(session.state.header.seed)];
+  const batches = [...entityBatches, ...backdropBatches(session.state.header.seed, session.presentation.view)];
+  const cell = session.presentation.cellSize;
   const extent = cellBounds(extentCells.length === 0 ? [[0, 0, 0]] : extentCells);
   const bounds: Bounds = {
-    min: [extent.min[0] - FRAME_MARGIN, 0, extent.min[2] - FRAME_MARGIN],
-    max: [extent.max[0] + 1 + FRAME_MARGIN, extent.max[1] + 1, extent.max[2] + 1 + FRAME_MARGIN],
+    min: [(extent.min[0] - FRAME_MARGIN) * cell, 0, (extent.min[2] - FRAME_MARGIN) * cell],
+    max: [(extent.max[0] + 1 + FRAME_MARGIN) * cell, (extent.max[1] + 1) * cell, (extent.max[2] + 1 + FRAME_MARGIN) * cell],
   };
   const layoutKey = [
     WORLD_ITEM_KEY,
+    `cell:${cell}`,
     `rev:${session.state.header.revision}`,
     `offsets:${session.offsets ? "look-dev" : "zero"}`,
     `selected:${session.selected ?? "none"}`,
@@ -162,8 +171,8 @@ export function worldViewModel(session: WorldSession, state: LabState): ViewMode
     cameraMode: state.cameraMode,
     overlays: state.overlays,
     look: state.look,
-    inkScale: WORLD_INK_SCALE,
-    view: worldView,
+    inkScale: session.presentation.inkScale,
+    view: session.presentation.view,
     motion: !state.reducedMotion,
     batches,
     sockets,
