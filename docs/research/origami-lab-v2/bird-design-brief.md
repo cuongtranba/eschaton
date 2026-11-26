@@ -127,13 +127,35 @@ Alternatives considered:
 | `span` | 1.55–2.45 | sparrow-like stubby to gull-like long wings |
 | `chord` | 0.75–1.25 × 0.30 | slender vs broad wings (aspect ratio) |
 | `sweep` | 5°–28° | straight vs swept hand |
-| `fingers` | 0, 4, 5 | pointed vs slotted wingtip |
+| `fingers` | 3 (closed, stepped pointed tip), 4, 5 (slotted) | pointed vs slotted wingtip |
 | `dihedralArm`, `dihedralHand` | (−4°, 12°), (−10°, 6°) | flat, V, or gull "M" |
+| `curl` | −4° to 8° | primaries droop or curl up (kept small so the tips do not read as a crest from the side) |
 | `tail` | 0.24–0.42 L | short vs long tail |
 | `tailShape` | square, rounded, wedge, forked | tail outline |
 | `tailSpread` | 0.08–0.13 | closed vs fanned tail |
 | `beak` | 0.07–0.13 L | finch-short to crow-heavy |
-| `head` | 0.88–1.15 | head mass |
-| `breast` | 0.88–1.2 | slim vs barrel body |
+| `head` | 0.82–1.22 | head mass |
+| `headPitch` | −8° to +10° | head carriage (head and beak stations rotate about the nape) |
+| `breast` | 0.85–1.25 | slim vs barrel body |
 
 Identity = `fnv1a64(canonicalJson({ version, params }))`, with every parameter quantised to 1/1000 before hashing and building. Hash distinctness is **not** used as evidence of visual variation (GEO-3 uses landmark ratios and silhouette IoU instead).
+
+## 10. Iteration log (design changes after review; the brief is the record)
+
+Iteration 2 (2026-11-26, after the first independent review, which recommended GO for the direction and NO-GO for this bird):
+
+| Finding (review) | Design response | Why |
+|---|---|---|
+| The flap was a roll: left wing up while the right went down | Articulation declares a world direction (`toward: up`); the compiler resolves the hinge-angle sign per hinge. Regression test added | The signed Foldon angle depends on face orientation and edge order, which mirroring does not preserve |
+| No layered structure | Two overlapping **covert rows** per arm (hinged on the camber ridge, hovering above the arm with clearance), **secondaries** teeth on the whole trailing edge, **upper tail coverts** over the pleated fan | Layering read: separate feather tracts overlap in real wings; in paper they are separate flaps |
+| Needle-comb fingers | Primaries are tapered quads (rachis crease where non-planar), base ≈ 0.18–0.25 × length, slots between them (76 % feather, 24 % gap), splay narrowed to −4°…+22°, staggered lengths. `fingers = 3` gives a closed, stepped pointed tip instead of a blank blade | Corvid emarginated primaries vs falcon/swift pointed tip |
+| Weak side view | Back arched (dorsal height +14 % at the shoulder, +14 % at the rump, nape lowered), deeper beak base, steeper forehead, smaller finger curl | Side silhouette must read as a bird, not a slipper |
+| No small head detail | A brow station: the upper-side vertex pushed out, the side vertex recessed, which gives a brow ridge over an eye-socket groove | Tertiary detail made of panels, not decals |
+| Head and body never vary | Wider `head` and `breast` ranges plus `headPitch` | Variation beyond wings and tail |
+| `span` did not equal measured span | The wing half-span is scaled by the actual beak-to-tail length | The parameter now means what the brief says |
+
+Validity consequences found by the gates during this iteration (fixed by design, not by relaxing checks):
+
+- **Hand slivers (3–6°):** a 3-point section was stitched to the 10-point slotted tip. Fix: an intermediate section placed inboard of every tip point.
+- **Beak orientation bug:** with head pitch, the outward direction ahead of the gape ignored the beak tip, so the lower beak faces faced inward and the beak net overlapped itself. Fix: the spine profile now includes the beak tip and the tail root.
+- **Fold-path crossing (seed 1, t ≈ 0.88)** between two pleated arm panels that met only across an internal cut. Fix: the arm and hand are cut into spanwise **column strips**, the same Mitani-style strip method as the body. The wrist column stays in the hand's sheet, so the wrist remains a real articulated crease.

@@ -51,6 +51,8 @@ export type Link = Readonly<{
   kind: "crease" | "glue" | "joint";
   rest: number;
   articulation?: Articulation;
+  /** +1 or -1: hinge-angle sign that moves the child toward the articulation's `toward` direction. */
+  sense?: 1 | -1;
 }>;
 
 export type Piece = Readonly<{
@@ -82,6 +84,12 @@ export type Compiled = Readonly<{
 export type CompileError = Readonly<{ code: "topology" | "articulation" | "foldon" | "define"; message: string }>;
 
 const JOIN_EPS = 1e-6;
+
+/** Sign of a hinge rotation that moves the child's centroid toward `toward` (Foldon axis convention on the parent face). */
+function senseOf(parent: readonly Vec3[], slot: readonly [number, number], child: readonly Vec3[], toward: Vec3): 1 | -1 {
+  const { origin, axis } = hingeAxis(parent, slot[0], slot[1]);
+  return dot(cross(axis, sub(centroid(child), origin)), toward) >= 0 ? 1 : -1;
+}
 const rad = (d: number): number => (d * Math.PI) / 180;
 
 function faceAt(design: Design, i: number): DesignFace {
@@ -214,10 +222,14 @@ export function compileDesign(design: Design): Result<Compiled, CompileError> {
       attach = { piece: pieceOf[host] ?? -1, face: host, edge: [a, b], kind: "joint", ...(joint.articulation === undefined ? {} : { articulation: joint.articulation }) };
       if (attach.piece < 0) return fail("topology", `joint ${module}: parent ${joint.parent} is not compiled before it`);
     }
-    const byPart = design.sheets[module] === "part";
+    const rule = design.sheets[module] ?? "module";
+    const sheetOf = (f: number): string => {
+      const part = faceAt(design, f).part;
+      return rule === "module" ? module : rule === "part" ? part : (rule[part] ?? part);
+    };
     while (root !== undefined) {
-      const part = faceAt(design, root).part;
-      const sheet = byPart ? new Set([...members].filter((f) => faceAt(design, f).part === part)) : members;
+      const key = sheetOf(root);
+      const sheet = new Set([...members].filter((f) => sheetOf(f) === key));
       const g = growPiece(design, root, sheet, taken, edgeFaces, scaleLen);
       for (const f of g.faces) pieceOf[f] = grown.length;
       grown.push({ ...g, module, ...(attach === undefined ? {} : { attach }) });
@@ -254,10 +266,12 @@ export function compileDesign(design: Design): Result<Compiled, CompileError> {
       creaseOf.set(child, c.id);
       const edge = g.parent.get(child)?.edge ?? [0, 0];
       const art = articulatedEdge.get(edgeKey(edge[0], edge[1]))?.articulation;
-      const values = [0, c.restAngle, ...(art === undefined ? [] : [c.restAngle + rad(art.lo), c.restAngle + rad(art.hi)])];
+      const parentFace = faceAt(design, g.parent.get(child)?.face ?? child);
+      const sense = art === undefined ? 1 : senseOf(positions(design, parentFace), edgeSlot(parentFace, edge[0], edge[1]) ?? [0, 1], positions(design, faceAt(design, child)), art.toward);
+      const values = [0, c.restAngle, ...(art === undefined ? [] : [c.restAngle + sense * rad(art.lo), c.restAngle + sense * rad(art.hi)])];
       const range: readonly [number, number] =
         Math.abs(c.restAngle) < JOIN_EPS && art === undefined ? [Math.min(0, c.restAngle), Math.max(0, c.restAngle)] : [Math.max(-Math.PI, Math.min(...values)), Math.min(Math.PI, Math.max(...values))];
-      links.set(child, { parent: g.parent.get(child)?.face ?? child, edge, kind: "crease", rest: c.restAngle, ...(art === undefined ? {} : { articulation: art }) });
+      links.set(child, { parent: g.parent.get(child)?.face ?? child, edge, kind: "crease", rest: c.restAngle, ...(art === undefined ? {} : { articulation: art, sense }) });
       return { ...c, range };
     });
     const recipe: GeometryRecipe = { ...net.value, creases };
@@ -269,7 +283,8 @@ export function compileDesign(design: Design): Result<Compiled, CompileError> {
       const { axis } = hingeAxis(hostPos, slot[0], slot[1]);
       const childPos = positions(design, faceAt(design, g.root));
       const rest = Math.atan2(dot(cross(normal(hostPos), normal(childPos)), axis), dot(normal(hostPos), normal(childPos)));
-      links.set(g.root, { parent: g.attach.face, edge: g.attach.edge, kind: g.attach.kind, rest, ...(g.attach.articulation === undefined ? {} : { articulation: g.attach.articulation }) });
+      const sense = g.attach.articulation === undefined ? 1 : senseOf(hostPos, slot, childPos, g.attach.articulation.toward);
+      links.set(g.root, { parent: g.attach.face, edge: g.attach.edge, kind: g.attach.kind, rest, ...(g.attach.articulation === undefined ? {} : { articulation: g.attach.articulation, sense }) });
     }
     const all = recipe.panels.flatMap((p) => p.vertices);
     const min: Vec3 = [Math.min(...all.map((v) => v[0])), Math.min(...all.map((v) => v[1])), Math.min(...all.map((v) => v[2]))];
@@ -317,8 +332,10 @@ export function compileDesign(design: Design): Result<Compiled, CompileError> {
 export type PosedFace = Readonly<{ face: number; id: string; module: string; part: string; piece: number; vertices: readonly Vec3[] }>;
 export type Pose = Readonly<{ t: number; phase: number | undefined; faces: readonly PosedFace[] }>;
 
-const offsetOf = (art: Articulation | undefined, phase: number | undefined): number =>
-  art === undefined || phase === undefined ? 0 : rad(art.lo + (art.hi - art.lo) * Math.min(1, Math.max(0, phase)));
+const offsetOf = (link: Link | undefined, phase: number | undefined): number => {
+  const art = link?.articulation;
+  return art === undefined || phase === undefined ? 0 : (link?.sense ?? 1) * rad(art.lo + (art.hi - art.lo) * Math.min(1, Math.max(0, phase)));
+};
 
 /** Local pose of every piece: its root face stays at the design position, creases at t * (rest + articulation offset). */
 export function posePieces(c: Compiled, t: number, phase?: number): ReadonlyMap<number, readonly Vec3[]> {
@@ -328,7 +345,7 @@ export function posePieces(c: Compiled, t: number, phase?: number): ReadonlyMap<
     for (const [face, id] of piece.creaseOf) {
       const link = c.links.get(face);
       if (link === undefined) continue;
-      angles.set(id, t * (link.rest + offsetOf(link.articulation, phase)));
+      angles.set(id, t * (link.rest + offsetOf(link, phase)));
     }
     const posed = poseGeometry(piece.recipe, angles);
     if (!posed.ok) throw new Error(`${piece.id}: ${posed.error.message}`);
@@ -359,7 +376,7 @@ export function poseCompiled(c: Compiled, t: number, phase?: number, explode = 0
     const m = rigidBetween([hostRest[0] ?? [0, 0, 0], hostRest[1] ?? [0, 0, 0], hostRest[2] ?? [0, 0, 0]], [hostNow[0] ?? [0, 0, 0], hostNow[1] ?? [0, 0, 0], hostNow[2] ?? [0, 0, 0]]);
     const slot = edgeSlot(faceAt(c.design, piece.attach.face), piece.attach.edge[0], piece.attach.edge[1]) ?? [0, 1];
     const { origin, axis } = hingeAxis(hostRest, slot[0], slot[1]);
-    const turn = rotation(origin, axis, tt * offsetOf(piece.attach.articulation, phase));
+    const turn = rotation(origin, axis, tt * offsetOf(c.links.get(piece.root), phase));
     const parentPiece = c.pieces[piece.attach.piece];
     const away = parentPiece === undefined ? ([0, 0, 0] as const) : unit(sub(pieceCentre(piece), pieceCentre(parentPiece)));
     const shift = translation(scale(away, explode * (1 - tt)));

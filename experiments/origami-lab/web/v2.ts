@@ -81,8 +81,8 @@ const CAMERAS = {
   side: { kind: "ortho", dir: [0, 0, 1], halfHeight: 1.45, target: [-0.2, 0.1, 0] },
   top: { kind: "ortho", dir: [0, 1, 0], up: [1, 0, 0], halfHeight: 2.7, target: [-0.4, 0, 0] },
   below: { kind: "ortho", dir: [0, -1, 0], up: [1, 0, 0], halfHeight: 2.7, target: [-0.4, 0, 0] },
-  head: { kind: "persp", azimuth: 50, elevation: 14, distance: 3.4, fov: 30, target: [1.35, 0.05, 0] },
-  sheet: { kind: "persp", azimuth: 38, elevation: 24, distance: 12, fov: 32, target: BIRD_CENTRE },
+  head: { kind: "persp", azimuth: 62, elevation: 12, distance: 2.2, fov: 30, target: [1.45, 0.1, 0] },
+  sheet: { kind: "persp", azimuth: 38, elevation: 24, distance: 14, fov: 32, target: BIRD_CENTRE },
 } as const satisfies Readonly<Record<string, CameraSpec>>;
 
 document.getElementById("build")?.replaceChildren(__BUILD__);
@@ -112,10 +112,13 @@ const livePhase = (seconds: number): number | undefined => (state.flap ? 0.5 + 0
 
 function studyPage(seed: number): void {
   const c = compiledFor(seed);
+  const crown = c.design.landmarks.crown ?? [1.45, 0.1, 0];
+  const beakTip = c.design.landmarks.beakTip ?? [2, 0, 0];
+  const headTarget: readonly [number, number, number] = [(crown[0] + beakTip[0]) / 2, (crown[1] + beakTip[1]) / 2 - 0.05, 0];
   if (tilesRoot !== null) tilesRoot.style.gridTemplateColumns = "repeat(3, minmax(0, 1fr))";
   const views: readonly (readonly [string, CameraSpec, number, number])[] = [
     [`three-quarter · ${labelFor(seed)}`, CAMERAS.threeQuarter, 430, 2],
-    ["head close-up", CAMERAS.head, 430, 1],
+    ["head close-up (framed on the head landmarks)", { ...CAMERAS.head, target: headTarget }, 430, 1],
     ["front (ortho)", CAMERAS.front, 250, 1],
     ["side (ortho)", CAMERAS.side, 250, 1],
     ["top (ortho)", CAMERAS.top, 250, 1],
@@ -124,10 +127,21 @@ function studyPage(seed: number): void {
     const view = tile(label, spec, h, span);
     tiles.push({ view, draw: (s) => { const snap = snapshot(c, poseCompiled(c, state.t, livePhase(s), 1.2), state.overlay); view.set(snap.polygons, snap.lines, state.look); } });
   }
-  const below = tile("from below (silhouette, as seen in the sky)", CAMERAS.below, 250, 3);
-  tiles.push({ view: below, draw: (s) => {
-    below.set(snapshot(c, poseCompiled(c, state.t, livePhase(s)), false).polygons, [], "silhouette");
-  } });
+  const silhouettes: readonly (readonly [string, CameraSpec])[] = [
+    ["silhouette: from below (as seen in the sky)", CAMERAS.below],
+    ["silhouette: side", CAMERAS.side],
+    ["silhouette: front", CAMERAS.front],
+    ["silhouette: three-quarter", { ...CAMERAS.threeQuarter, distance: 13 }],
+    ["close-up: wing tip and primaries", { kind: "persp", azimuth: 15, elevation: 55, distance: 3.6, fov: 30, target: c.design.landmarks.wingTipL ?? [0, 0, 3] }],
+    ["close-up: tail fan and coverts", { kind: "persp", azimuth: 150, elevation: 35, distance: 3.2, fov: 30, target: c.design.landmarks.tailTip ?? [-1.5, 0, 0] }],
+  ];
+  for (const [label, spec] of silhouettes) {
+    const look: Look = label.startsWith("silhouette") ? "silhouette" : "clay";
+    const view = tile(label, spec, 230, 1);
+    tiles.push({ view, draw: (s) => {
+      view.set(snapshot(c, poseCompiled(c, state.t, livePhase(s)), state.overlay && look === "clay").polygons, [], look);
+    } });
+  }
   if (inspector !== null) inspector.innerHTML = inspectorHtml(c);
 }
 
@@ -158,7 +172,7 @@ function comparePage(seed: number): void {
     return polys.map((poly) => poly.map((v): readonly [number, number, number] => [v[0] - (mid[0] ?? 0) + BIRD_CENTRE[0], v[1] - (mid[1] ?? 0) + BIRD_CENTRE[1], v[2] - (mid[2] ?? 0) + BIRD_CENTRE[2]]));
   };
   const v1Polys = (): readonly Tri3[] => (v1.ok ? centred(poseObject(v1.value, 1).panels.map((p) => p.vertices)) : []);
-  for (const [label, spec] of [["three-quarter", CAMERAS.sheet], ["top", { ...CAMERAS.top, halfHeight: 3.2 }], ["side", { ...CAMERAS.side, halfHeight: 1.6 }]] as const) {
+  for (const [label, spec] of [["three-quarter", { ...CAMERAS.sheet, distance: 19 }], ["top", { ...CAMERAS.top, halfHeight: 4.6, target: BIRD_CENTRE }], ["side", { ...CAMERAS.side, halfHeight: 2.6, target: BIRD_CENTRE }]] as const) {
     const old = tile(`V1 (PR #11 @ 73b612b) bird seed ${seed < 0 ? 1 : seed} · ${label}`, spec, 300);
     tiles.push({ view: old, draw: () => {
       old.set(v1Polys(), [], state.look);

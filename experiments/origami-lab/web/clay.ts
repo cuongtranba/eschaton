@@ -41,14 +41,16 @@ export function createClayStage(canvas: HTMLCanvasElement) {
 
   const addView = (element: HTMLElement, spec: CameraSpec): ClayView => {
     const scene = new THREE.Scene();
-    scene.add(new THREE.HemisphereLight(0xffffff, 0x77736c, 0.9));
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x9a958c, 0.9));
     const key = new THREE.DirectionalLight(0xffffff, 2.1);
     key.position.set(4, 9, 6);
     const fill = new THREE.DirectionalLight(0xffffff, 0.55);
     fill.position.set(-6, 3, -2);
     const rim = new THREE.DirectionalLight(0xffffff, 0.7);
     rim.position.set(-3, 5, -8);
-    scene.add(key, fill, rim);
+    const under = new THREE.DirectionalLight(0xffffff, 0.45);
+    under.position.set(1, -6, 2);
+    scene.add(key, fill, rim, under);
     const group = new THREE.Group();
     scene.add(group);
     const background = new THREE.Color(0xdedbd5);

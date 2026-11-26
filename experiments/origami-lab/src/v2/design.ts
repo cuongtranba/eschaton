@@ -7,8 +7,12 @@ export type DesignFace = Readonly<{ id: string; module: string; part: string; v:
 /** A module hangs from its parent module on one shared edge; the edge is the joint's hinge axis. */
 export type ModuleJoint = Readonly<{ module: string; parent: string; edge: readonly [number, number]; articulation?: Articulation }>;
 
-/** Angular offset in degrees added to a hinge at articulation phase 0 (lo) to 1 (hi); rest is offset 0. */
-export type Articulation = Readonly<{ lo: number; hi: number }>;
+/**
+ * Angular offset in degrees at articulation phase 0 (lo) to 1 (hi); rest is offset 0. Positive offsets move the child
+ * panel's centroid toward `toward` (a world direction, e.g. up for a wing raise). The hinge-angle sign is resolved per
+ * hinge at compile time, because the signed Foldon angle depends on face orientation and is not mirror-invariant.
+ */
+export type Articulation = Readonly<{ lo: number; hi: number; toward: Vec3 }>;
 
 export type ArticulatedEdge = Readonly<{ id: string; edge: readonly [number, number]; articulation: Articulation }>;
 
@@ -23,8 +27,11 @@ export type Design = Readonly<{
   joints: readonly ModuleJoint[];
   articulated: readonly ArticulatedEdge[];
   landmarks: Readonly<Record<string, Vec3>>;
-  /** How a module is cut into sheets before unfolding: one sheet per module, or one per semantic part (strip bands). */
-  sheets: Readonly<Record<string, "module" | "part">>;
+  /**
+   * How a module is cut into sheets before unfolding: one sheet per module, one per semantic part (strip bands), or an
+   * explicit part → sheet map (parts not listed get their own sheet).
+   */
+  sheets: Readonly<Record<string, "module" | "part" | Readonly<Record<string, string>>>>;
 }>;
 
 export type Facing = (faceCentroid: Vec3) => Vec3;
@@ -61,21 +68,21 @@ export function createBuilder() {
   };
 
   /** Quad a0 a1 b1 b0 as one planar panel when it is planar, else two triangles split on the shorter diagonal. */
-  const quad = (module: string, part: string, a0: number, a1: number, b1: number, b0: number, facing: Facing): void => {
+  const quad = (module: string, part: string, a0: number, a1: number, b1: number, b0: number, facing: Facing, thin = false): void => {
     const [p0, p1, q1, q0] = [a0, a1, b1, b0].map(pos);
     if (p0 === undefined || p1 === undefined || q1 === undefined || q0 === undefined) return;
     const n = normal([p0, p1, q1]);
     const scale = Math.max(dist(p0, q1), dist(p1, q0));
     if (Math.abs(dot(sub(q0, p0), n)) <= PLANAR_QUAD * scale) {
-      face(module, part, [a0, a1, b1, b0], facing);
+      face(module, part, [a0, a1, b1, b0], facing, thin);
       return;
     }
     if (dist(p0, q1) <= dist(p1, q0)) {
-      face(module, part, [a0, a1, b1], facing);
-      face(module, part, [a0, b1, b0], facing);
+      face(module, part, [a0, a1, b1], facing, thin);
+      face(module, part, [a0, b1, b0], facing, thin);
     } else {
-      face(module, part, [a0, a1, b0], facing);
-      face(module, part, [a1, b1, b0], facing);
+      face(module, part, [a0, a1, b0], facing, thin);
+      face(module, part, [a1, b1, b0], facing, thin);
     }
   };
 

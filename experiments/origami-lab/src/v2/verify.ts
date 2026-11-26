@@ -306,7 +306,8 @@ export function verifyCompiled(c: Compiled): GeoReport {
     const link = c.links.get(f);
     const rest = link?.rest ?? 0;
     const art = link?.articulation;
-    return art === undefined ? [rest, rest] : [rest + rad(art.lo), rest + rad(art.hi)];
+    const sense = link?.sense ?? 1;
+    return art === undefined ? [rest, rest] : [rest + sense * rad(art.lo), rest + sense * rad(art.hi)];
   };
   const articulation = sweep(c, "articulation phase 0→1 at t = 1", all, phasePose, phaseSteps, hingeRange);
   sweeps.push(articulation);

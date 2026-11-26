@@ -51,7 +51,7 @@ function sweepFixture(): Design {
     rootModule: "base",
     rootPart: "floor",
     joints: [
-      { module: "flap", parent: "base", edge: [b0, b3], articulation: { lo: -80, hi: 80 } },
+      { module: "flap", parent: "base", edge: [b0, b3], articulation: { lo: -80, hi: 80, toward: [1, 0, 0] } },
       { module: "post", parent: "base", edge: [b4, b5] },
     ],
     articulated: [],
@@ -166,4 +166,15 @@ test("flap articulation moves the wing tip continuously while the shoulder hinge
   const gaps = tips.slice(1).map((p, i) => Math.hypot(p[0] - (tips[i]?.[0] ?? 0), p[1] - (tips[i]?.[1] ?? 0), p[2] - (tips[i]?.[2] ?? 0)));
   const drift = steps.map((u) => Math.hypot(...at(u, shoulder[0]).map((x, k) => x - (bird.design.vertices[shoulder[0]]?.[k] ?? 0))));
   expect({ moves: (tips[32]?.[1] ?? 0) - (tips[0]?.[1] ?? 0) > 2, smooth: Math.max(...gaps) < 0.4, fixed: Math.max(...drift) < 1e-6 }).toEqual({ moves: true, smooth: true, fixed: true });
+});
+
+test("regression: the flap rolled (left wing up while the right went down); both wings now rise and fall together", () => {
+  const bird = compiled(birdDesign(CROW));
+  const heights = [0, 0.5, 1].map((u) => {
+    const pose = poseCompiled(bird, 1, u);
+    const top = (module: string): number => Math.max(...pose.faces.filter((f) => f.module === module).flatMap((f) => f.vertices.map((v) => v[1])));
+    return [top("wingL"), top("wingR")] as const;
+  });
+  expect(heights.every(([l, r]) => Math.abs(l - r) < 1e-6)).toBe(true);
+  expect((heights[2]?.[0] ?? 0) - (heights[0]?.[0] ?? 0)).toBeGreaterThan(1);
 });
