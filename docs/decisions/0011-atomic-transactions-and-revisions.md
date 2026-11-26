@@ -1,6 +1,6 @@
 # ADR 0011: Minimal atomic transaction and revision contract
 
-- Status: **Accepted with amendments** — owner decisions D3 and D4 (2026-11-25, recorded in [`../review/phase-0-owner-review.md`](../review/phase-0-owner-review.md) §0). D3 approved this ADR on condition that the independent-review amendments ([`../review/adr-review.md`](../review/adr-review.md)) are applied; D4 approved the Phase 1 plan recommendations that answer its questions. Both are applied in the section "Amendments (owner D3 and D4, 2026-11-25)" below. Phase 1 design; implemented on branch `phase-1`
+- Status: **Accepted with amendments** — owner decisions D3 and D4 (2026-11-25, recorded in [`../review/phase-0-owner-review.md`](../review/phase-0-owner-review.md) §0). D3 approved this ADR on condition that the independent-review amendments ([`../review/adr-review.md`](../review/adr-review.md)) are applied; D4 approved the Phase 1 plan recommendations that answer its questions. Both are applied in the section "Amendments (owner D3 and D4, 2026-11-25)" below. Phase 1 design; implemented on branch `phase-1` and merged to `main` with PR #2 (merge commit `940a50b`)
 - Date: 2026-11-24
 - Master plan: §5.4 (commit only if the base revision matches), §6.1 (workers return proposals; record authoritative outcomes), §7.2, §8.1 (revision, header, replay), §12 (transactionality, replay), §11 Phase 1 and Phase 2 (roadmap v1.1)
 - Related: [ADR 0010](0010-runtime-identity-ownership-lineage.md) (the entity state a patch changes), [ADR 0012](0012-directional-sockets.md) (socket rules version in the header)
@@ -10,10 +10,10 @@
 Phase 0 has no authoritative world, so there is no transaction.
 
 - **The only mutable state is a UI reducer.** `labReducer(state, command)` (`apps/studio/src/lab/state.ts:90-115`) always returns a state. It clamps bad values (`clampUnit`, `:55`) instead of rejecting them, has no revision, and cannot fail.
-- **The catalog is the one all-or-nothing commit that exists.** `createCatalog` collects every issue, then returns `err(issues)` if any exist and builds nothing (`packages/foldon/src/registry.ts:80-170`, the gate at `:170`). `compileAssembly` validates before it builds (`assembly.ts:241-271`). Expected failures are `Result` values, not exceptions (`result.ts`, `AGENTS.md`).
-- **Definition data is already frozen** by `canonicalizeAndFreeze` (`define.ts`, `assembly.ts:269`), so immutable-by-construction is an existing convention.
+- **The catalog is the one all-or-nothing commit that exists.** `createCatalog` collects every issue, then returns `err(issues)` if any exist and builds nothing (`packages/foldon/src/registry.ts:91-247`, the gate at `:191`). `compileAssembly` validates before it builds (`assembly.ts:237-268`). Expected failures are `Result` values, not exceptions (`result.ts`, `AGENTS.md`).
+- **Definition data is already frozen** by `canonicalizeAndFreeze` (`define.ts`, `assembly.ts:266`), so immutable-by-construction is an existing convention.
 - **Seeded derivation exists.** `createRandom(seed, salt)` derives independent streams from one seed (`apps/studio/src/lab/composition/random.ts`); the lab seed is normalised in `state.ts:57-59`.
-- **Hashing exists** as FNV-1a 64 over a canonical string (`assembly.ts:64-94`), explicitly not a security boundary (ADR 0008).
+- **Hashing exists** as FNV-1a 64 over a canonical string (`hash.ts:22-34`, `recipeHash` at `assembly.ts:74-84`), explicitly not a security boundary (ADR 0008).
 - The plan wants worker proposals that never mutate the world, a commit only if the base revision still matches, a save header (schema, seed, catalog/rules/engine versions, tick) and replay from snapshot plus authoritative outcomes (§6.1, §8.1). The WFC experiment never reached a worker or cancellation (ADR 0004), so no proposal has existed yet.
 
 Roadmap v1.1 pulls the transaction contract into Phase 1 because attach/detach and the ownership invariants of ADR 0010 are meaningless without an atomic commit, and because Phase 2's frozen-boundary solve and Phase 4's rollback depend on it.

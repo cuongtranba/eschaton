@@ -1,6 +1,6 @@
 # ADR 0005: Renderer — `WebGPURenderer` with TSL node materials and automatic WebGL2 fallback
 
-- Status: **Accepted with amendments** — owner decision D3 (2026-11-25, recorded in [`../review/phase-0-owner-review.md`](../review/phase-0-owner-review.md) §0) approved this ADR on condition that the independent-review amendments ([`../review/adr-review.md`](../review/adr-review.md)) are applied. They are applied in the section "Amendments (owner D3, 2026-11-25)" below. **The WebGPU backend has never been exercised on a physical GPU.** Owner decision D5 conditionally waived that test for the Phase 0 gate only and moved it to the start of Phase 1. The waiver is not a verification and does not waive any later gate.
+- Status: **Accepted with amendments** — owner decision D3 (2026-11-25, recorded in [`../review/phase-0-owner-review.md`](../review/phase-0-owner-review.md) §0) approved this ADR on condition that the independent-review amendments ([`../review/adr-review.md`](../review/adr-review.md)) are applied. They are applied in the section "Amendments (owner D3, 2026-11-25)" below. **At the time of D3 and D5 the WebGPU backend had never been exercised on a physical GPU.** Owner decision D5 conditionally waived that test for the Phase 0 gate only and moved it to the start of Phase 1. The waiver is not a verification and does not waive any later gate. Since then an automated run on an Apple M5 Pro (2026-11-25) is reported in the "Capability evidence" matrix below; the owner's RTX 5070 test is still **not performed**.
 - Date: 2026-11-24
 - Master plan: §2.3, §9; research R8, R9, R10
 
@@ -26,7 +26,7 @@ Option 2, three 0.187.0 (`three/webgpu`, TSL).
 ## Consequences
 
 - **Every measurement and screenshot in Phase 0 comes from the WebGL2 fallback backend in headless Chromium without a GPU adapter** (software rasteriser). The WebGPU code path, its shader compilation of the TSL graph, and parity between the two backends are untested.
-- Capability matrix: first rows recorded below ("Capability evidence"); the physical-GPU rows are pending. Still needed before Phase 5: WebGPU availability per target browser, which TSL nodes the ink material uses that are WebGPU-only (R9 says some functions are), line-width behaviour, MSAA, timestamp queries, and storage/compute availability.
+- Capability matrix: first rows recorded below ("Capability evidence"); the owner's RTX 5070 rows are pending and the Apple M5 Pro rows are recorded (automated, 2026-11-25). Still needed before Phase 5: WebGPU availability per target browser, which TSL nodes the ink material uses that are WebGPU-only (R9 says some functions are), line-width behaviour, MSAA, timestamp queries, and storage/compute availability.
 - WebGL lines are one device pixel wide, so outline weight cannot vary with distance (look-dev technique 5). Quad-based lines are the proposed experiment.
 - Compare mode renders the scene twice into one canvas with a scissor; this was only run on WebGL2.
 - Shaders cannot assume bit-equal results across backends; any future GPU simulation must not be assumed deterministic.
@@ -82,9 +82,9 @@ Readouts seen in this environment:
 | WebGL2 on a physical GPU: RTX 5070 | **No** | Pending: manual test check C3 | **PENDING.** |
 | WebGL2 on a physical GPU: Apple M5 Pro (ANGLE Metal) | **Yes, automated C3** | as above | Renders the reference composition with the same draw counts. |
 
-The status of this ADR is unchanged. Closing the two pending rows is part of the Phase 0 owner review, not a precondition for the Phase 0 decisions recorded above.
+The status of this ADR is its Status line at the top. Closing the two pending RTX 5070 rows is not a precondition for the Phase 0 decisions recorded above.
 
 ## Amendments (owner D3 and D5, 2026-11-25)
 
-- **Accepted conditionally on D5.** The owner waived the physical-GPU WebGPU test for the Phase 0 gate and deferred a real-GPU smoke test to the start of Phase 1. Both "physical GPU" rows in the capability matrix stay **PENDING** until a run on real hardware is recorded. A run on a software adapter (SwiftShader, `GPU class: software`) never counts. Owner-run instructions: [`../testing/webgpu-manual-test.md`](../testing/webgpu-manual-test.md).
+- **Accepted conditionally on D5.** The owner waived the physical-GPU WebGPU test for the Phase 0 gate and deferred a real-GPU smoke test to the start of Phase 1. Both RTX 5070 rows in the capability matrix stay **PENDING** until that run is recorded (when this amendment was written, both "physical GPU" rows were pending; the Apple M5 Pro smoke test has since been recorded in the matrix and does not close the RTX 5070 rows). A run on a software adapter (SwiftShader, `GPU class: software`) never counts. Owner-run instructions: [`../testing/webgpu-manual-test.md`](../testing/webgpu-manual-test.md).
 - This ADR does not block Phase 1 domain code. Any Phase 1 milestone criterion that depends on the GPU is reported as unresolved until the physical run exists.

@@ -81,6 +81,11 @@ function componentValue(definition: FoldonDefinition): Readonly<{ creases: reado
   return creases === undefined || stiffness === undefined || drag === undefined ? undefined : { creases, stiffness, drag };
 }
 
+function remainingFold(load: number, stiffness: number): number {
+  if (load === 0) return 1;
+  return stiffness === 0 ? 0 : Math.max(0, 1 - load / stiffness);
+}
+
 export const windFold: System<WindInput> = {
   id: "wind-fold",
   reads: ["foldable", "wind-responsive"],
@@ -91,7 +96,7 @@ export const windFold: System<WindInput> = {
       view.entities.flatMap(({ entity, definition }): WorldOp[] => {
         const data = componentValue(definition);
         if (data === undefined) return [];
-        const factor = 1 - (strength * data.drag) / data.stiffness;
+        const factor = remainingFold(strength * data.drag, data.stiffness);
         const rest = new Map(definition.geometry.creases.map((crease) => [crease.id as string, crease.restAngle]));
         const angles = Object.fromEntries(data.creases.map((id) => [id, (rest.get(id) ?? 0) * factor]));
         return [{ op: "fold", entity: entity.id, angles }];

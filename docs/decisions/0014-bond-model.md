@@ -64,7 +64,7 @@ If the owner rejects either interpretation, the change is local to the bond deri
 - **Code:** `packages/world/src/model.ts` (`contacts`, `bondsFromContacts`, `matedBonds`, `sortBonds`) and `ops.ts` (`settleBonds`).
 - **Settling:** after all ops of a patch, the bonds of every entity whose placement changed are removed and re-derived from its mated pairs. This gives the same final bonds as per-op creation and removal, because Phase 1 bonds depend only on final placement, and it keeps large patches linear.
 - **Tests:** `packages/world/test/bonds.test.ts`.
-- **Status:** unchanged. The two interpretations above still await owner confirmation.
+- **Status when this section was written:** Proposed; the two interpretations above awaited owner confirmation. Owner decision R3 (2026-11-25, [`../review/phase-1-owner-review.md`](../review/phase-1-owner-review.md)) later resolved them: interpretation 1 is confirmed and interpretation 2 is rejected and replaced (see "Amendments (owner R3, 2026-11-25)" below). The current status is the status line at the top.
 
 ## Amendments (owner R3, 2026-11-25)
 
@@ -85,7 +85,7 @@ The owner approved this ADR with three amendments. Interpretation 1 above is con
 
 ### One versioned source of rules
 
-- The socket table (version 2) is the only source. There is no implicit heuristic in the world package.
+- The socket table (version 2 when R3 landed, commit `1c05fce`; version 3 in code today) is the only source. There is no implicit heuristic in the world package.
 - `ProfileSpec.structural` says whether a profile can carry a bond at all. `empty` is non-structural, and table validation rejects any `bond: true` rule that names a non-structural profile, so "empty never bonds" cannot be overridden by data.
 - `MateSpec.bond` is required on every mate. In the default table `empty–empty` is `bond: false`; `deck–base`, `ground–base`, `wall–wall`, `eave–eave`, `beam–beam` and `beam–wall` are `bond: true`.
 - A wildcard makes an adjacency legal without a mate entry, so it has no `bond: true` rule and does not bond. A catalog may add an explicit rule such as `{ a: "open", b: "wall", relation: 0, bond: true }`.

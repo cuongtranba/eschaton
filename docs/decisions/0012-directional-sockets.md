@@ -1,6 +1,6 @@
 # ADR 0012: Directional sockets
 
-- Status: **Accepted with amendments** — owner decisions D3 and D4 (2026-11-25, recorded in [`../review/phase-0-owner-review.md`](../review/phase-0-owner-review.md) §0). D3 approved this ADR on condition that the independent-review amendments ([`../review/adr-review.md`](../review/adr-review.md)) are applied; D4 approved the Phase 1 plan recommendations that answer its questions. Both are applied in the section "Amendments (owner D3 and D4, 2026-11-25)" below. Phase 1 design; implemented on branch `phase-1`
+- Status: **Accepted with amendments** — owner decisions D3 and D4 (2026-11-25, recorded in [`../review/phase-0-owner-review.md`](../review/phase-0-owner-review.md) §0). D3 approved this ADR on condition that the independent-review amendments ([`../review/adr-review.md`](../review/adr-review.md)) are applied; D4 approved the Phase 1 plan recommendations that answer its questions. Both are applied in the section "Amendments (owner D3 and D4, 2026-11-25)" below. Phase 1 design; implemented on branch `phase-1` and merged to `main` with PR #2 (merge commit `940a50b`)
 - Date: 2026-11-24
 - Master plan: §4.2 (socket = local frame, profile, role, allowed mates; "match both directions, alignment, scale, geometry and occupancy"), §11 Phase 1 (roadmap v1.1)
 - Amends, once approved: [ADR 0009](0009-socket-compatibility.md) (its tangent rule and its "no direct test" gap)
@@ -10,10 +10,10 @@
 
 ### What the code does today
 
-A socket is one record per external unit face (`SocketDefinition`, `packages/foldon/src/definition.ts:34-44`) with a position, a unit normal, a **tangent**, a profile and a role. Compatibility is one function:
+A socket is one record per external unit face (`SocketDefinition`, `packages/foldon/src/definition.ts:36-46`) with a position, a unit normal, a **tangent**, a profile and a role. Compatibility is one function:
 
 ```ts
-// definition.ts:159-167
+// definition.ts:159-167 at `5b2a995` (replaced by `socketsCompatible` in `sockets.ts:118`)
 socketsCompatible(a, b) =
   distance(a.position, b.position) <= tolerance &&
   dot(a.normal, b.normal) <= -1 + tolerance &&
@@ -21,7 +21,7 @@ socketsCompatible(a, b) =
   profilesCompatible(a.profile, b.profile)
 ```
 
-The tangent is canonical per face: `faceTangent(face)` returns +x for ±y faces and +y for side faces (`definition.ts:113-115`), and `validateFoldon` rejects any other tangent (`validate.ts:227-230`). Placement rotates the tangent with the piece (`placeSockets`, `transform.ts:84-93`, line 91) using yaw-only quarter turns that keep the Y component (`rotateDirection`, `transform.ts:35-46`).
+The tangent is canonical per face: `faceTangent(face)` returns +x for ±y faces and +y for side faces (`definition.ts:113-115` at `5b2a995`; now `definition.ts:135`), and `validateFoldon` rejects any other tangent (`validate.ts:227-230` at `5b2a995`; now `allowedTangents`, `validate.ts:205` and `:240`). Placement rotates the tangent with the piece (`placeSockets`, `transform.ts:84-93`, line 91) using yaw-only quarter turns that keep the Y component (`rotateDirection`, `transform.ts:35-46`).
 
 ### The gap, precisely
 
@@ -29,9 +29,9 @@ The tangent is canonical per face: `faceTangent(face)` returns +x for ±y faces 
 2. **±y faces: orientation is carried and then ignored.** After a quarter turn the tangent of a top or bottom socket is one of +x, −z, −x, +z (`transform.ts:35-46`): the piece's orientation is present in the frame. Line 164 skips the test whenever `normal[1] !== 0`, so two stacked pieces mate regardless of their relative turn. This was a deliberate fix: requiring equal tangents on ±y faces rejected a rotated beam sitting on a box shell in the watchtower recipe (ADR 0009, "The P0.3 change"; `packages/foldon/src/assemblies.ts`, part `band-beam`).
 3. **Consequence: no orientation-sensitive mating.** Nothing can say "these two interfaces mate only when turned the same way" (a beam whose axis must continue along the beam below, a stair whose front must face a given direction, a roof ridge that must run along the wall below), or "this interface is asymmetric left to right". The current P01–P09 are all effectively fourfold symmetric on ±y faces: their profiles (`wall`, `deck`, `base`, `ground`, `eave`, `empty`, `open`) are chosen per face in `catalog.ts:200-254` and carry no turn.
 4. **A door on a side face is partly expressible today, by face-specific profile, not by orientation.** A piece with a `door` profile on its +z face and `wall` elsewhere, mating only with a road-side profile, would be rejected when rotated to face away, because the adjacent faces would be `wall` and the road's profile. No catalog piece does this yet (P08 has `wall` on all four sides, `catalog.ts:247`) and there is no test of it. What cannot be expressed is anything that depends on how the two faces are turned or mirrored relative to each other.
-5. **`open` is a wildcard** (`profilesCompatible`, `definition.ts:154-157`): every face of P01, P02, P05, P07 and P09 that uses `open` (`catalog.ts:200-254`) passes any check, so a wildcard face never produces a mismatch reason (ADR 0009 consequences).
+5. **`open` is a wildcard** (`profilesCompatible`, `definition.ts:154-157` at `5b2a995`; the wildcard is now `ProfileSpec.wildcard` in `sockets.ts`): every face of P01, P02, P05, P07 and P09 that uses `open` (`catalog.ts:200-254`) passes any check, so a wildcard face never produces a mismatch reason (ADR 0009 consequences).
 6. **No test targets the rule.** ADR 0009 records that a search of `packages/foldon/test` for "tangent" finds nothing; the socket tests (`foldon.test.ts:308`, `:323`) exercise profile pairs.
-7. **The compatibility answer is a boolean.** Callers (`facingIssues`, `assembly.ts:191-213`) cannot tell why a pair failed beyond the profile names.
+7. **The compatibility answer is a boolean.** Callers (`facingIssues`, `assembly.ts:181-209` on `main`; `assembly.ts:191-213` at `5b2a995`) cannot tell why a pair failed beyond the profile names.
 
 ### Why now
 
@@ -107,8 +107,8 @@ Each unordered pair appears once. `relation` is the nominal turn from the lower 
 ### Migration of P01–P09 and the assemblies
 
 - The table is created from the current data: profiles `empty, ground, deck, base, wall, eave, beam` get `symmetry: 4, handed: false, wildcard: false`; `open` becomes `wildcard: true`; the seven allowed pairs become `mates` with `relation: 0`.
-- Every existing socket keeps its canonical tangent and no hand. All current profiles are C4, so the new rule accepts exactly what the old rule accepted: no behaviour change, no definition version bump, and recipe hashes stay equal (hashes cover part references, not sockets: `assembly.ts:84-94`).
-- Assemblies need no recipe changes. Assembly external sockets inherit the placed tangent and hand of the part socket they expose (`assembly.ts:254-258`), so orientation survives nesting.
+- Every existing socket keeps its canonical tangent and no hand. All current profiles are C4, so the new rule accepts exactly what the old rule accepted: no behaviour change, no definition version bump, and recipe hashes stay equal (hashes cover part references, not sockets: `assembly.ts:74-84`).
+- Assemblies need no recipe changes. Assembly external sockets inherit the placed tangent and hand of the part socket they expose (`assembly.ts:251-255`), so orientation survives nesting.
 - New orientation-sensitive profiles (for example an axis-bound `rail`, C2) are **added**, not retrofitted. Whether P06's top, P07's top or P03/P04's eaves become oriented is a catalog decision for the owner (question 4); this ADR does not change them.
 - `socketsCompatible` is replaced by the table lookup, and the `open` wildcard becomes data. Moving the table into `CatalogInput` (so adding a profile is a catalog change, answering a note in ADR 0009) is proposed but optional (question 5).
 
@@ -151,7 +151,7 @@ declare function faceSockets(
 
 ## Behavioural tests to write in Phase 1
 
-Public seam: the `@eschaton/foldon` entry point. Test fixtures define their own foldons and a test table through the public `defineFoldon`, `faceSockets` and `createCatalog`; no piece is added to the shipped catalog just for a test. Today `SocketProfile` is a closed union (`definition.ts:30-31`), so fixture profiles such as `rail` or `door` need either the table to be catalog input with profile ids as branded strings (question 5, option A) or the profiles to be added to the default table (option B).
+Public seam: the `@eschaton/foldon` entry point. Test fixtures define their own foldons and a test table through the public `defineFoldon`, `faceSockets` and `createCatalog`; no piece is added to the shipped catalog just for a test. Today `SocketProfile` is a closed union (`definition.ts:30-31` at `5b2a995`; `SocketProfile` is an open string id since M3), so fixture profiles such as `rail` or `door` need either the table to be catalog input with profile ids as branded strings (question 5, option A) or the profiles to be added to the default table (option B).
 
 ```ts
 test("a quarter-turned piece resting on a fourfold-symmetric profile is accepted")  // regression for the P0.3 tangent defect
@@ -222,13 +222,13 @@ Landed in commit `47928a2` on branch `phase-1-m3`, in `packages/foldon/src/socke
 type Turn = 0 | 1 | 2 | 3;
 type Hand = "left" | "right";
 type SocketProfile = string; // open id, validated against the table by createCatalog
-type ProfileSpec = Readonly<{ id: SocketProfile; symmetry: 1 | 2 | 4; handed: boolean; wildcard: boolean }>;
-type MateSpec = Readonly<{ a: SocketProfile; b: SocketProfile; relation: Turn }>;
+type ProfileSpec = Readonly<{ id: SocketProfile; symmetry: 1 | 2 | 4; handed: boolean; wildcard: boolean }>; // M3 shape; today also `structural` (v2) and `needsMate` (v3)
+type MateSpec = Readonly<{ a: SocketProfile; b: SocketProfile; relation: Turn }>; // M3 shape; today also `bond: boolean` (v2)
 type SocketTable = Readonly<{ version: number; profiles: readonly ProfileSpec[]; mates: readonly MateSpec[] }>;
 type SocketMismatch = "position" | "normal" | "profile" | "turn" | "hand";
 type FaceSocketSpec = SocketProfile | Readonly<{ profile: SocketProfile; turn?: Turn; hand?: Hand }>;
 
-const defaultSocketTable: SocketTable; // version 1, frozen
+const defaultSocketTable: SocketTable; // frozen; version 1 when M3 shipped (this listing). Shipped code today: version 3 (v2 = R3, commit `1c05fce`, adds `ProfileSpec.structural` and `MateSpec.bond`; v3 = W0, commit `2f5f5ce`, adds `ProfileSpec.needsMate`)
 function validateSocketTable(table: SocketTable): Result<SocketTable, readonly ValidationIssue[]>;
 function turnOf(tangent: Vec3): Turn | undefined;
 function socketMismatches(table: SocketTable, a: SocketDefinition, b: SocketDefinition): readonly SocketMismatch[];

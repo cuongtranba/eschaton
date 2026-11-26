@@ -1,6 +1,6 @@
-# Architecture overview (Phase 0, extended in Phase 1)
+# Architecture overview (Phase 0, extended in Phases 1 and 2)
 
-This describes the code as it is at the end of Phase 0, plus the Phase 1 runtime package `@eschaton/world`, and compares it with the target architecture in [master plan §8](../master-plan.md). The plan's diagram shows runtime data flow, not imports; the diagram below shows both for the part that exists.
+This describes the code as it is on `main` after Phase 2 (`d673f84`): the Phase 0 foldon library, the Phase 1 runtime package `@eschaton/world` and the Phase 2 generation package `@eschaton/wave`. Phase 3 (PR #4) adds `@eschaton/genesis` and its Studio worker (rows and the Genesis flow below); the dependency graph and import table are as of `d673f84` and do not show genesis, whose import rules are the `pureGenesis` area in `eslint.config.js` (ADR 0017). It compares it with the target architecture in [master plan §8](../master-plan.md). The plan's diagram shows runtime data flow, not imports; the diagram below shows both for the part that exists.
 
 ## What exists
 
@@ -18,11 +18,11 @@ Seven projects. The first five are product code.
 
 ## Module table: now versus §8 target
 
-| §8 module | Phase 0 status | Where it lives | Notes |
+| §8 module | Status | Where it lives | Notes |
 |---|---|---|---|
 | contracts | **Merged into foldon** | `packages/foldon/src/{ids,result,issues,vec}.ts` | Branded ids, `Result<T,E>`, `ValidationIssue`. No commands or transactions yet. ([ADR 0001](../decisions/0001-package-layout.md)) |
 | foldon | **Exists** | `packages/foldon/src/` | Catalog, geometry recipes, assembly validation, canonical hashing, and (Phase 1 M3) the versioned socket table with the directional matcher `socketMismatches` ([ADR 0012](../decisions/0012-directional-sockets.md)). Owns definitions; does not own placement in a world. |
-| generation | **Experiment only** | `experiments/wfc-placement` | 2D throwaway; the Phase 2 solver will be new code. |
+| generation | **Exists (Phase 2)** | `packages/wave/src/` (and `experiments/wfc-placement`, the 2D throwaway) | Placement-based 3D WFC solver, region glue and job host; the Studio runs it in a Web Worker. Holds no world state ([ADR 0015](../decisions/0015-wave-solver.md), [ADR 0016](../decisions/0016-region-proposals.md)). |
 | simulation | **Absent** | none | Component *data* exists on definitions; no system reads it ([ADR 0007](../decisions/0007-component-data-and-system-order.md)). |
 | world | **Exists (Phase 1)** | `packages/world/src/` | Immutable `WorldState`, `applyPatch`, revisions and replay; no clock (Phase 4). The Studio's World mode holds one `WorldSession` and writes only through `applyPatch`/`runSystem`. Owner decision D4 approved the new package (ADR 0001 and ADR 0011 amendments). |
 | renderer | **Inside the Studio** | `apps/studio/src/renderer/` | Adapter from `ViewModel` to three.js; the only code that imports `three`. ([ADR 0005](../decisions/0005-renderer-webgpu-tsl-webgl2-fallback.md)) |
@@ -32,21 +32,27 @@ Seven projects. The first five are product code.
 
 ## Dependency direction
 
-The allowed import graph is enforced by ESLint (`eslint.config.js`, `no-restricted-imports` and `no-restricted-syntax`) and proved by `tools/architecture`, which lints virtual files against the real config and asserts each rule rejects a violating import and accepts the allowed one. Arrows point from importer to imported.
+The allowed import graph is enforced by ESLint (`eslint.config.js`: `no-restricted-imports` per directory area, plus `no-restricted-syntax` for class `extends`) and exercised by `tools/architecture` (`tools/architecture/test/architecture.test.ts`), which lints virtual probe files against the real config and asserts that a violating import is rejected and an allowed one accepted. The table below is read from `eslint.config.js` (`importAreas`, lines 109–122, and `importBoundaryConfigs`) as of `main` @ `d673f84`. Arrows point from importer to imported.
 
 ```mermaid
 flowchart TD
   F["@eschaton/foldon (pure domain)"]
   W["@eschaton/world (pure runtime state)"]
+  V["@eschaton/wave (pure generation)"]
+  SOL["wave/src/solver (solver core)"]
   subgraph STUDIO["apps/studio/src"]
     UI["ui, App, main (React)"]
     R["renderer (three)"]
     L["lab (pure state and view-model)"]
+    WK["worker (solver Worker host)"]
   end
   X["experiments/*, benchmarks, tools/*"]
   UI --> R
   UI --> L
+  UI --> WK
   R --> L
+  WK --> V
+  L --> V
   UI --> F
   R --> F
   L --> F
@@ -54,29 +60,40 @@ flowchart TD
   UI --> W
   X --> F
   W --> F
+  V --> W
+  V --> F
+  SOL --> F
   F -. "never" .-> W
+  F -. "never" .-> V
+  W -. "never" .-> V
+  SOL -. "never" .-> W
   X -. "never" .-> STUDIO
   F -. "never" .-> STUDIO
   F -. "never" .-> X
 ```
 
-`foldon` is the bottom of the graph: it may not import any other `@eschaton/*` package. This is enforced before Phase 1 adds `@eschaton/world` (which will import `foldon`), so the reverse import, which would create a cycle, can never land ([ADR 0001](../decisions/0001-package-layout.md) amendment).
+The graph shows the intended direction. Only the "never" edges and the per-area restrictions in the table are lint rules; a solid arrow is allowed, not required (for example nothing lints that `ui` may import `worker`).
 
-| Importer | May import | Must not import |
+| Area (`eslint.config.js` `dir`) | May import | Must not import |
 |---|---|---|
-| `packages/foldon` | its own modules | `three`, `react`, `react-dom`, Node built-ins (bare or `node:`), **any other workspace package** (`@eschaton/*` except itself), any app, experiment, tool or benchmark package |
-| `packages/world` | its own modules, `@eschaton/foldon` entry | `three`, `react`, `react-dom`, Node built-ins, any other workspace package, any app |
-| `apps/studio/src/lab` | `@eschaton/foldon` and `@eschaton/world` entries | `three`, `react`, `react-dom`, `renderer`, `ui`, `App`, `main` |
-| `apps/studio/src/renderer` | `three`, `lab`, `@eschaton/foldon` entry | `react`, `react-dom`, `ui`, `App`, `main` |
-| `apps/studio/src/ui`, `App`, `main` | `react`, `lab`, `renderer`, `@eschaton/foldon` and `@eschaton/world` entries | `three` |
-| `experiments/**`, `benchmarks/**`, `tools/**` | workspace package entry points | any app, deep paths |
-| every workspace package and app | other packages only through the `exports` entry point | `@eschaton/*/<subpath>`, relative paths into `apps/`, `packages/`, `experiments/`, `benchmarks/`, `tools/` |
+| `packages/foldon` | its own modules, workspace packages through their entry point | `three`, `react`, `react-dom`, Node built-ins (bare or `node:`), **any other `@eschaton/*` package** (the bottom of the graph, [ADR 0001](../decisions/0001-package-layout.md)), any app, experiment, tool or benchmark package |
+| `packages/world` | its own modules, `@eschaton/foldon` entry | `three`, `react`, `react-dom`, Node built-ins, any `@eschaton/*` package except `foldon` (so not `wave`), any app, experiment, tool or benchmark package |
+| `packages/wave` | its own modules, `@eschaton/foldon` and `@eschaton/world` entries ([ADR 0015](../decisions/0015-wave-solver.md)) | `three`, `react`, `react-dom`, Node built-ins, any other `@eschaton/*` package, any app, experiment, tool or benchmark package |
+| `packages/wave/src/solver` (the solver core) | its own modules (`./…`), `@eschaton/foldon` entry | everything `packages/wave` forbids, plus `@eschaton/world` and any `../…` relative import other than `../solver` and `../solver/*` (so not the region glue `region.ts` nor the job host `host.ts`) |
+| `apps/studio` (all of it) | workspace packages through their entry points | `three` (re-allowed only in `renderer`), `@eschaton/exp-*` and tool packages, deep paths |
+| `apps/studio/src/renderer` | `three`, `lab`, package entry points | `react`, `react-dom`, `ui`, `App`, `main` |
+| `apps/studio/src/lab` | package entry points | `three`, `react`, `react-dom`, `ui`, `App`, `main`, `renderer` |
+| `apps/studio/src/worker` | package entry points (including `@eschaton/wave`), `lab` | `three`, `react`, `react-dom`, `ui`, `App`, `main`, `renderer` |
+| `apps/studio/src/ui`, `App`, `main` | `react`, `lab`, `renderer`, `worker`, package entry points | `three` |
+| `experiments`, `benchmarks`, `tools` | workspace package entry points | any app, deep paths |
+| every area above | other workspace packages only through the `exports` entry point | `@eschaton/*/<subpath>`, relative paths into `apps/`, `packages/`, `experiments/`, `benchmarks/`, `tools/` |
 
-- **Composition over inheritance:** class `extends` is a lint error in every first-party `.ts`/`.tsx` file. There are no exceptions today. A third-party adapter that genuinely has to subclass would get a dedicated config block for that file in `eslint.config.js` with a comment naming the dependency; interface `extends` is always allowed.
-- **Tests:** `*.test.ts` files additionally forbid relative imports and `vi`, so behavioral tests reach code only through the package entry point (`tools/architecture` is the deliberate exception that inspects source by design).
+- **Packages never import apps, experiments, tools or benchmarks.** The list of names to forbid is read from each `package.json` under `apps/`, `experiments/`, `tools/` and `benchmarks/` when ESLint loads the config, so a new workspace package is covered without editing the config. A new layer inside the Studio needs a new entry in `importAreas`.
+- **Composition over inheritance:** class `extends` is a lint error (`no-restricted-syntax`) in every first-party `.ts`/`.tsx` file. There are no exceptions today. A third-party adapter that genuinely has to subclass would get a dedicated config block for that file in `eslint.config.js` with a comment naming the dependency; interface `extends` is always allowed.
+- **Tests:** every `*.test.ts` file additionally forbids relative `./` and `../` imports and the named import `vi` from `vitest`, so behavioral tests reach code only through the package entry point. This applies in every area, including `tools/architecture`, whose test imports only `vitest`, `eslint`, `typescript-eslint` and `node:` modules and lints virtual probe files.
 - **Current direction:** `renderer` imports lab values (`look`, `palette`) and types; `ui` and `App.tsx` import `renderer/labRenderer` for `RendererStats` and the renderer factory. No import runs the other way.
-- **Limitations:** dynamic `import()` and `require` are not covered; cycles inside one folder are not detected (there is no dependency-cruiser gate); new workspace packages are picked up automatically for the "never import apps/experiments/tools" rules because the config reads workspace package names, but a new layer inside the Studio needs a new entry in `importAreas`.
-- Tests of `@eschaton/foldon` import only its entry point. The Studio is covered by Playwright specs, not unit tests.
+- **Not enforced by lint:** that `new Worker(…)` appears only in `apps/studio/src/worker` (today it appears only in `worker/client.ts`; no rule would catch a second site); that the solver worker file imports nothing but the wave entry point (the rule only bars `three`, `react`, `ui`, `App`, `main` and `renderer`); dynamic `import()` and `require`; cycles inside one folder (there is no dependency-cruiser gate).
+- Tests of `@eschaton/foldon`, `@eschaton/world` and `@eschaton/wave` import only their own entry points. The Studio is covered by Playwright specs, not unit tests.
 
 ## Runtime data flow
 
@@ -152,7 +169,7 @@ Solid arrows are data or calls that cross a module boundary. The dotted arrow is
 - The renderer adapter takes whole batches, not patches. A patch protocol (§8 "Snapshot and patch") is not designed.
 - The view-model builder in `lab/scene.ts` re-poses every definition on every state change that affects pose; it is cached only for the reference composition (per seed).
 - Composition generators live in the Studio, so they are not reachable from the headless test seam ([ADR 0001](../decisions/0001-package-layout.md)).
-- No Web Worker exists; all computation runs on the main thread.
+- Since Phase 2 the Wave solver runs in a Web Worker (`apps/studio/src/worker`, [ADR 0015](../decisions/0015-wave-solver.md)); everything else, including all world commits, still runs on the main thread.
 
 ## Test and measurement seams
 

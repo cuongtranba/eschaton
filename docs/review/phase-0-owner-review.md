@@ -18,7 +18,9 @@ The owner gave these decisions in writing on 2026-11-25 ("OWNER AUTHORIZATION �
 | D6 | **Conditionally closes Phase 0**, only when the amendments, documentation sync, required tests and CI are green at the exact final Phase 0 SHA. | Evidence: [`../phase-0-exit.md`](../phase-0-exit.md) §9 and the PR #1 description. If anything is red or pending, Phase 0 is not passed and Phase 1 does not start. |
 | D7 | **Authorizes Phase 1 milestones M0–M9** after D6's conditions hold, without a further general go/no-go. | Phase 1 exit approval stays with the owner. No Phase 2, no final visual approval, and no merge of any PR without separate explicit authorization. |
 
-## 1. Hands-on review (local; no public tunnel)
+## 1. Hands-on review (local; no public tunnel) — as presented, 2026-11-24
+
+Historical: the `phase-0` worktree below is the branch as it was at presentation. To run the current Studio, use the instructions in [`../testing/webgpu-manual-test.md`](../testing/webgpu-manual-test.md) ("Run the Studio"), which start from `origin/main`.
 
 Run in WSL, then open the URL in Windows Chrome (WSL2 forwards `localhost`, so nothing is exposed publicly):
 
@@ -84,9 +86,9 @@ Some of these are composition (2–7), some are the ink strategy (1, 2, 8; ADR 0
 | `../screenshots/p0.5-compare-{flat,quantized,hatching,full}.png` | Same camera and light, techniques added one at a time |
 | `../screenshots/p0.5-orbit-stability-{a,b}.png` | Two nearby orbit angles for a hatching-stability check by eye |
 
-## 4. ADRs awaiting your decision
+## 4. ADRs as presented before the owner's decisions of 2026-11-25 (originally "ADRs awaiting your decision")
 
-All are **Proposed**. 0001–0009 describe what the Phase 0 code already does; 0010–0013 are Phase 1 designs (no code).
+Historical: at presentation (2026-11-24) all were **Proposed**; 0001–0009 described what the Phase 0 code already did and 0010–0013 were Phase 1 designs (no code). The owner's decisions D3 and D4 (§0) have since been recorded; the current status of each ADR is its own Status line and the [ADR index](../decisions/README.md). The questions below are kept as presented.
 
 | ADR | Proposed decision (one line) | Question for you |
 |---|---|---|
@@ -104,7 +106,9 @@ All are **Proposed**. 0001–0009 describe what the Phase 0 code already does; 0
 | [0012](../decisions/0012-directional-sockets.md) | Phase 1: orientation-aware sockets | See the ADR's approval questions |
 | [0013](../decisions/0013-logical-vs-rendered-geometry.md) | Phase 1: one authoritative logical model, bounded decorative offsets, separate backdrop | See the ADR's approval questions |
 
-## 5. Decisions needed from you
+## 5. Decisions as presented before the owner's decisions of 2026-11-25 (originally "Decisions needed from you")
+
+Historical: the owner answered D1–D7 on 2026-11-25; the answers are in §0. The options and agent recommendations below are kept as presented and are not the current state.
 
 - **D1 Visual criterion:** choose one:
   - (a) **Accept the proposed narrower Phase 0 visual criterion.** The reference scene counts as a look-development prototype, not final art and not evidence of generation. Phase 0 must show V1–V5: shared primitives read as folded paper, valid assemblies, visible folding, a basic ink/paper language, and documented limitations. Full fidelity is judged at the Genesis, Atmosphere and The Last District gates. See [`../phase-0-exit.md`](../phase-0-exit.md) §1a.

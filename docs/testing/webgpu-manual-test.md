@@ -1,6 +1,8 @@
 # Manual test: Studio on a physical WebGPU GPU (Windows Chrome, RTX 5070)
 
-- Status: **PENDING** — not run. Nothing in this repository has ever exercised the WebGPU backend on a physical GPU. The owner waived this test for the Phase 0 gate only (D5, 2026-11-25) and deferred a real-GPU smoke test to the start of Phase 1. The waiver is not a verification.
+- Status, by machine (as of `main` @ `d673f84`, 2026-11-25):
+  - **Apple M5 Pro (Metal), macOS Chrome 158 — physical-GPU run REPORTED.** Checks C1–C4 were automated on 2026-11-25 and reported as passing; C5 and C6 were not assessed. Results, provenance and caveats: [Start of Phase 1: automated smoke test on a different physical GPU](#start-of-phase-1-automated-smoke-test-on-a-different-physical-gpu-2026-11-25). Artifacts: `docs/screenshots/p1-webgpu-m5pro-*.png` (reference, reference on WebGL2, World mode, rebuild study) and, for Phase 2, `docs/screenshots/p2-webgpu-m5pro-wave.png`. The run was automated with Playwright, not watched by a human, and on hardware that is not the owner's target machine; it is not an owner verification of the RTX 5070.
+  - **Owner's Windows 11 / RTX 5070, Windows Chrome (the target) — NOT PERFORMED, still PENDING.** No result exists for this machine. The owner waived this test for the Phase 0 gate only (D5, 2026-11-25) and deferred a real-GPU smoke test to the start of Phase 1; the M5 Pro run is that smoke test on another GPU. The waiver is not a verification of the RTX 5070.
 - Owner: the repository owner (Windows 11, NVIDIA GeForce RTX 5070).
 - Related: [ADR 0005](../decisions/0005-renderer-webgpu-tsl-webgl2-fallback.md), capability matrix in its "Capability evidence" section.
 
@@ -20,15 +22,18 @@ The development machine is WSL2 on a Ryzen 7 7800X3D. `/dev/dxg` exists but no V
 In WSL2:
 
 ```bash
-cd /home/cuong/Kanna/eschaton/.worktrees/phase-0
+git -C /home/cuong/Kanna/eschaton fetch origin
+git -C /home/cuong/Kanna/eschaton worktree add --detach .worktrees/studio-main origin/main
+cd /home/cuong/Kanna/eschaton/.worktrees/studio-main
+pnpm install --frozen-lockfile
 STUDIO_PORT=5183 pnpm dev
 ```
 
-Open `http://localhost:5183/` in **Windows** Chrome. WSL2 forwards `localhost`, so no tunnel is needed. (If the page does not load, try `http://127.0.0.1:5183/`; do not expose the dev server publicly.)
+This runs the current `main`. (If `.worktrees/studio-main` already exists, `cd` into it, run `git fetch origin && git checkout --detach origin/main`, then `pnpm install --frozen-lockfile`.) The `phase-0` worktree is a historical branch and is not the current Studio. Open `http://localhost:5183/` in **Windows** Chrome. WSL2 forwards `localhost`, so no tunnel is needed. (If the page does not load, try `http://127.0.0.1:5183/`; do not expose the dev server publicly.)
 
 ## Checks
 
-Record every result in the template below. Take screenshots with the browser's own capture or Windows Snipping Tool at a 1440×860-ish viewport and save them as `docs/screenshots/p0-webgpu-rtx5070-<name>.png` (the names are given per check). Windows paths to the worktree are reachable as `\\wsl$\<distro>\home\cuong\Kanna\eschaton\.worktrees\phase-0\docs\screenshots\`.
+Record every result in the template below. Take screenshots with the browser's own capture or Windows Snipping Tool at a 1440×860-ish viewport and save them as `docs/screenshots/p0-webgpu-rtx5070-<name>.png` (the names are given per check). Windows paths to the worktree are reachable as `\\wsl$\<distro>\home\cuong\Kanna\eschaton\.worktrees\studio-main\docs\screenshots\`.
 
 ### C1. Backend and GPU readout (default URL, no flags)
 
@@ -83,7 +88,7 @@ In the default (WebGPU) URL, orbit slightly (drag a few degrees, or use the arro
 
 ## Results template
 
-Copy this table into a new section at the bottom of this file (or a PR comment) with the date of the run. Leave **Status** as PENDING until every row is filled.
+Copy this table into a new section at the bottom of this file (or a PR comment) with the date of the run. The RTX 5070 status stays PENDING until every row is filled.
 
 | Item | Value |
 |---|---|
@@ -120,7 +125,8 @@ Owner decision D5 deferred a real-GPU smoke test to the start of Phase 1. The ow
 | Date | 2026-11-25 |
 | Machine | Apple M5 Pro (Metal 4), macOS 26.5.1 |
 | Browser | Google Chrome 158.0.8127.37 (system install), new headless mode, launched by Playwright 1.65.1 with `channel: "chrome"` |
-| Studio commit | `5b2a995` (final Phase 0 head; the Studio is unchanged at the start of Phase 1) |
+| Studio commit | **Not recorded by the run; the measured SHA cannot be proven.** The run was documented in `072db74` (2026-11-25 11:25 +0700), whose parent is `5b2a995` (final Phase 0 head, 11:19 +0700). `git diff 5b2a995 072db74 -- apps packages tools benchmarks package.json pnpm-lock.yaml` is empty, so the Studio and package source is byte-identical at both and either SHA describes the same code. The earlier text here cited `5b2a995`; `docs/phase-1-exit.md` cites `072db74` (the commit that recorded the run). Neither is a recorded measurement SHA. |
+| Later artifacts from the same machine | `p1-webgpu-m5pro-world.png` and `p1-webgpu-m5pro-rebuild.png` were added in `c5798e6` (Phase 1 M9), and `p2-webgpu-m5pro-wave.png` in `a5746f2` (Phase 2). Each runs the Studio of that phase, not of `5b2a995`; the SHA each run used is likewise not recorded |
 | Adapter tooltip (default URL) | `vendor=apple architecture=metal-3 device=- description=- isFallbackAdapter=false; … source=webgpu-device-adapter-info` |
 | Backend / GPU / class (default URL) | `WebGPU` / `apple metal-3` / `physical` |
 | Backend / GPU / class (`?forceWebGL=1`) | `WebGL2` / `ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)` / `physical` |

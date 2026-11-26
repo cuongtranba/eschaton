@@ -1,7 +1,7 @@
 # Phase 2 exit report: Wave
 
 - Phase: **2 — Wave** (master plan v1.1 §11, amendment 1; plan in [`plans/phase-2-wave.md`](plans/phase-2-wave.md))
-- Branch / PR: `phase-2`, PR #3 (draft, base `main` @ `940a50b`; not merged)
+- Branch / PR: `phase-2`, PR #3. Written as "draft, base `main` @ `940a50b`; not merged"; since merged into `main` with merge commit `d673f84` (parents `940a50b` and `a5746f2`; the tree of `a5746f2` equals the tree of `d673f84`)
 - Date: 2026-11-25
 - Authorization: owner decision R7 ([`review/phase-1-owner-review.md`](review/phase-1-owner-review.md))
 - Status: **CONDITIONALLY CLOSED by owner decision W6 (2026-11-25), subject to the evidence in §9.**
@@ -63,12 +63,12 @@ Other requirements of the authorization (R7):
 | Check | Result |
 |---|---|
 | `pnpm lint`, `pnpm typecheck`, `pnpm build` | exit 0 (local: macOS 26.5.1, Apple M5 Pro, Node v24.20.0, pnpm 10.33.4) |
-| `pnpm test` | foldon 49, architecture 64, world 60, wave 23, WFC experiment 13: **209 passed** |
+| `pnpm test` | foldon 49, architecture 64, world 60, wave 23, WFC experiment 13: **209 passed** (an intermediate local measurement from before the W4/W5 review fixes; the measured commit is not recorded here; superseded by the closure counts in §9.5, which total 228) |
 | `pnpm e2e` | **31 passed** (26 earlier + 5 Wave, real worker) |
 | Cross-engine golden digest (`pnpm --filter @eschaton/studio engines`, local only) | Chromium 159, Firefox 159 and WebKit 27.2: 3 passed, same digest as Node |
 | GitHub Actions `CI` | Run on the final head: see the PR #3 description (a commit cannot contain its own CI result) |
 
-Test totals: 209 unit + 31 e2e = **240**.
+Test totals at that intermediate measurement: 209 unit + 31 e2e = **240**. Closure totals are in §9.5.
 
 Honest notes on local runs:
 - Another project's test suite was running on this Mac for part of the session (load average up to about 55). Under that load the parallel e2e run failed on up to nine Phase 0 lab tests through timeouts; the Wave tests passed in the same run. On a quieter machine all 31 passed, and CI runs them on clean runners. No test was weakened, skipped or retried away.
@@ -207,6 +207,8 @@ Same workload, baseline and optimised trees run back to back on the same machine
 
 ### 9.5 Tests, checks and GPU at closure
 
+Counts below are the local `pnpm test` / `pnpm e2e` / `engines` results at the Phase 2 closure head `a5746f2` (the PR #3 head; its tree is identical to `main` @ `d673f84`, the merge commit: `git diff a5746f2 d673f84` is empty). **Re-measured on `d673f84`, 2026-11-25** (orchestrator local run, `pnpm test` and `pnpm e2e`): foldon 49, tools/architecture 64, world 65, wave 37, WFC experiment 13 (228 unit tests) and Studio e2e 31 passed; the engines job was not re-run locally. GitHub Actions `CI` run [45577038193](https://github.com/cuongtranba/eschaton/actions/runs/45577038193) on `d673f84`: **success** (jobs "lint · typecheck · unit · build · e2e" and "solver determinism and worker transport · chromium · firefox · webkit").
+
 | Scope | Count |
 |---|---|
 | `@eschaton/foldon` | 49 |
@@ -218,6 +220,6 @@ Same workload, baseline and optimised trees run back to back on the same machine
 | Engines (3 browsers × 3) | 9 |
 | **Total** | **268** |
 
-- Local: lint, typecheck and build exit 0; 228 unit tests passed. e2e: all Wave specs passed; two long Phase 0 lab specs timed out locally under the other project's load, as they did on untouched trees earlier, and pass in CI. Nothing was weakened or skipped.
+- Local, at `a5746f2`: lint, typecheck and build exit 0; 228 unit tests passed (the sum of the table above, excluding e2e and engines). e2e: all Wave specs passed; two long Phase 0 lab specs timed out locally under the other project's load, as they did on untouched trees earlier, and pass in CI. Nothing was weakened or skipped.
 - **GPU:** Mac physical-GPU checks C1–C4 are from Phase 1. In addition, a Wave solve of 16×8×16 was run in installed Chrome 158 on this Mac's physical GPU: backend WebGPU, adapter `apple metal-3`, class `physical`, 1,068 instances, no shader errors (`screenshots/p2-webgpu-m5pro-wave.png`). **Still outstanding, not waived:** the Windows RTX 5070 run and the human checks C5 (hatching stability) and C6 (frame feel).
 

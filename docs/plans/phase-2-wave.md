@@ -11,7 +11,7 @@
 |---|---|
 | PR #1 (`phase-0` → `main`) | Exact head `5b2a995`; both checks green; merged with a **merge commit** `b0ff485`, pinned to that head. `main`'s tree equalled the `phase-0` tree |
 | PR #2 retargeted `phase-0` → `main` | Same 25 commits and 99 changed files against either base; no conflicts; the merge result tree equalled the `phase-1` tree |
-| PR #2 checks on the new base | Exact head `07b89c0`: CI run 45559048901 green (188 tests), plus run 45558353537 on the former base |
+| PR #2 checks on the new base | Exact head `07b89c0`: CI run 45559048901 green (188 tests = 162 unit + 26 e2e; Phase 1 numbers, see `phase-1-exit.md` §8), plus run 45558353537 on the former base |
 | PR #2 merged | **Merge commit** `940a50b`, pinned to `07b89c0`. `main`'s tree equals the `phase-1` tree; `5b2a995` and `07b89c0` are ancestors of `main` |
 | Branches | `phase-0` and `phase-1` are kept. Nothing was squashed, rebased or force-pushed |
 
