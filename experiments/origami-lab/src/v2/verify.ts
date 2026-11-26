@@ -1,6 +1,6 @@
 import { validateFoldon, type Vec3 } from "@eschaton/foldon";
 import { poseCompiled, posePieces, seamGap, type Compiled } from "./compile";
-import { boxGap, boxOf, dist, dot, normal, panelContact, panelDistance, panelQuality, sectorGap, sub, type Contact } from "./geom";
+import { boxGap, boxOf, dihedral, dist, dot, normal, panelContact, panelDistance, panelQuality, sectorGap, sub, type Contact } from "./geom";
 
 /** Hard numeric limits (geometry-quality-gates.md GEO-1). Lengths are in cells. */
 export const LIMITS = {
@@ -126,11 +126,29 @@ function sweep(c: Compiled, name: string, faces: readonly number[], poseAt: Pose
   const apexOf = (a: number, b: number): Readonly<{ apex?: Readonly<{ v: number; spin: number }> }> => {
     const [va, vb] = [c.design.faces[a]?.v ?? [], c.design.faces[b]?.v ?? []];
     const shared = va.filter((x) => vb.includes(x));
-    const v = shared[0];
-    if (shared.length !== 1 || v === undefined) return {};
     const moving = relative(a, b).filter((st) => st.rate !== 0);
-    if (!moving.every((st) => c.links.get(st.hinge)?.edge.includes(v) === true)) return {};
+    const v = shared.find((x) => moving.every((st) => c.links.get(st.hinge)?.edge.includes(x) === true));
+    if (v === undefined) return {};
     return { apex: { v, spin: moving.reduce((s2, st) => s2 + Math.abs(st.rate), 0) } };
+  };
+  /**
+   * Two convex panels that share a full edge and whose only relative motion is rotation about that edge meet only on it
+   * unless their dihedral reaches ±180°; the dihedral is affine in u, so its two end values decide.
+   */
+  const coHinged = (a: number, b: number): boolean => {
+    const [fa, fb] = [c.design.faces[a], c.design.faces[b]];
+    if (fa === undefined || fb === undefined || quality.get(a)?.convex !== true || quality.get(b)?.convex !== true) return false;
+    const slot = fa.v.findIndex((x, k) => {
+      const y = fa.v[(k + 1) % fa.v.length] ?? x;
+      return fb.v.includes(x) && fb.v.includes(y);
+    });
+    if (slot < 0) return false;
+    const edge = [fa.v[slot] ?? 0, fa.v[(slot + 1) % fa.v.length] ?? 0];
+    const moving = relative(a, b).filter((st) => st.rate !== 0);
+    if (!moving.every((st) => edge.every((x) => c.links.get(st.hinge)?.edge.includes(x) === true))) return false;
+    const angleAt = (u: number): number => dihedral(at(u).get(a) ?? [], slot, (slot + 1) % fa.v.length, at(u).get(b) ?? []);
+    const [t0, t1] = [angleAt(0), angleAt(1)];
+    return Math.max(Math.abs(t0), Math.abs(t1)) < Math.PI - 1e-6 && Math.abs(t1 - t0) < Math.PI;
   };
   const corner = (f: number, v: number, vs: readonly Vec3[]): readonly [Vec3, Vec3, Vec3] => {
     const ids = c.design.faces[f]?.v ?? [];
@@ -152,6 +170,10 @@ function sweep(c: Compiled, name: string, faces: readonly number[], poseAt: Pose
           status.set(key, "analytic");
           continue;
         }
+      }
+      if (coHinged(a, b)) {
+        status.set(key, "analytic");
+        continue;
       }
       const bound = relativeBound(steps.get(a) ?? [], steps.get(b) ?? []);
       const endpoint = exact(a, b, 0) ?? exact(a, b, 1);

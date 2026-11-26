@@ -6,7 +6,8 @@ const port = Number(process.env.ORIGAMI_LAB_PORT ?? 5182);
 function build(): string {
   try {
     const run = (command: string): string => execSync(command, { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim();
-    return `${run("git rev-parse --abbrev-ref HEAD")} @ ${run("git rev-parse --short HEAD")}`;
+    const dirty = run("git status --porcelain").length > 0 ? " +uncommitted changes" : "";
+    return `${run("git rev-parse --abbrev-ref HEAD")} @ ${run("git rev-parse --short HEAD")}${dirty} · served ${new Date().toISOString()}`;
   } catch {
     return "git info unavailable";
   }

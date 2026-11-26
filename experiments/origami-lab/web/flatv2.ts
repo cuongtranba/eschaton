@@ -30,7 +30,7 @@ export function flatNetSvg(c: Compiled): string {
       });
     });
     groups.push(`<g>${faces}${lines.join("")}<text x="${cursor.toFixed(2)}" y="0.22" font-size="0.18" fill="#333">${piece.module} p${piece.index} · ${piece.faces.length} panels</text></g>`);
-    cursor += x1 - x0 + 0.5;
+    cursor += Math.max(x1 - x0, 1.6) + 0.5;
     height = Math.max(height, y1 - y0 + 0.6);
   }
   return `<div>Flat nets: ${c.pieces.length} separate sheets (modular papercraft, not one sheet). Lines: mountain red, valley blue, join yellow dashed, glue seam green, joint orange, cut boundary black.</div><svg xmlns="http://www.w3.org/2000/svg" viewBox="-0.2 0 ${(cursor + 0.2).toFixed(2)} ${height.toFixed(2)}">${groups.join("")}</svg>`;

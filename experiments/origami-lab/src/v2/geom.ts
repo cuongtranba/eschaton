@@ -159,7 +159,21 @@ function to2d(vs: readonly Vec3[], o: Vec3, x: Vec3, y: Vec3): readonly Pt2[] {
   return vs.map((v) => [dot(sub(v, o), x), dot(sub(v, o), y)]);
 }
 
-export type Contact = Readonly<{ kind: "crossing" | "coplanar-overlap"; at: Vec3; length: number }>;
+/**
+ * `crossing`: the panels interpenetrate (the intersection runs through the interior of both).
+ * `edge-touch`: an edge of one panel lies on the other panel without a shared boundary (resting or T-contact, no penetration).
+ * `coplanar-overlap`: coplanar panels overlap with positive area.
+ */
+export type Contact = Readonly<{ kind: "crossing" | "edge-touch" | "coplanar-overlap"; at: Vec3; length: number }>;
+
+function onBoundary(poly: readonly Vec3[], x: Vec3, tol: number): boolean {
+  return poly.some((p, i) => {
+    const q = at(poly, i + 1);
+    const e = sub(q, p);
+    const u = Math.min(1, Math.max(0, dot(sub(x, p), e) / dot(e, e)));
+    return dist(x, add(p, scale(e, u))) <= tol;
+  });
+}
 
 /**
  * Exact intersection of two convex planar panels, ignoring contact on their shared boundary at this pose.
@@ -209,9 +223,10 @@ export function panelContact(a: readonly Vec3[], b: readonly Vec3[], tol = 1e-7)
     return u >= -1e-9 && u <= 1 + 1e-9 && dist(x, add(s0, scale(e, u))) <= tol * 10;
   };
   if (onShared(p) && onShared(q) && onShared(lerp(p, q, 0.5))) return undefined;
-  if (length <= tol && shared.length === 0) return { kind: "crossing", at: p, length };
-  if (length <= tol) return undefined;
-  return { kind: "crossing", at: lerp(p, q, 0.5), length };
+  if (length <= tol && shared.length > 0) return undefined;
+  const mid = lerp(p, q, 0.5);
+  const touching = onBoundary(a, mid, tol * 10) || onBoundary(b, mid, tol * 10);
+  return { kind: touching ? "edge-touch" : "crossing", at: mid, length };
 }
 
 function segSeg(p1: Vec3, q1: Vec3, p2: Vec3, q2: Vec3): number {

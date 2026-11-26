@@ -1,9 +1,9 @@
 import type { Vec3 } from "@eschaton/foldon";
 import { expect, test } from "vitest";
 import {
-  BIRD_BOUNDS,
   CROW,
   birdDesign,
+  birdExtreme,
   birdMetrics,
   birdParams,
   buildObject,
@@ -19,7 +19,6 @@ import {
   silhouette,
   triangleFromSides,
   verifyCompiled,
-  type BirdParams,
   type Compiled,
   type Design,
 } from "@eschaton/exp-origami-lab";
@@ -30,12 +29,6 @@ const compiled = (design: Design): Compiled => {
   return built.value;
 };
 
-const extreme = (side: 0 | 1): BirdParams => ({
-  ...CROW,
-  ...Object.fromEntries(Object.entries(BIRD_BOUNDS).map(([k, range]) => [k, range[side]])),
-  fingers: side === 0 ? 0 : 5,
-  tailShape: side === 0 ? "forked" : "wedge",
-});
 
 /** Base floor, a flap swinging 160° about the floor's x = 0 edge, and a static post whose top plate the flap passes through only for phase ≈ 0.39–0.48 or 0.52–0.61. */
 function sweepFixture(): Design {
@@ -128,7 +121,7 @@ test("an articulated edge that the unfolder would have to cut is refused at comp
 });
 
 test("every bird variant (crow, seeds 1–8, both parameter extremes) compiles to valid Foldon pieces with no GEO-1 hard failure", () => {
-  const variants = [CROW, ...[1, 2, 3, 4, 5, 6, 7, 8].map(birdParams), extreme(0), extreme(1)];
+  const variants = [CROW, ...[1, 2, 3, 4, 5, 6, 7, 8].map(birdParams), birdExtreme(0), birdExtreme(1)];
   const verdicts = variants.map((p) => {
     const report = verifyCompiled(compiled(birdDesign(p)));
     return { verdict: geo1Verdict(report).verdict, invalid: report.definitions.invalid };

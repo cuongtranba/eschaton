@@ -72,7 +72,7 @@ export {
 } from "./checks";
 export { objectInspection, type CreaseInfo, type FoldonInfo, type ObjectInspection, type PanelInfo } from "./inspect";
 export { generate, objectNames, recipeFor, type GenerateError, type ObjectName } from "./generate";
-export { BIRD_BOUNDS, BIRD_LENGTH_CELLS, BIRD_VERSION, CROW, birdDesign, birdParams, quantizeBird, type BirdParams } from "./v2/bird";
+export { BIRD_BOUNDS, BIRD_LENGTH_CELLS, BIRD_VERSION, CROW, birdDesign, birdExtreme, birdParams, quantizeBird, type BirdParams } from "./v2/bird";
 export { createBuilder, type ArticulatedEdge, type Articulation as JointArticulation, type Builder, type Design, type DesignFace, type Facing, type ModuleJoint } from "./v2/design";
 export {
   compileDesign,

@@ -5,7 +5,7 @@
  * Headless Chromium (software WebGL); viewport 1600x1000; waits for the page's ready flag and a fixed number of frames.
  */
 import { chromium } from "@playwright/test";
-import { mkdirSync } from "node:fs";
+import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 const [base, out, ...shots] = process.argv.slice(2);
@@ -17,8 +17,14 @@ for (const shot of shots) {
   const at = shot.indexOf("=");
   const [name, search] = [shot.slice(0, at), shot.slice(at + 1)];
   await page.goto(`${base}/v2.html?${search}`);
-  await page.waitForSelector("body[data-ready='1']");
+  await page.waitForSelector("body[data-ready='1']", { timeout: 300_000 });
   await page.evaluate(() => new Promise<void>((resolve) => { let n = 0; const tick = (): void => { n += 1; if (n > 30) resolve(); else requestAnimationFrame(tick); }; requestAnimationFrame(tick); }));
+  if (name.endsWith(".json")) {
+    const text = await page.textContent("#evidence");
+    writeFileSync(join(out, name), `${text ?? ""}\n`);
+    console.log(join(out, name));
+    continue;
+  }
   const path = join(out, `${name}.png`);
   await page.screenshot({ path, fullPage: true });
   console.log(path);

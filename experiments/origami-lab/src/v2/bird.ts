@@ -71,6 +71,26 @@ export function quantizeBird(p: BirdParams): BirdParams {
   };
 }
 
+/** Both corners of the parameter box (bird-design-brief.md §9): every bound at its minimum (0) or maximum (1). */
+export function birdExtreme(side: 0 | 1): BirdParams {
+  const pickBound = (key: keyof typeof BIRD_BOUNDS): number => BIRD_BOUNDS[key][side];
+  return quantizeBird({
+    span: pickBound("span"),
+    chord: pickBound("chord"),
+    sweep: pickBound("sweep"),
+    fingers: side === 0 ? 0 : 5,
+    dihedralArm: pickBound("dihedralArm"),
+    dihedralHand: pickBound("dihedralHand"),
+    curl: pickBound("curl"),
+    tail: pickBound("tail"),
+    tailShape: side === 0 ? "forked" : "wedge",
+    tailSpread: pickBound("tailSpread"),
+    beak: pickBound("beak"),
+    head: pickBound("head"),
+    breast: pickBound("breast"),
+  });
+}
+
 /** Seeded parameters: every slot drawn inside its anatomical bound (bird-design-brief.md §9). */
 export function birdParams(seed: number): BirdParams {
   const rng = createRng(seed, 0x0b12d);
