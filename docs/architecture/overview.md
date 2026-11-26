@@ -1,10 +1,10 @@
-# Architecture overview (Phase 0, extended in Phases 1 and 2)
+# Architecture overview (Phases 0–3)
 
-This describes the code as it is on `main` after Phase 2 (`d673f84`): the Phase 0 foldon library, the Phase 1 runtime package `@eschaton/world` and the Phase 2 generation package `@eschaton/wave`. Phase 3 (PR #4) adds `@eschaton/genesis` and its Studio worker (rows and the Genesis flow below); the dependency graph and import table are as of `d673f84` and do not show genesis, whose import rules are the `pureGenesis` area in `eslint.config.js` (ADR 0017). It compares it with the target architecture in [master plan §8](../master-plan.md). The plan's diagram shows runtime data flow, not imports; the diagram below shows both for the part that exists.
+This describes the code as it is on `main` after Phase 3 (`870ef62`, PR #4 merged): the Phase 0 foldon library, the Phase 1 runtime package `@eschaton/world`, the Phase 2 generation package `@eschaton/wave` and the Phase 3 district generator `@eschaton/genesis`, with their two Studio workers. It compares the code with the target architecture in [master plan §8](../master-plan.md). Decisions and their rationale live in the ADRs; this page links to them and does not restate them. The Phase 3 gate is still open ([`../phase-3-exit.md`](../phase-3-exit.md)). The plan's diagram shows runtime data flow, not imports; the diagram below shows both for the part that exists.
 
 ## What exists
 
-Seven projects. The first five are product code.
+Eight workspace projects. The first five are product code.
 
 | Project | Package name | Role |
 |---|---|---|
@@ -15,6 +15,7 @@ Seven projects. The first five are product code.
 | `apps/studio` | `@eschaton/studio` | Vite + React 19 laboratory: lab state, view-model building, the reference-scene generators, the renderer adapter, UI panels, and (Phase 1 M7) World mode, which renders a `WorldState` from `@eschaton/world`. |
 | `experiments/wfc-placement` | `@eschaton/exp-wfc-placement` | Throwaway solver comparison. Nothing imports it. See [ADR 0004](../decisions/0004-multi-cell-encoding.md). |
 | `tools/architecture` | `@eschaton/architecture` | Architecture test: lints virtual files against the repository ESLint config to prove each dependency rule rejects a violation. |
+| `benchmarks` | `@eschaton/benchmarks` | Node benchmarks and profiles (`pnpm bench`, `profile:commit`, `profile:genesis`); recorded evidence lives in `benchmarks/phase-*/`. Nothing imports it. |
 
 ## Module table: now versus §8 target
 
@@ -22,9 +23,9 @@ Seven projects. The first five are product code.
 |---|---|---|---|
 | contracts | **Merged into foldon** | `packages/foldon/src/{ids,result,issues,vec}.ts` | Branded ids, `Result<T,E>`, `ValidationIssue`. No commands or transactions yet. ([ADR 0001](../decisions/0001-package-layout.md)) |
 | foldon | **Exists** | `packages/foldon/src/` | Catalog, geometry recipes, assembly validation, canonical hashing, and (Phase 1 M3) the versioned socket table with the directional matcher `socketMismatches` ([ADR 0012](../decisions/0012-directional-sockets.md)). Owns definitions; does not own placement in a world. |
-| generation | **Exists (Phase 2)** | `packages/wave/src/` (and `experiments/wfc-placement`, the 2D throwaway) | Placement-based 3D WFC solver, region glue and job host; the Studio runs it in a Web Worker. Holds no world state ([ADR 0015](../decisions/0015-wave-solver.md), [ADR 0016](../decisions/0016-region-proposals.md)). |
-| simulation | **Absent** | none | Component *data* exists on definitions; no system reads it ([ADR 0007](../decisions/0007-component-data-and-system-order.md)). |
-| world | **Exists (Phase 1)** | `packages/world/src/` | Immutable `WorldState`, `applyPatch`, revisions and replay; no clock (Phase 4). The Studio's World mode holds one `WorldSession` and writes only through `applyPatch`/`runSystem`. Owner decision D4 approved the new package (ADR 0001 and ADR 0011 amendments). |
+| generation | **Exists (Phases 2–3)** | `packages/wave/src/`, `packages/genesis/src/` (and `experiments/wfc-placement`, the 2D throwaway) | Wave: placement-based 3D WFC solver, region glue and job host ([ADR 0015](../decisions/0015-wave-solver.md), [ADR 0016](../decisions/0016-region-proposals.md)). Genesis: semantic plan, independent validators, district job, audit, settlement, continuation and job host ([ADR 0017](../decisions/0017-hierarchical-generation.md)). Each runs in its own Web Worker in the Studio. Neither holds world state. |
+| simulation | **One explicit system, no tick** | `packages/world/src/systems.ts` | `runSystem` and `windFold` (Phase 1) read the `foldable` and `wind-responsive` components on explicit invocation. Wind strength is the square root of the summed squares, scaled by a power of two outside [2^-500, 2^500], so it has the same bits on every engine and any finite wind is accepted (ADR 0017, wind disclosure; versioning is open as choice 9). There is no clock, scheduler or system order; those are Phase 4 ([ADR 0007](../decisions/0007-component-data-and-system-order.md)). |
+| world | **Exists (Phase 1, extended in Phases 2–3)** | `packages/world/src/` | Immutable `WorldState`, `applyPatch`, revisions and replay; region proposals (`readRegion`, `applyProposal`, `draftProposal`, `Proposal.depends`); no clock (Phase 4). The Studio's World mode holds one `WorldSession` and writes only through `applyPatch`/`runSystem`. Owner decision D4 approved the new package (ADR 0001 and ADR 0011 amendments). |
 | renderer | **Inside the Studio** | `apps/studio/src/renderer/` | Adapter from `ViewModel` to three.js; the only code that imports `three`. ([ADR 0005](../decisions/0005-renderer-webgpu-tsl-webgl2-fallback.md)) |
 | presets | **Absent** | none | The look palette and scene constants are code (`lab/look.ts`, `lab/palette.ts`, `lab/composition/`). |
 | studio | **Exists** | `apps/studio/src/{App,ui,lab}` | Sends commands to the reducers; never mutates domain definitions or world state. World mode: `lab/world/`. |
@@ -32,7 +33,7 @@ Seven projects. The first five are product code.
 
 ## Dependency direction
 
-The allowed import graph is enforced by ESLint (`eslint.config.js`: `no-restricted-imports` per directory area, plus `no-restricted-syntax` for class `extends`) and exercised by `tools/architecture` (`tools/architecture/test/architecture.test.ts`), which lints virtual probe files against the real config and asserts that a violating import is rejected and an allowed one accepted. The table below is read from `eslint.config.js` (`importAreas`, lines 109–122, and `importBoundaryConfigs`) as of `main` @ `d673f84`. Arrows point from importer to imported.
+The allowed import graph is enforced by ESLint (`eslint.config.js`: `no-restricted-imports` per directory area, plus `no-restricted-syntax` for class `extends`) and exercised by `tools/architecture` (`tools/architecture/test/architecture.test.ts`), which lints virtual probe files against the real config and asserts that a violating import is rejected and an allowed one accepted. The table below is read from `eslint.config.js` (`importAreas` and the purity rule sets `pureDomain`, `pureRuntime`, `pureGeneration`, `pureGenesis`, `solverCore`) as of `main` @ `870ef62`. Arrows point from importer to imported; the solid arrows are the imports that exist today.
 
 ```mermaid
 flowchart TD
@@ -40,35 +41,43 @@ flowchart TD
   W["@eschaton/world (pure runtime state)"]
   V["@eschaton/wave (pure generation)"]
   SOL["wave/src/solver (solver core)"]
+  G["@eschaton/genesis (pure district generation)"]
   subgraph STUDIO["apps/studio/src"]
     UI["ui, App, main (React)"]
     R["renderer (three)"]
     L["lab (pure state and view-model)"]
-    WK["worker (solver Worker host)"]
+    WK["worker (wave and genesis Worker hosts and clients)"]
   end
   X["experiments/*, benchmarks, tools/*"]
   UI --> R
   UI --> L
   UI --> WK
-  R --> L
-  WK --> V
-  L --> V
-  UI --> F
-  R --> F
-  L --> F
-  L --> W
+  UI --> G
   UI --> W
+  UI --> F
+  R --> L
+  R --> F
+  WK --> G
+  WK --> V
+  WK --> W
+  L --> G
+  L --> V
+  L --> W
+  L --> F
   X --> F
-  W --> F
+  G --> V
+  G --> W
+  G --> F
   V --> W
   V --> F
+  W --> F
   SOL --> F
   F -. "never" .-> W
-  F -. "never" .-> V
   W -. "never" .-> V
+  V -. "never" .-> G
+  W -. "never" .-> G
   SOL -. "never" .-> W
   X -. "never" .-> STUDIO
-  F -. "never" .-> STUDIO
   F -. "never" .-> X
 ```
 
@@ -77,13 +86,14 @@ The graph shows the intended direction. Only the "never" edges and the per-area 
 | Area (`eslint.config.js` `dir`) | May import | Must not import |
 |---|---|---|
 | `packages/foldon` | its own modules, workspace packages through their entry point | `three`, `react`, `react-dom`, Node built-ins (bare or `node:`), **any other `@eschaton/*` package** (the bottom of the graph, [ADR 0001](../decisions/0001-package-layout.md)), any app, experiment, tool or benchmark package |
-| `packages/world` | its own modules, `@eschaton/foldon` entry | `three`, `react`, `react-dom`, Node built-ins, any `@eschaton/*` package except `foldon` (so not `wave`), any app, experiment, tool or benchmark package |
-| `packages/wave` | its own modules, `@eschaton/foldon` and `@eschaton/world` entries ([ADR 0015](../decisions/0015-wave-solver.md)) | `three`, `react`, `react-dom`, Node built-ins, any other `@eschaton/*` package, any app, experiment, tool or benchmark package |
+| `packages/world` | its own modules, `@eschaton/foldon` entry | `three`, `react`, `react-dom`, Node built-ins, any `@eschaton/*` package except `foldon` (so not `wave` or `genesis`), any app, experiment, tool or benchmark package |
+| `packages/wave` | its own modules, `@eschaton/foldon` and `@eschaton/world` entries ([ADR 0015](../decisions/0015-wave-solver.md)) | `three`, `react`, `react-dom`, Node built-ins, any other `@eschaton/*` package (so not `genesis`), any app, experiment, tool or benchmark package |
 | `packages/wave/src/solver` (the solver core) | its own modules (`./…`), `@eschaton/foldon` entry | everything `packages/wave` forbids, plus `@eschaton/world` and any `../…` relative import other than `../solver` and `../solver/*` (so not the region glue `region.ts` nor the job host `host.ts`) |
+| `packages/genesis` | its own modules, `@eschaton/foldon`, `@eschaton/world` and `@eschaton/wave` entries ([ADR 0017](../decisions/0017-hierarchical-generation.md)) | `three`, `react`, `react-dom`, Node built-ins, any other `@eschaton/*` package, any app, experiment, tool or benchmark package |
 | `apps/studio` (all of it) | workspace packages through their entry points | `three` (re-allowed only in `renderer`), `@eschaton/exp-*` and tool packages, deep paths |
 | `apps/studio/src/renderer` | `three`, `lab`, package entry points | `react`, `react-dom`, `ui`, `App`, `main` |
 | `apps/studio/src/lab` | package entry points | `three`, `react`, `react-dom`, `ui`, `App`, `main`, `renderer` |
-| `apps/studio/src/worker` | package entry points (including `@eschaton/wave`), `lab` | `three`, `react`, `react-dom`, `ui`, `App`, `main`, `renderer` |
+| `apps/studio/src/worker` | package entry points (including `@eschaton/wave` and `@eschaton/genesis`), `lab` | `three`, `react`, `react-dom`, `ui`, `App`, `main`, `renderer` |
 | `apps/studio/src/ui`, `App`, `main` | `react`, `lab`, `renderer`, `worker`, package entry points | `three` |
 | `experiments`, `benchmarks`, `tools` | workspace package entry points | any app, deep paths |
 | every area above | other workspace packages only through the `exports` entry point | `@eschaton/*/<subpath>`, relative paths into `apps/`, `packages/`, `experiments/`, `benchmarks/`, `tools/` |
@@ -92,8 +102,8 @@ The graph shows the intended direction. Only the "never" edges and the per-area 
 - **Composition over inheritance:** class `extends` is a lint error (`no-restricted-syntax`) in every first-party `.ts`/`.tsx` file. There are no exceptions today. A third-party adapter that genuinely has to subclass would get a dedicated config block for that file in `eslint.config.js` with a comment naming the dependency; interface `extends` is always allowed.
 - **Tests:** every `*.test.ts` file additionally forbids relative `./` and `../` imports and the named import `vi` from `vitest`, so behavioral tests reach code only through the package entry point. This applies in every area, including `tools/architecture`, whose test imports only `vitest`, `eslint`, `typescript-eslint` and `node:` modules and lints virtual probe files.
 - **Current direction:** `renderer` imports lab values (`look`, `palette`) and types; `ui` and `App.tsx` import `renderer/labRenderer` for `RendererStats` and the renderer factory. No import runs the other way.
-- **Not enforced by lint:** that `new Worker(…)` appears only in `apps/studio/src/worker` (today it appears only in `worker/client.ts`; no rule would catch a second site); that the solver worker file imports nothing but the wave entry point (the rule only bars `three`, `react`, `ui`, `App`, `main` and `renderer`); dynamic `import()` and `require`; cycles inside one folder (there is no dependency-cruiser gate).
-- Tests of `@eschaton/foldon`, `@eschaton/world` and `@eschaton/wave` import only their own entry points. The Studio is covered by Playwright specs, not unit tests.
+- **Not enforced by lint (conventions):** that `new Worker(…)` appears only in `apps/studio/src/worker` (today it appears in `worker/client.ts` and `worker/genesisClient.ts`; no rule would catch a site elsewhere); that each worker file imports nothing but its package entry point (the rule only bars `three`, `react`, `ui`, `App`, `main` and `renderer`); that the genesis validators and audit share no code with the planner (a review convention, ADR 0017); dynamic `import()` and `require`; cycles inside one folder (there is no dependency-cruiser gate).
+- Tests of `@eschaton/foldon`, `@eschaton/world`, `@eschaton/wave` and `@eschaton/genesis` import only package entry points. The Studio is covered by Playwright specs, not unit tests.
 
 ## Runtime data flow
 
@@ -163,17 +173,19 @@ Solid arrows are data or calls that cross a module boundary. The dotted arrow is
    - The renderer is unchanged and holds no world state: it receives a new `layoutKey` whenever the revision, the offsets toggle or the selection changes.
    - The Phase 0 catalog view and the reference composition are untouched and labelled look-dev in the catalog panel.
 
-## Differences from the §8 target that matter for Phase 1
+## Differences from the §8 target
 
 - The authoritative world exists only in World mode. The catalog view and the reference composition still render definitions directly from `LabState` (look-dev).
 - The renderer adapter takes whole batches, not patches. A patch protocol (§8 "Snapshot and patch") is not designed.
 - The view-model builder in `lab/scene.ts` re-poses every definition on every state change that affects pose; it is cached only for the reference composition (per seed).
 - Composition generators live in the Studio, so they are not reachable from the headless test seam ([ADR 0001](../decisions/0001-package-layout.md)).
-- Since Phase 2 the Wave solver runs in a Web Worker (`apps/studio/src/worker`, [ADR 0015](../decisions/0015-wave-solver.md)); everything else, including all world commits, still runs on the main thread.
+- The Wave solver (Phase 2) and the Genesis district job (Phase 3) run in Web Workers (`apps/studio/src/worker`, [ADR 0015](../decisions/0015-wave-solver.md), [ADR 0017](../decisions/0017-hierarchical-generation.md)). Everything else still runs on the main thread, including every world commit, settlement and audit. That is the cost that grows with the world ([`../phase-3-exit.md`](../phase-3-exit.md) §5).
+- There is no clock, scheduler or simulation package yet (Phase 4, not authorized).
 
 ## Test and measurement seams
 
-- `packages/foldon/test` — behavioural tests through the entry point.
+- `packages/{foldon,world,wave,genesis}/test` — behavioural tests through the package entry points (lint-enforced).
+- `apps/studio/engines` — the CI engines job: solver golden digest, preset catalog fingerprint, a generated district's state hash and real-worker cancellation, on Chromium, Firefox and WebKit.
 - `apps/studio/e2e` — Playwright against the dev server (`pnpm e2e`), using `data-testid` hooks from the status bar and inspector.
 - `packages/foldon/bench` and `apps/studio/bench` — benchmarks ([`../../benchmarks/`](../../benchmarks/)). `?continuous=1` and `?stress=N` are benchmark-only URL flags read by `lab/flags.ts`.
 
@@ -200,21 +212,77 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-  UI["Genesis panel (ui)"] -- "genesisStart" --> SES["World session reducer (lab)"]
-  SES -- "request + base state" --> CLI["genesis client (src/worker)"]
-  CLI -- "catalog source, world snapshot, request" --> WRK["genesis.worker: createGenesisHost"]
-  WRK --> PLAN["planDistrict + planIssues"]
-  PLAN --> LOTS["per lot: prepareRegion, solve, draftProposal on a scratch world"]
-  LOTS -- "one proposal + plan + metrics" --> WRK
-  WRK -- "progress: plan preview, lots done" --> CLI
-  WRK -- "done: one outcome" --> CLI
-  CLI -- "genesisProgress / genesisDone" --> SES
-  SES -- "settleDistrict: re-validate, applyProposal once, audit" --> WLD["WorldState (@eschaton/world)"]
-  WLD --> VM["ViewModel"]
-  SES -- "plan map (semantic layer, not world state)" --> UI
+  subgraph MAIN["Main thread (owns the one authoritative WorldState)"]
+    UI["Genesis panel (ui)"] -- "genesisStart" --> SES["World session reducer (lab/world/session.ts)"]
+    SES -- "settleDistrict" --> SET["check it answers the request, re-validate plan, applyProposal once, audit candidate"]
+    SET -- "adopt only if clean" --> WLD["WorldState + commit log"]
+    WLD --> VM["ViewModel (derived)"]
+    VM --> REN["renderer"]
+    SES -- "plan map: semantic layer, not world state" --> UI
+  end
+  subgraph WORKER["genesis.worker (no world authority)"]
+    HOST["createGenesisHost: createCatalog + fingerprint check, parseSnapshot"]
+    PLAN["planDistrict, then planIssues (independent validators)"]
+    NET["network ground pieces"]
+    SCR["private scratch world: empty world + copies of shell pieces"]
+    LOT["per lot: wave solve, draftProposal on scratch"]
+    OUT["one inert proposal read against the real snapshot, plus depends"]
+    HOST --> PLAN --> NET --> SCR --> LOT --> OUT
+  end
+  SES -- "generate: catalog source, fingerprint, snapshot, request, sliceMs" --> HOST
+  SES -- "cancel" --> HOST
+  OUT -- "progress previews, then exactly one done" --> SES
 ```
 
-- The worker gets a snapshot of the world and only reads it. Its scratch world is private and is discarded with the job.
-- The result is not trusted: `settleDistrict` re-validates the plan, applies the proposal to a candidate state and audits that state against the plan before it is adopted.
-- The plan is kept in the Studio session beside the committed district for inspection. The world does not store it.
-- The world changes exactly once per district, or not at all (failure, cancel, conflict).
+### Authoritative world versus scratch world
+
+| | Authoritative world | Scratch world |
+|---|---|---|
+| Where | The Studio session on the main thread (`WorldSession.state` and its `log`) | Inside one district job in the worker (`createDistrictJob`) |
+| Contents | Every committed entity, bond and lineage record | An empty world with the same seed and catalog, plus copies (under new ids) of the pieces touching the district's one-cell shell |
+| Written by | `applyPatch`, `runSystem`, `applyProposal` through `settleDistrict` (ADR 0011, 0016) | `draftProposal` per lot: the same validation as `applyProposal`, with no record and no hash |
+| Lifetime | The session; replayable from its log | Discarded with the job; never logged, published or rendered |
+| Why it exists | One source of truth (master plan §7.3) | So generation cost does not grow with the world ([ADR 0017](../decisions/0017-hierarchical-generation.md), "The scratch world is small") |
+
+The job's result is still **one proposal read against the real snapshot** it was given. The scratch ids never leave the job.
+
+### Pipeline and who enforces each step
+
+1. **Semantic plan (2D):** river, roads with bridges, plaza, lots and roles from scoped seeds (`plan.ts`, `seed.ts`).
+2. **Global validators:** `planIssues` (`validate.ts`) re-checks river continuity, gate-to-plaza connectivity, frontage and overlap without sharing the planner's code.
+3. **Network pieces:** one ground Foldon per road, plaza, water and bridge cell.
+4. **Local solver:** the wave solver fills one lot at a time with its role's tile set, around frozen neighbours. WFC knows nothing about roads or roles.
+5. **Atomic proposal:** one `Proposal` for the district box, with `depends` (below).
+6. **Settlement on the main thread (`settleDistrict`):**
+   - checks the result's shape, and returns `failed` for a malformed one instead of throwing;
+   - checks that the result answers the request it was sent for: the district box (corner, size and region), the road gates and river terminals of its plan, and exactly the dependency regions the request declared;
+   - re-validates the plan;
+   - runs `applyProposal` once (versions, read set, depends, write set, invariants);
+   - audits the candidate state against the plan from scratch (`auditDistrict`).
+
+   Only a clean candidate is adopted, and the world gains one revision.
+7. **Rendering:** the view-model is derived from the committed state only. The plan map is labelled as the generator's semantic layer.
+
+### Worker message contracts and where they are validated
+
+| Message | Direction | Fields | Validated by |
+|---|---|---|---|
+| `generate` | session → genesis worker | `job`, `source` (catalog input), `fingerprint`, `snapshot` (`serializeSnapshot` text), `request` (preset, seed, `at`, optional continuation), `sliceMs` (12 in the Studio) | Host: `sliceMs` finite and ≥ 0; `createCatalog(source)` succeeds and its fingerprint equals `fingerprint`; `parseSnapshot` accepts the snapshot (schema, catalog, rules). Failure is one `done` with a `failed` outcome at stage `host`, never a throw |
+| `cancel` | session → worker | `job` | Ignored unless that job is running; the next slice posts `cancelled` |
+| `progress` | worker → session | `job`, `progress` (stage, plan preview, lots done) | Preview only. The session drops it unless the run is current |
+| `done` | worker → session | `job`, `outcome` (`generated`, `failed` or `cancelled`), `timing` | `settleDistrict` takes `unknown` and the request the session sent. It checks the shape first, then that the result answers that request (step 6). A cancel requested on the main thread wins over a finished result. It does not re-plan to prove the seed and lots, and it trusts the digests as concurrency tokens: a wrong digest gives a `conflict` ([closure audit](../review/phase-3-closure-audit.md) §4.13). Worker crash or unreadable message: the client turns every open job into `failed` at stage `worker` |
+
+The wave worker (`solve`/`cancel` → `progress`/`done`) follows the same pattern. Its host also checks `sliceNodes` and caches compiled tiles per fingerprint and tile set ([ADR 0015](../decisions/0015-wave-solver.md)). Messages are typed at compile time on both sides, but the worker does not validate the shape of an incoming `generate` beyond the checks above. Both ends are same-origin first-party code. The main thread re-validates what comes back: shape, the match with its request, plan, world validation and audit.
+
+### Read sets and nonlocal dependencies
+
+- **Read set:** the district box plus a one-cell shell. Its digest is FNV-1a over canonical JSON of the catalog fingerprint, the rules version, the conservation mode, the region, and the id, definition, anchor and rotation of every placed entity with a cell in the box or shell (`readRegion`).
+  - Fold angles, bonds and detached fragments are **not** in the digest. That is enough for Phase 3; a simulation that re-solves next to damaged pieces will need structural state in the digest (a Phase 4 question).
+- **`depends`:** a district that continues a neighbour (`continueFrom`) declares the first 12 cells of each neighbour road it attaches to, each as a one-cell region with its digest. `applyProposal` compares them like the read set. A change there is a `conflict`; an unrelated change in the neighbour is not ([ADR 0016](../decisions/0016-region-proposals.md), Phase 3 additions).
+- **Comparison is by content, not revision** (ADR 0016, W4 amendment). A district commits after unrelated commits; an A → B → A change in its read set commits only if the contents are equal again.
+
+### Catalog fingerprint compatibility
+
+- The fingerprint hashes the canonical content of every definition, recipe, contract and the socket table. It is in every state header, every read-set digest and therefore every state hash. The worker refuses a catalog source whose fingerprint differs from the one the main thread sent.
+- A snapshot or log from another catalog is refused as `catalog-mismatch` by `applyPatch`, `replay` and `parseSnapshot` ([ADR 0011](../decisions/0011-atomic-transactions-and-revisions.md), version policy).
+- Stored recipe numbers lie on a 1e-9 grid so the fingerprint is the same on every engine. That changed the fingerprint of catalogs containing P03 or P09 once, in Phase 3 ([ADR 0017](../decisions/0017-hierarchical-generation.md), "Stored recipe numbers are engine independent"). The engines job pins the preset catalog fingerprint on Chromium, Firefox and WebKit.

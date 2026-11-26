@@ -1,6 +1,6 @@
 # Eschaton — agent rules
 
-Procedural origami-inspired world engine (TypeScript + Three.js). Authoritative design: `docs/master-plan.md`. Visual anchor: `assets/reference/visual-direction.png`. Current phase: **Phase 3 — Genesis**, authorized by owner decision W7 (2026-11-25) after the conditional closure of Phase 2 (W6; evidence in `docs/phase-2-exit.md` §9). Scope: roadmap v1.1 (`docs/master-plan.md` §11) and the Phase 3 plan in `docs/plans/`. Phase 4 is **not** authorized; no Phase 3 PR is merged without the owner's explicit approval.
+Procedural origami-inspired world engine (TypeScript + Three.js). Authoritative design: `docs/master-plan.md`. Visual anchor: `assets/reference/visual-direction.png`. Current phase: **Phase 3 — Genesis**, authorized by owner decision W7 (2026-11-25) after the conditional closure of Phase 2 (W6; evidence in `docs/phase-2-exit.md` §9). Scope: roadmap v1.1 (`docs/master-plan.md` §11) and the Phase 3 plan in `docs/plans/`. Phase 3 was merged into `main` as PR #4 (`870ef62`, 2026-11-26) on the owner's explicit merge-only instruction; the Phase 3 exit gate, its visual review and the ADR 0017 choices are **not** decided. Phase 4 is **not** authorized; no PR is merged without the owner's explicit approval.
 
 ## Commands (pnpm only)
 
