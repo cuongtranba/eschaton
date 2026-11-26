@@ -27,6 +27,8 @@ Questions that were not answered by D3 or D4 are marked **open owner question** 
 | [0015](0015-wave-solver.md) | Wave solver: placement-based 3D multi-cell WFC, explicit air, MRV integer-only cell choice with weighted seeded placement, steppable with budgets; results verified independently before commit | Accepted with amendments (W4) |
 | [0016](0016-region-proposals.md) | Region proposals: content-compared read set (region plus one-cell shell, local constraints only), write set, rebase through `applyProposal` | Accepted with amendments (W4); Phase 3 must extend the read set for nonlocal constraints |
 | [0017](0017-hierarchical-generation.md) | Hierarchical district generation: seeded semantic plan with independent global validators, network pieces, per-lot local WFC in a private scratch world, one audited proposal with nonlocal read dependencies; stored recipe numbers on a 1e-9 grid for cross-engine fingerprints | Accepted for Phase 3 (W7); eight choices to confirm at the Phase 3 gate |
+| [0018](0018-clock-tick-and-system-order.md) | Fixed 30 Hz clock owned by a session; idle ticks commit nothing; input log for re-simulation; fixed tick order; fail-stop; late worker results hold the cursor, bounded by a recorded stop | **Proposed (draft, not accepted).** Phase 4 not authorized |
+| [0019](0019-structural-support-and-bond-failure.md) | `damage` and `broken` state; no bond resurrection; integer support graph on stored bonds with a per-tick failure budget; whole-component detach; structural read set; precise exterior protection | **Proposed (draft, not accepted).** Phase 4 not authorized |
 
 ## Pending (not written yet)
 
@@ -34,9 +36,9 @@ These come from the master plan §13 list and need evidence that Phase 0 did not
 
 | Topic | Why pending | Earliest phase |
 |---|---|---|
-| Tick pipeline, system order and simulation replay semantics | The transaction and revision contract is [ADR 0011](0011-atomic-transactions-and-revisions.md); Phase 1 systems run only on explicit invocation ([ADR 0007](0007-component-data-and-system-order.md) amendment); stepping, idle ticks and system order need the Phase 4 tick ADR | 4 |
+| Tick pipeline, system order and simulation replay semantics | The transaction and revision contract is [ADR 0011](0011-atomic-transactions-and-revisions.md); Phase 1 systems run only on explicit invocation ([ADR 0007](0007-component-data-and-system-order.md) amendment); stepping, idle ticks and system order need the Phase 4 tick ADR; draft [0018](0018-clock-tick-and-system-order.md) is proposed, not accepted | 4 |
 | Incremental state hash | The O(world) FNV hash is the dominant commit cost after the W3 work ([ADR 0011](0011-atomic-transactions-and-revisions.md)). An incremental hash is a format change and needs an owner decision and a migration rule | owner decision |
 | Generic undo | Deferred (R5). Future undo is a compensating transaction, never history branching ([ADR 0011](0011-atomic-transactions-and-revisions.md)); semantics for `split`, `merge` and `consume` need an owner decision | not scheduled |
-| Broken bonds, force and damage | [ADR 0014](0014-bond-model.md) records how a broken bond will differ from contact; the model itself is the Phase 4 ADR | 4 |
+| Broken bonds, force and damage | [ADR 0014](0014-bond-model.md) records how a broken bond will differ from contact; the model itself is the Phase 4 ADR; draft [0019](0019-structural-support-and-bond-failure.md) is proposed, not accepted | 4 |
 | Closed-loop crease networks | Research gate before the Phase 4 gate ([ADR 0003](0003-crease-representation.md) amendment) | before 4 |
 | Local solve and seam ownership | Split by roadmap v1.1 ([master plan §11](../master-plan.md)): the frozen-boundary local solve is Phase 2 scope; seam ownership belongs to the Phase 8 research track. The WFC experiment is 2D, single-chunk and throwaway | 2 (local solve), 8 (seams) |

@@ -173,7 +173,7 @@ This is owner decision P4-10. No option is taken silently.
 1. No entity is owned twice. A detached or consumed entity owns no cells (existing, ADR 0010).
 2. Stored bonds ⊆ eligible contacts. No stored bond is also listed as broken, and settling never re-creates a broken bond.
 3. Every placed structural entity is either connected to an anchor through stored bonds or detached in the same tick (checked after the structural pass, by the audit).
-4. Outside a committed dirty region, every placed entity, bond and damage value is identical before and after a re-collapse ("local repair protects exterior").
+4. After a committed re-collapse of region R, every entity with no cell in R keeps its id, definition, pose, owner, fold angles and damage. Every bond and broken record with both ends outside R is unchanged. A bond or broken record with one end inside R changes only because the proposal consumed or instantiated that end ("local repair protects exterior"; made precise in draft [ADR 0019](../decisions/0019-structural-support-and-bond-failure.md) §7, because consuming or placing a piece inside R necessarily changes its bonds to exterior neighbours).
 5. A failed, cancelled, conflicting or late re-collapse changes nothing.
 6. Same initial snapshot + same command log → same records (ids, ticks, state hashes) on Node and the three engines in scope.
 7. `damage` is an integer in [0, 1000] and never decreases without an explicit repair op (none in Phase 4).
@@ -208,16 +208,16 @@ Each test is written failing first at `@eschaton/world` or `@eschaton/collapse`,
 Milestones are labelled CL0–CL7 so that they cannot be confused with the RTX 5070 checks C1–C6 or with owner decision labels.
 
 
-| | Scope | Depends on | Decisive evidence |
-|---|---|---|---|
-| CL0 | Owner decisions P4-1…P4-10; ADR 0018 (clock, tick commit, system order) and ADR 0019 (structural support and bond failure) accepted; ADR 0014 and 0016 amendments | Phase 3 gate decided; Phase 4 authorized | Recorded decisions |
-| CL1 | Clock, scheduler, one-patch-per-tick commit, idle ticks, pause, step, replay; **tick commit cost measured at 2k and 9k entities** | CL0 | Unit tests above; benchmark on a clean SHA with load stated |
-| CL2 | Field specs and sampling; `windFold` under the clock; decay damage op | CL1 | Field and damage tests |
-| CL3 | Broken-bond state, support graph, stress heuristic, failure budget, disconnection detach | CL2 | Structural tests; invariants 2, 3 and 7 |
-| CL4 | Fragment settle (recorded); CL4b optional: P09 split fragments with lineage | CL3 | Settle and replay tests |
-| CL5 | Dirty region, protected content, re-collapse job, structural-state digest, settle at `t + L`, conflict, retry, rollback | CL3, and CL1's commit-cost decision | Re-collapse, conflict and late-worker tests; three-engine re-simulation |
-| CL6 | Studio: event triggers, play, pause, step, support and damage overlays, replay | CL1–CL5 | e2e above |
-| CL7 | Corpus (at least 10 seeds × 3 events), cross-engine run, performance profile, screenshots on a physical GPU, exit report | CL6 | Exit report; CI green on the exact head |
+| | Scope | Depends on | Owner decisions needed first | Decisive evidence |
+|---|---|---|---|---|
+| CL0 | Owner decisions P4-1…P4-10; ADR 0018 (clock, tick commit, system order) and ADR 0019 (structural support and bond failure) accepted; ADR 0014 and 0016 amendments | Phase 3 gate decided; Phase 4 authorized | P3D-1; Phase 4 authorization; drafts [0018](../decisions/0018-clock-tick-and-system-order.md) and [0019](../decisions/0019-structural-support-and-bond-failure.md) reviewed | Recorded decisions |
+| CL1 | Clock, scheduler, one-patch-per-tick commit, idle ticks, pause, step, replay; **tick commit cost measured at 2k and 9k entities** | CL0 | P4-1, P4-3, P4-4, P4-10 (c) for the slice | Unit tests above; benchmark on a clean SHA with load stated |
+| CL2 | Field specs and sampling; `windFold` under the clock; decay damage op | CL1 | none beyond CL1 | Field and damage tests |
+| CL3 | Broken-bond state, support graph, stress heuristic, failure budget, disconnection detach | CL2 | P4-6; ADR 0019 §1–§5 (rules bump `invariants@3`) | Structural tests; invariants 2, 3 and 7 |
+| CL4 | Fragment settle (recorded); CL4b optional: P09 split fragments with lineage | CL3 | P4-8 stays provisional | Settle and replay tests |
+| CL5 | Dirty region, protected content, re-collapse job, structural-state digest, settle at `t + L`, conflict, retry, rollback | CL3, and CL1's commit-cost decision | P4-2, P4-5, P4-7; ADR 0018 §6 late-result bound | Re-collapse, conflict and late-worker tests; three-engine re-simulation |
+| CL6 | Studio: event triggers, play, pause, step, support and damage overlays, replay | CL1–CL5 | none new | e2e above |
+| CL7 | Corpus (at least 10 seeds × 3 events), cross-engine run, performance profile, screenshots on a physical GPU, exit report | CL6 | P4-9 (or deferred); ADR 0003 closed-loop gate done; owner visual review | Exit report; CI green on the exact head |
 
 **External dependency.** The closed-loop crease research gate (ADR 0003 amendment) must run "before the Phase 4 gate". It is independent of CL1–CL6, so it can run in parallel but must finish before CL7.
 
