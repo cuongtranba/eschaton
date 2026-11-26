@@ -1,6 +1,6 @@
 # Phase 3 — Genesis: implementation plan
 
-- Status: **Implemented; waiting at the Phase 3 exit gate** ([`../phase-3-exit.md`](../phase-3-exit.md)). Authorized by owner decision W7 (2026-11-25) ([`../review/phase-2-owner-review.md`](../review/phase-2-owner-review.md)): design and execute Phase 3 within this scope, stopping at the Phase 3 exit gate. No Phase 3 PR merge and no Phase 4 work without separate authorization.
+- Status: **Implemented and merged (PR #4, `870ef62`, 2026-11-26, merge-only authorization); the Phase 3 exit gate is still open** ([`../phase-3-exit.md`](../phase-3-exit.md), §8 addendum). Authorized by owner decision W7 (2026-11-25) ([`../review/phase-2-owner-review.md`](../review/phase-2-owner-review.md)): design and execute Phase 3 within this scope, stopping at the Phase 3 exit gate. No Phase 3 PR merge and no Phase 4 work without separate authorization.
 - Scope and exit criteria: [`../master-plan.md`](../master-plan.md) §11, Phase 3 row (roadmap v1.1, amendments 1–2), and §5.3. That text is canonical.
 - Builds on: ADR 0013 (regular lattice, logical placements), 0015 (wave solver), 0016 (region proposals; Phase 3 must extend the read set). New: [0017](../decisions/0017-hierarchical-generation.md).
 - Base: `main` @ `d673f84`, which contains Phases 0–2 (PR #3 merged as `d673f84`, pinned to `a5746f2`, CI run 45575897725 green; `main`'s tree equals the `phase-2` tree). Branch `phase-3`.

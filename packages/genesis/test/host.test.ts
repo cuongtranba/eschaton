@@ -45,14 +45,14 @@ test("a hosted job that crossed a structured clone commits to the same state has
   const { host, posted, runOne, request, outcome } = harness();
   host.receive(structuredClone(request("a")));
   while (runOne());
-  const hosted = settleDistrict(catalog, world, structuredClone(outcome()), { cancelRequested: false });
-  const direct = settleDistrict(catalog, world, generateDistrict(catalog, world, district), { cancelRequested: false });
+  const hosted = settleDistrict(catalog, world, structuredClone(outcome()), { cancelRequested: false, request: district });
+  const direct = settleDistrict(catalog, world, generateDistrict(catalog, world, district), { cancelRequested: false, request: district });
   if (hosted.status !== "committed" || direct.status !== "committed") throw new Error(`${hosted.detail} / ${direct.detail}`);
   expect(hashState(hosted.committed.state)).toBe(hashState(direct.committed.state));
   expect(posted.filter((message) => message.type === "progress").length).toBeGreaterThan(10);
 });
 
-test("progress reports the plan and a rising lot count before the result", () => {
+test("progress reports the plan and a lot count that never decreases before the result", () => {
   const { host, posted, runOne, request } = harness();
   host.receive(request("b"));
   while (runOne());

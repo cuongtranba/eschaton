@@ -120,3 +120,24 @@ Six districts chained to the east in one world:
 - **The 1e-9 grid is a rounding rule**, not a proof of cross-engine equality; the engines job pins the fingerprint so a regression fails in CI.
 - **Benchmarks were recorded on a busy machine.** Loads are stated with every number.
 - **Home machine:** any unpushed work there is unknown and was not inspected.
+
+## 8. Addendum: merge and closure audit (2026-11-26)
+
+Sections 1–7 are the report as written at the gate on 2026-11-25 and are left unchanged. This section records what happened after it.
+
+- **Merge.** PR #4 was merged into `main` on 2026-11-26 as `870ef62`, on the owner's explicit merge-only instruction. Main CI run 45757095399 was green on both jobs. That instruction authorized the merge only. It was **not** a gate pass, a visual approval, an ADR 0017 approval or a waiver of the manual checks. The header line "Not merged" above describes the report at the time it was written.
+- **Closure audit:** [`review/phase-3-closure-audit.md`](review/phase-3-closure-audit.md), on branch `phase-3-closure`.
+  - A defect fixed test-first: finite winds above about 1.3e154 were rejected after `62cf1e3`.
+  - The wind-formula change is disclosed in ADR 0017, and its versioning is offered to the owner as choice 9.
+  - The golden-hash provenance to the pre-W3 commit path is restored by reproduction.
+  - Full-catalog coverage is back in Node unit tests through a value that was already recorded.
+  - A second defect fixed test-first: `settleDistrict` trusted the result's district box and declared dependencies, so a continuation whose result had lost its `depends` committed without the neighbour-road check.
+  - A second review closed two gaps in settlement, test-first: a malformed result could make it throw, and a plan for other road gates or another river than the request was accepted (audit §4.13).
+  - Unit tests: 280 on the branch, against 269 on `main`. Engines: 21, against 18.
+- **Visual walkthrough** on a physical Apple GPU (WebGPU on Metal, not the RTX 5070): [`review/phase-3-visual-walkthrough.md`](review/phase-3-visual-walkthrough.md). Observations only; not an approval.
+- **Still pending for the owner:**
+  - the gate decision (§6.1) and the visual review (§6.2);
+  - ADR 0017 choices 1–9;
+  - cross-engine determinism as a promise (§6.5);
+  - the RTX 5070 test C1–C6;
+  - the carried-over questions (§6.6).
