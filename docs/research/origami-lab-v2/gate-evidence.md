@@ -1,7 +1,7 @@
 # Gate evidence — hero bird V2 (experimental)
 
 - Spec: [`../geometry-quality-gates.md`](../geometry-quality-gates.md) (proposal, not adopted).
-- Geometry commit: `e8082a8`, branch `experiment/origami-lab-v2`, pushed to the draft PR #11 branch `experiment/origami-expressiveness-lab`. All screenshots and `evidence.json` were captured from a page whose banner reads `experiment/origami-lab-v2 @ e8082a8` with no uncommitted marker (§5.3).
+- Geometry commit: `e8082a8` (no geometry change since). The final captures come from a clean tree at `50de5f1`; the page banner in every image and the `build` field of `evidence.json` read `experiment/origami-lab-v2 @ 50de5f1` with no uncommitted marker (§5.3). The committed images are re-captures of that state. Branch `experiment/origami-lab-v2`, fast-forwarded onto the draft PR #11 branch `experiment/origami-expressiveness-lab`.
 - Status: **no gate is closed.** The [A] results are machine output. The [H] verdicts are the *independent reviewer's* (§7), not the implementer's. Owner approval is pending for everything.
 
 ## Summary
@@ -10,10 +10,10 @@
 |---|---|---|
 | GEO-0 Principle and brief | **PASS** (A + H self-check; owner review pending) | Brief, references and 3-view target were committed before or with the first geometry code. The iteration log records the design changes |
 | GEO-1 Geometric validity | **NOT VERIFIED** (no FAIL) | 0 collisions, 0 invalid panels, 0 invalid definitions on 14 variants. 24–30 vertex-sharing pairs per variant are certified only up to u ≈ 0.95 of their fold, or not at all for 3 variants (see §GEO-1) |
-| GEO-2 Morphology | see the round-2 review below | [H] |
+| GEO-2 Morphology | **PASS by the independent reviewer (round 2); owner verdict pending** | 2.3, every 2.4 bird requirement, 2.5 and 2.6 pass. Layering, close-up detail and 2.6 pass only narrowly. Open minor findings are listed below |
 | GEO-3 Expressiveness | **NOT VERIFIED** | Depends on GEO-1 being PASS and GEO-2 being accepted. Diversity is measured; reuse in a second object is not demonstrated |
 | GEO-4 Motion and fold | **NOT VERIFIED** | Crease transforms, fixed joints and symmetric flap are tested. Fold sweeps are not fully certified (GEO-1) |
-| GEO-5 Visual evidence | see the round-2 review below | [H]; the reproducibility parts are A-PASS |
+| GEO-5 Visual evidence | **NOT VERIFIED** (5.6, owner approval, pending) | 5.1 visual PASS; 5.2 PASS; 5.3 and 5.7 A-PASS; 5.4 done (independent review, two rounds) |
 | GEO-6 Engineering readiness | **NOT VERIFIED** | Production untouched, deterministic, tested. CI on the exact head is recorded at push time; it is not production-ready by design (Q1–Q6 undecided) |
 
 ## GEO-0 — Principle and brief
@@ -88,7 +88,45 @@ Reviewer: a separate agent with no access to the implementation code, judging im
 
 Round-1 findings and the responses are in the brief §10. The round-2 verdicts on the clean commit are recorded below.
 
-ROUND2_PLACEHOLDER
+**Round 2** (clean commit images; the reviewer verified the banners and `git status`):
+
+| Round-1 finding | Round 2 |
+|---|---|
+| 1 Flap was a roll | RESOLVED (both wings down at phase 0, both up at phase 1) |
+| 2 Needle comb fingers | RESOLVED. New minor: the primaries are near-parallel and equal-width, so they read as a rake up close |
+| 3 No layering | PARTLY: coverts visible from the top and in the tail close-up, teeth on the trailing edge; barely visible in three-quarter, and the coverts read as rectangular boards |
+| 4 Weak side view | PARTLY: forehead and beak read; the back is still flat; the wing seen end-on gives a ragged "lid" over the crow's back (seed 3 is clean) |
+| 5 No head detail | RESOLVED (brow ridge over an eye-socket facet) |
+| 6 Head and body never vary | PARTLY (head width 0.10–0.16 and pitch vary; the contact sheet still differs mostly in wings and tail) |
+| 7 Cracks | PARTLY: the wing-ridge crack is gone; a dotted dark line along the shoulder seam and a bright pinhole at the shoulder vertex remain (a render artifact or a real gap: **not diagnosed**) |
+| 8 Blunt fingerless tips | RESOLVED (stepped tips) |
+| 9 Irregular trailing edge | PARTLY (uneven lumps on seeds 2, 7, 101) |
+| 10 Span parameter ≠ measured span | PARTLY: within 2 % except seed 4 (−7.5 %), seed 202 (−7 %) and extreme min (1.49 < the 1.55 bound). Cause: the fingers' extent is estimated, not solved |
+| 11 Framing | PARTLY at the round-2 images. Fixed after round 2 in `d22822b`: one-scale flat-net grid, landmark-framed close-ups, smaller explode, wider sheet framing. **The fixes were not re-reviewed** |
+
+Round-2 verdicts:
+
+- **2.3:** PASS.
+- **2.4:** head, beak and neck PASS; body with breast and tail PASS; wings root/mid/tip PASS; layered structure PASS (weak); proportions PASS; pose PASS.
+- **2.5:** PASS (weak).
+- **2.6:** PASS (narrowly).
+- **3.3:** NOT VERIFIED (GEO-1 not PASS).
+- **3.4:** PASS.
+- **3.5:** PASS.
+- **5.1:** visual PASS.
+- **5.2:** PASS.
+- **New major finding (GEO-4.6):** the flat-net strip was unreadable with 48 pieces. Fixed in `d22822b` (grid at one scale); not re-reviewed.
+
+**Reviewer recommendation:** GO for presenting this bird to the owner for review, not acceptance. It "reads more like a careful low-poly mesh than folded paper; in a small silhouette it now fits the reference's birds" — the owner's call against `visual-direction.png`.
+
+Open findings carried forward:
+
+- The shoulder seam dotted line and the pinhole (undiagnosed).
+- The covert rows hover with a visible window in side view.
+- Rake-like primaries.
+- A flat back in profile.
+- Span off by up to 7.5 % on 3 variants.
+- 48 sheets, about 20 of them single panels: a lot of paper.
 
 ## GEO-3 (automated parts)
 

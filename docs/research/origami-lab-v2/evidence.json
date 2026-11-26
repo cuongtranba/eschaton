@@ -1,5 +1,5 @@
 {
- "build": "experiment/origami-lab-v2 @ d22822b +uncommitted changes · served 2026-11-26T11:42:13.049Z",
+ "build": "experiment/origami-lab-v2 @ 50de5f1 · served 2026-11-26T11:43:10.269Z",
  "generated": "v2.html?mode=evidence",
  "birds": [
   {
@@ -23,7 +23,7 @@
    },
    "faces": 243,
    "pieces": 48,
-   "verifyMs": 440,
+   "verifyMs": 418,
    "geo1": {
     "verdict": "NOT VERIFIED",
     "reasons": [
@@ -782,7 +782,7 @@
    },
    "faces": 243,
    "pieces": 48,
-   "verifyMs": 396,
+   "verifyMs": 383,
    "geo1": {
     "verdict": "NOT VERIFIED",
     "reasons": [
@@ -1541,7 +1541,7 @@
    },
    "faces": 215,
    "pieces": 44,
-   "verifyMs": 292,
+   "verifyMs": 287,
    "geo1": {
     "verdict": "NOT VERIFIED",
     "reasons": [
@@ -2244,7 +2244,7 @@
    },
    "faces": 243,
    "pieces": 48,
-   "verifyMs": 356,
+   "verifyMs": 354,
    "geo1": {
     "verdict": "NOT VERIFIED",
     "reasons": [
@@ -3003,7 +3003,7 @@
    },
    "faces": 243,
    "pieces": 47,
-   "verifyMs": 402,
+   "verifyMs": 381,
    "geo1": {
     "verdict": "NOT VERIFIED",
     "reasons": [
@@ -3748,7 +3748,7 @@
    },
    "faces": 231,
    "pieces": 46,
-   "verifyMs": 319,
+   "verifyMs": 312,
    "geo1": {
     "verdict": "NOT VERIFIED",
     "reasons": [
@@ -4479,7 +4479,7 @@
    },
    "faces": 231,
    "pieces": 46,
-   "verifyMs": 313,
+   "verifyMs": 312,
    "geo1": {
     "verdict": "NOT VERIFIED",
     "reasons": [
@@ -5210,7 +5210,7 @@
    },
    "faces": 231,
    "pieces": 46,
-   "verifyMs": 328,
+   "verifyMs": 325,
    "geo1": {
     "verdict": "NOT VERIFIED",
     "reasons": [
@@ -5941,7 +5941,7 @@
    },
    "faces": 243,
    "pieces": 48,
-   "verifyMs": 346,
+   "verifyMs": 365,
    "geo1": {
     "verdict": "NOT VERIFIED",
     "reasons": [
@@ -6700,7 +6700,7 @@
    },
    "faces": 231,
    "pieces": 46,
-   "verifyMs": 328,
+   "verifyMs": 321,
    "geo1": {
     "verdict": "NOT VERIFIED",
     "reasons": [
@@ -7431,7 +7431,7 @@
    },
    "faces": 243,
    "pieces": 47,
-   "verifyMs": 430,
+   "verifyMs": 429,
    "geo1": {
     "verdict": "NOT VERIFIED",
     "reasons": [
@@ -8176,7 +8176,7 @@
    },
    "faces": 215,
    "pieces": 44,
-   "verifyMs": 285,
+   "verifyMs": 283,
    "geo1": {
     "verdict": "NOT VERIFIED",
     "reasons": [
@@ -8879,7 +8879,7 @@
    },
    "faces": 215,
    "pieces": 43,
-   "verifyMs": 342,
+   "verifyMs": 337,
    "geo1": {
     "verdict": "NOT VERIFIED",
     "reasons": [
@@ -9568,7 +9568,7 @@
    },
    "faces": 243,
    "pieces": 47,
-   "verifyMs": 426,
+   "verifyMs": 419,
    "geo1": {
     "verdict": "NOT VERIFIED",
     "reasons": [
