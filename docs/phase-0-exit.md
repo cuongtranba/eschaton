@@ -1,7 +1,7 @@
 # Phase 0 exit report: Laboratory closure
 
 - Phase: **0 — Laboratory closure** (master plan v1.1 §11; v1.0 "Research & geometry lab" plus closure tasks T0–T6)
-- Branch / PR: `phase-0`, PR #1 (not merged)
+- Branch / PR: `phase-0`, PR #1. Written as "not merged"; since merged into `main` with merge commit `b0ff485` (record: [`plans/phase-2-wave.md`](plans/phase-2-wave.md) §1)
 - Date: 2026-11-24; owner decisions 2026-11-25
 - Status: **CONDITIONALLY CLOSED by owner decision D6 (2026-11-25), subject to the evidence in §9.** D6 closes the phase only if the review amendments, the documentation sync, the required tests and CI are green at the exact final Phase 0 SHA. §9 records that evidence. If any item there is red or missing, the phase is not passed and Phase 1 does not start. The owner's decisions D1–D7 are recorded in [`review/phase-0-owner-review.md`](review/phase-0-owner-review.md) §0. Nothing here is inferred beyond them.
 - Owner review package: [`review/phase-0-owner-review.md`](review/phase-0-owner-review.md)

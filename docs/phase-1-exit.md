@@ -1,14 +1,14 @@
 # Phase 1 exit report: Foundation
 
 - Phase: **1 — Foundation** (master plan v1.1 §11; milestones in [`plans/phase-1-foundation.md`](plans/phase-1-foundation.md))
-- Branch / PR: `phase-1`, PR #2 (draft, stacked on `phase-0` @ `5b2a995`; not merged)
+- Branch / PR: `phase-1`, PR #2. Written as "draft, stacked on `phase-0` @ `5b2a995`; not merged"; since merged into `main` with merge commit `940a50b`, pinned to head `07b89c0` (record: [`plans/phase-2-wave.md`](plans/phase-2-wave.md) §1)
 - Date: 2026-11-25
 - Authorization: owner decision D7 (2026-11-25), after the conditional Phase 0 closure (D6; [`phase-0-exit.md`](phase-0-exit.md) §9)
 - Status: **CONDITIONALLY CLOSED by owner decision R6 (2026-11-25), subject to the evidence in §8.**
   - R6 closes the phase only when the R1–R5 corrections and evidence are in, the documents are synchronized, and lint, typecheck, unit, build, e2e, architecture checks and remote CI are green on the exact final head. §8 records that evidence; the final-head CI run is in the PR #2 description. If any item is red or missing, the phase is not closed.
   - The owner's decisions R1–R8 are recorded in [`review/phase-1-owner-review.md`](review/phase-1-owner-review.md). Sections 1–7 are the report as presented at the gate, with §6 annotated.
   - World mode and the rebuild study are accepted as **prototype-level evidence only** (R4). This is not a final visual approval.
-  - Phase 2 is authorized by R7 after the closure and the merges of PR #1 and PR #2 (R8). Phase 3 is not authorized.
+  - Phase 2 is authorized by R7 after the closure and the merges of PR #1 and PR #2 (R8). Phase 3 was not authorized when this report was written (it was later authorized by W7, [`review/phase-2-owner-review.md`](review/phase-2-owner-review.md)).
 
 ## 1. Exit criteria (master plan §11, Phase 1 row) mapped to tests
 
@@ -40,6 +40,8 @@ All tests import only `@eschaton/world` or `@eschaton/foldon`, or drive the Stud
 | M7 World mode in the Studio | Done; ran in parallel on `phase-1-m7` and merged locally | `3671dad`, merge `b7c700a` | `apps/studio/e2e/world.spec.ts` (5 tests); screenshots `p1-world-mode*.png` |
 | M8 self-assembly precursor (not WFC) | Done | `ff0ea45` | `world/assemble` (5 tests) |
 | M9 exit evidence | This report | `6ac884b`, `b8f2f45`, `3a35dae`, `f3f6f34`, this commit | §3–§5 |
+
+The per-milestone test counts above, and the milestone status "Drafted, **Proposed**" for ADR 0014, are as of this report (2026-11-25, `phase-1` head). They are historical. On `main` @ `d673f84` (count of `test(`/`it(` lines per file, a reader's `grep -c`, not a test run): `world/patch` 10, `world/bonds` 10, `foldon/sockets` 8, because later corrections (R1–R3) and Phase 2 added tests. ADR 0014 was accepted with amendments by owner decision R3 (see its Status line).
 
 ## 3. Demonstrations
 
@@ -79,7 +81,7 @@ All tests import only `@eschaton/world` or `@eschaton/foldon`, or drive the Stud
 | Check | Where | Result |
 |---|---|---|
 | `pnpm lint`, `pnpm typecheck`, `pnpm build` | local (macOS 26.5.1, Apple M5 Pro, Node v24.20.0, pnpm 10.33.4) | exit 0 |
-| `pnpm test` | local and CI | foldon 46, architecture 51, world 42, WFC 13: **152 passed** |
+| `pnpm test` | local and CI, at `3a35dae` (before the R1–R3 corrections below) | foldon 46, architecture 51, world 42, WFC 13: **152 passed** |
 | `pnpm e2e` | CI ([run 45552524180](https://github.com/cuongtranba/eschaton/actions/runs/45552524180), job 138996766598) | **26 passed** (21 Phase 0 + 5 World mode) |
 | `pnpm e2e` | local, `--workers=1` | 26 passed |
 | GitHub Actions `CI` on `3a35dae` | run 45552524180 | **success** (178 tests) |
@@ -177,6 +179,8 @@ R4 and R5 are documentation decisions (ADR 0013, ADR 0002, ADR 0011, plan §2a).
 
 ### Test totals on the corrected tree
 
+Measured on the final `phase-1` head (local run for the unit counts; CI run [45559048901](https://github.com/cuongtranba/eschaton/actions/runs/45559048901) on `07b89c0` reports 188 tests, per `docs/plans/phase-2-wave.md` §1). These are Phase 1 numbers, not current ones: Phase 2 later raised them (see `phase-2-exit.md` §9.5).
+
 | Scope | Count |
 |---|---|
 | `@eschaton/foldon` | 48 |
@@ -186,7 +190,7 @@ R4 and R5 are documentation decisions (ADR 0013, ADR 0002, ADR 0011, plan §2a).
 | Studio e2e | 26 |
 | **Total** | **188** |
 
-Local results (macOS 26.5.1, Apple M5 Pro, Node v24.20.0, pnpm 10.33.4): `pnpm lint`, `pnpm typecheck`, `pnpm build` exit 0; `pnpm test` 162 passed; `pnpm e2e` 26 passed. The remote CI run on the exact final `phase-1` head is recorded in the PR #2 description, because a commit cannot contain its own CI result. **Phase 1 counts as conditionally closed only once that run is green.**
+Local results at the final `phase-1` head (macOS 26.5.1, Apple M5 Pro, Node v24.20.0, pnpm 10.33.4): `pnpm lint`, `pnpm typecheck`, `pnpm build` exit 0; `pnpm test` 162 passed (48 + 51 + 50 + 13); `pnpm e2e` 26 passed. The remote CI run on the exact final `phase-1` head is recorded in the PR #2 description, because a commit cannot contain its own CI result. **Phase 1 counts as conditionally closed only once that run is green.**
 
 ### GPU status at closure
 

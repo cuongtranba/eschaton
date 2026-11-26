@@ -55,7 +55,7 @@ Summary. The ten references fall into three groups. Wave Function Collapse (R1, 
 ## R3. Tessera (Boris the Brave): PDF and generator API
 
 **What it is.** Tessera is a Unity add-on that runs WFC to generate 3D tile-based levels. The PDF describes its extended WFC system. The generator API page documents the `TesseraGenerator` MonoBehaviour.
-**Verified:** The generator API page loaded (`docs/tessera/6/api/Tessera.TesseraGenerator.html`). Its parameters include `size` (cells), `cellSize` (stride between cells), `tiles`, `initialConstraints`, `skyBox` (boundary constraints), `seed`, `backtrack`, `retries`, `stepLimit`, `failureMode`, `contradictionTile` and `uncertaintyTile`. The page says that "big" tiles may occupy a multiple of the cell size.
+**Verified:** The generator API page loaded ([`https://www.boristhebrave.com/docs/tessera/6/api/Tessera.TesseraGenerator.html`](https://www.boristhebrave.com/docs/tessera/6/api/Tessera.TesseraGenerator.html)). Its parameters include `size` (cells), `cellSize` (stride between cells), `tiles`, `initialConstraints`, `skyBox` (boundary constraints), `seed`, `backtrack`, `retries`, `stepLimit`, `failureMode`, `contradictionTile` and `uncertaintyTile`. The page says that "big" tiles may occupy a multiple of the cell size.
 **Not verified:** The PDF. WebFetch returned raw binary PDF bytes and no readable text, so none of the paper's claims about multi-cell encoding were checked. The docs index page did not describe big tiles either.
 **Not verified:** How a big tile declares its footprint or offset. The API page does not say.
 

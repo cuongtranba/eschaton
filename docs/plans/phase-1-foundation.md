@@ -259,7 +259,7 @@ M3 depends only on Phase 0 foldon code and can run in parallel with M0–M2.
 | The world package grows into a framework | Systems are plain objects; no registry or plugin layer; deep-module review at each milestone |
 | Visual divergence between look-dev and the world mode | Expected; the owner reviews at the gate; the look-dev scene stays labelled |
 
-## 7. Exit gate (proposed)
+## 7. Exit gate (as proposed in this plan; the outcome is in [`../phase-1-exit.md`](../phase-1-exit.md) and R6)
 
 Phase 1 passes only with the owner's decision on all of the following:
 
