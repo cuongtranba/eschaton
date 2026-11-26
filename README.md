@@ -8,7 +8,7 @@ Status: **Phase 3 — Genesis is merged into `main` (PR #4) on the owner's expli
 
 - **Foldon library** (`@eschaton/foldon`): nine draft primitives P01–P09 with continuous hinge folding, external-face sockets, four assemblies built from shared pieces (watchtower, roof-house, ruined-gate and the nested roof-module), canonical recipe hashing and validation.
 - **Studio laboratory** (`apps/studio`): catalog, inspector, fold slider and play, grid/footprint/socket/crease overlays, orbit and composition cameras, seed control, an ink look panel and the art-directed **Reference composition**.
-- **Research and decisions**: reference notes, look-dev notes, a throwaway WFC placement experiment and nine ADRs (sixteen ADRs on `main` after Phases 1–2; see the decision index below).
+- **Research and decisions**: reference notes, look-dev notes, a throwaway WFC placement experiment and nine ADRs (seventeen ADRs on `main` after Phases 1–3; see the decision index below).
 - **Measurements**: benchmarks recorded with their limits. They come from a software-rendered WebGL2 fallback and are **not** the master plan's §9.1 targets.
 
 Nothing here is final art or a passed performance gate. The owner accepted the reference composition only as a research and look-development prototype (D1). The original artwork stays the anchor, and the Genesis, Atmosphere and The Last District visual gates remain. Read [`docs/phase-0-exit.md`](docs/phase-0-exit.md).
@@ -28,16 +28,17 @@ Open the URL, pick items in the left catalog, drag the **Fold** slider or press 
 | What | Where |
 |---|---|
 | Master plan (authoritative design) | [`docs/master-plan.md`](docs/master-plan.md) |
+| Phase 3 exit report (gate open; PR #4 merged on a merge-only authorization) | [`docs/phase-3-exit.md`](docs/phase-3-exit.md) |
 | Phase 2 exit report (conditional closure, owner W6) | [`docs/phase-2-exit.md`](docs/phase-2-exit.md) |
 | Phase 1 exit report (conditional closure, owner R6) | [`docs/phase-1-exit.md`](docs/phase-1-exit.md) |
 | Phase 0 exit report (conditional closure, owner D6) | [`docs/phase-0-exit.md`](docs/phase-0-exit.md) |
 | Owner decisions and review packages | Phase 0 D1–D7: [`docs/review/phase-0-owner-review.md`](docs/review/phase-0-owner-review.md); Phase 1 R1–R8: [`docs/review/phase-1-owner-review.md`](docs/review/phase-1-owner-review.md); Phase 2 W1–W7: [`docs/review/phase-2-owner-review.md`](docs/review/phase-2-owner-review.md) |
-| Phase plans | [`docs/plans/phase-1-foundation.md`](docs/plans/phase-1-foundation.md), [`docs/plans/phase-2-wave.md`](docs/plans/phase-2-wave.md) |
+| Phase plans | [`docs/plans/phase-1-foundation.md`](docs/plans/phase-1-foundation.md), [`docs/plans/phase-2-wave.md`](docs/plans/phase-2-wave.md), [`docs/plans/phase-3-genesis.md`](docs/plans/phase-3-genesis.md) |
 | Physical WebGPU manual test (Apple M5 Pro run reported; the owner's RTX 5070 run is pending) | [`docs/testing/webgpu-manual-test.md`](docs/testing/webgpu-manual-test.md) |
-| Architecture overview with data-flow diagram | [`docs/architecture/overview.md`](docs/architecture/overview.md) |
+| Architecture overview: dependency graph, data flows, Genesis worker contracts | [`docs/architecture/overview.md`](docs/architecture/overview.md) |
 | Decision records and the pending list | [`docs/decisions/`](docs/decisions/README.md) |
 | Research notes | [`docs/research/phase-0.md`](docs/research/phase-0.md), [`docs/research/look-dev.md`](docs/research/look-dev.md) |
-| Benchmarks (recorded evidence, methodology) | [`benchmarks/README.md`](benchmarks/README.md); Phase 0 baseline [`benchmarks/phase-0/2026-11-24-e9e50c527/report.md`](benchmarks/phase-0/2026-11-24-e9e50c527/report.md) |
+| Benchmarks (recorded evidence, methodology) | [`benchmarks/README.md`](benchmarks/README.md); Phase 3 district workload [`benchmarks/phase-3/`](benchmarks/phase-3/README.md); Phase 0 baseline [`benchmarks/phase-0/2026-11-24-e9e50c527/report.md`](benchmarks/phase-0/2026-11-24-e9e50c527/report.md) |
 | Screenshots | [`docs/screenshots/`](docs/screenshots/) |
 | WFC placement experiment | [`experiments/wfc-placement/`](experiments/wfc-placement/README.md) |
 
