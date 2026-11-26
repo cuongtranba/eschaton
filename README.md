@@ -31,7 +31,7 @@ Open the URL, pick items in the left catalog, drag the **Fold** slider or press 
 | Phase 2 exit report (conditional closure, owner W6) | [`docs/phase-2-exit.md`](docs/phase-2-exit.md) |
 | Phase 1 exit report (conditional closure, owner R6) | [`docs/phase-1-exit.md`](docs/phase-1-exit.md) |
 | Phase 0 exit report (conditional closure, owner D6) | [`docs/phase-0-exit.md`](docs/phase-0-exit.md) |
-| Owner decisions and review packages | Phase 0 D1–D7: [`docs/review/phase-0-owner-review.md`](docs/review/phase-0-owner-review.md); Phase 1 R1–R8: [`docs/review/phase-1-owner-review.md`](docs/review/phase-1-owner-review.md); Phase 2 W1–W7: [`docs/review/phase-2-owner-review.md`](docs/review/phase-2-owner-review.md) |
+| Owner decisions and review packages | Phase 0 D1–D7: [`docs/review/phase-0-owner-review.md`](docs/review/phase-0-owner-review.md); Phase 1 R1–R8: [`docs/review/phase-1-owner-review.md`](docs/review/phase-1-owner-review.md); Phase 2 W1–W7: [`docs/review/phase-2-owner-review.md`](docs/review/phase-2-owner-review.md); Phase 3 G3-1–G3-6 (decision request, nothing decided): [`docs/review/phase-3-owner-decision-packet.md`](docs/review/phase-3-owner-decision-packet.md) |
 | Phase plans | [`docs/plans/phase-1-foundation.md`](docs/plans/phase-1-foundation.md), [`docs/plans/phase-2-wave.md`](docs/plans/phase-2-wave.md) |
 | Physical WebGPU manual test (Apple M5 Pro run reported; the owner's RTX 5070 run is pending) | [`docs/testing/webgpu-manual-test.md`](docs/testing/webgpu-manual-test.md) |
 | Architecture overview with data-flow diagram | [`docs/architecture/overview.md`](docs/architecture/overview.md) |
