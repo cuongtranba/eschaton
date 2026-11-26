@@ -240,3 +240,31 @@ test("a system cannot change entities outside its declared components", () => {
   const result = runSystem(catalog, before, rogue, null);
   expect(result.ok ? [] : result.error.kind === "invalid" ? result.error.issues.map((i) => i.code) : []).toEqual(["op-invalid"]);
 });
+
+test.each([
+  [[1e200, 0, 0]],
+  [[1e155, 1e155, 0]],
+  [[Number.MAX_VALUE, Number.MAX_VALUE, 0]],
+] as const)("a finite gust %j too strong to square flattens the leaf instead of being rejected as not finite", (wind) => {
+  const result = runSystem(catalog, garden(), windFold, { wind });
+  if (!result.ok) throw new Error(JSON.stringify(result.error));
+  expect(Math.abs(byDefinition(result.value.state, "leaf")[0]?.fold.midrib ?? NaN)).toBe(0);
+});
+
+test("a wind off the x axis gives the recorded fold angles, which Math.hypot changes in the last bit", () => {
+  const result = runSystem(catalog, garden(), windFold, { wind: [0.1, 0.1, 0.1] });
+  if (!result.ok) throw new Error(JSON.stringify(result.error));
+  expect([byDefinition(result.value.state, "leaf")[0]?.fold, ...byDefinition(result.value.state, "P03").map((roof) => roof.fold)]).toEqual([
+    { midrib: 0.3574988523517096 },
+    { ridge: -0.9056611201481806 },
+    { ridge: -0.9056611201481806 },
+  ]);
+});
+
+test.each([
+  ["an infinite", [Number.POSITIVE_INFINITY, 0, 0]],
+  ["a NaN", [0, Number.NaN, 0]],
+] as const)("a wind with %s component is rejected", (_, wind) => {
+  const result = runSystem(catalog, garden(), windFold, { wind });
+  expect(result.ok ? [] : result.error.kind === "invalid" ? result.error.issues.map((issue) => issue.code) : []).toEqual(["op-invalid"]);
+});
