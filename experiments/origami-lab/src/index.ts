@@ -72,3 +72,23 @@ export {
 } from "./checks";
 export { objectInspection, type CreaseInfo, type FoldonInfo, type ObjectInspection, type PanelInfo } from "./inspect";
 export { generate, objectNames, recipeFor, type GenerateError, type ObjectName } from "./generate";
+export { BIRD_BOUNDS, BIRD_LENGTH_CELLS, BIRD_VERSION, CROW, birdDesign, birdParams, quantizeBird, type BirdParams } from "./v2/bird";
+export { createBuilder, type ArticulatedEdge, type Articulation as JointArticulation, type Builder, type Design, type DesignFace, type Facing, type ModuleJoint } from "./v2/design";
+export {
+  compileDesign,
+  edgeKey,
+  poseCompiled,
+  posePieces,
+  seamGap,
+  type CompileError,
+  type Compiled,
+  type CompiledEdge,
+  type EdgeRole,
+  type Link,
+  type Piece,
+  type Pose,
+  type PosedFace,
+} from "./v2/compile";
+export { panelContact, panelDistance, panelQuality, type Contact, type PanelQuality } from "./v2/geom";
+export { LIMITS, geo1Verdict, posedContacts, verifyCompiled, type PosedPanelLike, type Collision, type GeoReport, type PairStatus, type PanelIssue, type SweepReport, type Verdict } from "./v2/verify";
+export { birdMetrics, iou, silhouette, type BirdMetrics, type Silhouette } from "./v2/metrics";

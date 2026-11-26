@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EXPERIMENTAL — Origami lab V2 (neutral clay review)</title>
+    <style>
+      :root { color-scheme: dark; --bg: #2a2b2f; --panel: #202227; --line: #3c3e45; }
+      * { box-sizing: border-box; }
+      body { margin: 0; background: var(--bg); color: #e3e0d9; font: 13px/1.4 ui-sans-serif, system-ui, sans-serif; }
+      #banner { position: relative; z-index: 3; background: #7a2e12; color: #fff3e6; padding: 6px 12px; font-weight: 600; display: flex; justify-content: space-between; gap: 12px; }
+      #banner small { font-weight: 400; opacity: 0.9; }
+      #controls { position: relative; z-index: 3; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; padding: 6px 12px; background: var(--panel); border-bottom: 1px solid var(--line); }
+      #controls label { display: inline-flex; gap: 4px; align-items: center; white-space: nowrap; }
+      #controls input[type="number"] { width: 60px; }
+      button, input, select { background: #34363d; color: #eee; border: 1px solid #4a4c55; border-radius: 4px; padding: 2px 7px; font: inherit; }
+      main { display: grid; grid-template-columns: minmax(0, 1fr) 360px; }
+      #canvas { position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 0; }
+      #tiles { position: relative; z-index: 1; display: grid; gap: 6px; padding: 6px; }
+      .tile { position: relative; border: 1px solid var(--line); border-radius: 4px; }
+      .tile .label { position: absolute; left: 6px; top: 4px; font-weight: 600; color: #222; font-size: 12px; pointer-events: none; }
+      .flat { background: #f4f2ed; border: 1px solid var(--line); border-radius: 4px; padding: 4px; position: relative; z-index: 1; color: #222; }
+      .flat svg { width: 100%; height: auto; display: block; }
+      aside { position: relative; z-index: 2; padding: 8px 12px; border-left: 1px solid var(--line); background: var(--panel); overflow: auto; max-height: calc(100vh - 64px); }
+      aside h3 { margin: 10px 0 4px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #aaa59a; }
+      aside pre { white-space: pre-wrap; word-break: break-word; font: 11px/1.35 ui-monospace, monospace; margin: 2px 0; }
+    </style>
+  </head>
+  <body>
+    <div id="banner"><span>EXPERIMENTAL — Origami lab V2: neutral clay geometry review (not production, not approved, no gate closed)</span><small id="build"></small></div>
+    <div id="controls"></div>
+    <main>
+      <div><canvas id="canvas"></canvas><div id="tiles"></div></div>
+      <aside id="inspector"></aside>
+    </main>
+    <script type="module" src="/web/v2.ts"></script>
+  </body>
+</html>
