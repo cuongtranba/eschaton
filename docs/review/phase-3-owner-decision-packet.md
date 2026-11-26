@@ -1,6 +1,6 @@
 # Phase 3 — owner decision packet (2026-11-26)
 
-- Status: **DECISION REQUEST. Nothing here is decided, approved or waived.** Every item waits for the owner, by its id.
+- Status: **DECISION REQUEST. Nothing here is decided, approved or waived.** Every item waits for the owner, by its id. The `P3D-` prefix avoids the Phase 3 milestone labels G0–G7.
 - Base: `main` @ `8f4f106` (PR #9 merged). Canonical evidence:
   - [`../phase-3-exit.md`](../phase-3-exit.md) (§6 decisions, §8 addendum);
   - [`phase-3-closure-audit.md`](phase-3-closure-audit.md);
@@ -29,12 +29,12 @@ A merge does not imply any other row.
 
 | Id | Decision | Options | Recommendation and rationale |
 |---|---|---|---|
-| **G3-1** | Phase 3 gate outcome (exit §6.1) | pass · pass with conditions · keep open | **Pass with conditions** G3-2 and G3-5. The exit criteria of master plan §11 are met and audited. The two settlement defects and the wind defect are fixed test-first, and CI is green on the merged head. What is still open is visual quality and target-hardware evidence, which do not affect the logic Phase 4 builds on |
-| **G3-2** | Visual review (exit §6.2) | accept at prototype level · accept with listed gaps · reject | **Accept with listed gaps.** The plan reads as a settlement: core towers, roads, river, bridge and plaza, and two districts join at the seam. Known gaps: roads and river hard to read in 3D, box-like towers, unreadable roofs at district scale, no sky or depth. They are art and camera work for Phases 5 and 7, not generation. **This needs the owner's own look**: see §6 to run the Studio |
-| **G3-3** | ADR 0017 choices 1–8 (exit §6.3–6.4; choice 7 is the 1e-9 catalog grid) | confirm · change individual choices | **Confirm all eight as implemented.** Each is recorded with its limits (exit §7). No stored snapshot or log is affected by choice 7 |
-| **G3-4** | ADR 0017 choice 9: wind formula and system versioning | (a) keep `sqrt` with power-of-two scaling, no version change · (b) version systems in `versions.rules` · (c) back to `Math.hypot` | **(a).** Logs record outcomes, so replay is unaffected. The Studio sends only axis winds, which are bit-identical. (b) refuses every snapshot for a change no stored data observed. (c) is engine-dependent and fails the three-engine pin. Revisit system versioning when the Phase 4 tick runs systems continuously (P4 ADR 0018) |
-| **G3-5** | RTX 5070 test C1–C6 ([`../testing/webgpu-manual-test.md`](../testing/webgpu-manual-test.md)) | run before the gate · make it a condition with a deadline · waive (owner only) | **Make it a condition, due before any Phase 5 (Atmosphere) work.** Phase 5 is where the renderer and hatching quality are judged, and C5 (hatching stability) and C6 (frame feel) can only be judged there by a human. Phase 4 is logic and simulation and does not depend on it. Not waived |
-| **G3-6** | Cross-engine determinism as a product promise (exit §6.5) | promise for named browsers · keep as a tested property | **Keep as a tested property.** Four artefacts are pinned on Node, Chromium, Firefox and WebKit: solver digest, catalog fingerprint, district seed 1 hash and an off-axis wind fold. A finite corpus is not a promise. Decide the promise at Phase 7, as P4-9 proposes |
+| **P3D-1** | Phase 3 gate outcome (exit §6.1) | pass · pass with conditions · keep open | **Pass with conditions** P3D-2 and P3D-5. The exit criteria of master plan §11 are met and audited. The two settlement defects and the wind defect are fixed test-first, and CI is green on the merged head. What is still open is visual quality and target-hardware evidence, which do not affect the logic Phase 4 builds on |
+| **P3D-2** | Visual review (exit §6.2) | accept at prototype level · accept with listed gaps · reject | **Accept with listed gaps.** The plan reads as a settlement: core towers, roads, river, bridge and plaza, and two districts join at the seam. Known gaps: roads and river hard to read in 3D, box-like towers, unreadable roofs at district scale, no sky or depth. They are art and camera work for Phases 5 and 7, not generation. **This needs the owner's own look**: see §6 to run the Studio |
+| **P3D-3** | ADR 0017 choices 1–8 (exit §6.3–6.4; choice 7 is the 1e-9 catalog grid) | confirm · change individual choices | **Confirm all eight as implemented.** Each is recorded with its limits (exit §7). No stored snapshot or log is affected by choice 7 |
+| **P3D-4** | ADR 0017 choice 9: wind formula and system versioning | (a) keep `sqrt` with power-of-two scaling, no version change · (b) version systems in `versions.rules` · (c) back to `Math.hypot` | **(a).** Logs record outcomes, so replay is unaffected. The Studio sends only axis winds, which are bit-identical. (b) refuses every snapshot for a change no stored data observed. (c) is engine-dependent and fails the three-engine pin. Revisit system versioning when the Phase 4 tick runs systems continuously (P4 ADR 0018) |
+| **P3D-5** | RTX 5070 test C1–C6 ([`../testing/webgpu-manual-test.md`](../testing/webgpu-manual-test.md)) | run before the gate · make it a condition with a deadline · waive (owner only) | **Make it a condition, due before any Phase 5 (Atmosphere) work.** Phase 5 is where the renderer and hatching quality are judged, and C5 (hatching stability) and C6 (frame feel) can only be judged there by a human. Phase 4 is logic and simulation and does not depend on it. Not waived |
+| **P3D-6** | Cross-engine determinism as a product promise (exit §6.5) | promise for named browsers · keep as a tested property | **Keep as a tested property.** Four artefacts are pinned on Node, Chromium, Firefox and WebKit: solver digest, catalog fingerprint, district seed 1 hash and an off-axis wind fold. A finite corpus is not a promise. Decide the promise at Phase 7, as P4-9 proposes |
 
 ## 3. Decisions that can be deferred, with a target
 
@@ -44,12 +44,12 @@ A merge does not imply any other row.
 | ADR 0010 Q9 | Conservation key (appearance-derived `MaterialId`) | Defer to before Phase 6 (reconstruction), where it becomes observable; P4-8 |
 | ADR 0010 Q10 | Group on detach | Same as Q9; Phase 4 keeps the provisional rule and pins it with a test (P4-8) |
 | ADR 0012 Q5 | Socket table placement interpretation | Confirm as implemented, or defer; no later phase changes it |
-| ADR 0006 | Hatching on moving pieces | Defer to Phase 5, together with G3-5 |
+| ADR 0006 | Hatching on moving pieces | Defer to Phase 5, together with P3D-5 |
 | ADR 0011 | Incremental state hash (hash-format change) | Decide inside P4-10, after the CL1 measurement (§4.1) |
 | Studio | Offset-toggle details, UI-only `homes` map (exit §6.6) | Defer; UI-only, no world state |
 | GOV-1 | Separate decision kinds (merge ≠ gate ≠ visual ≠ ADR ≠ next phase ≠ release) | **Decide now (adopt):** it is how this packet is already structured, and it costs nothing |
 | GOV-2…GOV-8 | Ledger, agent identity, rulesets, review policy, invalidation paths, migration, validator | Defer to before the Phase 4 gate. GOV-4a (GitHub Pro or public) is the owner's cost call and comes before GOV-4. Implementation needs its own authorization |
-| P4-1…P4-10 | Phase 4 architecture choices | Only after G3-1, with a separate Phase 4 authorization. The proposal's defaults stand, refined as in §4 |
+| P4-1…P4-10 | Phase 4 architecture choices | Only after P3D-1, with a separate Phase 4 authorization. The proposal's defaults stand, refined as in §4 |
 
 ## 4. Technical risks for the next phase, with the smallest mitigation (design only)
 
@@ -83,10 +83,10 @@ A merge does not imply any other row.
 
 ## 5. Suggested order for the owner
 
-1. Run the Studio (§6) and look at seeds 1, 3 and 11 and two districts → **G3-2**.
-2. **G3-3, G3-4, G3-6**: confirmations, each with a recommended default.
-3. **G3-5**: set the C1–C6 condition and its deadline.
-4. **G3-1**: the gate outcome.
+1. Run the Studio (§6) and look at seeds 1, 3 and 11 and two districts → **P3D-2**.
+2. **P3D-3, P3D-4, P3D-6**: confirmations, each with a recommended default.
+3. **P3D-5**: set the C1–C6 condition and its deadline.
+4. **P3D-1**: the gate outcome.
 5. **GOV-1** (optional now).
 6. Only then, and separately: whether to authorize Phase 4, with P4-1…10.
 
@@ -97,4 +97,4 @@ git checkout main && git pull --ff-only && pnpm install --frozen-lockfile
 STUDIO_PORT=5173 pnpm dev   # then open http://localhost:5173/ and use the Genesis panel
 ```
 
-The recorded walkthrough used WebGPU on Apple Metal. It is not the RTX 5070 run (G3-5).
+The recorded walkthrough used WebGPU on Apple Metal. It is not the RTX 5070 run (P3D-5).
