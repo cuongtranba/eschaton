@@ -52,7 +52,7 @@ test("a hosted job that crossed a structured clone commits to the same state has
   expect(posted.filter((message) => message.type === "progress").length).toBeGreaterThan(10);
 });
 
-test("progress reports the plan and a rising lot count before the result", () => {
+test("progress reports the plan and a lot count that never decreases before the result", () => {
   const { host, posted, runOne, request } = harness();
   host.receive(request("b"));
   while (runOne());
