@@ -31,6 +31,9 @@ The rules below are kept small on purpose. There is no ECS, no plugin registry, 
 ### 2. Idle ticks and the cursor (P4-3 a)
 
 - An **idle tick** is one in which no command applies, no result is due and no system emits an op. It commits nothing, writes no record and does not change `header.tick`. The cursor still advances.
+- **This needs two changes to how systems behave today** (`packages/world/src/systems.ts`):
+  - `windFold` emits a `fold` op for every matching entity, even when the angle does not change. That op still commits, and it marks the entity as touched, so its bonds are re-derived. Under the clock, a system emits ops **only for values that change**. Otherwise no tick with wind is ever idle.
+  - `runSystem` rejects an empty plan as `op-invalid` ("proposed no change"). The scheduler does not call `runSystem`. It calls `plan` on the system's view, and an empty plan is the normal idle result. `runSystem` stays as it is for the explicit Phase 1–3 path.
 - Every field input is a pure function of an **absolute** tick, for example a gust's `fromTick`. A run that skips idle ticks therefore produces the same records as one that counts them.
 - **Restart** is reset plus re-simulation: initial snapshot + input log.
 - **Resume from a mid-run snapshot** is allowed only at a quiescent point, with no outstanding job. The cursor then resumes at `max(header.tick + 1, the last input tick + 1)`. A resume with jobs outstanding is refused with a diagnostic, not approximated.
@@ -54,8 +57,8 @@ The rules below are kept small on purpose. There is no ECS, no plugin registry, 
 
 1. Apply the input commands for tick `t`, in `seq` order.
 2. **Settle due results:** each job due at `t`, in `(due tick, job id)` order, through `applyProposal`. Each is its own commit with origin `job`. An outcome of `conflict` re-dispatches the job against the current state, due at `t + L` again and at most twice, and the diagnostic is published. `invalid` abandons the job and publishes a diagnostic. Neither stops the session.
-3. Sample fields at `t` for the drafted state: pure, integer or correctly rounded only (proposal §2.5).
-4. Run systems in order, each on the state drafted by the previous ones (`draftProposal`/`advance` pattern):
+3. Sample fields at `t` for the drafted state: pure, integer or correctly rounded only (proposal §2.5). "No `pow`" means no operation whose result can differ between engines. An exact power-of-two constant such as `2 ** 500` in `windStrength` is allowed (ADR 0017 choice 9 a).
+4. Run systems in order, each on the state drafted by the previous ones. This uses the same pattern as `draftProposal`: validate and apply without hashing or recording. Today the drafting step (`advance`) is internal to `@eschaton/world` and is exposed only for proposals. CL1 therefore adds one world export, `draftPatch(catalog, state, patch)`, which runs exactly the checks of `applyPatch` and returns the drafted state. The systems, in order:
    1. `windFold` (fold angles);
    2. `decay` (damage);
    3. `structural` (break within budget, ADR 0019);
@@ -107,6 +110,7 @@ Catch-up is capped at 4 ticks per frame, as in the proposal.
 
 - "an idle tick commits nothing and leaves the header tick and state hash unchanged"
 - "a patch with a tick below the header tick is refused"
+- "a steady wind after the folds have settled leaves the tick idle" (no op for an unchanged angle)
 - "the same initial snapshot and input log re-simulate to the same records" (Node; the engines job for Chromium, Firefox and WebKit)
 - "re-simulation refuses an input log with another schedule version, and replay of the same records still succeeds"
 - "a command for a tick that has already run is refused"
