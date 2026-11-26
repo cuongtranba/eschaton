@@ -50,6 +50,7 @@ The per-milestone test counts above, and the milestone status "Drafted, **Propos
   - In the Studio, "Replay log" shows `match <hash>` (e2e "replaying the commit log in the Studio reproduces the live state hash").
   - The rebuild study (27 commits, 1,233 entities) replays to the same hash, `79bb58b0560088a4`, in headless software Chromium and in Chrome on a physical GPU.
 - **Roof and leaf in the Studio:** the World mode wind control runs `windFold` through `runSystem`. An over-strong gust is shown as a rejection, and the state is unchanged (e2e "applying wind commits a new revision and an over-strong gust is shown as a rejection").
+  - Later change (2026-11-26, PR #5, not part of this gate's evidence): that rejection was a defect. `windFold` now bounds the response at flat, so a strong gust folds the roof and leaf and commits a revision (e2e "a strong gust folds the roof and the leaf and commits a new revision"). A patch is still rejected atomically when a system proposes a fold outside a crease range (`world/systems`).
 - **Self-assembly precursor:**
   - `assemble` rebuilds a roof-module and a 27-piece watchtower from stored fragments with the same entity ids, also under closed conservation.
   - It builds a different recipe from the same pieces.

@@ -69,7 +69,7 @@ test.describe("reduced motion", () => {
   });
 });
 
-test("applying wind commits a new revision and an over-strong gust is shown as a rejection", async ({ page }) => {
+test("applying wind commits a new revision", async ({ page }) => {
   await openWorld(page);
   const start = await revision(page);
 
@@ -77,11 +77,18 @@ test("applying wind commits a new revision and an over-strong gust is shown as a
   await page.getByTestId("world-apply-wind").click();
   await expect(page.getByTestId("world-revision")).toHaveText(String(start + 1));
   await expect(page.getByTestId("world-rejection")).toHaveText("");
+});
+
+test("a strong gust folds the roof and the leaf and commits a new revision", async ({ page }) => {
+  await openWorld(page);
+  const start = await revision(page);
+  const hash = await page.getByTestId("world-hash").innerText();
 
   await page.getByTestId("world-wind").fill("1");
   await page.getByTestId("world-apply-wind").click();
-  await expect(page.getByTestId("world-rejection")).toContainText("fold");
   await expect(page.getByTestId("world-revision")).toHaveText(String(start + 1));
+  await expect(page.getByTestId("world-rejection")).toHaveText("");
+  await expect(page.getByTestId("world-hash")).not.toHaveText(hash);
 });
 
 test("replaying the commit log in the Studio reproduces the live state hash", async ({ page }) => {
