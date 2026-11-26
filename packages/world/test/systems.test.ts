@@ -1,4 +1,18 @@
-import { presetCatalog, type Catalog, type Cell, type FoldonDefinition } from "@eschaton/foldon";
+import {
+  createCatalog,
+  creaseId,
+  defineFoldon,
+  foldable,
+  foldonId,
+  materialId,
+  presetCatalog,
+  presetFoldons,
+  renderable,
+  windResponsive,
+  type Catalog,
+  type Cell,
+  type FoldonDefinition,
+} from "@eschaton/foldon";
 import {
   applyPatch,
   cellOccupant,
@@ -168,6 +182,45 @@ test.each([10, 50])("a gust of strength %d stays inside every crease range and n
     }
   }
   expect(seen).toBeGreaterThan(0);
+});
+
+const limpLeaf = (() => {
+  const leaf = presetFoldons[0];
+  if (leaf === undefined) throw new Error("leaf preset expected");
+  const defined = defineFoldon({
+    id: foldonId("limp-leaf"),
+    name: "Leaf without stiffness",
+    footprint: leaf.footprint,
+    geometry: leaf.geometry,
+    sockets: leaf.sockets,
+    components: [foldable({ creases: [creaseId("midrib")], stiffness: 0 }), windResponsive({ drag: 0.8 }), renderable({ material: materialId("ash-paper") })],
+  });
+  if (!defined.ok) throw new Error(JSON.stringify(defined.error));
+  const built = createCatalog({ foldons: [defined.value], assemblies: [] });
+  if (!built.ok) throw new Error(JSON.stringify(built.error));
+  const world = createWorld({ catalog: built.value, seed: 1 });
+  if (!world.ok) throw new Error("world must build");
+  const placed = applyPatch(built.value, world.value, {
+    baseRevision: world.value.header.revision,
+    ops: [{ op: "instantiate", ref: { kind: "foldon", id: "limp-leaf" }, anchor: [0, 0, 0], rotation: 0 }],
+    origin: { kind: "command", id: "test" },
+  });
+  if (!placed.ok) throw new Error(JSON.stringify(placed.error));
+  return { catalog: built.value, state: placed.value.state, rest: creaseOf(defined.value, "midrib").restAngle };
+})();
+
+function limpGust(strength: number): number {
+  const result = runSystem(limpLeaf.catalog, limpLeaf.state, windFold, { wind: [strength, 0, 0] });
+  if (!result.ok) throw new Error(JSON.stringify(result.error));
+  return result.value.state.entities[0]?.fold.midrib ?? NaN;
+}
+
+test("a gust flattens a zero-stiffness crease and commits instead of dividing by zero", () => {
+  expect(Math.abs(limpGust(0.1))).toBeCloseTo(0, 12);
+});
+
+test("zero wind keeps a zero-stiffness crease at its rest angle instead of NaN", () => {
+  expect(limpGust(0)).toBeCloseTo(limpLeaf.rest, 12);
 });
 
 test("folding never changes occupancy", () => {
