@@ -13,6 +13,7 @@
 | The golden fixed history lost its link to the pre-W3 commit path when it was re-recorded | Lost provenance | Restored by reproduction: pre-W3 code plus only the rounding patch gives the re-recorded hashes (§3) |
 | No Node unit test covered the full preset catalog after G0 | Lost coverage | A recorded value is now pinned in Node (district seed 1, `5dc9053d2e6bd656`); nothing was re-recorded (§3.3) |
 | `settleDistrict` trusted the result's district box and declared dependencies | **Defect** (a continuation could commit without its neighbour-road check) | Fixed test-first (§4.1) |
+| `settleDistrict` could throw on a malformed result, and did not compare road gates and river with the request | **Defect** (second review) | Fixed test-first (§4.13) |
 | Other review items: draftProposal, depends, validators, worker cancellation and budget, minor items | Audited | §4 |
 
 ## 2. Wind strength: `Math.hypot` → `Math.sqrt` (`62cf1e3`)
@@ -126,6 +127,7 @@ Audited by reading the code at `870ef62`: a read-only research pass, with every 
 | 4.10 | Relative type import | OK | No import crosses a package boundary. `apps/studio/engines/genesis.spec.ts` type-imports `../src/bench/genesisBench` inside the same app, and `Reflect.get(…) as GenesisBench` is a test-side cast on a value the bench page itself defines |
 | 4.11 | Seed corpus and claims | Recorded | Unit tests use one world seed (20,261,125), one preset and origin `[0,0,0]`. The benchmark corpus (seeds 1–12) overlaps the unit seeds, so it is not independent evidence. The cross-engine equality of a district holds for seed 1, the one pinned. Determinism across *world* seeds is not tested. None of this is claimed as universal |
 | 4.12 | The off-axis wind engines test compares raw doubles | OK (not engine-dependent) | The reviewer flagged it as the same risk as `atan2` or `sin`. It is not: `windFold` uses only `*`, `+`, `/`, `sqrt`, `max` and `min`, which are correctly rounded or exact. It passed on all three engines locally (§2.3) |
+| 4.13 | Second review of `settleDistrict` (2026-11-26, before merge) | **BUG, fixed** | Two gaps were left after 4.1. (1) Some malformed results made it **throw** instead of returning `failed`: `plan`, `proposal` or `metrics` set to `null`, `plan.gates` missing, or a `depends` entry that is `null` or has no valid region. (2) The result's plan was not compared with the request's **road gates and river**. So a continuation planned without the gate that meets the neighbour's road could commit, as long as its box and dependencies matched. Both were red before the fix: one test threw a `TypeError`, the other returned `committed`. Fix: the shape check covers those fields and each dependency entry. The plan's gate cells and river terminals must equal those the request asks for. These are derived by `planRequestOf` and `plannedTerminals`, the functions the planner itself uses, so the rule is defined once. The declared dependency regions must be **exactly** the request's, not a superset. Each check was mutation-tested. Tests: "a malformed result from an untrusted transport is refused instead of throwing"; "a result planned for other road gates or another river than its request is refused at settlement". **What settlement does not check, by design:** (a) that the result's seed and lots are the ones the request would produce. Proving that means re-planning on the main thread, about 10–40 ms per district on this machine. Settlement checks contracts instead: box, terminals, dependencies, plan validity and an audit from scratch. (b) The read and dependency *digests*. They are optimistic-concurrency tokens taken on the state the job was sent (ADR 0016). A wrong digest gives a `conflict`, not a corrupt commit |
 
 
 ## 5. Validation
@@ -143,7 +145,18 @@ The machine was shared and not idle. OrbStack was running 13 containers, and oth
 | `pnpm e2e` (Chromium) | 36 passed, 1 failed (lab "selecting every catalog item…", 30 s timeout) | 31 passed, 6 failed: all Phase 0 lab tests, all timeouts (`stat-backend` 5 s, a 30 s test timeout) | `e2e/lab.spec.ts` alone with 1 worker at load 54–103: 18 passed, 2 failed. These are the same two tests the Phase 3 exit report (§4) recorded as timing out locally and passing in CI ("selecting every catalog item…", "switching items repeatedly…"). The first passed alone in 8.0 s at load 8 (run 1). **No Genesis, Wave or World e2e test failed in any run** |
 | `pnpm --filter @eschaton/studio engines` | 21 passed | 21 passed | — |
 
-Unit test count at the head: **278** (foldon 50, architecture 70, world 83, wave 37, genesis 25, wfc experiment 13). `main` @ `870ef62` has 269.
+Unit test count at the head: **280** (foldon 50, architecture 70, world 83, wave 37, genesis 27, wfc experiment 13). `main` @ `870ef62` has 269. The two tests of 4.13 were added after runs 1 and 2; run 3 is in §5.1a.
+
+### 5.1a Run 3: the §4.13 settlement fix, load 77–173
+
+- `pnpm lint`, `pnpm typecheck` and `pnpm build`: pass.
+- `pnpm test`: 280 passed.
+- `pnpm --filter @eschaton/studio engines`: 21 passed.
+- `e2e/genesis.spec.ts` with 1 worker:
+  - first run, 3 passed and 2 failed;
+  - re-run of the same tree at the same load, all 5 passed.
+
+  The failing tests were "generating a district in the worker…" and "a second district continues the first one…". The full e2e suite was not run locally at this load. CI on the head is the arbiter.
 
 The local failures are timeouts in code this branch does not touch, under a load roughly six times the core count. The CI run on the PR head is the arbiter.
 

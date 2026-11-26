@@ -146,3 +146,26 @@ test("a continuation whose result dropped the neighbour road dependencies is ref
   const stripped = { ...second, proposal: { ...second.proposal, depends: [] } };
   expect(settleDistrict(catalog, first, stripped, live(request)).status).toBe("failed");
 });
+
+test("a malformed result from an untrusted transport is refused instead of throwing", () => {
+  const state = emptyWorld();
+  const outcome = generated(state, 2);
+  const malformed = [
+    { ...outcome, plan: null },
+    { ...outcome, proposal: null },
+    { ...outcome, metrics: null },
+    { ...outcome, plan: { ...outcome.plan, gates: undefined } },
+    { ...outcome, proposal: { ...outcome.proposal, depends: [null] } },
+    { ...outcome, proposal: { ...outcome.proposal, depends: [{ region: null, digest: "0" }] } },
+    { ...outcome, proposal: { ...outcome.proposal, depends: [{ region: { min: [0, 0, 0] }, digest: "0" }] } },
+  ];
+  expect(malformed.map((result) => settleDistrict(catalog, state, result, live(atOrigin(2))).status)).toEqual(malformed.map(() => "failed"));
+});
+
+test("a result planned for other road gates or another river than its request is refused at settlement", () => {
+  const state = emptyWorld();
+  const outcome = generated(state, 1);
+  const extraGate: DistrictRequest = { ...atOrigin(1), gates: [...lastDistrict.gates, { edge: "east", at: 20 }] };
+  const noRiver: DistrictRequest = { ...atOrigin(1), river: "none" };
+  expect([extraGate, noRiver].map((request) => settleDistrict(catalog, state, outcome, live(request)).status)).toEqual(["failed", "failed"]);
+});

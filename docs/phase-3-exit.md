@@ -132,7 +132,8 @@ Sections 1–7 are the report as written at the gate on 2026-11-25 and are left 
   - The golden-hash provenance to the pre-W3 commit path is restored by reproduction.
   - Full-catalog coverage is back in Node unit tests through a value that was already recorded.
   - A second defect fixed test-first: `settleDistrict` trusted the result's district box and declared dependencies, so a continuation whose result had lost its `depends` committed without the neighbour-road check.
-  - Unit tests: 278 on the branch, against 269 on `main`. Engines: 21, against 18.
+  - A second review closed two gaps in settlement, test-first: a malformed result could make it throw, and a plan for other road gates or another river than the request was accepted (audit §4.13).
+  - Unit tests: 280 on the branch, against 269 on `main`. Engines: 21, against 18.
 - **Visual walkthrough** on a physical Apple GPU (WebGPU on Metal, not the RTX 5070): [`review/phase-3-visual-walkthrough.md`](review/phase-3-visual-walkthrough.md). Observations only; not an approval.
 - **Still pending for the owner:**
   - the gate decision (§6.1) and the visual review (§6.2);

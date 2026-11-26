@@ -74,6 +74,13 @@ function requestIssue(request: PlanRequest): string | undefined {
 
 type Attempt = Result<DistrictPlan, Readonly<{ stage: PlanFailure["stage"]; reason: string }>>;
 
+/** The gate cells and river terminals a plan for this request records. */
+export function plannedTerminals(request: PlanRequest): Pick<DistrictPlan, "gates" | "river"> {
+  const gates = request.gates.map((gate) => gateCell(gate, request.size));
+  const depth = request.size[1];
+  return { gates, river: request.river === undefined || gates.length === 0 ? undefined : { inlet: [request.river.inlet, 0], outlet: [request.river.outlet, depth - 1] } };
+}
+
 function attemptPlan(request: PlanRequest, attempt: number): Attempt {
   const { rules } = request;
   const [width, depth] = request.size;
@@ -176,7 +183,7 @@ function attemptPlan(request: PlanRequest, attempt: number): Attempt {
     }
     routes.push([...path]);
   };
-  const gates = request.gates.map((gate) => gateCell(gate, request.size));
+  const { gates, river } = plannedTerminals(request);
   for (const gate of gates) {
     if (kinds[at(gate[0], gate[1])] !== "open") return err({ stage: "roads", reason: `gate ${gate.join(",")} is not on open land` });
     const path = route(gate);
@@ -236,13 +243,12 @@ function attemptPlan(request: PlanRequest, attempt: number): Attempt {
   }
   if (!lots.some((lot) => lot.role === "house" || lot.role === "tower")) return err({ stage: "lots", reason: "no lot with road frontage could be laid out" });
 
-  const [firstGate] = gates;
   return ok({
     size: request.size,
     kinds,
     lotOf,
     gates,
-    river: request.river === undefined || firstGate === undefined ? undefined : { inlet: [request.river.inlet, 0], outlet: [request.river.outlet, depth - 1] },
+    river,
     plaza: { min: plazaMin, max: plazaMax },
     routes,
     lots,

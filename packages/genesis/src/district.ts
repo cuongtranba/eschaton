@@ -1,7 +1,7 @@
 import type { Catalog, Cell } from "@eschaton/foldon";
 import { compileTiles, prepareRegion, proposalOf, solve, type CompiledTiles } from "@eschaton/wave";
 import { applyPatch, createWorld, draftProposal, readRegion, type Origin, type Proposal, type Region, type WorldOp, type WorldState } from "@eschaton/world";
-import { planDistrict, type DistrictPlan, type Gate, type Lot, type Role } from "./plan";
+import { planDistrict, type DistrictPlan, type Gate, type Lot, type PlanRequest, type Role } from "./plan";
 import type { DistrictPreset } from "./presets";
 import { scopedSeed } from "./seed";
 import { planIssues } from "./validate";
@@ -51,6 +51,13 @@ export function districtRegion(preset: DistrictPreset, at: Cell): Region {
   return { min: at, max: [at[0] + preset.size[0] - 1, at[1] + height - 1, at[2] + preset.size[1] - 1] };
 }
 
+/** The plan request a district request asks for: the preset's gates and river unless the request overrides them. */
+export function planRequestOf(request: DistrictRequest, worldSeed: number): PlanRequest {
+  const { preset } = request;
+  const river = request.river === "none" ? undefined : (request.river ?? preset.river);
+  return { rules: preset.rules, worldSeed, seed: request.seed, size: preset.size, gates: request.gates ?? preset.gates, ...(river === undefined ? {} : { river }) };
+}
+
 /**
  * Generates one district as a job that advances one stage or one lot per step. It works on a private scratch world
  * that holds only the district and copies of the pieces in its one-cell shell, so the cost of a district does not
@@ -85,8 +92,7 @@ export function createDistrictJob(catalog: Catalog, state: WorldState, request: 
     if (base.entities.some((entity) => entity.cells.some((cell) => cell.every((value, axis) => value >= (region.min[axis] ?? 0) && value <= (region.max[axis] ?? 0))))) {
       return fail("world", "the district box already holds entities; Phase 3 generates into empty ground only");
     }
-    const river = request.river === "none" ? undefined : (request.river ?? preset.river);
-    const planned = planDistrict({ rules: preset.rules, worldSeed: state.header.seed, seed: request.seed, size: preset.size, gates: request.gates ?? preset.gates, ...(river === undefined ? {} : { river }) });
+    const planned = planDistrict(planRequestOf(request, state.header.seed));
     if (!planned.ok) return fail(`plan:${planned.error.stage}`, `${planned.error.reason} (after ${planned.error.attempts} attempts)`);
     const issues = planIssues(planned.value);
     if (issues.length > 0) return fail("plan:validation", issues.slice(0, 3).join("; "));

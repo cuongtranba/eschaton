@@ -1,7 +1,8 @@
 import { canonicalJson, type Catalog } from "@eschaton/foldon";
 import { applyProposal, type Committed, type WorldState } from "@eschaton/world";
 import { auditDistrict } from "./audit";
-import { districtRegion, type DistrictOutcome, type DistrictRequest } from "./district";
+import { districtRegion, planRequestOf, type DistrictOutcome, type DistrictRequest } from "./district";
+import { plannedTerminals } from "./plan";
 import { planIssues } from "./validate";
 
 export type DistrictSettlement =
@@ -11,34 +12,46 @@ export type DistrictSettlement =
 const isOutcome = (value: unknown): value is DistrictOutcome =>
   typeof value === "object" && value !== null && "kind" in value && (value.kind === "generated" || value.kind === "failed");
 
+const isObject = (value: unknown): value is object => typeof value === "object" && value !== null;
+
+const isRegion = (value: unknown): boolean =>
+  isObject(value) && "min" in value && "max" in value && Array.isArray(value.min) && Array.isArray(value.max);
+
+const isDependency = (value: unknown): boolean => isObject(value) && "region" in value && isRegion(value.region) && "digest" in value && typeof value.digest === "string";
+
 const wellFormed = (value: DistrictOutcome): value is Extract<DistrictOutcome, { kind: "generated" }> =>
   value.kind === "generated" &&
-  typeof value.plan === "object" &&
+  isObject(value.plan) &&
   Array.isArray(value.plan.kinds) &&
   Array.isArray(value.plan.lots) &&
+  Array.isArray(value.plan.gates) &&
   Array.isArray(value.at) &&
-  typeof value.proposal === "object" &&
+  isObject(value.proposal) &&
+  isRegion(value.proposal.region) &&
   Array.isArray(value.proposal.ops) &&
-  (value.proposal.depends === undefined || Array.isArray(value.proposal.depends)) &&
-  typeof value.metrics === "object" &&
-  typeof value.metrics.lots === "object" &&
+  (value.proposal.depends === undefined || (Array.isArray(value.proposal.depends) && value.proposal.depends.every(isDependency))) &&
+  isObject(value.metrics) &&
+  isObject(value.metrics.lots) &&
   Array.isArray(value.diagnostics);
 
-function requestMismatch(outcome: Extract<DistrictOutcome, { kind: "generated" }>, request: DistrictRequest): string | undefined {
+const sortedCanonical = (values: readonly unknown[]): string => canonicalJson(values.map((value) => canonicalJson(value)).sort());
+
+function requestMismatch(outcome: Extract<DistrictOutcome, { kind: "generated" }>, request: DistrictRequest, worldSeed: number): string | undefined {
   const same = (a: unknown, b: unknown): boolean => canonicalJson(a) === canonicalJson(b);
   if (!same(outcome.at, request.at) || !same(outcome.plan.size, request.preset.size) || !same(outcome.proposal.region, districtRegion(request.preset, request.at))) {
     return "the result is not for the requested district box";
   }
-  const declared = new Set((outcome.proposal.depends ?? []).map((dependency) => canonicalJson(dependency.region)));
-  const missing = (request.depends ?? []).filter((region) => !declared.has(canonicalJson(region)));
-  return missing.length > 0 ? `the result does not declare ${missing.length} of the dependencies the request relied on` : undefined;
+  const { gates, river } = plannedTerminals(planRequestOf(request, worldSeed));
+  if (!same(outcome.plan.gates, gates) || !same(outcome.plan.river, river)) return "the result is not planned for the requested road gates and river";
+  const declared = (outcome.proposal.depends ?? []).map((dependency) => dependency.region);
+  return sortedCanonical(declared) === sortedCanonical(request.depends ?? []) ? undefined : "the result does not declare exactly the dependencies the request relied on";
 }
 
 /**
  * The only way a generated district reaches the world. The result may come from another thread and is not trusted:
- * its shape is checked, its box and declared dependencies must be those of the request it answers, its plan is
- * re-validated, the proposal is applied to get a candidate state, and that candidate is audited against the plan from
- * scratch. Only a clean candidate is returned as committed; nothing else changes.
+ * its shape is checked, its box, road gates, river and declared dependencies must be exactly those of the request it
+ * answers, its plan is re-validated, the proposal is applied to get a candidate state, and that candidate is audited
+ * against the plan from scratch. Only a clean candidate is returned as committed; nothing else changes.
  */
 export function settleDistrict(
   catalog: Catalog,
@@ -50,7 +63,7 @@ export function settleDistrict(
   if (!isOutcome(outcome)) return { status: "failed", detail: "the generator returned a malformed result" };
   if (outcome.kind === "failed") return { status: "failed", detail: `${outcome.stage}: ${outcome.reason}` };
   if (!wellFormed(outcome)) return { status: "failed", detail: "the generator returned a malformed result" };
-  const mismatch = requestMismatch(outcome, options.request);
+  const mismatch = requestMismatch(outcome, options.request, state.header.seed);
   if (mismatch !== undefined) return { status: "failed", detail: mismatch };
   const planned = planIssues(outcome.plan);
   if (planned.length > 0) return { status: "failed", detail: `the plan failed validation: ${planned.slice(0, 3).join("; ")}` };
