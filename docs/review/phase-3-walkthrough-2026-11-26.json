@@ -1,0 +1,160 @@
+[
+ {
+  "step": "status",
+  "backend": "WebGPU",
+  "gpu": "apple metal-3",
+  "gpuTitle": "vendor=apple architecture=metal-3 device=- description=- isFallbackAdapter=false; requestAdapter() reporting only: vendor=apple architecture=metal-3 device=- description=- isFallbackAdapter=false source=webgpu-device-adapter-info",
+  "gpuClass": "physical",
+  "forceWebGL": "off",
+  "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36"
+ },
+ {
+  "step": "reference idle frames",
+  "frames": 72,
+  "p50": 16.700000000000273,
+  "p95": 50.09999999999991,
+  "max": 66.80000000000018
+ },
+ {
+  "step": "seed 1",
+  "status": "committed",
+  "clickToStatusMs": 412,
+  "hash": "4c2c49146f508829",
+  "revision": "2",
+  "entities": "1543",
+  "metrics": "Districts 1 Last seed / revision 1 / 2 Origin cell 12, 0, -20 Entities added 1543 Placements 1306 Road / water / bridge 135 / 78 / 2 Lots T / H / R / G 4 / 27 / 4 / 52 Solver decisions / backtracks 2089 / 0 Plan attempts / lot retries 1 / 0",
+  "draws": "11",
+  "triangles": "11793",
+  "instances": "1547",
+  "idle": {
+   "frames": 47,
+   "p50": 49.899999999999864,
+   "p95": 83.30000000000018,
+   "max": 83.40000000000009
+  },
+  "orbit": {
+   "frames": 42,
+   "p50": 33.30000000000018,
+   "p95": 66.69999999999982,
+   "max": 66.79999999999927
+  }
+ },
+ {
+  "step": "seed 2",
+  "status": "committed",
+  "clickToStatusMs": 464,
+  "hash": "b392f3569115fd78",
+  "revision": "2",
+  "entities": "1578",
+  "metrics": "Districts 1 Last seed / revision 2 / 2 Origin cell 12, 0, -20 Entities added 1578 Placements 1228 Road / water / bridge 114 / 78 / 2 Lots T / H / R / G 5 / 29 / 3 / 50 Solver decisions / backtracks 2125 / 0 Plan attempts / lot retries 1 / 0",
+  "draws": "13",
+  "triangles": "11893",
+  "instances": "1582",
+  "idle": {
+   "frames": 56,
+   "p50": 33.399999999999636,
+   "p95": 66.59999999999991,
+   "max": 66.70000000000027
+  },
+  "orbit": {
+   "frames": 38,
+   "p50": 33.400000000000546,
+   "p95": 66.80000000000018,
+   "max": 83.29999999999973
+  }
+ },
+ {
+  "step": "seed 3",
+  "status": "committed",
+  "clickToStatusMs": 286,
+  "hash": "fcc1c46f237d073a",
+  "revision": "2",
+  "entities": "1343",
+  "metrics": "Districts 1 Last seed / revision 3 / 2 Origin cell 12, 0, -20 Entities added 1343 Placements 1168 Road / water / bridge 126 / 76 / 4 Lots T / H / R / G 1 / 22 / 9 / 49 Solver decisions / backtracks 1933 / 0 Plan attempts / lot retries 1 / 1",
+  "draws": "13",
+  "triangles": "9031",
+  "instances": "1347",
+  "idle": {
+   "frames": 58,
+   "p50": 33.30000000000018,
+   "p95": 50.100000000000364,
+   "max": 66.80000000000018
+  },
+  "orbit": {
+   "frames": 36,
+   "p50": 33.40000000000009,
+   "p95": 66.70000000000027,
+   "max": 66.79999999999927
+  }
+ },
+ {
+  "step": "seed 7",
+  "status": "committed",
+  "clickToStatusMs": 329,
+  "hash": "63eeb384aa05c65d",
+  "revision": "2",
+  "entities": "1582",
+  "metrics": "Districts 1 Last seed / revision 7 / 2 Origin cell 12, 0, -20 Entities added 1582 Placements 1232 Road / water / bridge 122 / 78 / 2 Lots T / H / R / G 4 / 19 / 12 / 43 Solver decisions / backtracks 1964 / 0 Plan attempts / lot retries 1 / 0",
+  "draws": "13",
+  "triangles": "12303",
+  "instances": "1586",
+  "idle": {
+   "frames": 58,
+   "p50": 33.30000000000018,
+   "p95": 66.59999999999991,
+   "max": 66.80000000000018
+  },
+  "orbit": {
+   "frames": 35,
+   "p50": 33.399999999999636,
+   "p95": 66.69999999999982,
+   "max": 66.70000000000073
+  }
+ },
+ {
+  "step": "seed 11",
+  "status": "committed",
+  "clickToStatusMs": 374,
+  "hash": "08d56ccd667be012",
+  "revision": "2",
+  "entities": "1726",
+  "metrics": "Districts 1 Last seed / revision 11 / 2 Origin cell 12, 0, -20 Entities added 1726 Placements 1386 Road / water / bridge 122 / 78 / 2 Lots T / H / R / G 8 / 22 / 5 / 50 Solver decisions / backtracks 2302 / 0 Plan attempts / lot retries 1 / 0",
+  "draws": "11",
+  "triangles": "14135",
+  "instances": "1730",
+  "idle": {
+   "frames": 57,
+   "p50": 33.30000000000018,
+   "p95": 66.70000000000027,
+   "max": 66.70000000000027
+  },
+  "orbit": {
+   "frames": 29,
+   "p50": 50.100000000000364,
+   "p95": 66.70000000000073,
+   "max": 66.80000000000018
+  }
+ },
+ {
+  "step": "cancel",
+  "status": "cancelled",
+  "revision": "1",
+  "hashUnchanged": true
+ },
+ {
+  "step": "two districts",
+  "revision": "3",
+  "hash": "125e3617336685ad",
+  "instances": "3208",
+  "idle": {
+   "frames": 46,
+   "p50": 49.90000000000009,
+   "p95": 83.30000000000018,
+   "max": 83.40000000000009
+  }
+ },
+ {
+  "step": "replay",
+  "status": "match 125e3617336685ad"
+ }
+]
