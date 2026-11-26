@@ -54,6 +54,11 @@ test("ten seeds give ten distinct districts that all pass the plan validators, t
   expect(new Set(hashes).size).toBe(10);
 });
 
+test("the Last District, seed 1, commits to the state hash the engines job pins on Chromium, Firefox and WebKit", () => {
+  const settled = settleDistrict(catalog, emptyWorld(), generated(emptyWorld(), 1), live);
+  expect(settled.status === "committed" ? hashState(settled.committed.state) : settled.detail).toBe("5dc9053d2e6bd656");
+});
+
 test("the same seed gives the same committed state hash", () => {
   expect(hashState(committedDistrict(7).after)).toBe(hashState(committedDistrict(7).after));
 });
