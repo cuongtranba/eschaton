@@ -26,6 +26,7 @@ Questions that were not answered by D3 or D4 are marked **open owner question** 
 | [0014](0014-bond-model.md) | Bond record per bond-eligible socket pair (explicit `bond` rule in the socket table; `empty` never bonds, the `open` wildcard only by explicit rule), created when an entity becomes placed and removed when it leaves; strength is data only until Phase 4 | Accepted with amendments (R3) |
 | [0015](0015-wave-solver.md) | Wave solver: placement-based 3D multi-cell WFC, explicit air, MRV integer-only cell choice with weighted seeded placement, steppable with budgets; results verified independently before commit | Accepted with amendments (W4) |
 | [0016](0016-region-proposals.md) | Region proposals: content-compared read set (region plus one-cell shell, local constraints only), write set, rebase through `applyProposal` | Accepted with amendments (W4); Phase 3 must extend the read set for nonlocal constraints |
+| [0017](0017-hierarchical-generation.md) | Hierarchical district generation: seeded semantic plan with independent global validators, network pieces, per-lot local WFC in a private scratch world, one audited proposal with nonlocal read dependencies; stored recipe numbers on a 1e-9 grid for cross-engine fingerprints | Accepted for Phase 3 (W7); eight choices to confirm at the Phase 3 gate |
 
 ## Pending (not written yet)
 

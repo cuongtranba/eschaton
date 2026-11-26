@@ -11,10 +11,12 @@
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json",
-    "profile:commit": "vitest run profile/commit.test.ts"
+    "profile:commit": "vitest run profile/commit.test.ts",
+    "profile:genesis": "vitest run profile/genesis.test.ts"
   },
   "devDependencies": {
     "@eschaton/foldon": "workspace:*",
+    "@eschaton/genesis": "workspace:*",
     "@eschaton/world": "workspace:*",
     "@eschaton/wave": "workspace:*",
     "vitest": "5.1.1"

@@ -6,6 +6,7 @@ import { shortcutCommand } from "./lab/shortcuts";
 import { initialLabState, labReducer, type LabCommand } from "./lab/state";
 import { createRebuildSession, createWorldSession, WAVE_TILES, worldReducer, type WorldCommand, type WorldSession } from "./lab/world/session";
 import { createWaveClient, type WaveClient } from "./worker/client";
+import { createGenesisClient, type GenesisClient } from "./worker/genesisClient";
 import type { RendererStats } from "./renderer/labRenderer";
 import { CatalogPanel } from "./ui/CatalogPanel";
 import { Inspector } from "./ui/Inspector";
@@ -64,6 +65,24 @@ function Lab({ library, initialWorld }: Readonly<{ library: Library; initialWorl
   useEffect(() => {
     if (cancelRequested) waveClient.current?.cancel(`wave-${waveRun}`);
   }, [cancelRequested, waveRun]);
+
+  const genesisClient = useRef<GenesisClient | undefined>(undefined);
+  useEffect(() => {
+    const client = createGenesisClient();
+    genesisClient.current = client;
+    return () => { client.dispose(); };
+  }, []);
+  const { run: genesisRun, job: genesisJob, cancelRequested: genesisCancelRequested } = world.genesis;
+  useEffect(() => {
+    if (genesisJob === undefined) return;
+    genesisClient.current?.generate(`genesis-${genesisRun}`, worldCatalog, genesisJob.base, genesisJob.request, {
+      onProgress: (progress) => { worldDispatch({ type: "genesisProgress", run: genesisRun, progress }); },
+      onDone: (outcome) => { worldDispatch({ type: "genesisDone", run: genesisRun, outcome }); },
+    });
+  }, [genesisRun, genesisJob, worldCatalog]);
+  useEffect(() => {
+    if (genesisCancelRequested) genesisClient.current?.cancel(`genesis-${genesisRun}`);
+  }, [genesisCancelRequested, genesisRun]);
 
   const stateRef = useRef(state);
   useEffect(() => {

@@ -281,3 +281,19 @@ kbd {
 .world__actions input[type="range"] { width: 110px; }
 .world__entity { grid-template-columns: 44px 1fr auto; }
 [data-testid="world-rejection"] { min-height: 1.4em; margin: 6px 0; overflow-wrap: anywhere; }
+
+.plan-map { display: block; width: 100%; max-width: 260px; margin: 6px 0; background: var(--graphite-800); border: 1px solid var(--line); }
+.plan-map__open { fill: var(--graphite-700); }
+.plan-map__lot { fill: #6f6a5e; }
+.plan-map__road { fill: var(--paper); }
+.plan-map__plaza { fill: #f4ead2; }
+.plan-map__bridge { fill: var(--vermilion); }
+.plan-map__water { fill: #3f6f86; }
+.plan-map__tower { fill: #b9a06a; }
+.plan-map__house { fill: #8d7f63; }
+.plan-map__ruin { fill: #5b564d; }
+.plan-map__garden { fill: #56704f; }
+.plan-map__pending { opacity: 0.35; }
+.plan-map__route { fill: none; stroke: var(--ink); stroke-width: 0.28; stroke-dasharray: 0.6 0.4; }
+.plan-legend { display: flex; flex-wrap: wrap; gap: 4px 10px; margin: 4px 0; padding: 0; list-style: none; color: var(--text-dim); }
+.plan-legend svg { width: 9px; height: 9px; margin-right: 4px; vertical-align: -1px; }

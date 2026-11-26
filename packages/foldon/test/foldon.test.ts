@@ -22,6 +22,7 @@ import {
   type SocketDefinition,
   type ValidationCode,
   type Vec3,
+  presetCatalog,
 } from "@eschaton/foldon";
 
 const rotations: readonly Rotation[] = [0, 1, 2, 3];
@@ -327,4 +328,15 @@ test("definitions round-trip through JSON to deep-equal values", () => {
   for (const def of primitiveCatalog) {
     expect(JSON.parse(JSON.stringify(def))).toEqual(def);
   }
+});
+
+test("the ground presets are valid single-cell pieces that stand on the ground and carry nothing", () => {
+  if (!presetCatalog.ok) throw new Error("the preset catalog must build");
+  const catalog = presetCatalog.value;
+  const ground = ["paving", "water", "bridge"].map((id) => catalog.foldon(foldonId(id)));
+  expect(ground.map((piece) => [piece?.footprint.length, piece?.sockets.find((socket) => socket.face === "-y")?.profile, piece?.sockets.find((socket) => socket.face === "+y")?.profile])).toEqual([
+    [1, "base", "empty"],
+    [1, "base", "empty"],
+    [1, "base", "empty"],
+  ]);
 });

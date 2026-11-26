@@ -16,7 +16,7 @@ All commands run from the repository root. `pnpm bench` writes **only** to an un
 | Mode | Directory | Tracked? |
 |---|---|---|
 | Default (scratch) | `benchmarks/runs/<UTC timestamp>-<short SHA>[-dirty]/` | No, gitignored |
-| `BENCH_RECORD=1` | `benchmarks/phase-2/<commit date>-<short SHA>/` (earlier evidence is kept in `benchmarks/phase-0/` and `benchmarks/phase-1/`) | Yes, this is the recorded evidence |
+| `BENCH_RECORD=1` | `benchmarks/phase-3/<commit date>-<short SHA>/` (earlier evidence is kept in `benchmarks/phase-0/`, `benchmarks/phase-1/` and `benchmarks/phase-2/`) | Yes, this is the recorded evidence |
 
 `BENCH_RUN_DIR=<path>` overrides both; `pnpm bench` sets it for its children so Foldon and WFC share a directory.
 
@@ -70,6 +70,13 @@ Each of `foldon.json`, `wfc.json`, `studio.json` carries `provenance` (`commit`,
 
 - `pnpm --filter @eschaton/benchmarks profile:commit` runs world commits under `--cpu-prof` and writes timings to `benchmarks/runs/profile/commit-<n>.txt`; `node benchmarks/src/profileSummary.ts <dir> <function names>` prints inclusive and self time from the `.cpuprofile`. Recorded comparisons are in `benchmarks/phase-2/commit-profile/`.
 
+### District workload (`benchmarks/profile/genesis.test.ts`)
+
+- `pnpm --filter @eschaton/benchmarks profile:genesis` runs on Node's main thread under `--cpu-prof` and writes `benchmarks/runs/profile/genesis-district.{json,md}`. Copy them to `benchmarks/phase-3/<commit date>-<short SHA>/` to record them; the report states whether the tree was dirty.
+- Three unrecorded warm-up districts, then a **corpus** (seeds 1..`GENESIS_SEEDS`, default 12, each into an empty world) and a **chain** (`GENESIS_CHAIN` districts, default 6, each continuing the previous one to the east in one world).
+- Per district: generate time, the world commit alone (`applyProposal`), settle (plan re-validation, commit and audit), the state hash and the generator's metrics. The chain adds the state hash time, the snapshot size with serialize and parse times (the cost of handing the world to a worker) and `heapUsed` after a forced collection.
+- The load average before and after is recorded in the report. The machine these were recorded on is shared and was not idle.
+
 ### WFC placement experiment (`experiments/wfc-placement/bench/run.ts`)
 
 - Corpus: seeds 1..100 for each scenario (`open`, `constrained`), size (8, 12, 16) and encoding (`placement`, `offset-state`): 1,200 timed solves. Five untimed warm-up solves per cell (seeds 100000..100004) before timing.
@@ -107,5 +114,6 @@ Each of `foldon.json`, `wfc.json`, `studio.json` carries `provenance` (`commit`,
 | Directory | Commit | Notes |
 |---|---|---|
 | [`phase-0/2026-11-24-e9e50c527/`](phase-0/2026-11-24-e9e50c527/report.md) | `e9e50c5` (clean) | Phase 0 closure baseline (C-T1). Recorded from a detached clean checkout with `BENCH_RECORD=1 pnpm bench` and `BENCH_RECORD=1 STUDIO_PORT=5190 pnpm bench:studio`. Software rasteriser (SwiftShader, WebGL2); no §9.1 gate claimed. |
+| [`phase-3/`](phase-3/README.md) | `5ab709e`, `62cf1e3` (clean) | Phase 3 district workload: 12-seed corpus and six-district chain, before and after `draftProposal`. Node main thread; load recorded, not idle. |
 
 The files written by the old scripts (`benchmarks/raw/*.json`, `benchmarks/phase-0-2026-11-24.{md,json}`, `experiments/wfc-placement/results/bench-2026-11-24.{md,json}`, measured at `0e34f55` with a dirty tree) were removed in the re-record commit; they remain in git history (e.g. `git show 4cecd5b:benchmarks/phase-0-2026-11-24.md`).

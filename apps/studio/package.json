@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@eschaton/foldon": "workspace:*",
+    "@eschaton/genesis": "workspace:*",
     "@eschaton/wave": "workspace:*",
     "@eschaton/world": "workspace:*",
     "react": "19.3.1",

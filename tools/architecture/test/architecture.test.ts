@@ -39,6 +39,7 @@ const FOLDON = "packages/foldon/src/probe.ts";
 const WORLD = "packages/world/src/probe.ts";
 const WAVE = "packages/wave/src/probe.ts";
 const SOLVER = "packages/wave/src/solver/probe.ts";
+const GENESIS = "packages/genesis/src/probe.ts";
 const LAB = "apps/studio/src/lab/probe.ts";
 const RENDERER = "apps/studio/src/renderer/probe.ts";
 const UI = "apps/studio/src/ui/Probe.tsx";
@@ -78,6 +79,11 @@ const cases: readonly Case[] = [
   imports("accepts the wave region glue importing world", WAVE, `import { readRegion } from "@eschaton/world";`, "accepted"),
   imports("rejects the wave solver core importing world", SOLVER, `import { readRegion } from "@eschaton/world";`, "rejected"),
   imports("rejects the wave solver core importing the region glue", SOLVER, `import { prepareRegion } from "../region";`, "rejected"),
+  imports("rejects wave importing genesis", WAVE, `import { planDistrict } from "@eschaton/genesis";`, "rejected"),
+  imports("rejects world importing genesis", WORLD, `import { planDistrict } from "@eschaton/genesis";`, "rejected"),
+  imports("accepts genesis importing wave", GENESIS, `import { solve } from "@eschaton/wave";`, "accepted"),
+  imports("rejects genesis importing three", GENESIS, `import { Vector3 } from "three";`, "rejected"),
+  imports("rejects genesis importing the studio", GENESIS, `import { App } from "@eschaton/studio";`, "rejected"),
   imports("accepts the wave solver core importing foldon and its own modules", SOLVER, `import { compileTiles } from "./compile";`, "accepted"),
   imports("rejects the studio deep-importing foldon source", LAB, `import { cellKey } from "@eschaton/foldon/src/definition";`, "rejected"),
   imports("rejects the studio importing foldon by relative path", LAB, `import { cellKey } from "../../../../packages/foldon/src/definition";`, "rejected"),
@@ -96,6 +102,7 @@ const cases: readonly Case[] = [
   imports("rejects the solver worker importing three", "apps/studio/src/worker/probe.ts", `import { Vector3 } from "three";`, "rejected"),
   imports("rejects the solver worker importing react", "apps/studio/src/worker/probe.ts", `import { useState } from "react";`, "rejected"),
   imports("rejects the solver worker importing the renderer", "apps/studio/src/worker/probe.ts", `import { createLabRenderer } from "../renderer/labRenderer";`, "rejected"),
+  imports("accepts the generation worker importing the genesis entry point", "apps/studio/src/worker/probe.ts", `import { createGenesisHost } from "@eschaton/genesis";`, "accepted"),
   imports("accepts the solver worker importing the wave entry point", "apps/studio/src/worker/probe.ts", `import { createWaveHost } from "@eschaton/wave";`, "accepted"),
   imports("rejects the studio importing an experiment", UI, `import { solvePlacement } from "@eschaton/exp-wfc-placement";`, "rejected"),
 

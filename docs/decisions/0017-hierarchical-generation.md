@@ -1,0 +1,93 @@
+# ADR 0017: Hierarchical district generation (Genesis)
+
+- Status: **Accepted for Phase 3** under owner decision W7 (2026-11-25), which authorizes the Phase 3 design within its stated scope. Choices that go beyond the master plan's wording are listed under "Choices to confirm at the Phase 3 gate".
+- Date: 2026-11-25
+- Master plan: §5.3, §11 Phase 3. Builds on ADR 0013, 0015, 0016.
+
+## Context
+
+Phase 2 fills a box with compatible Foldons. It has no notion of a road, a river or a house, so its output is valid and meaningless. Phase 3 must produce a district: connected roads, a river and boundaries that hold as contracts, lots with roles, and recognisable structures, from a seed, as one atomic change to the world.
+
+## Decision
+
+### Layers and who enforces what
+
+| Layer | Decides | Enforced by |
+|---|---|---|
+| Request | Preset, seed, district box, boundary contract (road gates, river inlet and outlet) | Request validation |
+| Semantic plan (2D) | River course, road network, plaza, lots and their roles | The planner, then **independent validators**: river continuous between its terminals; every gate connected to the plaza through road, bridge or plaza cells; built lots have road frontage; nothing overlaps |
+| Network pieces | One ground Foldon per road, plaza, water and bridge cell | Derived mechanically from the plan |
+| Structures | Which Foldons fill each lot | The wave solver, per lot, with the role's tile set, around frozen neighbours |
+| World | Occupancy, legal adjacency, bonds, identity | `applyProposal` and the world invariants |
+
+The solver handles local compatibility only. Connectivity and boundaries are graph problems solved and checked by separate code. A failure at any layer is an explicit result with a stage and a reason.
+
+### Determinism and seeds
+
+- Everything is integer arithmetic over seeded streams, as in ADR 0015.
+- **Scoped sub-seeds:** `seed(scope) = hash(world seed, district seed, preset id, scope name, attempt)`. Scopes are named (`river`, `roads`, `lots`, `lot:<id>`), so adding or reordering one stage does not change the others.
+- Retries are bounded and explicit: a new attempt is a new scope value, recorded in the diagnostics.
+
+### One atomic change, no second world
+
+- The generator works on a **scratch state**: an immutable value of the ordinary world type, validated by the world for every step, never published (see "The scratch world is small" below for its final form). Each lot is solved against it, so it sees the network pieces and earlier lots as frozen neighbours.
+- The result is **one proposal** for the whole district box, read against the real state the job started from. The world applies it once or rejects it. Intermediate scratch states, previews and the plan are not world state.
+- The plan is kept beside the result for inspection (semantic layers, routes, diagnostics). It is derived data: the world does not store it.
+
+### Nonlocal read dependencies (ADR 0016 amendment)
+
+- `Proposal.depends` lists further regions with the digest each had when the job started. `applyProposal` compares them like the main read set.
+- A district that **continues a neighbour's network** depends on more than its one-cell shell: its claim "this gate leads somewhere" rests on the neighbour's road. It declares the cells of the connected road it attaches to (bounded in length) as dependencies. A change to that road conflicts; an unrelated change in the neighbour does not.
+
+### Results are audited independently
+
+`settleDistrict` is the only way a district reaches the world. It applies the proposal to get a **candidate** state (a value, not yet adopted) and audits it from scratch against the plan: every road, plaza, bridge and water cell holds the right ground piece; no structure stands on the network; every structure lies in its lot; no piece that needs support stands on air; roads in the candidate world are connected to every gate. Only a clean candidate is adopted.
+
+### Pieces
+
+- New ground Foldons are flat presets built with the shared net helpers: `paving`, `water`, `bridge`. They are single cells, not building meshes.
+- Structures reuse the catalog and the Phase 2 presets. The regular lattice is unchanged.
+
+## Choices to confirm at the Phase 3 gate
+
+1. **Terrain is land and water only.** No elevation. The ground plane stays a request parameter (ADR 0015 amendment).
+2. **Roles and their tile sets are preset data** (`tower`, `house`, `ruin`, `garden`), chosen by distance to the plaza and road frontage with seeded variation.
+3. **Lots are solved in a fixed order against earlier lots**, not jointly. A later lot adapts to an earlier one, never the reverse.
+4. **The semantic plan is not stored in the world.** A reloaded world has its entities but not its plan.
+
+## Consequences
+
+- Hierarchical backtracking (revising the plan when a lot cannot be filled) is not implemented. A lot that stays empty is reported.
+- Multi-district worlds need a persistent semantic layer and seam ownership; that is beyond this phase.
+
+## Implementation (Phase 3)
+
+- **Code:** `packages/genesis/src/` — `seed.ts` (scoped seeds, integer streams), `plan.ts` (river, plaza, roads with bridges, side streets, lots, roles), `validate.ts` (`planIssues`, written independently of the planner), `district.ts` (`createDistrictJob`, `generateDistrict`), `audit.ts` (`auditDistrict`), `settle.ts` (`settleDistrict`), `continuation.ts` (`continueFrom`), `host.ts` (`createGenesisHost`: sliced, cancellable, snapshot in, inert outcome out), `presets.ts` (`lastDistrict`, 40×40).
+- **Imports:** `@eschaton/foldon`, `@eschaton/world`, `@eschaton/wave` only (lint area and architecture tests). No renderer, no UI, no Node built-ins.
+- **Studio:** `apps/studio/src/worker/genesis.worker.ts` and `genesisClient.ts`; session commands `genesisSet`, `genesisStart`, `genesisCancel`, `genesisProgress`, `genesisDone` in `lab/world/session.ts`; `ui/GenesisPanel.tsx` (seed, generate, cancel, progress, plan map with role and route layers, metrics, diagnostics). The viewport draws committed entities only; the plan map is labelled as the generator's semantic layer.
+- **Tests:** `packages/genesis/test/{plan,district,host}.test.ts`, `packages/world/test/region.test.ts` (dependencies, `draftProposal`), `apps/studio/e2e/genesis.spec.ts`, `apps/studio/engines/{genesis,determinism}.spec.ts`.
+
+### The scratch world is small (changed during implementation)
+
+The first implementation advanced the real world value as its scratch state, committing once per lot. The district workload profile showed generation time growing with the world around the district (474 ms, 923 ms, 2,959 ms for the first three chained districts under load), because every scratch commit read and hashed the whole world.
+
+- The job now builds a **private scratch world**: an empty world with the same seed and catalog, plus copies of the pieces that touch the district's one-cell shell. Copies are legal because they are a subset of a valid world's contacts and `needsMate` is a generation-only rule (ADR 0015 amendment). If the copy is refused, the job fails with stage `scratch`.
+- Scratch steps use **`draftProposal`** (`@eschaton/world`): the same validation as `applyProposal`, returning the candidate state without a commit record and therefore without hashing it. A drafted state cannot be logged or replayed.
+- Nothing about the result changes: the job still returns one proposal read against the real world, and the world validates it again. The corpus state hashes were identical before and after both changes.
+- Measured effect (Node main thread, same machine, load 17–29): generate p50 650 ms → 314 ms with `draftProposal`; chained districts stay flat (136–247 ms at load 19–20) from 1,591 to 9,158 world entities. Evidence: `benchmarks/phase-3/`.
+
+### Stored recipe numbers are engine independent (defect found in Phase 3)
+
+The cross-engine Genesis test found that Chromium, Firefox and WebKit gave **different catalog fingerprints**, so the same district had a different state hash on each. The plan, the placements and the solver decisions were identical. The cause predates Phase 3: `foldedNet` stored rest angles from `atan2` and, for P09, vertices posed with `sin` and `cos`, and those functions may differ in the last bits between engines. The Phase 2 golden corpus could not see it because the solver digest does not include the fingerprint.
+
+- `foldedNet` now rounds every stored vertex coordinate and rest angle to a multiple of 1e-9 (`packages/foldon/src/geometry.ts`). Authored decimals with up to nine places are unchanged. `windFold` computes wind strength with `sqrt` instead of `hypot`.
+- **Compatibility consequence, stated plainly:** the fingerprint of every catalog containing P03 or P09 changed (the preset catalog is now `e77d898a9014df16` on all three engines and Node). A snapshot or commit log written before this change is refused with `catalog-mismatch`, exactly as after any catalog change. No such data is stored in the repository. The hash format (FNV-1a 64 over canonical JSON) is unchanged. Pinned test values in `packages/world/test/golden.test.ts` and `packages/foldon/test/sockets.test.ts` were re-recorded once, with a comment.
+- The rule is a rounding grid, not a proof: a value within about 1e-16 of a grid midpoint could still round differently. The engines job pins the fingerprint, so a regression fails in CI.
+- Adding the ground presets in G0 also changed the preset catalog's fingerprint, as any catalog addition does.
+
+### Further choices to confirm at the Phase 3 gate
+
+5. **`draftProposal` is a new public function of `@eschaton/world`.** It commits nothing and records nothing; it exists so a job can validate scratch steps without paying for a state hash.
+6. **The scratch world holds copies of shell pieces under new ids.** The ids never leave the job.
+7. **Stored recipe numbers lie on a 1e-9 grid**, with the fingerprint change described above.
+8. **The Studio places the first district at a fixed origin and each later one to the east of the previous**, through `continueFrom`. Other layouts are not offered.

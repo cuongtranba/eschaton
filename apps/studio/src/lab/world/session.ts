@@ -1,4 +1,14 @@
-import { err, ok, presetCatalog, type Catalog, type Pose, type Result } from "@eschaton/foldon";
+import { err, ok, presetCatalog, type Catalog, type Cell, type Pose, type Result } from "@eschaton/foldon";
+import {
+  continueFrom,
+  lastDistrict,
+  settleDistrict,
+  type DistrictMetrics,
+  type DistrictPlan,
+  type DistrictProgress,
+  type DistrictRequest,
+  type DistrictSettlement,
+} from "@eschaton/genesis";
 import {
   applyPatch,
   createWorld,
@@ -34,6 +44,7 @@ export type WorldSession = Readonly<{
   replay: string;
   presentation: Presentation;
   wave: WaveSession;
+  genesis: GenesisSession;
 }>;
 
 export const WAVE_SIZES = { small: [6, 4, 6], medium: [10, 5, 10], large: [16, 8, 16], huge: [28, 8, 28] } as const;
@@ -79,6 +90,40 @@ const IDLE_WAVE: WaveSession = {
   seed: 1,
 };
 
+export type GenesisStatus = "idle" | "generating" | DistrictSettlement["status"];
+
+/** A district the world committed, with the plan it was audited against. The plan is kept for inspection only. */
+export type GenesisDistrict = Readonly<{ plan: DistrictPlan; at: Cell; seed: number; revision: number; entities: number; metrics: DistrictMetrics; diagnostics: readonly string[] }>;
+
+export type GenesisLayers = Readonly<{ roles: boolean; routes: boolean }>;
+
+export type GenesisSession = Readonly<{
+  status: GenesisStatus;
+  detail: string;
+  run: number;
+  job: Readonly<{ request: DistrictRequest; base: WorldState }> | undefined;
+  cancelRequested: boolean;
+  /** The plan of the running job. A preview: it is not part of the world. */
+  preview: DistrictProgress | undefined;
+  seed: number;
+  layers: GenesisLayers;
+  districts: readonly GenesisDistrict[];
+}>;
+
+export const GENESIS_ORIGIN: Cell = [12, 0, -20];
+
+const IDLE_GENESIS: GenesisSession = {
+  status: "idle",
+  detail: "",
+  run: 0,
+  job: undefined,
+  cancelRequested: false,
+  preview: undefined,
+  seed: 1,
+  layers: { roles: true, routes: true },
+  districts: [],
+};
+
 export type Presentation = Readonly<{ cellSize: number; view: ViewPreset; inkScale: InkScale; study: RebuildReport | undefined }>;
 
 export const worldView: ViewPreset = { position: [3.2, 4.4, 11.5], target: [3, 0.5, 1], fov: 32 };
@@ -101,7 +146,12 @@ export type WorldCommand =
   | Readonly<{ type: "waveStart" }>
   | Readonly<{ type: "waveCancel" }>
   | Readonly<{ type: "waveProgress"; run: number; progress: WaveProgress }>
-  | Readonly<{ type: "waveDone"; run: number; outcome: unknown }>;
+  | Readonly<{ type: "waveDone"; run: number; outcome: unknown }>
+  | Readonly<{ type: "genesisSet"; seed?: number; layers?: Partial<GenesisLayers> }>
+  | Readonly<{ type: "genesisStart" }>
+  | Readonly<{ type: "genesisCancel" }>
+  | Readonly<{ type: "genesisProgress"; run: number; progress: DistrictProgress }>
+  | Readonly<{ type: "genesisDone"; run: number; outcome: unknown }>;
 
 export const INITIAL_OPS: readonly WorldOp[] = [
   { op: "instantiate", ref: { kind: "assembly", id: "roof-module" }, anchor: [0, 0, 0], rotation: 0 },
@@ -140,6 +190,7 @@ export function createWorldSession(seed: number = DEFAULT_SEED): Result<WorldSes
     replay: "",
     presentation: WORLD_PRESENTATION,
     wave: IDLE_WAVE,
+    genesis: IDLE_GENESIS,
   });
 }
 
@@ -166,6 +217,7 @@ export function createRebuildSession(seed: number = DEFAULT_SEED): Result<WorldS
       study: rebuild.report,
     },
     wave: IDLE_WAVE,
+    genesis: IDLE_GENESIS,
   });
 }
 
@@ -255,6 +307,41 @@ function waveDone(session: WorldSession, outcome: unknown): WorldSession {
   return { ...next, state: settled.committed.state, log: [...session.log, settled.committed.record], rejection: "", replay: "" };
 }
 
+/** The first district stands at a fixed origin. Each later one continues the previous district's roads to the east. */
+function genesisRequest(genesis: GenesisSession): DistrictRequest {
+  const previous = genesis.districts.at(-1);
+  if (previous === undefined) return { preset: lastDistrict, seed: genesis.seed, at: GENESIS_ORIGIN };
+  const link = continueFrom(previous.plan, previous.at, "east");
+  return {
+    preset: lastDistrict,
+    seed: genesis.seed,
+    at: link.at,
+    gates: [...link.gates, ...lastDistrict.gates.filter((gate) => gate.edge !== "west")],
+    depends: link.depends,
+  };
+}
+
+function genesisStart(session: WorldSession): WorldSession {
+  const { genesis } = session;
+  if (genesis.status === "generating" || session.wave.status === "solving") return session;
+  return {
+    ...session,
+    genesis: { ...genesis, status: "generating", detail: "", run: genesis.run + 1, job: { request: genesisRequest(genesis), base: session.state }, cancelRequested: false, preview: undefined },
+  };
+}
+
+function genesisDone(session: WorldSession, outcome: unknown): WorldSession {
+  const { genesis } = session;
+  if (genesis.job === undefined) return session;
+  const settled = settleDistrict(session.catalog, session.state, outcome, { cancelRequested: genesis.cancelRequested });
+  const next: GenesisSession = { ...genesis, status: settled.status, detail: settled.detail, job: undefined, cancelRequested: false, preview: undefined };
+  if (settled.status !== "committed") return { ...session, genesis: next };
+  const { plan, at, metrics, diagnostics } = settled.district;
+  const { state, record } = settled.committed;
+  const district: GenesisDistrict = { plan, at, seed: genesis.job.request.seed, revision: state.header.revision, entities: state.entities.length - session.state.entities.length, metrics, diagnostics };
+  return { ...session, state, log: [...session.log, record], rejection: "", replay: "", genesis: { ...next, districts: [...genesis.districts, district] } };
+}
+
 export function worldReducer(session: WorldSession, change: WorldCommand): WorldSession {
   switch (change.type) {
     case "selectEntity":
@@ -285,7 +372,7 @@ export function worldReducer(session: WorldSession, change: WorldCommand): World
             },
           };
     case "waveStart":
-      return waveStart(session);
+      return session.genesis.status === "generating" ? session : waveStart(session);
     case "waveCancel":
       return session.wave.status === "solving" ? { ...session, wave: { ...session.wave, cancelRequested: true } } : session;
     case "waveProgress":
@@ -301,5 +388,17 @@ export function worldReducer(session: WorldSession, change: WorldCommand): World
         : session;
     case "waveDone":
       return change.run === session.wave.run && session.wave.status === "solving" ? waveDone(session, change.outcome) : session;
+    case "genesisSet":
+      return session.genesis.status === "generating"
+        ? session
+        : { ...session, genesis: { ...session.genesis, seed: Math.max(0, integer(change.seed, session.genesis.seed)), layers: { ...session.genesis.layers, ...change.layers } } };
+    case "genesisStart":
+      return genesisStart(session);
+    case "genesisCancel":
+      return session.genesis.status === "generating" ? { ...session, genesis: { ...session.genesis, cancelRequested: true } } : session;
+    case "genesisProgress":
+      return change.run === session.genesis.run && session.genesis.status === "generating" ? { ...session, genesis: { ...session.genesis, preview: change.progress } } : session;
+    case "genesisDone":
+      return change.run === session.genesis.run && session.genesis.status === "generating" ? genesisDone(session, change.outcome) : session;
   }
 }

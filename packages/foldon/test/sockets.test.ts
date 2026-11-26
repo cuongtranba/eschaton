@@ -92,7 +92,8 @@ test("migrating the profile table changes no primitive, assembly or hash", () =>
       "roof-house": "e4ed8a33570fc9d4",
       "ruined-gate": "72172b6052872a8b",
     },
-    primitives: "050e3fdd",
+    // Re-recorded once in Phase 3, when stored recipe numbers were rounded to be the same on every engine (ADR 0017).
+    primitives: "3d8aca15",
     assemblies: "a5c10493",
     table: defaultSocketTable,
   });

@@ -2,7 +2,7 @@
 
 A web-based procedural world engine and laboratory: a small vocabulary of origami-inspired geometric pieces (**Foldons**) composed, folded and collapsed under explicit rules, rendered as a living woodcut print. See [`docs/master-plan.md`](docs/master-plan.md) for the full design and [`AGENTS.md`](AGENTS.md) for contributor rules.
 
-Status: **Phase 2 — Wave is conditionally closed by owner decision W6 (2026-11-25)** on the evidence in [`docs/phase-2-exit.md`](docs/phase-2-exit.md) §9; Phase 3 (Genesis) is authorized by W7, stopping at its exit gate. Phases 0, 1 and 2 are conditionally closed and merged into `main` (PRs #1–#3; `main` @ `d673f84`). Phase 0 was conditionally closed by owner decision D6 on 2026-11-25 ([`docs/phase-0-exit.md`](docs/phase-0-exit.md) §9). Phase 4 is not authorized, and no Phase 3 PR is merged without separate owner authorization (W7). The roadmap is in [`docs/master-plan.md`](docs/master-plan.md) §11.
+Status: **Phase 3 — Genesis is merged into `main` (PR #4) on the owner's explicit merge authorization (2026-11-26).** The exit-gate items listed in [`docs/phase-3-exit.md`](docs/phase-3-exit.md) §6 (gate decision, visual review, the RTX 5070 run) are not recorded as approved. Phase 2 — Wave is conditionally closed by owner decision W6 (2026-11-25) on the evidence in [`docs/phase-2-exit.md`](docs/phase-2-exit.md) §9. Phases 0, 1 and 2 are conditionally closed and merged into `main` (PRs #1–#3). Phase 0 was conditionally closed by owner decision D6 on 2026-11-25 ([`docs/phase-0-exit.md`](docs/phase-0-exit.md) §9). Phase 4 is not authorized. The roadmap is in [`docs/master-plan.md`](docs/master-plan.md) §11.
 
 ## What Phase 0 delivers
 

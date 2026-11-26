@@ -4,6 +4,7 @@ import {
   applyProposal,
   checkInvariants,
   createWorld,
+  draftProposal,
   hashState,
   readRegion,
   replay,
@@ -149,4 +150,33 @@ test("a patch with an unknown op is rejected instead of committing an empty revi
   const patch = JSON.parse(JSON.stringify({ baseRevision: base.header.revision, ops: [{ op: "bogus" }], origin })) as Parameters<typeof applyPatch>[2];
   const result = applyPatch(catalog, base, patch);
   expect(result.ok ? "committed" : result.error.kind).toBe("invalid");
+});
+
+test("a proposal with a nonlocal dependency conflicts when that region changes and commits when something unrelated changes", () => {
+  const base = start();
+  const far: Region = { min: [0, 0, 0], max: [0, 0, 0] };
+  const read = readRegion(catalog, base, region);
+  const proposal: Proposal = {
+    region,
+    read: { revision: read.revision, digest: read.digest },
+    depends: [{ region: far, digest: readRegion(catalog, base, far).digest }],
+    ops: [box(10, 0, 10)],
+    origin,
+  };
+  const dependency = base.entities[0];
+  if (dependency === undefined) throw new Error("the far box must exist");
+  const unrelated = commit(base, box(40, 0, 40));
+  const broken = commit(base, { op: "detach", entity: dependency.id });
+  expect([verdict(applyProposal(catalog, unrelated, proposal)), verdict(applyProposal(catalog, broken, proposal))]).toEqual(["committed@3", "conflict"]);
+});
+
+test("drafting a proposal gives the state that committing it gives, and refuses what a commit refuses", () => {
+  const created = createWorld({ catalog, seed: 3 });
+  if (!created.ok) throw new Error("world must build");
+  const read = readRegion(catalog, created.value, region);
+  const proposal: Proposal = { region, read: { revision: read.revision, digest: read.digest }, ops: [box(10, 0, 10), box(11, 0, 10)], origin };
+  const [drafted, committed] = [draftProposal(catalog, created.value, proposal), applyProposal(catalog, created.value, proposal)];
+  const moved = commit(created.value, box(12, 0, 12));
+  const refused = draftProposal(catalog, moved, proposal);
+  expect([drafted.ok ? hashState(drafted.value) : "rejected", refused.ok ? "drafted" : refused.error.kind]).toEqual([committed.ok ? committed.value.record.stateHash : "", "conflict"]);
 });

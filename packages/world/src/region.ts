@@ -1,9 +1,9 @@
-import { err, fnv1a64, placeFootprint, type Catalog, type Cell, type Result, type Rotation } from "@eschaton/foldon";
+import { err, fnv1a64, ok, placeFootprint, type Catalog, type Cell, type Result, type Rotation } from "@eschaton/foldon";
 import { canonicalJson, deepFreeze } from "./canonical";
 import { worldIssue, type WorldIssue } from "./issues";
 import { cellsOf, definitionOf, isPlaced, resolvePlacement } from "./model";
 import { opShapeIssue, type WorldOp } from "./ops";
-import { applyPatch, patchShapeIssue, type Committed, type Origin, type Rejection } from "./patch";
+import { advance, applyPatch, patchShapeIssue, type Committed, type Origin, type Patch, type Rejection } from "./patch";
 import type { DefinitionRef, EntityId, Revision, WorldState } from "./state";
 import { versionIssues } from "./world";
 
@@ -22,6 +22,8 @@ export type RegionRead = Readonly<{
 export type Proposal = Readonly<{
   region: Region;
   read: Readonly<{ revision: Revision; digest: string }>;
+  /** Further regions the job relied on, each with the digest it had then (ADR 0016: nonlocal read dependencies). */
+  depends?: readonly Readonly<{ region: Region; digest: string }>[];
   ops: readonly WorldOp[];
   origin: Origin;
 }>;
@@ -97,7 +99,8 @@ function writeIssue(catalog: Catalog, state: WorldState, region: Region, op: Wor
   }
 }
 
-export function applyProposal(catalog: Catalog, state: WorldState, proposal: Proposal): Result<Committed, ProposalRejection> {
+/** Every proposal check that comes before the patch itself: versions, shape, write set and read set. */
+function proposalPatch(catalog: Catalog, state: WorldState, proposal: Proposal): Result<Patch, ProposalRejection> {
   const mismatch = versionIssues(catalog, state.header.versions);
   if (mismatch.length > 0) return err({ kind: "invalid", issues: mismatch });
   const badRegion = regionIssue(proposal.region);
@@ -109,6 +112,27 @@ export function applyProposal(catalog: Catalog, state: WorldState, proposal: Pro
     if (issue !== undefined) return err({ kind: "invalid", issues: [issue] });
   }
   const now = readRegion(catalog, state, proposal.region);
-  if (now.digest !== proposal.read.digest) return err({ kind: "conflict", base: proposal.read.revision, current: state.header.revision });
-  return applyPatch(catalog, state, { baseRevision: state.header.revision, ops: proposal.ops, origin: proposal.origin });
+  const conflict: ProposalRejection = { kind: "conflict", base: proposal.read.revision, current: state.header.revision };
+  if (now.digest !== proposal.read.digest) return err(conflict);
+  for (const dependency of proposal.depends ?? []) {
+    const bad = regionIssue(dependency.region);
+    if (bad !== undefined) return err({ kind: "invalid", issues: [bad] });
+    if (readRegion(catalog, state, dependency.region).digest !== dependency.digest) return err(conflict);
+  }
+  return ok({ baseRevision: state.header.revision, ops: proposal.ops, origin: proposal.origin });
+}
+
+export function applyProposal(catalog: Catalog, state: WorldState, proposal: Proposal): Result<Committed, ProposalRejection> {
+  const patch = proposalPatch(catalog, state, proposal);
+  return patch.ok ? applyPatch(catalog, state, patch.value) : patch;
+}
+
+/**
+ * The state `applyProposal` would commit, validated in exactly the same way, without a commit record and therefore
+ * without hashing the state. For a job's private scratch work only: a drafted state has no record, so it cannot be
+ * logged or replayed, and the job's real result still goes through `applyProposal`.
+ */
+export function draftProposal(catalog: Catalog, state: WorldState, proposal: Proposal): Result<WorldState, ProposalRejection> {
+  const patch = proposalPatch(catalog, state, proposal);
+  return patch.ok ? advance(catalog, state, patch.value) : patch;
 }

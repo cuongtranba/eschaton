@@ -89,3 +89,9 @@ The read set is compared **by content, not by revision**. If the region changes 
 ### Commit cost (W3)
 
 The commit behind `applyProposal` now validates only what a patch touched and shares unchanged entities between states. Hashes and outcomes are unchanged, and `applyPatch(..., { audit: "full" })` is the reference path (ADR 0011). Numbers are in [`../phase-2-exit.md`](../phase-2-exit.md) §5.
+
+## Phase 3 additions (ADR 0017)
+
+- **Nonlocal read dependencies.** `Proposal.depends` lists further regions, each with the digest it had when the job started. `applyProposal` compares them like the main read set and reports a change as `conflict`. This is the read-set extension W4 required for Phase 3.
+- **`draftProposal(catalog, state, proposal)`** returns the state `applyProposal` would commit, after exactly the same checks, without a commit record and without hashing the state. It is for a job's private scratch work. A drafted state cannot be logged or replayed; the job's result still goes through `applyProposal`.
+- Tests: `packages/world/test/region.test.ts`.

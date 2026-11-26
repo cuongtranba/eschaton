@@ -177,12 +177,12 @@ export function worldViewModel(session: WorldSession, state: LabState): ViewMode
     authority: group.authority,
   }));
   const preview = previewBatches(session);
-  const backdrop = session.wave.run > 0 ? [] : backdropBatches(session.state.header.seed, session.presentation.view);
+  const framed = session.wave.run > 0 || session.genesis.run > 0;
+  const backdrop = framed ? [] : backdropBatches(session.state.header.seed, session.presentation.view);
   const batches = [...entityBatches, ...preview, ...backdrop];
   const cell = session.presentation.cellSize;
   const solving = session.wave.job?.region;
   if (solving !== undefined) extentCells.push(solving.min, solving.max);
-  const framed = session.wave.run > 0;
   const extent = cellBounds(extentCells.length === 0 ? [[0, 0, 0]] : extentCells);
   const bounds: Bounds = {
     min: [(extent.min[0] - FRAME_MARGIN) * cell, 0, (extent.min[2] - FRAME_MARGIN) * cell],
@@ -199,7 +199,9 @@ export function worldViewModel(session: WorldSession, state: LabState): ViewMode
   ].join("|");
 
   return {
-    itemKey: framed ? `${WORLD_ITEM_KEY}#wave-${session.wave.run}-${session.wave.status === "solving" ? "solving" : "settled"}` : WORLD_ITEM_KEY,
+    itemKey: framed
+      ? `${WORLD_ITEM_KEY}#wave-${session.wave.run}-${session.wave.status === "solving" ? "solving" : "settled"}#genesis-${session.genesis.districts.length}`
+      : WORLD_ITEM_KEY,
     layoutKey,
     layoutHash: undefined,
     cameraMode: state.cameraMode,
