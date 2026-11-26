@@ -1,5 +1,5 @@
 import { presetCatalog } from "@eschaton/foldon";
-import { lastDistrict, settleDistrict } from "@eschaton/genesis";
+import { lastDistrict, settleDistrict, type DistrictRequest } from "@eschaton/genesis";
 import { createWorld, hashState } from "@eschaton/world";
 import { createGenesisClient } from "../worker/genesisClient";
 
@@ -26,11 +26,12 @@ const bench: GenesisBench = {
       job += 1;
       let progressMessages = 0;
       const start = performance.now();
-      client.generate(`bench-${job}`, catalog, world, { preset: lastDistrict, seed, at: [0, 0, 0] }, {
+      const request: DistrictRequest = { preset: lastDistrict, seed, at: [0, 0, 0] };
+      client.generate(`bench-${job}`, catalog, world, request, {
         onProgress: () => { progressMessages += 1; },
         onDone: (outcome) => {
           const returned = performance.now();
-          const settled = settleDistrict(catalog, world, outcome, { cancelRequested: false });
+          const settled = settleDistrict(catalog, world, outcome, { cancelRequested: false, request });
           const hash = settled.status === "committed" ? hashState(settled.committed.state) : "";
           resolve({ status: settled.status, hash, detail: settled.detail, progressMessages, roundTripMs: returned - start, settleMs: performance.now() - returned });
         },

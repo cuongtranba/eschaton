@@ -333,7 +333,7 @@ function genesisStart(session: WorldSession): WorldSession {
 function genesisDone(session: WorldSession, outcome: unknown): WorldSession {
   const { genesis } = session;
   if (genesis.job === undefined) return session;
-  const settled = settleDistrict(session.catalog, session.state, outcome, { cancelRequested: genesis.cancelRequested });
+  const settled = settleDistrict(session.catalog, session.state, outcome, { cancelRequested: genesis.cancelRequested, request: genesis.job.request });
   const next: GenesisSession = { ...genesis, status: settled.status, detail: settled.detail, job: undefined, cancelRequested: false, preview: undefined };
   if (settled.status !== "committed") return { ...session, genesis: next };
   const { plan, at, metrics, diagnostics } = settled.district;
