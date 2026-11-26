@@ -84,6 +84,27 @@ The cross-engine Genesis test found that Chromium, Firefox and WebKit gave **dif
 - **Compatibility consequence, stated plainly:** the fingerprint of every catalog containing P03 or P09 changed (the preset catalog is now `e77d898a9014df16` on all three engines and Node). A snapshot or commit log written before this change is refused with `catalog-mismatch`, exactly as after any catalog change. No such data is stored in the repository. The hash format (FNV-1a 64 over canonical JSON) is unchanged. Pinned test values in `packages/world/test/golden.test.ts` and `packages/foldon/test/sockets.test.ts` were re-recorded once, with a comment.
 - The rule is a rounding grid, not a proof: a value within about 1e-16 of a grid midpoint could still round differently. The engines job pins the fingerprint, so a regression fails in CI.
 - Adding the ground presets in G0 also changed the preset catalog's fingerprint, as any catalog addition does.
+- Provenance of the re-recorded golden hashes, restored by the closure audit: the pre-W3 commit path (`11d31d9`) with only this rounding patch applied produces exactly the re-recorded values, and without it produces the original W3 values. So the W3 promise ("the optimised commit path gives the hashes of the unoptimised one") still holds for the new values ([`../review/phase-3-closure-audit.md`](../review/phase-3-closure-audit.md) §3).
+
+### Wind strength: compatibility disclosure (Phase 3 closure audit, 2026-11-26)
+
+The sentence "`windFold` computes wind strength with `sqrt` instead of `hypot`" above was the whole record of a behaviour change. This is the missing disclosure, reproduced through public APIs. Evidence and commands: [`../review/phase-3-closure-audit.md`](../review/phase-3-closure-audit.md) §2.
+
+- **What changed in `62cf1e3`.** `Math.hypot(x, y, z)` became `Math.sqrt(x*x + y*y + z*z)`. ECMAScript specifies `Math.hypot` only as an implementation-approximated value. `sqrt`, `*` and `+` are correctly rounded IEEE operations, so the new expression gives the same bits on every engine for the same input.
+- **Measured difference.** On Node 24.20 (V8), 37.3 % of 100,000 seeded random winds with components in [0, 0.2) give a strength that differs in the last bit. Some of those reach the stored fold angles and the state hash. Example: wind [0.1, 0.1, 0.1] on the systems-test garden folds the leaf to 0.35749885235170975 with `hypot` and to 0.3574988523517096 with `sqrt`, and the state hashes differ (`5e3b3822b1e6836b` and `ea9906626dd9f97b`).
+- **Not affected:**
+  - Replay of recorded logs. A commit record stores the `fold` op with its angles, and replay re-applies them; it does not run `windFold` again (ADR 0011, "Determinism scope").
+  - Winds along one axis. For a normal-range `x`, `sqrt(x*x)` is exactly `|x|`. The Studio only ever sends `[s, 0, 0]` with `s` in [0, 1].
+  - The golden fixed history, whose wind is `[0.05, 0, 0]`.
+- **Affected:** running `windFold` again with an off-axis wind on the same state gives a fold that can differ in the last bit from what V8 gave before `62cf1e3`. On other engines the old result was already engine-specific.
+- **A regression the change introduced, fixed in the closure branch.** Squaring overflows above about 1.3e154. A finite wind such as `[1e200, 0, 0]` became an infinite strength, and `windFold` rejected it as "wind must be a finite vector". That is the strong-gust rejection PR #5 removed, and `hypot` had accepted it. The fix:
+  - scales the components by a power of two only when the largest one is outside [2^-500, 2^500];
+  - checks finiteness on the components;
+  - clamps a norm above `Number.MAX_VALUE`, so a zero-drag crease cannot produce `NaN`.
+
+  Inside that range the arithmetic is unchanged, so every result and every golden hash is bit-identical to `62cf1e3`. Tests: the finite gusts `[1e200,0,0]`, `[1e155,1e155,0]` and `[MAX,MAX,0]` flatten the leaf (red on `main`); infinite and `NaN` components are rejected.
+- **Pinned.** The off-axis wind `[0.1, 0.1, 0.1]` fold angles are pinned in Node (`packages/world/test/systems.test.ts`) and on Chromium, Firefox and WebKit (`apps/studio/engines/determinism.spec.ts`). Putting `Math.hypot` back fails the Node pin; this was checked by mutation.
+- **No version was raised.** ADR 0011's version policy ties `rules` to commit validation and derivation. `windFold` is a system that proposes a patch. Systems have no version field of their own, and replay uses their recorded outcomes. Whether system behaviour should be versioned is choice 9 below. Phase 4 makes the question sharper, because its tick runs systems continuously.
 
 ### Further choices to confirm at the Phase 3 gate
 
@@ -91,3 +112,7 @@ The cross-engine Genesis test found that Chromium, Firefox and WebKit gave **dif
 6. **The scratch world holds copies of shell pieces under new ids.** The ids never leave the job.
 7. **Stored recipe numbers lie on a 1e-9 grid**, with the fingerprint change described above.
 8. **The Studio places the first district at a fixed origin and each later one to the east of the previous**, through `continueFrom`. Other layouts are not offered.
+9. **Wind strength formula and system versioning** (closure audit, 2026-11-26; the disclosure is above). Alternatives:
+   - (a) keep `sqrt` with power-of-two scaling and the disclosure, with no version change (**recommended**: logs record outcomes, and the Studio sends only axis winds);
+   - (b) add a systems component to `versions.rules`, so a system behaviour change is versioned; every existing snapshot is then refused as `rules-mismatch`;
+   - (c) return to `Math.hypot`, which is engine-dependent again and fails the three-engine pin.

@@ -264,6 +264,10 @@ Further amendments:
   - The next state shares unchanged frozen entities, bonds and lineage records with the previous one; only touched entities and new records are cloned and frozen.
   - `hashState` and `serializeSnapshot` assemble the same canonical JSON from cached per-part fragments.
 - **Reference and tests.** `applyPatch(catalog, state, patch, { audit: "full" })` always runs the complete audit. Tests: a fixed history keeps the state hashes recorded before the change; the incremental and full paths return deep-equal results on 600 seeded valid and invalid patches, with a full audit after every commit; a state loaded from a snapshot commits exactly like the live state.
+  - Later history of that test, added 2026-11-26:
+    - In Phase 3 (G0) the fixed history was pinned to the W3-era preset catalog content, so adding ground presets would not move it.
+    - In `62cf1e3` its hashes were re-recorded once, when stored recipe numbers were rounded (ADR 0017).
+    - The Phase 3 closure audit reproduced the re-recorded values on the pre-W3 commit path with only the rounding patch applied, so the W3 equivalence claim carries over ([`../review/phase-3-closure-audit.md`](../review/phase-3-closure-audit.md) §3).
 - **Derived data is not truth.** The cell index lives in a `WeakMap` keyed by state objects this package validated (`createWorld`, `applyPatch`, `parseSnapshot`). A state without it is audited in full. It is never serialised or hashed.
 - **Hash format is unchanged.** `stateHash` is still FNV-1a 64 over the canonical JSON of the whole state, so historical hashes, logs and snapshots stay valid. No migration is needed.
 - **Residual limit.** That hash is O(world): about 36 ms at 10,000 entities, and now the dominant cost of a commit. Removing it means an incremental hash, which is a **hash format change** (new schema version, a migration rule for recorded logs). That is a new decision for the owner and was not taken.

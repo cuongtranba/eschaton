@@ -44,7 +44,7 @@ function district(state: WorldState, request: DistrictRequest) {
   const [outcome, generateMs] = timed(() => generateDistrict(catalog, state, request));
   if (outcome.kind !== "generated") throw new Error(`seed ${request.seed}: ${outcome.stage}: ${outcome.reason}`);
   const [, proposalMs] = timed(() => applyProposal(catalog, state, outcome.proposal));
-  const [settled, settleMs] = timed(() => settleDistrict(catalog, state, outcome, live));
+  const [settled, settleMs] = timed(() => settleDistrict(catalog, state, outcome, { ...live, request }));
   if (settled.status !== "committed") throw new Error(`seed ${request.seed}: ${settled.detail}`);
   const after = settled.committed.state;
   return { outcome: outcome satisfies Generated, after, generateMs, proposalMs, settleMs };

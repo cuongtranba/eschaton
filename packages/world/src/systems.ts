@@ -86,12 +86,19 @@ function remainingFold(load: number, stiffness: number): number {
   return stiffness === 0 ? 0 : Math.max(0, 1 - load / stiffness);
 }
 
+function windStrength(wind: Vec3): number {
+  const largest = Math.max(Math.abs(wind[0]), Math.abs(wind[1]), Math.abs(wind[2]));
+  const scale = largest > 2 ** 500 ? 2 ** -600 : largest < 2 ** -500 ? 2 ** 600 : 1;
+  const [x, y, z] = [wind[0] * scale, wind[1] * scale, wind[2] * scale];
+  return Math.min(Math.sqrt(x * x + y * y + z * z) / scale, Number.MAX_VALUE);
+}
+
 export const windFold: System<WindInput> = {
   id: "wind-fold",
   reads: ["foldable", "wind-responsive"],
   plan: (view, { wind }) => {
-    const strength = Math.sqrt(wind[0] * wind[0] + wind[1] * wind[1] + wind[2] * wind[2]);
-    if (!Number.isFinite(strength)) return err([worldIssue("op-invalid", "wind must be a finite vector")]);
+    if (!wind.every(Number.isFinite)) return err([worldIssue("op-invalid", "wind must be a finite vector")]);
+    const strength = windStrength(wind);
     return ok(
       view.entities.flatMap(({ entity, definition }): WorldOp[] => {
         const data = componentValue(definition);
