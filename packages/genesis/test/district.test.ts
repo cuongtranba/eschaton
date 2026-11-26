@@ -1,5 +1,5 @@
 import { presetCatalog, type Catalog } from "@eschaton/foldon";
-import { auditDistrict, continueFrom, generateDistrict, lastDistrict, settleDistrict, type DistrictOutcome } from "@eschaton/genesis";
+import { auditDistrict, continueFrom, generateDistrict, lastDistrict, settleDistrict, type DistrictOutcome, type DistrictRequest } from "@eschaton/genesis";
 import { applyPatch, checkInvariants, createWorld, hashState, replay, type WorldOp, type WorldState } from "@eschaton/world";
 import { expect, test } from "vitest";
 
@@ -8,7 +8,8 @@ const catalog: Catalog = (() => {
   return presetCatalog.value;
 })();
 
-const live = { cancelRequested: false } as const;
+const atOrigin = (seed: number): DistrictRequest => ({ preset: lastDistrict, seed, at: [0, 0, 0] });
+const live = (request: DistrictRequest) => ({ cancelRequested: false, request }) as const;
 const origin = { kind: "command", id: "test" } as const;
 
 function emptyWorld(): WorldState {
@@ -26,7 +27,7 @@ function commit(state: WorldState, ...ops: WorldOp[]): WorldState {
 type Generated = Extract<DistrictOutcome, { kind: "generated" }>;
 
 function generated(state: WorldState, seed: number): Generated {
-  const outcome = generateDistrict(catalog, state, { preset: lastDistrict, seed, at: [0, 0, 0] });
+  const outcome = generateDistrict(catalog, state, atOrigin(seed));
   if (outcome.kind !== "generated") throw new Error(`${outcome.stage}: ${outcome.reason}`);
   return outcome;
 }
@@ -34,7 +35,7 @@ function generated(state: WorldState, seed: number): Generated {
 function committedDistrict(seed: number): { before: WorldState; after: WorldState; outcome: Generated } {
   const before = commit(emptyWorld(), { op: "instantiate", ref: { kind: "foldon", id: "P08" }, anchor: [-6, 0, -6], rotation: 0 });
   const outcome = generated(before, seed);
-  const settled = settleDistrict(catalog, before, outcome, live);
+  const settled = settleDistrict(catalog, before, outcome, live(atOrigin(seed)));
   if (settled.status !== "committed") throw new Error(settled.detail);
   return { before, after: settled.committed.state, outcome };
 }
@@ -55,7 +56,7 @@ test("ten seeds give ten distinct districts that all pass the plan validators, t
 });
 
 test("the Last District, seed 1, commits to the state hash the engines job pins on Chromium, Firefox and WebKit", () => {
-  const settled = settleDistrict(catalog, emptyWorld(), generated(emptyWorld(), 1), live);
+  const settled = settleDistrict(catalog, emptyWorld(), generated(emptyWorld(), 1), live(atOrigin(1)));
   expect(settled.status === "committed" ? hashState(settled.committed.state) : settled.detail).toBe("5dc9053d2e6bd656");
 });
 
@@ -65,9 +66,10 @@ test("the same seed gives the same committed state hash", () => {
 
 test("a district that cannot meet its road contract fails explicitly and commits nothing", () => {
   const state = emptyWorld();
-  const outcome = generateDistrict(catalog, state, { preset: { ...lastDistrict, rules: { ...lastDistrict.rules, maxBridges: 0 } }, seed: 1, at: [0, 0, 0] });
+  const request: DistrictRequest = { preset: { ...lastDistrict, rules: { ...lastDistrict.rules, maxBridges: 0 } }, seed: 1, at: [0, 0, 0] };
+  const outcome = generateDistrict(catalog, state, request);
   expect(outcome.kind === "failed" ? outcome.stage : outcome.kind).toBe("plan:roads");
-  expect(settleDistrict(catalog, state, outcome, live).status).toBe("failed");
+  expect(settleDistrict(catalog, state, outcome, live(request)).status).toBe("failed");
 });
 
 test("generation is refused on ground that already holds entities", () => {
@@ -95,20 +97,20 @@ test("a result whose world would not match its plan is refused by the audit", ()
     { kind: "generated" },
     "nonsense",
   ];
-  expect(tampered.map((result) => settleDistrict(catalog, state, result, live).status)).toEqual(tampered.map(() => "failed"));
+  expect(tampered.map((result) => settleDistrict(catalog, state, result, live(atOrigin(2))).status)).toEqual(tampered.map(() => "failed"));
 });
 
 test("a cancel request wins over a finished generation, and a change in the district box is a conflict", () => {
   const state = emptyWorld();
   const outcome = generated(state, 3);
   const raced = commit(state, { op: "instantiate", ref: { kind: "foldon", id: "P08" }, anchor: [20, 0, 20], rotation: 0 });
-  expect([settleDistrict(catalog, state, outcome, { cancelRequested: true }).status, settleDistrict(catalog, raced, outcome, live).status]).toEqual(["cancelled", "conflict"]);
+  expect([settleDistrict(catalog, state, outcome, { cancelRequested: true, request: atOrigin(3) }).status, settleDistrict(catalog, raced, outcome, live(atOrigin(3))).status]).toEqual(["cancelled", "conflict"]);
 });
 
 test("a district that continues a neighbour's road conflicts when that road changes and commits when an unrelated piece does", { timeout: 60_000 }, () => {
   const { after: first, outcome: neighbour } = committedDistrict(4);
   const link = continueFrom(neighbour.plan, neighbour.at, "east");
-  const request = { preset: lastDistrict, seed: 9, at: link.at, gates: [...link.gates, { edge: "east", at: 20 } as const], depends: link.depends };
+  const request: DistrictRequest = { preset: lastDistrict, seed: 9, at: link.at, gates: [...link.gates, { edge: "east", at: 20 }], depends: link.depends };
   const second = generateDistrict(catalog, first, request);
   if (second.kind !== "generated") throw new Error(`${second.stage}: ${second.reason}`);
   const road = link.depends[5]?.min;
@@ -118,13 +120,29 @@ test("a district that continues a neighbour's road conflicts when that road chan
   const roadCut = commit(first, { op: "consume", entity: paving.id });
   const roofGone = commit(first, { op: "consume", entity: house.id });
   expect([link.gates.length > 0, link.depends.length > 5]).toEqual([true, true]);
-  expect([settleDistrict(catalog, roadCut, second, live).status, settleDistrict(catalog, roofGone, second, live).status, settleDistrict(catalog, first, second, live).status]).toEqual(["conflict", "committed", "committed"]);
+  expect([settleDistrict(catalog, roadCut, second, live(request)).status, settleDistrict(catalog, roofGone, second, live(request)).status, settleDistrict(catalog, first, second, live(request)).status]).toEqual(["conflict", "committed", "committed"]);
 });
 
 test("a committed district replays from the log to the same state hash", () => {
   const start = emptyWorld();
-  const settled = settleDistrict(catalog, start, generated(start, 5), live);
+  const settled = settleDistrict(catalog, start, generated(start, 5), live(atOrigin(5)));
   if (settled.status !== "committed") throw new Error(settled.detail);
   const replayed = replay(catalog, start, [settled.committed.record]);
   expect(replayed.ok ? hashState(replayed.value) : "diverged").toBe(hashState(settled.committed.state));
+});
+
+test("a result generated for another district box is refused at settlement", () => {
+  const state = emptyWorld();
+  const elsewhere: DistrictRequest = { ...atOrigin(1), at: [40, 0, 0] };
+  expect(settleDistrict(catalog, state, generated(state, 1), live(elsewhere)).status).toBe("failed");
+});
+
+test("a continuation whose result dropped the neighbour road dependencies is refused instead of committed unchecked", { timeout: 60_000 }, () => {
+  const { after: first, outcome: neighbour } = committedDistrict(4);
+  const link = continueFrom(neighbour.plan, neighbour.at, "east");
+  const request: DistrictRequest = { preset: lastDistrict, seed: 9, at: link.at, gates: [...link.gates, { edge: "east", at: 20 }], depends: link.depends };
+  const second = generateDistrict(catalog, first, request);
+  if (second.kind !== "generated") throw new Error(`${second.stage}: ${second.reason}`);
+  const stripped = { ...second, proposal: { ...second.proposal, depends: [] } };
+  expect(settleDistrict(catalog, first, stripped, live(request)).status).toBe("failed");
 });

@@ -55,8 +55,8 @@ export function districtRegion(preset: DistrictPreset, at: Cell): Region {
  * Generates one district as a job that advances one stage or one lot per step. It works on a private scratch world
  * that holds only the district and copies of the pieces in its one-cell shell, so the cost of a district does not
  * grow with the size of the world around it. The scratch world is never the result: the job returns one proposal
- * against the real world, which validates it again at commit.
- * and never touches the world: the result is a single inert proposal, or an explicit failure.
+ * against the real world, which validates it again at commit. The job never touches the world: the result is a single
+ * inert proposal, or an explicit failure.
  */
 export function createDistrictJob(catalog: Catalog, state: WorldState, request: DistrictRequest): DistrictJob {
   const { preset, at } = request;

@@ -1,7 +1,7 @@
-import type { Catalog } from "@eschaton/foldon";
+import { canonicalJson, type Catalog } from "@eschaton/foldon";
 import { applyProposal, type Committed, type WorldState } from "@eschaton/world";
 import { auditDistrict } from "./audit";
-import type { DistrictOutcome } from "./district";
+import { districtRegion, type DistrictOutcome, type DistrictRequest } from "./district";
 import { planIssues } from "./validate";
 
 export type DistrictSettlement =
@@ -19,20 +19,39 @@ const wellFormed = (value: DistrictOutcome): value is Extract<DistrictOutcome, {
   Array.isArray(value.at) &&
   typeof value.proposal === "object" &&
   Array.isArray(value.proposal.ops) &&
+  (value.proposal.depends === undefined || Array.isArray(value.proposal.depends)) &&
   typeof value.metrics === "object" &&
   typeof value.metrics.lots === "object" &&
   Array.isArray(value.diagnostics);
 
+function requestMismatch(outcome: Extract<DistrictOutcome, { kind: "generated" }>, request: DistrictRequest): string | undefined {
+  const same = (a: unknown, b: unknown): boolean => canonicalJson(a) === canonicalJson(b);
+  if (!same(outcome.at, request.at) || !same(outcome.plan.size, request.preset.size) || !same(outcome.proposal.region, districtRegion(request.preset, request.at))) {
+    return "the result is not for the requested district box";
+  }
+  const declared = new Set((outcome.proposal.depends ?? []).map((dependency) => canonicalJson(dependency.region)));
+  const missing = (request.depends ?? []).filter((region) => !declared.has(canonicalJson(region)));
+  return missing.length > 0 ? `the result does not declare ${missing.length} of the dependencies the request relied on` : undefined;
+}
+
 /**
  * The only way a generated district reaches the world. The result may come from another thread and is not trusted:
- * its shape and its plan are re-validated, the proposal is applied to get a candidate state, and that candidate is
- * audited against the plan from scratch. Only a clean candidate is returned as committed; nothing else changes.
+ * its shape is checked, its box and declared dependencies must be those of the request it answers, its plan is
+ * re-validated, the proposal is applied to get a candidate state, and that candidate is audited against the plan from
+ * scratch. Only a clean candidate is returned as committed; nothing else changes.
  */
-export function settleDistrict(catalog: Catalog, state: WorldState, outcome: unknown, options: Readonly<{ cancelRequested: boolean }>): DistrictSettlement {
+export function settleDistrict(
+  catalog: Catalog,
+  state: WorldState,
+  outcome: unknown,
+  options: Readonly<{ cancelRequested: boolean; request: DistrictRequest }>,
+): DistrictSettlement {
   if (options.cancelRequested) return { status: "cancelled", detail: "cancelled; nothing was committed" };
   if (!isOutcome(outcome)) return { status: "failed", detail: "the generator returned a malformed result" };
   if (outcome.kind === "failed") return { status: "failed", detail: `${outcome.stage}: ${outcome.reason}` };
   if (!wellFormed(outcome)) return { status: "failed", detail: "the generator returned a malformed result" };
+  const mismatch = requestMismatch(outcome, options.request);
+  if (mismatch !== undefined) return { status: "failed", detail: mismatch };
   const planned = planIssues(outcome.plan);
   if (planned.length > 0) return { status: "failed", detail: `the plan failed validation: ${planned.slice(0, 3).join("; ")}` };
   const applied = applyProposal(catalog, state, outcome.proposal);
