@@ -24,7 +24,7 @@ Eight workspace projects. The first five are product code.
 | contracts | **Merged into foldon** | `packages/foldon/src/{ids,result,issues,vec}.ts` | Branded ids, `Result<T,E>`, `ValidationIssue`. No commands or transactions yet. ([ADR 0001](../decisions/0001-package-layout.md)) |
 | foldon | **Exists** | `packages/foldon/src/` | Catalog, geometry recipes, assembly validation, canonical hashing, and (Phase 1 M3) the versioned socket table with the directional matcher `socketMismatches` ([ADR 0012](../decisions/0012-directional-sockets.md)). Owns definitions; does not own placement in a world. |
 | generation | **Exists (Phases 2–3)** | `packages/wave/src/`, `packages/genesis/src/` (and `experiments/wfc-placement`, the 2D throwaway) | Wave: placement-based 3D WFC solver, region glue and job host ([ADR 0015](../decisions/0015-wave-solver.md), [ADR 0016](../decisions/0016-region-proposals.md)). Genesis: semantic plan, independent validators, district job, audit, settlement, continuation and job host ([ADR 0017](../decisions/0017-hierarchical-generation.md)). Each runs in its own Web Worker in the Studio. Neither holds world state. |
-| simulation | **One explicit system, no tick** | `packages/world/src/systems.ts` | `runSystem` and `windFold` (Phase 1) read the `foldable` and `wind-responsive` components on explicit invocation. There is no clock, scheduler or system order; those are Phase 4 ([ADR 0007](../decisions/0007-component-data-and-system-order.md)). |
+| simulation | **One explicit system, no tick** | `packages/world/src/systems.ts` | `runSystem` and `windFold` (Phase 1) read the `foldable` and `wind-responsive` components on explicit invocation. Wind strength is the square root of the summed squares, scaled by a power of two outside [2^-500, 2^500], so it has the same bits on every engine and any finite wind is accepted (ADR 0017, wind disclosure; versioning is open as choice 9). There is no clock, scheduler or system order; those are Phase 4 ([ADR 0007](../decisions/0007-component-data-and-system-order.md)). |
 | world | **Exists (Phase 1, extended in Phases 2–3)** | `packages/world/src/` | Immutable `WorldState`, `applyPatch`, revisions and replay; region proposals (`readRegion`, `applyProposal`, `draftProposal`, `Proposal.depends`); no clock (Phase 4). The Studio's World mode holds one `WorldSession` and writes only through `applyPatch`/`runSystem`. Owner decision D4 approved the new package (ADR 0001 and ADR 0011 amendments). |
 | renderer | **Inside the Studio** | `apps/studio/src/renderer/` | Adapter from `ViewModel` to three.js; the only code that imports `three`. ([ADR 0005](../decisions/0005-renderer-webgpu-tsl-webgl2-fallback.md)) |
 | presets | **Absent** | none | The look palette and scene constants are code (`lab/look.ts`, `lab/palette.ts`, `lab/composition/`). |
@@ -214,7 +214,7 @@ flowchart LR
 flowchart LR
   subgraph MAIN["Main thread (owns the one authoritative WorldState)"]
     UI["Genesis panel (ui)"] -- "genesisStart" --> SES["World session reducer (lab/world/session.ts)"]
-    SES -- "settleDistrict" --> SET["re-validate plan, applyProposal once, audit candidate"]
+    SES -- "settleDistrict" --> SET["check it answers the request, re-validate plan, applyProposal once, audit candidate"]
     SET -- "adopt only if clean" --> WLD["WorldState + commit log"]
     WLD --> VM["ViewModel (derived)"]
     VM --> REN["renderer"]
@@ -254,7 +254,8 @@ The job's result is still **one proposal read against the real snapshot** it was
 4. **Local solver:** the wave solver fills one lot at a time with its role's tile set, around frozen neighbours. WFC knows nothing about roads or roles.
 5. **Atomic proposal:** one `Proposal` for the district box, with `depends` (below).
 6. **Settlement on the main thread (`settleDistrict`):**
-   - checks the result's shape;
+   - checks the result's shape, and returns `failed` for a malformed one instead of throwing;
+   - checks that the result answers the request it was sent for: the district box (corner, size and region), the road gates and river terminals of its plan, and exactly the dependency regions the request declared;
    - re-validates the plan;
    - runs `applyProposal` once (versions, read set, depends, write set, invariants);
    - audits the candidate state against the plan from scratch (`auditDistrict`).
@@ -269,9 +270,9 @@ The job's result is still **one proposal read against the real snapshot** it was
 | `generate` | session → genesis worker | `job`, `source` (catalog input), `fingerprint`, `snapshot` (`serializeSnapshot` text), `request` (preset, seed, `at`, optional continuation), `sliceMs` (12 in the Studio) | Host: `sliceMs` finite and ≥ 0; `createCatalog(source)` succeeds and its fingerprint equals `fingerprint`; `parseSnapshot` accepts the snapshot (schema, catalog, rules). Failure is one `done` with a `failed` outcome at stage `host`, never a throw |
 | `cancel` | session → worker | `job` | Ignored unless that job is running; the next slice posts `cancelled` |
 | `progress` | worker → session | `job`, `progress` (stage, plan preview, lots done) | Preview only. The session drops it unless the run is current |
-| `done` | worker → session | `job`, `outcome` (`generated`, `failed` or `cancelled`), `timing` | `settleDistrict` takes `unknown` and checks the shape before anything else; a cancel requested on the main thread wins over a finished result. On `main` it does **not** compare the result's district box or declared `depends` with the request it answers; the Phase 3 closure branch adds that check. Worker crash or unreadable message: the client turns every open job into `failed` at stage `worker` |
+| `done` | worker → session | `job`, `outcome` (`generated`, `failed` or `cancelled`), `timing` | `settleDistrict` takes `unknown` and the request the session sent. It checks the shape first, then that the result answers that request (step 6). A cancel requested on the main thread wins over a finished result. It does not re-plan to prove the seed and lots, and it trusts the digests as concurrency tokens: a wrong digest gives a `conflict` ([closure audit](../review/phase-3-closure-audit.md) §4.13). Worker crash or unreadable message: the client turns every open job into `failed` at stage `worker` |
 
-The wave worker (`solve`/`cancel` → `progress`/`done`) follows the same pattern. Its host also checks `sliceNodes` and caches compiled tiles per fingerprint and tile set ([ADR 0015](../decisions/0015-wave-solver.md)). Messages are typed at compile time on both sides, but the worker does not validate the shape of an incoming `generate` beyond the checks above. Both ends are same-origin first-party code. The main thread re-validates what comes back: shape, plan, world validation and audit. The comparison with the original request is the exception noted in the `done` row.
+The wave worker (`solve`/`cancel` → `progress`/`done`) follows the same pattern. Its host also checks `sliceNodes` and caches compiled tiles per fingerprint and tile set ([ADR 0015](../decisions/0015-wave-solver.md)). Messages are typed at compile time on both sides, but the worker does not validate the shape of an incoming `generate` beyond the checks above. Both ends are same-origin first-party code. The main thread re-validates what comes back: shape, the match with its request, plan, world validation and audit.
 
 ### Read sets and nonlocal dependencies
 
