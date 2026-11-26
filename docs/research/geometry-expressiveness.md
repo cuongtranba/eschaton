@@ -4,6 +4,7 @@
 - Date: 2026-11-26. Base: `main` @ `6024a1b`. Branch: `experiment/origami-expressiveness-lab` (not for merge without owner approval).
 - Trigger: owner feedback 2026-11-26 — the scene reads as "only triangles and squares"; origami should be able to build birds, vehicles, houses; triangles should come in many shapes (right or not, determined by the hypotenuse and the other two sides).
 - Lab: [`experiments/origami-lab`](../../experiments/origami-lab/README.md), served on `http://127.0.0.1:5182/` (loopback only).
+- **Superseding note (2026-11-26):** the owner rejected the V1 geometry in this lab. The V2 follow-up is the gate spec [`geometry-quality-gates.md`](geometry-quality-gates.md), the bird brief and the evidence in [`origami-lab-v2/`](origami-lab-v2/gate-evidence.md). Two claims below are corrected there. First, V1's "0 folded overlaps" was produced by a check that exempts hinged and closing pairs, shrinks panels by 4 % and samples five times; the exact test finds roof/wall interpenetration in the V1 house. Second, the lattice/sliver rules reject valid shapes (spec §3.1).
 
 ## 1. Summary
 

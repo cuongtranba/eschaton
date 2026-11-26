@@ -9,6 +9,7 @@ import {
   buildObject,
   compileDesign,
   createBuilder,
+  generate,
   geo1Verdict,
   iou,
   panelQuality,
@@ -177,4 +178,11 @@ test("regression: the flap rolled (left wing up while the right went down); both
   });
   expect(heights.every(([l, r]) => Math.abs(l - r) < 1e-6)).toBe(true);
   expect((heights[2]?.[0] ?? 0) - (heights[0]?.[0] ?? 0)).toBeGreaterThan(1);
+});
+
+test("regression: V1's 4 % centroid shrink hid a roof/wall interpenetration in the V1 house; the exact contact test reports it", () => {
+  const house = generate("house", 1);
+  if (!house.ok) throw new Error(house.error.message);
+  const crossings = posedContacts(poseObject(house.value, 1).panels).filter((c) => c.contact.kind === "crossing");
+  expect(crossings.map((c) => [c.a, c.b])).toEqual([["walls.right", "roof.overhang"]]);
 });

@@ -77,3 +77,33 @@ No Foldon, world, wave or genesis change was needed for any object. Things worth
 - The house has one overhang trapezoid (on the second roof panel) rather than two, because the first roof panel's eave is hinged to the wall.
 - The bird's wing span to body ratio is not enforced by a rule; the keel, wing and neck choices come from short enumerated lists that keep the silhouette.
 - The chimney tilt is scaled by fold progress so the flat state does not intersect the roof.
+
+## V2 (2026-11-26): gate-driven redesign of the hero bird (EXPERIMENTAL, not approved)
+
+V1 above is kept unchanged as the baseline. V2 is the response to the owner's rejection of V1's geometry. It is governed by the proposed gate spec [`docs/research/geometry-quality-gates.md`](../../docs/research/geometry-quality-gates.md), the design brief [`docs/research/origami-lab-v2/bird-design-brief.md`](../../docs/research/origami-lab-v2/bird-design-brief.md) (written before code) and the evidence record [`docs/research/origami-lab-v2/gate-evidence.md`](../../docs/research/origami-lab-v2/gate-evidence.md).
+
+| File | Role |
+|---|---|
+| `src/v2/design.ts` | Design surface on shared vertex indices: `point`, `face`, `quad`, `ringLoft`, `stitch`, `fan`; facing-based orientation; sheet rules |
+| `src/v2/compile.ts` | Greedy strip unfolding into flat non-overlapping pieces (Mitani & Suzuki 2004 style), Foldon compile per piece (`foldedNet` from the 3D design, `defineFoldon`), glue seams and articulated joints with direction-resolved signs, `poseCompiled` |
+| `src/v2/verify.ts` | GEO-1 automated checks: panel validity, flat nets, rigidity, seam gap, Foldon validity, swept collision certificates (`analytic` / `static` / `certified` / `sampled` / `collision`), `posedContacts` |
+| `src/v2/geom.ts` | Exact shared-boundary-aware contact, panel distance, sector gap, rigid transforms |
+| `src/v2/bird.ts` | The bird: bounded parameters, `CROW` baseline, `birdParams(seed)` (a bounded random sampler, not WFC), `birdExtreme(0 / 1)` |
+| `src/v2/metrics.ts` | Landmark ratios measured on the mesh; silhouette raster and IoU (diagnostics) |
+| `v2.html`, `web/v2.ts`, `web/clay.ts` | Neutral clay review page: `?mode=study|sheet|fold|compare|evidence`, `preset=crow|min|max` or `seed=N`, `seeds=…` for sheets |
+| `capture/capture.ts` | Reproducible screenshots and `evidence.json` from a running page |
+
+```sh
+ORIGAMI_LAB_PORT=5183 pnpm --filter @eschaton/exp-origami-lab dev      # http://127.0.0.1:5183/v2.html
+pnpm --filter @eschaton/exp-origami-lab test                          # V1 + V2 tests (V2 sweep of 11 variants ≈ 20 s)
+node --experimental-strip-types experiments/origami-lab/capture/capture.ts http://127.0.0.1:5183 docs/screenshots \
+  exp-origami-v2-crow-study="mode=study&preset=crow"                  # run from the repo root; see the file header
+```
+
+V1 findings that V2's contact test exposes:
+
+- **Interpenetration in the V1 house.** The roof overhang and the right wall interpenetrate at t = 1, giving 6 crossings over seeds 1–8. For seed 1 the intersection segment is 3.96 cells long. This pair is *not* in V1's exempt set. V1's `posedOverlaps` missed it because it shrinks every panel 4 % toward its centroid before testing, and the crossing lies within that margin along the wall's top edge. The likely origin is V1's 7.5° angle quantisation (V1 finding 6); this is not verified.
+- **Unglued contacts.** V1 vehicles and houses have 104 edge-touch contacts between unglued panels, at seams that V1 calls "closing".
+- **Exemptions and sampling.** Separately, V1 exempts every hinged and closing pair and samples only five fold times. The V2 tests show both blind spots with constructed cases.
+
+Details are in `gate-evidence.md`.

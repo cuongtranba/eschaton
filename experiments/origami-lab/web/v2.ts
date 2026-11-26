@@ -82,7 +82,7 @@ const CAMERAS = {
   top: { kind: "ortho", dir: [0, 1, 0], up: [1, 0, 0], halfHeight: 2.7, target: [-0.4, 0, 0] },
   below: { kind: "ortho", dir: [0, -1, 0], up: [1, 0, 0], halfHeight: 2.7, target: [-0.4, 0, 0] },
   head: { kind: "persp", azimuth: 62, elevation: 12, distance: 2.2, fov: 30, target: [1.45, 0.1, 0] },
-  sheet: { kind: "persp", azimuth: 38, elevation: 24, distance: 14, fov: 32, target: BIRD_CENTRE },
+  sheet: { kind: "persp", azimuth: 38, elevation: 24, distance: 16.5, fov: 32, target: BIRD_CENTRE },
 } as const satisfies Readonly<Record<string, CameraSpec>>;
 
 document.getElementById("build")?.replaceChildren(__BUILD__);
@@ -110,6 +110,11 @@ function tile(label: string, spec: CameraSpec, height: number, span = 1): ClayVi
 
 const livePhase = (seconds: number): number | undefined => (state.flap ? 0.5 + 0.5 * Math.sin(seconds * 3) : state.phase);
 
+const midpoint = (a: Vec3 | undefined, b: Vec3 | undefined, u: number): readonly [number, number, number] => {
+  const [p, q] = [a ?? [0, 0, 0], b ?? [0, 0, 0]];
+  return [p[0] + (q[0] - p[0]) * u, p[1] + (q[1] - p[1]) * u, p[2] + (q[2] - p[2]) * u];
+};
+
 function studyPage(seed: number): void {
   const c = compiledFor(seed);
   const crown = c.design.landmarks.crown ?? [1.45, 0.1, 0];
@@ -132,8 +137,8 @@ function studyPage(seed: number): void {
     ["silhouette: side", CAMERAS.side],
     ["silhouette: front", CAMERAS.front],
     ["silhouette: three-quarter", { ...CAMERAS.threeQuarter, distance: 13 }],
-    ["close-up: wing tip and primaries", { kind: "persp", azimuth: 15, elevation: 55, distance: 3.6, fov: 30, target: c.design.landmarks.wingTipL ?? [0, 0, 3] }],
-    ["close-up: tail fan and coverts", { kind: "persp", azimuth: 150, elevation: 35, distance: 3.2, fov: 30, target: c.design.landmarks.tailTip ?? [-1.5, 0, 0] }],
+    ["close-up: wing tip and primaries", { kind: "persp", azimuth: 20, elevation: 60, distance: 3.4, fov: 30, target: midpoint(c.design.landmarks.wristL, c.design.landmarks.wingTipL, 0.72) }],
+    ["close-up: tail fan and coverts", { kind: "persp", azimuth: 140, elevation: 40, distance: 2.6, fov: 30, target: midpoint(c.design.landmarks.keel, c.design.landmarks.tailTip, 0.75) }],
   ];
   for (const [label, spec] of silhouettes) {
     const look: Look = label.startsWith("silhouette") ? "silhouette" : "clay";
@@ -154,7 +159,7 @@ function sheetPage(): void {
   }
   for (const seed of sheetSeeds) {
     const c = compiledFor(seed);
-    const view = tile(`${labelFor(seed)} · top silhouette`, { ...CAMERAS.top, halfHeight: 3.2 }, 200);
+    const view = tile(`${labelFor(seed)} · top silhouette`, { ...CAMERAS.top, halfHeight: 3.6 }, 200);
     tiles.push({ view, draw: () => {
       view.set(snapshot(c, poseCompiled(c, 1), false).polygons, [], "silhouette");
     } });
@@ -189,8 +194,8 @@ function foldPage(seed: number): void {
   const c = compiledFor(seed);
   if (tilesRoot !== null) tilesRoot.style.gridTemplateColumns = "repeat(5, minmax(0, 1fr))";
   for (const t of [0, 0.25, 0.5, 0.75, 1]) {
-    const view = tile(`t = ${t}${t < 1 ? " (pieces exploded)" : " (assembled)"}`, { ...CAMERAS.sheet, distance: 21 }, 230);
-    tiles.push({ view, draw: () => { const snap = snapshot(c, poseCompiled(c, t, undefined, 1.2), true); view.set(snap.polygons, snap.lines, "clay"); } });
+    const view = tile(`t = ${t}${t < 1 ? " (pieces exploded)" : " (assembled)"}`, { ...CAMERAS.sheet, distance: 22 }, 230);
+    tiles.push({ view, draw: () => { const snap = snapshot(c, poseCompiled(c, t, undefined, 0.45), true); view.set(snap.polygons, snap.lines, "clay"); } });
   }
   for (const phase of [0, 0.25, 0.5, 0.75, 1]) {
     const view = tile(`flap phase ${phase} (shoulder + wrist)`, CAMERAS.front, 200);
