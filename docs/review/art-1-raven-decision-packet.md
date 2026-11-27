@@ -532,3 +532,91 @@ Each reviewer was a separate agent that made none of the work and recomputed the
 - Phase 4 and Geometry V4.
 - Any merge.
 
+
+## 11. M3.1, laboratory M0–M1 and their independent reviews (under §0.3, 2026-11-28)
+
+This section was written on draft PR #14. The work is design and research only, and no artwork was drawn. No package, app, experiment, runtime, server or Foldon contract was changed. Nothing is approved or adopted.
+
+### 11.1 What was produced
+
+| Item | File | Commits |
+|---|---|---|
+| Decisions D-1…D-5 recorded; bible clarifications D-4a and D-4b (draft branch only) | §0.3; [`visual-bible.md`](../art/visual-bible.md) §4.1.3, §5 and §8; `AGENTS.md` | `eab9920`, `9fd8018` |
+| Method **M3.1**, the bounded revision under D-2 | [`form-construction-method.md`](../art/form-construction-method.md) §4.0, §6.0, P1, P5, P6, P7 | `e26ccae` |
+| Diagnostic scripts (D-5): they reproduce the M3 read-outs and compute the controls | [`form-method-diagnostics/`](../art/form-method-diagnostics/README.md); [check](../art/form-method-check.md) §9 | `e26ccae` |
+| Re-review of M3.1, recorded as errata R1–R12 | method §15 | `d25f738` |
+| **M0:** O1 contract v1, written before any script | [`m0-o1-contract.md`](../research/geometry-operator-lab/m0-o1-contract.md) | `58b424f` |
+| **M0 freeze:** contract v1.1 after the independent math review; decision **GO** | contract §11–§12 | `33e7f67` |
+| **M1 red:** fixtures, oracles, tests and a stub | [`geometry-operator-lab/`](../research/geometry-operator-lab/README.md) | `0770c03` |
+| **M1 green:** the implementation and the evidence | same | `44cfd68` |
+| The bounded revision after the M1 review | same | `8965cff` |
+| Pointers from the operator and lab proposals; README index rows | operators §10; lab §9; `README.md` | `36bd051`, `fa608e5` |
+
+### 11.2 Independent reviews
+
+Each reviewer was a separate agent that made none of the work. Each recomputed the numbers with its own code. Every verdict is a recommendation.
+
+**M0 contract v1: GO WITH AMENDMENTS** (contract §12).
+- **Reproduced:** every fixture value, plus 300 random pairs and 200 caps and wedges against a brute-force hull, with 0 mismatches.
+- **Findings:** 15, applied in v1.1 before any script. The main ones:
+  - "a sliver comes only from a short edge" was false;
+  - caps and wedges are not intrinsically flat;
+  - the ring kind must be exact (`on_path`);
+  - the convexity predicate, the total error precedence and a canonical-form oracle were missing.
+- No fixture value changed.
+
+**Method M3.1: NEEDS REVISION** (no blocker, four majors; method §15). This was the single re-review that D-2 allows, so no further revision follows.
+- **Held:**
+  - §4.0 rules 3 and 4 reconciled with GEO §1.8–§1.13;
+  - no exemption from geometric truth or visual judgment;
+  - D-4a and D-4b applied faithfully;
+  - the 2 px constant withdrawn;
+  - no adopted gate weakened;
+  - every reproduced number matches.
+- **Majors:**
+  - P1 compares `d` with `ε_m` in different units (R1);
+  - the partition rule does not fully close the escape and conflicts with the operator seam erratum (R2);
+  - §6.0 lists P7 measures as data, but the scripts do not compute them (R3);
+  - `D_v` is a bounding-box ratio with unstated limits (R4).
+
+**Laboratory M1: PASS WITH FINDINGS** (lab README).
+- **Chronology:** confirmed. The freeze came before any script, and the tests before the implementation. No oracle, fixture value or tolerance changed after the implementation existed.
+- **Second implementation:** the reviewer wrote a BigInt O1 on Node 24 (V8) from the contract alone. It produced **byte-identical digests on 736 of 736 `ok` cases** and identical codes on 70 error cases, against `o1.py` on CPython 3.9.6. The cases include permuted inputs, reversed chains, ±10⁹ coordinates, h = 1 q and 1024-vertex pairs.
+- **Adversarial checks:** 40,000 fuzzed calls raised no exception. Star polygons, error precedence, `normal` and `min_altitude` all behaved as specified.
+- **Findings, fixed in `8965cff`:**
+  - an empty vertex list and fewer than 2 stations returned `malformed-input`, not `out-of-bounds`;
+  - the README timing did not match the committed evidence;
+  - R6 permuted only one section, and R7 omitted chains;
+  - areas were not checked against their own oracle;
+  - no overlapping net was tested.
+
+### 11.3 Outcome
+
+| Item | Verdict | Remaining |
+|---|---|---|
+| M0 | **GO**; contract v1.1 frozen | — |
+| M1 against contract v1.1 | **PASS** on every listed item (28 tests), after one bounded revision for the count-bound codes | `inconclusive` net class never seen; Hausdorff bound out of scope |
+| Cross-engine agreement (P3D-6 is a tested property) | **PASS for 806 inputs** compared (CPython against V8) | floats, error details, other versions and platforms not compared |
+| Worst residuals | exact parts: 0. Float parts: net congruence 5.7e-7 τ, seam 4.9e-7 τ, with τ = 1e-9 × diameter; F1 angle error 0.0°; F1 net deviation 7.6e-5 L | — |
+| Timing | measured only: 0.58, 4.19, 33.6 and 63.3 ms per band at m = n = 8, 64, 512 and 1024; fitted exponent 0.98 (CPython 3.9.6, arm64) | no budget |
+| Rigid folding path, collision, physical seam closure, single-sheet foldability | **NOT VERIFIED; not claimed** | needs Q1, Q2 or Q4, and GEO-1 |
+| M3.1 | **NEEDS REVISION**, recorded as errata; stays a proposal | R1–R4 for any later round |
+| v5 rejection | stands as the human and independent visual result; no metric is required to reproduce it (D-2) | — |
+
+**Unchanged:**
+- B-2 v7 is **NOT APPROVED**; B (perched) stays the selected direction only.
+- ART-D3c, Q1–Q6, ADR 0018 and ADR 0019, and the Phase 3 exit stay pending.
+- No merge, Geometry V4, Phase 4, object implementation or visual approval.
+- Artwork digests re-verified at this branch: v5 `888cf4a5…0942`, v7 `2f1dc0a7…9e77`, B `55406933…4f74f`, holdout `9a21e3b7…38fc`.
+
+### 11.4 Decisions the owner would need before M2 or later
+
+| ID | Question | Recommendation (not a decision) |
+|---|---|---|
+| D-6 | Authorize M2 (O2 crease insertion) under the same isolation, test-first and freeze-first discipline? | authorize only after deciding whether O1's next contract covers tilted planes, which every real spine needs |
+| D-7 | Extend the O1 contract to non-parallel section planes, or to non-convex sections through matched partitions? | tilted planes first, as a contract v2 with its own freeze and review |
+| D-8 | Q1, Q2 and Q4: are bands joined by seams between sheets (Q1, Q2), or by closed crease networks (Q4)? Without one of them, no closed shell built from O1 bands can be a Foldon object | needed before M3 (O1 + O2 composition) |
+| D-9 | O3 attachments with more than one host (the holdout's strings), holes in panels (the holdout's peg holes) and seam topology | a research question for M4, not decided |
+| D-10 | Any further method round on errata R1–R4 | optional; the read-outs stay informative either way |
+
+Q1–Q6 themselves are unchanged and open, as defined on draft PR #11 (`docs/research/geometry-expressiveness.md` §6 @ `616b0cf`).
