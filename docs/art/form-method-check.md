@@ -247,3 +247,44 @@ The link between `e_v` and "depth is visible" is **not shown**. The holdout foun
 - "Values fixed before the table" cannot be shown from git, because the definitions and the results were committed together in `8371748`.
 - `λ` for sparse forms is ambiguous: extents and covariance eigenvalues give different ratios.
 - The end-view direction is undefined for a curved spine.
+
+## 9. M3.1: why the M3 measures fail, computed (2026-11-28)
+
+These read-outs come from the committed diagnostic scripts [`form-method-diagnostics/`](form-method-diagnostics/README.md) (owner decision D-5). The evidence file is `form-method-diagnostics/evidence/m31-readouts.json`. §1–§8 above stay unchanged as the M3 record. Every value below is **data** in the sense of method §6.0. The verdicts that M3 would give are shown only to explain why M3.1 drops them.
+
+**Reproduced from M3 and its review:**
+- v5: all 45 keyframe pairs give `d` = 0.000, with a sample bound of 0.001.
+- v7: all seven graded pairs, plus `NAPE_FLAT` → `NAPE`, reproduce `d` and `Δ` exactly: 0.039 / 0.40 px, 0.055 / 0.60, 0.136 / 1.50, 0.066 / 0.85, 0.030 / 0.48, 0.166 / 2.90, 0.082 / 0.65 and 0.131 / 0.35.
+- v5 one-mass `e_v` = 0.017 L = 3.4 px (review: 3.4).
+- The raised-station clone gives 2.95 px (review: 3.0).
+- v7 body: 1.66 px (M3: 1.69; review: 1.71).
+- v7 drawn with folded wings: 3.5 px (review: 3.6).
+- v5 body `e_v` = 0.000 L. M3 gave 0.0002 L and the review 0.0004 L; these scripts ignore the ring tilt, as §5 did. The widest station contains the others, so the value is exactly 0 here. All three values give the same M3 verdict.
+
+**Controls and what they show:**
+
+| Case | Read-out | M3 would say | Why that is wrong | M3.1 |
+|---|---|---|---|---|
+| v5 body against v5 head + body | `e_v` 0.000 L against 0.017 L (3.4 px) | fail or pass, depending on the partition | the verdict comes from the partition, not the form | the partition is declared before the artwork; both readings are reported; a partition-sensitive read-out decides nothing (§4.0 rule 7) |
+| v5 with its first body station raised 0.03 L | `e_v` 2.95 px, with no profile change | passes | `e_v` of one section and its translate equals the offset (test: 0.25 exactly for a 0.25 shift), so it measures position, not depth | `e_v` is information only |
+| Nested sections: a torpedo of circles, or a circle containing a square and a diamond | `e_v` = 0 (below 1e-12) | fails, whatever the profiles do | a convex body's widest section contains the rest, so one cut explains the outline | as above |
+| Shallow body (holdout biwa, frozen record) | P1 `d` 0.139, `Δ` 1.33 px | fails P1 by 2 px | `Δ_px = d · s_px`, and `s_px` is proportional to the mass's depth, so a pixel threshold fails a shallow subject for being shallow | P1 conforms (the declared change exists); visibility is reviewer judgment; P7 compares the declared depth target |
+| Turned vessel or lighthouse (circle, 64-gon, radius 1 → 3) | `d` = 0.000 | fails as a "scaled profile family" | one profile at every station is the truth of a turned object | P1 `constant`, conforms |
+| Valid prism (identical sections) | `d` = 0.000 | needed an "empty program", in conflict with bible §5 | — | `constant` under D-4a, conforms |
+| Rectangle 4 × 1 → 2 × 3 (aspect change only) | `d` = 0.000 | — | an aspect change is not a profile change | conforms only if declared `constant` |
+| Square → diamond | `d` = 0.7071 (analytic √2/2) | — | upper reference | — |
+| Four equal pegs | width CV = 0 | P5 rake flag | the pegs are equal by function | functionally equal elements (§4.0 rule 8) |
+| Folded wings against spread wings, same v7 body | `e_v` 3.5 px against 1.66 px | pass or fail depending on the wings | the pixel scale comes from the whole object's largest extent | P7 uses model-unit ratios of the mass alone |
+| Cube along its body diagonal | `e_v` = 0.20412 (analytic √6/12 = 0.20412) | passes | positive control: the formula is computed correctly | information only |
+
+**Dimensional reasoning.**
+- `d` is dimensionless. `Δ_px = d · s · (400 / E)`, where s is the mass's smaller half-extent and E is the object's largest extent, both in L.
+- A fixed pixel threshold p therefore asks for `d ≥ p · E / (400 · s)`. That bar rises as the mass gets shallower (smaller s) and as unrelated parts spread (larger E). Neither is a property of the section program.
+- `e_v` has units of length, and it is bounded below by zero for every nested convex body. It cannot separate "deep" from "flat" bodies whose sections nest.
+- `D_v`, `c` and `λ3/λ1` are dimensionless ratios of one element's own extents, so they are invariant under drawing size.
+
+**What remains NOT VERIFIED:**
+- `D_v` for B-2 v5–v7: no full mesh is committed.
+- Any M3.1 conformance verdict on existing artwork: no brief declared P1 or P7 targets, and M3.1 is not retroactive.
+- Whether any read-out tracks what viewers see: no viewer study exists.
+- **No metric labels B-2 v5 as rejected.** Its rejection is the owner's and the independent reviewer's visual result (packet §0.1, §7.2).

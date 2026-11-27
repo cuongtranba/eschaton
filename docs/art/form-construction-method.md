@@ -1,9 +1,10 @@
 # Form construction method: a generic design procedure for any object (PROPOSED)
 
 - Status: **PROPOSED. Not adopted.** Written under the owner's second ART-D3b ruling of 2026-11-27, which did not approve B-2 v5 and asked for a fix whose direction is "generic for all objects, not confined to the bird shape" ([decision packet](../review/art-1-raven-decision-packet.md) §0.1). Nothing here changes the adopted [Visual Bible](visual-bible.md) (ART-D2), the adopted [ART gates](../governance/art-quality-gates.md) (ART-D1) or the adopted [GEO gates](../governance/geometry-quality-gates.md). The amendments in §10 are **proposals** for the owner. If any of them is adopted, it is adopted by a separate owner decision.
-- Version: **M3** (2026-11-27), written under the owner's third ART-D3b ruling ([packet](../review/art-1-raven-decision-packet.md) §0.2).
-  - It corrects P1, P7 and §4.0, makes bends over the allowance P4 flags, and binds P5's tessellation clause to bible §4.3.
-  - Earlier versions stay in git as the record: M1 `449406b`, M2 `09591cf` (§13.2).
+- Version: **M3.1** (2026-11-28). It is the one bounded revision authorized by owner decision D-2 ([packet](../review/art-1-raven-decision-packet.md) §0.3), recorded on draft PR #14 and not adopted. It replaces §4.0, P1 and P7, adds the number classification in §6.0, and answers the M3 review's errata E1–E5 (§14).
+  - **P1 and P7 are now conditional geometric diagnostics.** Each is measured against a target that the brief declares from the subject's function or form, before the artwork. Neither is a universal aesthetic pass or fail, and neither asks for shape variety for its own sake.
+  - **No metric is required to label B-2 v5 ugly.** The rejection of v5 stands as a human result: the owner's ruling (§0.1) and the independent review (§7.2).
+- The frozen **M3** text (2026-11-27, under the third ART-D3b ruling, §0.2) is kept in git at `8c2bd53`. That is the version the holdout check applied, and the holdout record is unchanged. Earlier versions are also kept: M1 `449406b`, M2 `09591cf` (§13.2).
   - The P1 and P7 numbers are in [`form-method-check.md`](form-method-check.md).
   - Geometry operators that could build what this method asks for are researched separately, in [`docs/research/geometry-operators.md`](../research/geometry-operators.md).
 - What it is: a **design procedure**, a small **vocabulary**, and a set of **form principles**. Each principle comes with a pass example, a fail example and a **future** measurable diagnostic. It applies to concept artwork now and to geometry briefs later.
@@ -76,24 +77,55 @@ The smallest set of words needed to describe any object's form. Each word names 
 | **Edge** | one of five kinds (§4.1) | declared per edge or per panel boundary |
 | **Scale tier** | hero (more than 400 px), mid (96–48 px), district (24–12 px), as in bible §6 | the smallest tier at which each element must read |
 
-### 4.0 When a declaration is legitimate (M3: non-retroactive, in line with GEO §1.8)
+### 4.0 When a declaration is legitimate (M3.1)
 
-A **declaration** is any statement that changes what a principle asks of an element. Examples: a kind (§4), a function program or an empty one, a junction class (C or B), a deliberate tessellation, a hidden surface, a fold, a scale tier, a volume target.
+A **declaration** is any statement that changes what a principle asks of an element. Examples:
+- a kind (§4);
+- a function program, or an empty one;
+- a mass partition (rule 7);
+- a junction class (C or B);
+- a P1 or P7 target;
+- a deliberate tessellation, or a set of functionally equal elements (rule 8);
+- a hidden surface;
+- a fold;
+- a scale tier.
 
 A declaration is legitimate only if **all** of the following hold.
 
 1. **Reason.** It names its reason in the subject's grammar or function (layer S) or in the approved art direction (layer A), citing the source: a reference, or a bible clause. A drawing tool, a modelling convenience or a diagnostic's outcome is never a reason.
 2. **Before the artwork.** It is written in the brief in a commit that is a strict ancestor of the first commit containing the artwork or geometry it governs. This is the same rule as GEO §1.8 and ART-1.5.
-3. **Changes are new versions.** Any later change to a declaration is a **new brief version** with a new identifier, committed before any artwork that relies on it. Every verdict and read-out made under the earlier declaration, for the affected elements, returns to `NOT VERIFIED`, and the reviews concerned are repeated (GEO §1.10, ART §2.5). The earlier artwork keeps its earlier verdict as history (GEO §1.13).
-4. **No post-hoc exemption.** A declaration added or changed after a diagnostic or a reviewer has flagged a version can never change that version's verdict. It can only govern the next version.
+3. **A late change is a new brief version, and it invalidates evidence going forward.**
+   - Any change to a declaration after the artwork exists is a **new brief version** with a new identifier. It is committed before any artwork that relies on it.
+   - Evidence made under the earlier declaration may not be **reused** for a later version, for the elements the change affects: read-outs, views and reviews. For that version the evidence is `NOT VERIFIED` until it is made again under the new declaration (GEO §1.10, ART §2.5).
+4. **No change backwards.** The verdict already recorded for an earlier version stays exactly as recorded (GEO §1.13). A declaration added or changed later, in particular after a diagnostic or a reviewer has flagged that version, never changes it.
+
+   *Rules 3 and 4 do not conflict. Rule 3 governs the evidence that later versions may use; rule 4 protects the record of earlier versions.*
 5. **Independent confirmation.** A reviewer who did not author the brief confirms each declaration against layer S or A **before** relying on it, and may reject it.
 6. **Prohibitions.** No declaration may:
-   - **reproduce a bible §5 anti-pattern.** For example, a raven limb may not be declared a prismatic plank, a non-corrugated series may not be declared a tessellation, and a heraldic spread may not be declared a pose;
-   - **hide something visible.** "Hidden" is measured, not asserted: a surface is hidden only if its visible projected area is zero in every view of the sheet at the declared tier;
-   - **contradict the geometry's actual crease, hinge or rigidity.** A fold must be an edge in the crease map. A "bend" whose angle defect or dihedral exceeds the allowance is a fold (P4). A hinge must articulate about a shared edge (GEO-4.2);
+   - **reproduce a bible §5 anti-pattern that nobody intended.** For example, a raven limb may not be declared a prismatic plank (its function changes along it); an accidental series may not be declared a tessellation or a set of functionally equal elements; a heraldic spread may not be declared a pose. An intentional functional prism or box, declared with its reason under owner decision D-4a, is not the extruded-slab anti-pattern (bible §5, as clarified on draft PR #14);
+   - **hide something visible.** "Hidden" is measured, not asserted. A surface is hidden only if its visible projected area is zero in **every required view of the sheet at every required scale tier**, the hero tier included. A surface that shows in any one of them is visible;
+   - **exempt anything from geometric truth or visual judgment.** No declaration exempts a panel from GEO-1 planarity, convexity or the crease and hinge structure, and it cannot redefine rigidity: a fold must be an edge in the crease map, a "bend" whose angle defect or dihedral exceeds the allowance is a fold or a seam (P4), and a hinge must articulate about a shared edge (GEO-4.2). No declaration takes any element out of the truthful visual judgment of the reviewers (ART-2, GEO-2);
    - **be broader than its element.** A tessellation, for example, covers one named field inside one named envelope.
+7. **Mass partition (answers E1 and E3).**
+   - **Classify every functional landmark.** The brief classifies each functional landmark on a spine, with its layer-S reason, as either:
+     - a **station inside a mass**: a change of function within one continuous part;
+     - a **junction between masses**: the subject names two parts with distinct functions there, and the design intends a seam or a stated break with a transitional element (P3).
 
-A declaration that fails any test is void, and the principle applies as if it had not been made. This rule is prospective. Records made under M1 and M2 keep their verdicts (GEO §1.13).
+     The geometry must agree. A junction is a seam or a stated break in the crease map. A station is not.
+   - **Report the sensitivity.** Every P1 and P7 read-out is reported **twice**: under the declared partition, and with the whole spine as one mass. If the two disagree, the read-out is `partition-sensitive`. It then decides nothing in either direction, and the reviewer judges.
+   - This removes the incentive to declare a junction at every station: a partition chosen to change a read-out cannot change a verdict.
+8. **Functionally equal elements (owner decision D-4a).**
+   - **What may be declared.** A set of elements may be declared **functionally equal** when the subject's function makes them equal: the same job at different stations, for example wheels, tuning pegs, frets, or a row of identical windows. The declaration names the elements and the source of the function. P5's rake flags are then expected and are not defects.
+   - **What P5 still asks.** P5 still asks for:
+     - placement and spacing that follow the function (for example, frets follow the scale length, and pegs follow the strings);
+     - a designed envelope for the group.
+   - **What may not be declared.** An **accidental rake** may not be declared functionally equal (rule 6). That means a series whose subject does not make its members equal, such as feathers, branches or roof tiers.
+
+A declaration that fails any test is void, and the principle applies as if it had not been made. This rule is prospective. Records made under M1, M2 and M3 keep their verdicts (GEO §1.13).
+
+**Symmetry (owner decision D-4b).**
+- Mirror-symmetric geometry is allowed. P1 treats a bilaterally symmetric mass with the mirror as its admissible frame change, and no principle here asks for asymmetric geometry.
+- Gesture, pose and the composition of a view or scene are judged separately, by the reviewer, under bible §4.1.3, which governs pose and not geometry.
 
 ### 4.1 Edge taxonomy
 
@@ -126,32 +158,48 @@ The procedure does not prescribe a construction tool. It prescribes that the too
 
 ## 6. Principles, examples and future diagnostics
 
-Each principle is a layer-U relationship. Each diagnostic is an **aid**: it finds candidates for a reviewer, it does not pass or fail anything, and it is not a beauty score. The thresholds are **proposed starting values** with their reasons. None is adopted. Each would need its own counterexample and negative control under GEO §1.9 before any use as a test.
+Each principle is a layer-U relationship. Each diagnostic is an **aid**: it finds candidates for a reviewer, it does not pass or fail anything, and it is not a beauty score. The thresholds are **proposed starting values** with their reasons, and §6.0 labels the kind of each number. None is adopted. Each would need its own counterexample and negative control under GEO §1.9 before any use as a test.
 
-### P1. Sections change profile where the function changes (M3)
+### 6.0 What kind of number each value is (M3.1)
 
-A solid mass whose function program is not empty changes the **profile** of its section at each declared station. A change of size or of aspect alone does not count. Definitions, derivation and worked numbers: [`form-method-check.md`](form-method-check.md) §1–§3.
+Every number in this section is one of three kinds. It is labelled as such wherever it is used.
 
-- **Fail:**
-  - B-2 v5: every keyframe is `diag(w, h) · PENT`, so the profile distance is d = 0 at every pair, although the aspect runs from 1.22 to 0.74;
-  - B-2 v6 and v7: the profiles differ, but six of seven declared stations change by less than 2 px at the hero lower bound;
-  - the V3 car `tub`: one band section repeated.
-- **Pass:**
-  - a raven body whose breast, back and rump profiles differ visibly at hero size;
-  - a car body whose profile changes at the bonnet, the cabin and the boot (tumblehome, flare over the arches).
-- **Diagnostic: profile distance.**
-  1. **Frame.** Normalise each keyframe section in its declared frame (`s` across, `u` up): translate the bounding-box centre to the origin, then scale each axis so the box is [−1, 1]². This removes position, size and aspect, which are recorded separately as proportions.
-  2. **Distance.** `d` is the Hausdorff distance between the normalised boundaries, minimised over the admissible frame changes: the mirror for symmetric masses, rotation for asymmetric ones. Unit: half-extents. No vertex correspondence and no landmark selection is needed, so flat tops, symmetric peaks and vertex counts are not degenerate cases.
-  3. **F1 test.** If `d ≤ ε_m` across all declared stations, the mass is a **scaled profile family** and fails. `ε_m` is the measurement floor (coordinate rounding, and the station tolerance when slicing a mesh), not a taste value.
-  4. **Visibility test.** At each station, `d · s_px ≥ p`, where:
-     - `s_px` is the smaller half-extent in pixels at the **hero lower bound** (largest object extent = 400 px; bible §6 keeps section form at hero scale only);
-     - `p = 2 px` is the P6 visibility constant.
+| Kind | Meaning | Examples |
+|---|---|---|
+| **Data** | measured on committed geometry or keyframes with a stated method and bound; anyone can recompute it ([`form-method-diagnostics/`](form-method-diagnostics/README.md)) | P1 `d`; the measurement floor `ε_m`; P7 `D_v`, `c` and `λ`; P5 coefficients of variation; P6 hole areas |
+| **Unmeasured assumption** | a perception or tolerance value that nobody has measured on viewers. It may guide a reviewer's attention. It decides nothing | P2 width ratio 0.85–1.15; P4 8° line visibility (a bound from a shading model, not a measurement); P4 2° defect allowance; P5 0.08 and R² 0.98; P6 2 px at 400 px and 1.5 px at 96 px. **The M3 "p = 2 px" visibility constant of P1 and P7 is withdrawn** |
+| **Reviewer judgment** | what a person sees on the actual views at the required scales, under the neutral treatment (bible §4.6) | whether a section change, a depth, a series or a line reads; the v5 "banded head" and "block" |
 
-     A real change below `p` is not visible and fails at that station. A section with `s_px < p` is unresolvable and is reported, not graded.
-- **Scope:** solid masses with a non-empty function program. Sheets and sparse forms have their own P7 measures. Equality **across** elements (equal wheels, equal windows) is P5's subject, not P1's.
-- **Empty program.** A prism, a column, a pipe or a repeated-floor shaft has no function change along its spine, so P1 has nothing to test. This is **not** a declaration-by-convenience: the empty program must cite layer S and pass §4.0, and a reviewer may reject it. Whether a tower may be prismatic at all is an open owner question against bible §8 (§13).
-- **Why not a similarity metric:** shape modulo translation, rotation and uniform scale (Kendall) counts aspect as shape. On v5 it reports up to 0.162 and would pass the documented failure.
-- **Why not the M2 descriptors:** side lean re-imports aspect (v5 drifts from 48.8° to 62.0°), the peak is degenerate on symmetric and flat-topped sections, and ε had no unit.
+A read-out that would need an unmeasured assumption to reach a verdict reports `NOT VERIFIED` and leaves the verdict to the reviewer.
+
+### P1. Section program matches its declared targets (M3.1)
+
+A solid mass's sections change profile where the brief, from the subject's function, says they change, and stay one profile where it says they stay one. P1 is a **conformance read-out against declared targets**, not a demand for variety.
+
+- **Declared targets.** For each pair of consecutive declared stations, the brief states one target with its layer-S reason, before the artwork (§4.0):
+  - **`change`**, saying what changes. For example: "the back rounds into the neck"; "the bonnet flattens into the cowl".
+  - **`constant`**, saying why. For example: a turned vessel, a lighthouse, a fuselage of circular section, an extrusion, or a prism justified under D-4a.
+- **Read-out (data):**
+  - `d`, the profile distance: Hausdorff distance between the normalised section boundaries. The normalisation and frame are as in M3: bounding box to [−1, 1]², minimised over the mirror for symmetric masses and over rotation for asymmetric ones.
+  - `ε_m`, the measurement floor: coordinate rounding, or the station tolerance when sections are sliced from a mesh.
+  - `Δ_L = d · s`, in model units, where s is the smaller half-extent.
+  - `Δ_px` at every scale tier at which the brief requires the section form to read.
+- **Conformance.**
+
+  | Target | `d > ε_m` | `d ≤ ε_m` |
+  |---|---|---|
+  | `change` | **conforms**: the declared change exists | **does not conform**: the declared change is absent. This is F1, the mechanism of B-2 v5 |
+  | `constant` | **does not conform**: the declaration is not true of the geometry | **conforms** |
+
+  No pixel threshold enters the verdict. Whether a change that exists is **visible** at a tier is reviewer judgment on the actual views at that tier. `Δ_px` is the evidence offered for it.
+- **Not applicable:** sheets, sparse forms, a mass with fewer than two declared stations, and equality **across** elements, which is P5's subject (§4.0 rule 8).
+- **Not verified:** a station pair with no declared target, which includes every brief written before M3.1; and a read-out that is `partition-sensitive` (§4.0 rule 7).
+- **Why the M3 rules were wrong** (numbers: [check](form-method-check.md) §9):
+  - *Turned and extruded objects* (E3). A turned vessel has one circular profile at every function change, so `d = 0` (computed: 0.000). M3 failed it as a "scaled profile family". It is a correct `constant` program.
+  - *Shallow masses.* `Δ_px = d · s_px`, and `s_px` is proportional to the mass's smaller half-extent. A pixel threshold therefore fails a **shallow** subject for being shallow: the holdout biwa's sourced shoulder change gives `d` = 0.139 but only `Δ` = 1.33 px at the hero lower bound. That reflects the subject's proportions, not a defect.
+  - *Tier coupling.* `s_px` depends on the whole object's largest extent. A wing spread or folded changes it without touching the mass (P7, below).
+  - *Prisms and aspect changes.* A prism and an aspect-only family both give `d = 0` (computed: 0.000 for a 2 × 0.5 → 1 × 1.5 rectangle). The prism is `constant` by declaration. The aspect-only family conforms only if the brief declared it `constant`. v5 declared function changes along its spine, so its program is F1.
+- **B-2 v5, as a read-out only.** All 45 keyframe pairs give `d = 0.000` (data). The v5 brief declared stations but no P1 targets, so under M3.1 its conformance is `NOT VERIFIED`, and M3.1 changes no recorded verdict (§4.0 rule 4). The v5 rejection is the owner's and the reviewer's visual result; the read-out is consistent with it and decides nothing.
 
 ### P2. Outlines converge or break with purpose
 
@@ -207,6 +255,10 @@ A tract of similar elements has a series law: size, orientation, spacing and ove
     - P4 line visibility still applies to it (study finding S5).
 
     Under those conditions P5's flags are expected and are not defects. A pattern chosen for construction convenience on a subject that is not corrugated is **not** a tessellation; it is the repeated-noise anti-pattern (bible §5).
+  - **Functionally equal elements (M3.1, owner decision D-4a).** This is a second route, separate from tessellation. Four wheels, four tuning pegs, frets or a row of identical windows are equal because the subject's function makes them equal. They are declared under §4.0 rule 8.
+    - The rake flags then fire **by design** and are not defects: the holdout's four pegs give coefficients of variation of exactly 0.
+    - What remains to judge: placement and spacing follow the function, the group has a designed envelope, and the reviewer judges the read.
+  - **Equal against accidental.** An equal series is acceptable when the subject calls for equality. A rake is an equal or ramped series that the subject does **not** call for, such as feathers, branches, roof ribs or the V3 primaries. The rake flags cannot tell the two apart; the declaration and its reason can, and an independent reviewer confirms the reason.
 
 ### P6. Every gap is designed
 
@@ -216,38 +268,35 @@ The positive envelope carries the silhouette landmarks. Every negative space is 
 - **Pass:** finger slots that open toward the tips; wheel arches cut into the body around the tyres with a stated clearance; deep eaves that cast a designed band of shadow; branch gaps that frame the sky.
 - **Future diagnostic: silhouette topology.** On the filled silhouette of each view at hero and mid scale, list every hole and every thin feature. Proposed flags: a hole larger than 2 px at a 400 px height that is not on the declared list; a feature thinner than 1.5 px at 96 px height that is not a declared tertiary element.
   - Scope: all views on the sheet.
-  - Rationale: 2 px at 400 px is 0.5% of the object's height, the smallest gap that is consistently visible at hero scale; anything smaller disappears at mid scale and is not a defect there. 1.5 px at 96 px is the width below which a part breaks into dots when downsampled.
+  - Rationale (*unmeasured assumptions*, §6.0): 2 px at 400 px is 0.5% of the object's height, offered as the smallest gap that is consistently visible at hero scale; 1.5 px at 96 px is offered as the width below which a part breaks into dots when downsampled. Neither was measured on viewers. A hole that the reviewer sees on the actual views is a defect whatever its size.
   - Counterexample: a deliberate lattice or tracery (a window grille, the slots between fingers) is declared and passes.
 
-### P7. The declared depth is visible (M3)
+### P7. Declared depth targets are met where they apply (M3.1)
 
-The depth that a mass's kind and function program imply must show in the views where it can. P7 counts no planes, no tones and no families, and it does not depend on lighting or shader. Definitions and numbers: [`form-method-check.md`](form-method-check.md) §4–§6.
+The depth that the brief declares for a mass, from the subject's references, is present in the geometry. P7 compares **proportions in model units** with **declared targets**. It does not measure visibility in pixels, and it does not judge whether a view reads as volume: that is reviewer judgment on the actual views, under the neutral treatment, at every required view and scale.
 
-- **Fail:**
-  - B-2 v5 front body: the end-view silhouette is one section, `e_v` = 0.04 px at the hero lower bound;
-  - B-2 v6 and v7: 1.67 and 1.69 px, still below 2 px;
-  - the V3 car seen from the front: a single slab section. This is by inspection of the V3 record; it was not measured.
-- **Pass:**
-  - a raven body whose breast and back stations give different parts of the end-view outline;
-  - a box building in its three-quarter hero view (for a cube, `e_v` ≈ 0.204 of its side);
-  - a box shaft seen from directly above, because its function program is empty.
-- **Diagnostics by kind.**
-  - **Solid: single-section distance.** In view `v`, `e_v` = the smallest Hausdorff distance between the silhouette outline and the outline of any one slice perpendicular to `v`. `e_v ≈ 0` means one cut explains the whole outline, so the view is a section, a cut-out or a prism end.
-    - **Required:** `e_v · L_px ≥ p` at the hero lower bound in two places:
-      1. the end view of every spine with a non-empty function program;
-      2. the declared oblique hero.
-    - An end view along a spine with an empty program may be a section, because that is the truthful view of a prism or of a uniform taper.
-    - **Also reported:** the depth ratio `D_v` (extent along `v` ÷ smaller in-view extent) in every principal view, against the brief's layer-S or layer-P target and tolerance.
-  - **Sheet: camber.** `c` = the largest distance from the chord plane ÷ the chord, per declared section, against the layer-S target. A cambered arm needs `c > 0`; a door may have `c = 0`.
-  - **Sparse: envelope depth.** `λ3 / λ1`, from the principal extents of the members' end points, against the layer-S target.
-- **No circularity.** Every target and every function program comes from layer S before modelling (§4.0). Every measured value comes from geometry. No diagnostic sets its own target.
-- **Rejected alternatives:**
-  - plane-family counts (M1, M2). The two tones of v5's block are two families, and every box seen square-on has only one;
-  - the area-weighted spread of visible normals. A finely tessellated sphere and a Miura field both maximise it, yet under bible §4.5 they read as a disc and as a flat sheet.
-- **Limits:**
-  - no full B-2 mesh is committed, so side, top and underside `e_v` and every `D_v` are **NOT VERIFIED**;
-  - the verdict depends on the mass partition. Measured as one head-and-body mass, v5 to v7 pass with 3.3 to 5.4 px, because the head sits above the body. The partition is therefore a declaration under §4.0;
-  - no approved raven exists to show that P7 accepts a good one.
+- **Declared targets.** Per mass, and before the artwork (§4.0), the brief states a target value, a tolerance and the layer-S or layer-P source. Without a declared target, P7 is `NOT VERIFIED` for that mass. That is not a fail.
+- **Read-outs by kind (data):**
+  - **Solid: depth ratio** `D_v`, in each principal view v = extent of the mass along v ÷ the smaller of its two in-view extents. It is measured on the mass's own geometry in model units, so it does not depend on other parts or on the drawing size. It conforms if it lies within the declared tolerance.
+  - **Sheet: camber** `c` = the largest distance from the chord plane ÷ the chord, per declared section, against the target. A cambered arm needs `c > 0`; a door may have `c = 0`.
+  - **Sparse: envelope ratio** `λ3 / λ1`. The axes are the eigenvectors of the covariance of the members' end points. The `λ_i` are the **extents** (maximum minus minimum) of the end points projected on those axes, not eigenvalues; this resolves the M3 ambiguity. It conforms within the declared tolerance.
+- **Single-section distance `e_v`: demoted to an informative read-out.**
+  - Meaning: "one slice explains this view's outline". That is a property, not depth.
+  - It may be reported. It never passes or fails anything.
+  - The reasons, computed in [check](form-method-check.md) §9:
+
+    | Case | `e_v` | What it shows |
+    |---|---|---|
+    | v5 body | 0.000 L | depends on the partition |
+    | v5 head and body as one mass | 0.017 L = 3.4 px | the same bird passes |
+    | v5 with its first body station only raised by 0.03 L | 2.95 px | measures an offset, not depth |
+    | Nested sections, a torpedo or an egg | exactly 0, whatever the profiles | |
+    | v7 body | 1.66 px, but 3.5 px when the same body is drawn with folded wings | the pixel value depends on unrelated parts |
+- **B-2 v5 front body.** The "two-tone block" and "shallow depth" are the owner's and the reviewer's visual results (packet §0.1, §7.2). M3.1 offers no read-out that claims to reproduce them, and none is required (D-2).
+- **Not applicable:** secondary elements (P5, P8). An end view along a spine whose program is declared `constant` is a section by construction, and that is a truthful view.
+- **Limits.**
+  - No full B-2 mesh is committed, so no `D_v` for v5–v7 is computed.
+  - No brief so far has declared a P7 target. Every P7 conformance to date is therefore `NOT VERIFIED`.
 
 ### P8. Every secondary element has an attachment frame
 
@@ -364,13 +413,13 @@ Only if the owner later authorizes Geometry V4 or an equivalent. Nothing here is
 
 | Diagnostic | Public seam (future) | Promise | Negative control |
 |---|---|---|---|
-| P1 profile distance | an object-evaluation entry point that receives a built object and its brief | a mass whose declared stations change profile by less than `p` at the hero lower bound is reported; a scaled profile family is reported | `diag(w_i, h_i) · P` through five stations must be reported (v5); a profile with one vertex nudged by 0.01 must be reported; a 20 × 12 m shaft with an empty program confirmed under §4.0 must not |
+| P1 profile distance (M3.1) | an object-evaluation entry point that receives a built object and its brief | a station pair whose declared target is `change` and whose `d ≤ ε_m` is reported; a `constant` pair whose `d > ε_m` is reported; a pair without a target is `NOT VERIFIED` | `diag(w_i, h_i) · P` through stations declared `change` must be reported (v5 mechanism); a turned vessel declared `constant` must not; a 20 × 12 m shaft declared `constant` under D-4a must not; a `constant` declaration on a body whose profiles differ must be reported |
 | P2 convergence | same | a long limb with parallel edges and no declaration is reported | a rectangle must be reported; a declared door must not |
 | P3 junction step ratio | same | an undeclared step above ratio 1 is reported | a box placed on a slab must be reported; a declared eave overhang must not |
 | P4 undeclared folds and developability | the crease graph and the panel list | an undeclared non-coplanar edge inside a panel is reported; a bent panel with angle defect above the allowance is reported | a pentagon loft with no declared folds must be reported; a cylinder strip (developable) must not |
 | P5 rake and end alignment | the tract description | a tract with equal widths, spacing and angle steps, or with collinear ends, is reported unless declared a tessellation | four equal blades must be reported; a declared corrugated roof must not |
 | P6 silhouette topology | the capture script (GEO-5.3) | an undeclared hole at hero scale is reported | a pinhole made on purpose must be reported |
-| P7 single-section distance, camber, envelope | the built geometry (no renderer needed: slices and projections) | an end view along a spine with a non-empty program, or an oblique hero, explained by one slice within `p` is reported | the v5 body keyframes must be reported (`e_v` ≈ 0.04 px); a cube in its diagonal hero must not (`e_v` ≈ 0.204 a); a box shaft seen from above with an empty program must not |
+| P7 depth ratio, camber, envelope (M3.1) | the built geometry (no renderer needed) | a mass whose `D_v`, `c` or `λ3/λ1` lies outside its declared tolerance is reported; a mass without a declared target is `NOT VERIFIED`; `e_v` is reported only as information | a biwa body declared shallow from its source must not be reported; a body built deeper than its declared tolerance must be; the same body drawn at another size must give the same `D_v` |
 | P8 attachment audit | the composition graph | a secondary element without a host, or with negative clearance in its range, is reported | a free-floating blade must be reported |
 
 Each threshold would follow GEO §1.9: unit, object scale, reason, a counterexample just beyond it, and a negative control. Tests would follow `AGENTS.md`: the public seam only, no mocks, one cause and one outcome per test. The diagnostics report; they do not accept. GEO-2, GEO-5, GEO-7 and ART-5 stay human and owner decisions.
@@ -388,6 +437,7 @@ The method was committed in `449406b`, before any study or B-2 v6 artwork. Chang
 | 2026-11-27 | read-out tool | `formkit.diagnostics` gained, during the studies, a fold-only filter for the under-8° check (seams are cuts and need no dihedral) and a `hidden` list that leaves declared hidden surfaces out of the bend and defect counts and reports them apart. Neither was in the method text. The building's soffit was wrongly classed as hidden: it is visible under every eave (round-1 review M4). It is counted as visible from round 2 on | `docs/art/form-studies/source/formkit.py`; studies README | tool |
 | 2026-11-27 (round 2) | P1, P3, P4, P7, §4.0, §5, §7 | P1 descriptors defined in the rest frame, aspect not counted; P3 limited to spines; P4 rationale stated as a bound; P7 rescoped to two values plus line, prismatic masses exempt; §4.0 declaration test added; §5 depth by scale tier; §7 bent panels as an open question, §7.4 counts and order depend on Q5 | round-1 method review M2, M3, M6, M7 and minors (packet §9.2) | review |
 | 2026-11-27 (M3) | P1, P7, §4.0, P4, P5, vocabulary | Changes:<ul><li>P1 is restated as a profile distance in the declared frame, with aspect removed, a measurement floor and visibility at the hero lower bound;</li><li>P7 is restated per kind: single-section distance for solids, camber for sheets, envelope depth for sparse forms; no plane counts;</li><li>§4.0 is non-retroactive, with new brief versions, invalidation, independent confirmation and prohibitions;</li><li>bends over the allowance are P4 flags, and bent panels are stated to have no production representation;</li><li>P5's tessellation clause is bound to bible §4.3;</li><li>"mass", "kind" and "function program" are defined.</li></ul>No artwork was drawn to fit these changes | Old and new principles compared against v5, v6, v7, a rectangular shaft, equal repeated elements, a planar sheet and a sparse crown ([`form-method-check.md`](form-method-check.md)) | owner's third ruling (packet §0.2); the M2 review (packet §9.4) |
+| 2026-11-28 (M3.1) | §4.0, §6.0, P1, P5, P6, P7, §11, §13.1 | Changes:<ul><li>§4.0 rules 3 and 4 are reconciled: evidence is invalidated going forward, and the record never changes backwards;</li><li>"hidden" is checked in every required view at every required tier;</li><li>no declaration exempts anything from GEO-1 or from visual judgment;</li><li>rule 7, the declared mass partition with a sensitivity report;</li><li>rule 8, functionally equal elements (D-4a);</li><li>symmetry under D-4b;</li><li>§6.0 labels each number as data, an unmeasured assumption or reviewer judgment, and withdraws the 2 px constant from P1 and P7;</li><li>P1 becomes conformance to declared `change` or `constant` targets;</li><li>P7 becomes declared depth targets in model units, with `e_v` demoted to information;</li><li>P5 gains the equal-against-accidental distinction.</li></ul>No artwork was drawn. No threshold was set after an outcome; the controls were computed on the M3 definitions to show why they fail | reproducible read-outs and controls in [`form-method-diagnostics/`](form-method-diagnostics/README.md); [check](form-method-check.md) §9 | owner decisions D-2, D-4a and D-4b (packet §0.3); M3 review E1–E5; holdout findings |
 
 ### 12.1 Findings from the building and tree studies (recorded, not applied)
 
@@ -425,9 +475,9 @@ The bible is adopted and is not changed here. Where it and this proposal could d
 
 | Topic | Bible (adopted) | This proposal | State |
 |---|---|---|---|
-| Slab towers | §3 records slab towers in the reference image; §8 says "towers taper and break" | P1 and P7 accept an empty function program for a prismatic shaft only under §4.0 | **unresolved, owner question O-1:** may a tower shaft be prismatic, or must every tower taper and break? Until it is decided, a prismatic tower would be judged against bible §8 by the reviewer |
+| Slab towers | §3 records slab towers in the reference image; §8 says "towers taper and break" | P1 `constant` target for a prismatic shaft, declared under §4.0 | **answered by D-4a** (owner, 2026-11-28; recorded on draft PR #14, not in force on `main` until a merge): prismatic and box forms are allowed when function and art direction justify them; the bible now says so in §5 and §8 on this branch. *Earlier state:* open question O-1 |
 | Tessellation | §4.3 allows equal parallel creases only where the subject is corrugated, "such as a roof" | P5's tessellation clause is narrowed to the same condition (M3) | **resolved** by aligning to the bible. The broader M1/M2 wording is withdrawn |
-| Asymmetry | §4.1.3: asymmetry and gesture beat symmetry (pose and silhouette) | P1 allows bilaterally symmetric **sections**; it does not judge pose | **unresolved, owner question O-2:** does §4.1.3 apply to objects without a gesture (a building, a vehicle at rest), as the round-1 studies brief assumed (B-c)? The method reads it as applying to pose and silhouette only |
+| Asymmetry | §4.1.3: asymmetry and gesture beat symmetry (pose and silhouette) | symmetric geometry allowed; pose and composition judged by the reviewer (§4.0, symmetry) | **answered by D-4b** (owner, 2026-11-28; draft PR #14): asymmetry is not mandatory, and geometric symmetry is judged separately from gesture, pose and composition; the bible §4.1.3 clarification says so on this branch. *Earlier state:* open question O-2 |
 | Bent panels | §7: "no surface should bend where there is no crease" | P4: a bent panel is a concept device with no production representation; bends over the allowance are flags | **consistent, with an open item:** a curved-panel kind is outside Q1–Q6 and undecided |
 | Two values plus line | §4.5 is a drawing style | M1/M2 cited it as a minimum for a solid; M3 no longer does | **resolved** (the citation is withdrawn) |
 
@@ -437,7 +487,8 @@ The bible is adopted and is not changed here. Where it and this proposal could d
 |---|---|---|---|
 | M1 | `449406b` | B-2 v6 brief and sheet; round-1 studies | the v6 brief §1, §3, §6 and §8 cite M1's P1, P5 and P7 |
 | M2 | `09591cf` | the B-2 v7 target (brief §12; it inherits M1 citations, packet §9.6) and round-2 studies | the round-2 sheet banners say "as committed in `449406b`", which is false for round 2; superseded by packet §9.6, and the images are unchanged |
-| M3 | this revision | no artwork; the frozen holdout check (§8) | not adopted |
+| M3 | `8c2bd53` (frozen) | no artwork; the frozen holdout check (§8) | not adopted; reviewed NEEDS REVISION (§14) |
+| M3.1 | the M3.1 commit on PR #14 (packet §11) | no artwork | not adopted; one bounded revision under D-2, with one independent re-review (packet §11) |
 
 **Stale captions stay as reviewed records.** The images are unchanged and the notes in packet §9.6 supersede them:
 - the v7 method board's "mildly doubly curved" sentence;
@@ -452,10 +503,10 @@ The frozen M3 at `8c2bd53` was reviewed by a separate agent, which recomputed it
 
 | # | Where | Erratum | Status |
 |---|---|---|---|
-| E1 | P7 | P7 does **not** reject v5 under the frozen rules. v5 declared a nape fold, not a junction, so it is one mass and passes with `e_v` = 3.4 px. The method lacks a rule for a fold inside a mass against a junction between masses ([check](form-method-check.md) §8) | owner requirement **not met**; open for M3.1 |
-| E2 | P7 | Single-section distance does not measure visible depth. It passes a raised station with no profile change, and it fails any body whose sections nest inside the widest one (also found by the holdout) | open for M3.1 |
-| E3 | P1 | Turned and extruded objects with one profile at every function change fail wrongly. The mass split can empty a program | open for M3.1 |
-| E4 | §4.0 rules 3 and 4 | Contradictory as written. The **intended** reading is narrower: an earlier version's verdict stays as recorded and is never changed by a later declaration (GEO §1.13); evidence made under an old declaration may not be **reused** for a new version. "Hidden" is measured at the **hero** tier in every sheet view, never at a smaller declared tier, because a surface visible at hero size is visible | wording for M3.1 |
-| E5 | §13.1 and P2 | Adopted bible §5 lists "Extruded slab: constant-thickness prism" as an anti-pattern. §4.0 rule 6 would then void the empty-program declaration for a prismatic shaft. P2's "slab tower in the reference image" counterexample prejudges O-1. **Both are added to owner question O-1** | owner question |
+| E1 | P7 | P7 does **not** reject v5 under the frozen rules. v5 declared a nape fold, not a junction, so it is one mass and passes with `e_v` = 3.4 px. The method lacks a rule for a fold inside a mass against a junction between masses ([check](form-method-check.md) §8) | **addressed in M3.1** by §4.0 rule 7 (declared partition, sensitivity reported, a partition-sensitive read-out decides nothing). P7 no longer claims to reject v5; v5's rejection stands as the human result (D-2) |
+| E2 | P7 | Single-section distance does not measure visible depth. It passes a raised station with no profile change, and it fails any body whose sections nest inside the widest one (also found by the holdout) | **addressed in M3.1**: `e_v` demoted to information; P7 compares declared depth targets in model units (P7) |
+| E3 | P1 | Turned and extruded objects with one profile at every function change fail wrongly. The mass split can empty a program | **addressed in M3.1**: P1 is conformance to declared `change` or `constant` targets; the partition rule 7 removes the escape |
+| E4 | §4.0 rules 3 and 4 | Contradictory as written. The **intended** reading is narrower: an earlier version's verdict stays as recorded and is never changed by a later declaration (GEO §1.13); evidence made under an old declaration may not be **reused** for a new version. "Hidden" is measured at the **hero** tier in every sheet view, never at a smaller declared tier, because a surface visible at hero size is visible | **addressed in M3.1** (§4.0 rules 3, 4 and 6: every required view at every required tier, hero included) |
+| E5 | §13.1 and P2 | Adopted bible §5 lists "Extruded slab: constant-thickness prism" as an anti-pattern. §4.0 rule 6 would then void the empty-program declaration for a prismatic shaft. P2's "slab tower in the reference image" counterexample prejudges O-1. **Both are added to owner question O-1** | **answered by D-4a**; §4.0 rule 6 now exempts only an intentional, declared functional prism |
 | E6 | P4 | "A larger defect means the panel is doubly curved and needs folds" is wrong. Folding never changes angle sums, so a vertex with angle defect needs a **cut or seam** (two sheets), not a fold | corrected here |
 | E7 | §12 intro | Mentions "the round-2 P7 exemption", which M3 replaced | stale, superseded |
