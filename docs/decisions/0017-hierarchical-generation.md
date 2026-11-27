@@ -1,6 +1,6 @@
 # ADR 0017: Hierarchical district generation (Genesis)
 
-- Status: **Accepted for Phase 3** under owner decision W7 (2026-11-25), which authorizes the Phase 3 design within its stated scope. Choices that go beyond the master plan's wording are listed under "Choices to confirm at the Phase 3 gate".
+- Status: **Accepted for Phase 3** under owner decision W7 (2026-11-25), which authorizes the Phase 3 design within its stated scope. Choices that go beyond the master plan's wording are listed under "Choices to confirm at the Phase 3 gate". **Choice 9 was decided as (a) by the owner on 2026-11-27** (decision P3D-4, recorded in [`../review/phase-3-owner-decision-packet.md`](../review/phase-3-owner-decision-packet.md) §0). **Choices 1–8 are not confirmed** (P3D-3 is pending).
 - Date: 2026-11-25
 - Master plan: §5.3, §11 Phase 3. Builds on ADR 0013, 0015, 0016.
 
@@ -104,7 +104,7 @@ The sentence "`windFold` computes wind strength with `sqrt` instead of `hypot`" 
 
   Inside that range the arithmetic is unchanged, so every result and every golden hash is bit-identical to `62cf1e3`. Tests: the finite gusts `[1e200,0,0]`, `[1e155,1e155,0]` and `[MAX,MAX,0]` flatten the leaf (red on `main`); infinite and `NaN` components are rejected.
 - **Pinned.** The off-axis wind `[0.1, 0.1, 0.1]` fold angles are pinned in Node (`packages/world/test/systems.test.ts`) and on Chromium, Firefox and WebKit (`apps/studio/engines/determinism.spec.ts`). Putting `Math.hypot` back fails the Node pin; this was checked by mutation.
-- **No version was raised.** ADR 0011's version policy ties `rules` to commit validation and derivation. `windFold` is a system that proposes a patch. Systems have no version field of their own, and replay uses their recorded outcomes. Whether system behaviour should be versioned is choice 9 below. Phase 4 makes the question sharper, because its tick runs systems continuously.
+- **No version was raised.** ADR 0011's version policy ties `rules` to commit validation and derivation. `windFold` is a system that proposes a patch. Systems have no version field of their own, and replay uses their recorded outcomes. Whether system behaviour should be versioned is choice 9 below. Phase 4 makes the question sharper, because its tick runs systems continuously. The owner decided choice 9 as (a) on 2026-11-27, so no version is raised.
 
 ### Further choices to confirm at the Phase 3 gate
 
@@ -116,3 +116,5 @@ The sentence "`windFold` computes wind strength with `sqrt` instead of `hypot`" 
    - (a) keep `sqrt` with power-of-two scaling and the disclosure, with no version change (**recommended**: logs record outcomes, and the Studio sends only axis winds);
    - (b) add a systems component to `versions.rules`, so a system behaviour change is versioned; every existing snapshot is then refused as `rules-mismatch`;
    - (c) return to `Math.hypot`, which is engine-dependent again and fails the three-engine pin.
+
+   **Decided (a)** by the owner on 2026-11-27 (P3D-4). The current implementation stands unchanged, and neither `versions.rules` nor any other version changes. This decides only the Phase 3 formula and its versioning. How Phase 4 versions its systems is draft ADR 0018 §3, which is proposed, not accepted.

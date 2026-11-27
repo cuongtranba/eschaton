@@ -141,3 +141,11 @@ Sections 1–7 are the report as written at the gate on 2026-11-25 and are left 
   - cross-engine determinism as a promise (§6.5);
   - the RTX 5070 test C1–C6;
   - the carried-over questions (§6.6).
+
+## 9. Addendum: owner decisions of 2026-11-27
+
+Sections 1–8 are left unchanged. The owner decided four items by explicit instruction on 2026-11-27. They are recorded, with their source and limits, in [`review/phase-3-owner-decision-packet.md`](review/phase-3-owner-decision-packet.md) §0; that table is the canonical record and is not restated here.
+
+- **Decided:** ADR 0017 choice 9 as (a), the wind formula kept with no version change (P3D-4); the RTX 5070 test C1–C6 due before any Phase 5 work, **not waived** (P3D-5); cross-engine determinism kept as a tested property over a finite pinned corpus, not a product promise (P3D-6, answers §6.5); GOV-1, separate decision kinds, adopted as policy only.
+- **Phase 3 stays open** (§6.1). The owner's instruction keeps P3D-1 open; no gate decision of any kind has been made.
+- **Still pending:** the visual review (§6.2), ADR 0017 choices 1–8 (§6.3–6.4), the carried-over questions (§6.6), and the C1–C6 run itself.
