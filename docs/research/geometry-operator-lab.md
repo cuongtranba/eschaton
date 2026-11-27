@@ -114,3 +114,9 @@ No absolute millisecond budget is set before a measurement exists.
 | Identity under detach and attach | n/a | n/a | required | id equality |
 | Determinism | required | required | required | same inputs give the same hash, on two engines (P3D-6) |
 | Rejection with a reason | all of its codes | all of its codes | all of its codes | one negative control each |
+
+## 8. Errata after the independent review (2026-11-27)
+
+- **M3 milestone.** The off-path ring is a **seam** between band sheets, not a fold ([operators §9](geometry-operators.md#9-errata-after-the-independent-review-2026-11-27) item 1). The decisive question becomes: are the seams at off-path rings reported as seams with their dihedral and angle defect, and is the on-path ring reported as a tessellation ring?
+- **M1 fixture.** The warp metric must be named; proposed: the distance between the diagonals. The v5 warp figure is replaced by the reviewer's actual-frame values.
+- **Determinism.** It needs exact predicates, not quantisation alone (operators §9 item 4).

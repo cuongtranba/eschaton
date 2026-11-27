@@ -202,3 +202,48 @@ This dependence is real. A brief that **omits** a junction in order to merge mas
 - **The building, vehicle and tree studies** were not re-measured. Their function programs were written by the same author after the method existed (packet §9.2, B1), so a result would not be independent. They are **NOT VERIFIED** under M3.
 - **No positive raven control exists.** No approved raven body passes M3 P1 or P7, so neither measure has been shown to accept a good raven. They are shown only to reject the documented failures and to leave the prism, sheet and repeated-element cases alone.
 - **Neither measure proves aesthetics.** A body can pass P1 and P7 and still read badly. Both are aids for a reviewer (method §6 preamble).
+
+## 8. Errata after the independent review of M3 (supersede the text above)
+
+**Reviewer.** A separate agent, 2026-11-27, reviewing the frozen commit `8c2bd53`. It recomputed every table independently in its own pure-Python code. **Verdict: NEEDS REVISION.**
+
+**Reproduced:**
+- v5 `d = 0`;
+- all 14 v6 and v7 P1 rows (`d`, `1 − IoU`, `Δ`, the span-needed table, the 3.41 px sensitivity);
+- the cube value √6/12 · a;
+- the square→diamond hull band (faces, angle sums, volume, mid-section area);
+- v6 and v7 body `e_v` (1.68 and 1.71 px);
+- the camber table;
+- every case in §3.
+
+**Erratum E1 (blocker B1): P7 does not reject v5 under the frozen rules.** §5 states that every B-2 brief declares the nape as a junction. **That is false for v5.**
+- In `c2f5_sumi_flight.py`, `head` and `body` are Python list names. They are joined (`secs = head + body`) and lofted in one `kit.loft` call.
+- The v4/v5 brief declares a nape **fold**, not a junction.
+- Under §4.0 rule 2, v5 is therefore **one mass**, with `e_v` = 0.017 L = 3.4 px, and P7 **passes** it.
+- A new design can cite bible §4.2 ("one continuous mass … bill–head–neck–body–tail spine") as its layer-S reason for one mass.
+- The method has no rule for when a landmark is a fold inside a mass and when it is a junction between masses.
+
+The owner's requirement that P7 reject the v5 two-tone block is therefore **not met** by the frozen text. P1 does reject v5 robustly.
+
+**Erratum E2 (major M1): P7's single-section distance does not measure visible depth.**
+- It passes a v5 clone whose first body station is only raised by 0.03 L: `e_v` = 3.0 px, with no change of profile.
+- It gives exactly 0 for any body in which one section contains all the others, such as an egg or torpedo body, however strongly the profiles change. A linear blend of convex sections inside a convex set stays inside it.
+- Because the pixel size comes from the object's largest extent, its verdict depends on unrelated parts: v7's body drawn with folded wings passes at 3.6 px.
+
+The link between `e_v` and "depth is visible" is **not shown**. The holdout found the same nested-section failure independently.
+
+**Erratum E3 (major M2): P1's layer-U claim fails a class of valid objects, and the mass split can escape it.**
+- Turned or extruded objects whose sections are all one profile at every function change (circular sections in a turned vessel, a fuselage, a lighthouse) give `d = 0` and fail as a "scaled profile family". So "a section changes shape where the function changes" is false for that class.
+- Declaring a junction at every station empties every program, and the method leaves that undefined.
+
+**Minor corrections:**
+- v6 uses `program(keys, sub=4)`, not `sub=6`. v7 uses `sub=6`.
+- The body ring tilt reaches 11.0° at the 0.225 ring, not 9.5°.
+- `s_px` uses the nominal w and h, not the true bounding-box half-extents, so `Δ` is a lower bound. For v7 vent → plate it is 0.35 px this way but 0.87 px per axis. No verdict flips.
+- `NAPE_FLAT` → `NAPE` should have been graded under the same-named-profile rule: `d` 0.136, `Δ` 1.50 px. The verdict is unchanged.
+- The reviewer's `d_sim` column differs, for example v6 0.076 against 0.080. That column is a comparison only, and no verdict uses it.
+- The single-vertex notch case: a single V-notch in the belly gives `d` 0.432 (7.6 px) and **passes** P1. So "a token change cannot pass" is overstated: a large token change can pass.
+- The slice spacing and measurement floor for `e_v` were never stated. The reviewer's exact v5 value is 0.0004 L (0.08 px), against 0.0002 L here, with the same FAIL.
+- "Values fixed before the table" cannot be shown from git, because the definitions and the results were committed together in `8371748`.
+- `λ` for sparse forms is ambiguous: extents and covariance eigenvalues give different ratios.
+- The end-view direction is undefined for a curved spine.

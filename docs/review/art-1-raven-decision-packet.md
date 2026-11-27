@@ -435,3 +435,74 @@ These change no reviewed image, design or principle text. They correct statement
 | Method §12 | The table no longer splits at a blank line. A new §12.2 lists what stays open after the round-2 review |
 | B-2 v6 brief §3 | A note that §1, §3, §6 and §8 cite P1, P5 and P7 as first committed, which the method has since revised. The v7 target inherits them; this is recorded, not reconciled |
 | B-2 v7 method board | Its read-out panel prints a sentence carried over from v6 ("the merged crown, throat and belly panels are mildly doubly curved"). The v7 read-out file (`renders/b2v7/diagnostics.json`) shows **no** angle defect over 2°, 14 edges bending over 20° (max 53.9°), and one declared fold under 8°. The image is unchanged as the reviewed record; this note supersedes the sentence |
+
+## 10. Method correction, geometry operators and holdout (under §0.2)
+
+Design and research only. No package, app, experiment, runtime, lab or server was added. Nothing is approved or adopted. PR #14 stays a draft, and PR #11 is untouched.
+
+### 10.1 What was produced
+
+| Item | File | Commit |
+|---|---|---|
+| Ruling recorded (v7 NOT APPROVED) | this packet §0.2; ART gates §8–§9 | `8e4e0cf` |
+| Method M3: P1, P7, §4.0, P4 bends, P5 tessellation, §13 consistency | [`form-construction-method.md`](../art/form-construction-method.md) | `8371748` |
+| Old and new P1 and P7 against v5, v6, v7, a prismatic shaft, repeats, sheets and sparse forms | [`form-method-check.md`](../art/form-method-check.md) | `8371748` |
+| Operators O1, O2 and O3 (research proposal) | [`geometry-operators.md`](../research/geometry-operators.md) | `8c2bd53` |
+| Geometry Operator Laboratory (**proposal only**) | [`geometry-operator-lab.md`](../research/geometry-operator-lab.md) | `8c2bd53` |
+| **Freeze** of M3 and the operators, before any holdout category was chosen | — | `8c2bd53` (pushed) |
+| Holdout selection log (biwa-type lute, chosen by an independent selector) | [`holdout/README.md`](../art/form-studies/holdout/README.md) | `56fe301` |
+| Holdout brief, before any drawing or computation | [`holdout/brief.md`](../art/form-studies/holdout/brief.md) | `ff0b4a2` |
+| Holdout sheet (original drawing, `9a21e3b7158e92610a174e6ba81db067c1314b093ceaeec9640f4ad565a838fc`) and composition | [`holdout/`](../art/form-studies/holdout/README.md) | `a2ec1c1` |
+| Reviews and errata | holdout README §4; method §14; check §8; operators §9; lab §8 | `557e583` and the commit that adds this section |
+
+### 10.2 Independent reviews
+
+Each reviewer was a separate agent that made none of the work and recomputed the numbers independently. Every verdict is a recommendation.
+
+**Method M3 at `8c2bd53`: NEEDS REVISION** (one blocker, five majors; method §14).
+- **Met:** P1 rejects the v5 scaled profile family; equal repeated elements, planar sheets and sparse forms are not punished; the frame, normalisation and metric are explicit for P1; symmetry, degenerate peaks and correspondence are handled; the worked numbers reproduce; there is no global beauty threshold; P7 counts no planes and needs no shader; §4.0 requires declarations before artwork, with new versions; the operators' theorems and labels are correct; there is no migration decision.
+- **Blocker:** **P7 does not reject v5 under its own rules.** v5 declared a nape fold, not a junction, so it is one mass and passes at 3.4 px.
+- **Majors:**
+  - P7's measure does not track visible depth (nested bodies, raised stations);
+  - P1 fails turned or extruded objects, and the mass split can escape it;
+  - §4.0 rules 3 and 4 contradict each other, and the hidden test used the declared tier;
+  - the extruded-slab anti-pattern (bible §5) conflicts with prismatic shafts;
+  - operator rings between bands are **seams, not folds** (angle defect; operators §9).
+
+**Holdout (biwa) at `a2ec1c1`: NEEDS REVISION** (no blocker). It **supports the author's "transfer partial" conclusion**.
+- **What held:** the freeze, ancestry and leakage controls; the key numbers reproduce.
+- **Findings judged real:**
+  - P7 fails a mass whose sections nest;
+  - P1 fails shallow masses;
+  - no declaration route exists for equal functional elements (P5);
+  - the two-host string is not covered by O3;
+  - holes against Q2;
+  - soundboard camber against P4.
+- **The sheet's reads** (hero, end view, small sizes) and **four claims** were overstated. They are corrected in composition §5. The sheet is not redrawn.
+
+### 10.3 Outcome
+
+- **Mathematical research.** The operator proposal holds up except for the seam erratum: its exact results were reproduced. The lab proposal is complete as a proposal.
+- **Method.** M3 meets the P1 requirement but **not** the P7 requirement. Its §4.0 needs one wording fix.
+- **Transfer.** "Partial", on one category. Generalization is **NOT VERIFIED**.
+- **No further revision this round,** so the work stops at the research approval boundary. No artwork, concept, gate, policy or phase decision changed.
+
+### 10.4 Decisions for the owner (actionable only)
+
+| ID | Question | Options | Recommendation (not a decision) |
+|---|---|---|---|
+| **D-1** | Accept the **research direction**: O1 section transition, O2 crease insertion and O3 attach, with a grammar for global shape and a solver for local choice, as the basis for any later operator work | accept · revise · reject | accept as a research direction, with the seam erratum. It is not a production API |
+| **D-2** | Authorize a **bounded M3.1** of the method. Scope: replace or condition P7 (E1, E2); a rule for a fold inside a mass against a junction between masses; P1 for turned and extruded objects (E3); §4.0 wording (E4); a declaration route for equal functional elements (holdout) | authorize · stop the method track · defer | authorize one bounded revision with one independent re-review, without artwork |
+| **D-3** | Authorize the **Geometry Operator Laboratory, milestones M0–M1 only**: mathematical and exploratory, under the ART-1 feasibility allowance, with no Foldon change | authorize · defer · reject | defer until D-1 |
+| **D-4** | **O-1:** may a tower shaft, or any mass, be prismatic, given bible §5 "extruded slab" and §8 "towers taper and break"? **O-2:** does bible §4.1.3 asymmetry apply to objects without a gesture? | answer each | — |
+| **D-5** | May diagnostic **computation scripts** (no runtime, imported by nothing) be committed under `docs/` as design artefacts, so that read-outs are reproducible? This round they were kept out of the repository because the ruling forbids a runnable lab | allow · keep out | allow, labelled as design artefacts |
+
+**Unchanged and not asked here:**
+- ART-1 for B-2: no version is approved. B (perched) stays the selected direction.
+- ART-D3c.
+- Q1–Q6.
+- ADR 0018 and ADR 0019.
+- The Phase 3 exit.
+- Phase 4 and Geometry V4.
+- Any merge.
+

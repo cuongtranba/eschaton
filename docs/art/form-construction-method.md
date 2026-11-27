@@ -446,3 +446,16 @@ The bible is adopted and is not changed here. Where it and this proposal could d
 
 No historical file is overwritten.
 
+## 14. Independent review of M3 and errata (2026-11-27)
+
+The frozen M3 at `8c2bd53` was reviewed by a separate agent, which recomputed its numbers. **Verdict: NEEDS REVISION** (packet §10.2). The text above is kept unchanged as the frozen, reviewed version; the following supersede it where they conflict.
+
+| # | Where | Erratum | Status |
+|---|---|---|---|
+| E1 | P7 | P7 does **not** reject v5 under the frozen rules. v5 declared a nape fold, not a junction, so it is one mass and passes with `e_v` = 3.4 px. The method lacks a rule for a fold inside a mass against a junction between masses ([check](form-method-check.md) §8) | owner requirement **not met**; open for M3.1 |
+| E2 | P7 | Single-section distance does not measure visible depth. It passes a raised station with no profile change, and it fails any body whose sections nest inside the widest one (also found by the holdout) | open for M3.1 |
+| E3 | P1 | Turned and extruded objects with one profile at every function change fail wrongly. The mass split can empty a program | open for M3.1 |
+| E4 | §4.0 rules 3 and 4 | Contradictory as written. The **intended** reading is narrower: an earlier version's verdict stays as recorded and is never changed by a later declaration (GEO §1.13); evidence made under an old declaration may not be **reused** for a new version. "Hidden" is measured at the **hero** tier in every sheet view, never at a smaller declared tier, because a surface visible at hero size is visible | wording for M3.1 |
+| E5 | §13.1 and P2 | Adopted bible §5 lists "Extruded slab: constant-thickness prism" as an anti-pattern. §4.0 rule 6 would then void the empty-program declaration for a prismatic shaft. P2's "slab tower in the reference image" counterexample prejudges O-1. **Both are added to owner question O-1** | owner question |
+| E6 | P4 | "A larger defect means the panel is doubly curved and needs folds" is wrong. Folding never changes angle sums, so a vertex with angle defect needs a **cut or seam** (two sheets), not a fold | corrected here |
+| E7 | §12 intro | Mentions "the round-2 P7 exemption", which M3 replaced | stale, superseded |

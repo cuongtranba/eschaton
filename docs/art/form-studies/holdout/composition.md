@@ -186,3 +186,4 @@ The text above, and the sheet, are kept as the reviewed record. Where they confl
 
 **Reproducibility.** The read-outs were computed by a script outside the repository, because the ruling forbids a runnable lab or a runtime prototype. The reviewer re-derived the key numbers independently. Whether such diagnostic scripts may be committed under `docs/` as design artefacts is put to the owner (packet §10, decision D-5).
 
+**C12 (from the M3 review).** §1.2's "closed band chain … closed crease network" holds, but the rings between bands are **seams** between band sheets, not folds ([operators §9](../../../research/geometry-operators.md#9-errata-after-the-independent-review-2026-11-27) item 1). The shell and neck is therefore a set of band sheets joined by seams.

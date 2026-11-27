@@ -12,7 +12,7 @@ The commit that adds this file freezes these three files. That commit is recorde
 - [`docs/research/geometry-operators.md`](../../../research/geometry-operators.md);
 - [`docs/research/geometry-operator-lab.md`](../../../research/geometry-operator-lab.md).
 
-**No change to the frozen files until the holdout result is recorded.** If the holdout shows that the method or an operator must change, the rules are:
+**No change to the frozen files until the holdout result is recorded.** *Later note: after the result was recorded (`a2ec1c1`) and reviewed, errata sections were **appended** to the frozen files (method §14, check §8, operators §9, lab §8). The frozen text above them is unchanged, and `8c2bd53` keeps it.* If the holdout shows that the method or an operator must change, the rules are:
 - the frozen version and its result stay as recorded;
 - the change is a new variant (M3.1 or later);
 - the new variant is **exploratory**, and this category is no longer held out for it.

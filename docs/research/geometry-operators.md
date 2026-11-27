@@ -344,3 +344,29 @@ All of the following were checked on 2026-11-27 against publisher or author page
 | Karth and Smith 2017 | doi:10.1145/3102071.3110566 | verified |
 | Lang 1996 | doi:10.1145/237218.237249 | verified |
 | Kern and Bland 1948, §30, and MathWorld "Prismatoid" | — | partly (definition only) |
+
+## 9. Errata after the independent review (2026-11-27)
+
+A separate reviewer checked the frozen text at `8c2bd53`. Correct, as reproduced:
+- the Minkowski-slice proof;
+- the volume formula (Simpson's rule is exact here);
+- face shapes and face counts;
+- refinement invariance for parallel planes;
+- the intrinsic flatness and unfolding of one band;
+- the O2 `splits-crease` cycle claim, which is in fact stronger than stated: the new crease would be locked at 0°;
+- the camber formula;
+- O3 associativity.
+
+The following supersede the text above.
+
+1. **Rings between bands are seams, not folds** (§3.1, result 6 and "Composition").
+   - Where a keyframe lies **off** the Minkowski path, the vertices of the ring carry angle defect. For square→diamond→square, each diamond vertex has 210° of face angle in each band, 420° in total. A waist of side 2, 1, 2 gives 456°; a bulge of side 1, 2, 1 gives 264°.
+   - A fold never changes angle sums, and a vertex folded from one flat sheet needs exactly 360°.
+   - So **each O1 band is its own sheet**, and the rings between bands are **seams** between sheets (GEO-1.3 shared vertex pairs; Q1 and Q2), not fold rings.
+   - Splitting a band into mirrored halves removes only that band's crease cycle. It does not remove the cycle of faces around a ring vertex.
+   - "Off-path keyframes make real folds" should read "off-path keyframes make **seams with a dihedral**".
+2. **Parallel planes.** Results 2, 4 and 6 and the error bound all need parallel section planes, not only result 3.
+3. **Citation.** Demaine et al. 2011 concerns the hypar crease pattern. For the non-planar loft quad, the negative-curvature argument alone suffices.
+4. **Determinism.** Quantising inputs does not make floating-point predicates exact. P3D-6 needs exact predicates, for example integer or rational arithmetic on the quantised inputs.
+5. **Warp metric.** The loft-quad warp depends on which corner is measured: 0.71 to 1.15 for square→diamond. For v5 in the actual `kit.loft` frames, it is up to 0.0089 L corner-to-plane, or 0.0032 L between diagonals, not 0.0039 L. A fixture must name its metric. **Proposed metric:** the distance between the two diagonals.
+6. **O1-a** (aspect-only families give triangles) was already stated in §3.1. The holdout additionally measured that most of those folds are below 8° (holdout composition §1.1).
