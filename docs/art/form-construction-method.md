@@ -333,6 +333,8 @@ Every module instance keeps its definition id and its instance id when it is det
 
 ## 8. Transfer across categories
 
+**M3 holdout.** A category never used in this method's derivation, examples or studies is selected independently, after M3 is frozen, and the frozen procedure is applied to it at design level: [`form-studies/holdout/`](form-studies/holdout/README.md). The earlier studies follow.
+
 The [design studies](form-studies/README.md) apply §5 to the raven (organic, articulated), a vehicle (mechanical, solid), a building (architectural, tiered) and a tree (branching). The building and the tree were not used to derive the principles, but they are not blind tests (see the status lines at the top). The [cross-object matrix](form-studies/README.md#transfer-matrix-round-2) shows, per principle, the application in each category, the reusable relationship or module family, or the reason reuse is not justified, and the proof still needed.
 
 ## 9. Distinctions
