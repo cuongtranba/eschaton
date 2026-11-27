@@ -3,7 +3,7 @@
 - Status: **PROPOSED. Not adopted.** Written under the owner's second ART-D3b ruling of 2026-11-27, which did not approve B-2 v5 and asked for a fix whose direction is "generic for all objects, not confined to the bird shape" ([decision packet](../review/art-1-raven-decision-packet.md) §0.1). Nothing here changes the adopted [Visual Bible](visual-bible.md) (ART-D2), the adopted [ART gates](../governance/art-quality-gates.md) (ART-D1) or the adopted [GEO gates](../governance/geometry-quality-gates.md). The amendments in §10 are **proposals** for the owner. If any of them is adopted, it is adopted by a separate owner decision.
 - What it is: a **design procedure**, a small **vocabulary**, and a set of **form principles**. Each principle comes with a pass example, a fail example and a **future** measurable diagnostic. It applies to concept artwork now and to geometry briefs later.
 - What it is not: a new gate, a beauty score, a generator, a fixed anatomy, or a set of universal numbers. It claims nothing about foldability, collision, closure, thickness or structural support. Those stay with GEO-1, GEO-7 and the open questions Q1–Q6 and ADR 0019.
-- Evidence base: the V2 and V3 lab bird and vehicle on draft PR #11 @ `616b0cf` (read-only), Concepts A, B, B-2 v3–v5 and C, and their independent reviews (packet §3, §7). The principles were derived from the **raven and vehicle** failures only. The **building** and the **tree** were held out and are used afterwards to test transfer ([studies](form-studies/README.md)).
+- Evidence base: the V2 and V3 lab bird and vehicle on draft PR #11 @ `616b0cf` (read-only), Concepts A, B, B-2 v3–v5 and C, and their independent reviews (packet §3, §7). The principles were derived from the **raven and vehicle** failures. The **building** and the **tree** were not used to derive them, and their studies came after the method's first commit. They are **not blind holdouts**: this text already gives building and tree examples (for instance a tiered roof, a branch collar), and the studies' before maquettes were built by the same author. They show that the procedure **can be carried out** on other categories; they do not show that the principles transfer blind ([studies](form-studies/README.md), round-1 method review B1).
 
 ## 1. The problem in one paragraph
 
@@ -61,13 +61,22 @@ The smallest set of words needed to describe any object's form. Each word names 
 | **Mass** | a primary volume that carries the gesture (body, hull, trunk, tower) | its spine (a curve), its landmarks along the spine, and its section program |
 | **Section program** | how the cross-section changes along a mass: **aspect** (height to width), **peak** (where the highest point sits across the width), **camber or tumblehome** (how the sides lean or bow), **fill** (how boxy or pointed), and **size** | a short table of keyframe sections at landmarks, each with its shape and the reason for it |
 | **Outline** | the plan and elevation edges of a mass or a limb (planform, profile) | edge curves with their convergence (taper) and their breaks at landmarks |
-| **Landmark** | a named point or line where the form or the function changes (nape, wrist, bonnet line, eave, fork) | its position and its role. Planes break at landmarks and nowhere else |
+| **Landmark** | a named point or line where the form or the function changes (nape, wrist, bonnet line, eave, fork) | its position and its role, from the subject's anatomy or function (layer S), named before modelling. Planes break at landmarks, or at a structural fold with a stated role (a hem, a rachis, a pleat, a camber line), and nowhere else |
 | **Junction** | where two masses, or a mass and a limb, meet | **C** (continuous: a shared plane or a tangent flow) or **B** (a stated hard break with a reason, plus a transitional element or a deliberate overlap) |
 | **Envelope** | the outer shape a group of parts fills. The **positive envelope** carries the silhouette landmarks; a **negative envelope** is a designed gap (finger slots, wheel arches, eave shadow, branch gaps) | listed per view; any gap not listed is a defect |
 | **Tract** | an ordered series of similar secondary elements (feathers, shingles, roof tiers, windows, branches) | the series law: size, orientation, spacing and overlap as functions of position, its **grouping** and its **terminations**, and whether it is a deliberate tessellation |
 | **Attachment frame** | the root of a secondary element on its host: a position, an orientation and an overlap or clearance | which host, where, how much overlap, how much clearance through the articulation range |
 | **Edge** | one of five kinds (§4.1) | declared per edge or per panel boundary |
 | **Scale tier** | hero (more than 400 px), mid (96–48 px), district (24–12 px), as in bible §6 | the smallest tier at which each element must read |
+
+### 4.0 When a declaration is legitimate
+
+Several principles let the designer **declare** something: a mass prismatic, a field a tessellation, a junction a hard break (B), a surface hidden, an edge a fold. A declaration is legitimate only if all three hold:
+1. it names its reason in the subject's function or grammar (layer S) or in the approved art direction (layer A), not in the drawing tool;
+2. it is written in the brief **before** the model is built, or, if it is added later, the brief's iteration log says so and says why;
+3. it does not hide something a reader can see: a "hidden" surface is one that no sheet view shows.
+
+A declaration that fails these is not a declaration; the principle applies. (Added after round-1 review M7.)
 
 ### 4.1 Edge taxonomy
 
@@ -83,7 +92,7 @@ The rule that follows: **every visible line is a boundary, a fold, a hinge or a 
 
 ## 5. The procedure
 
-The steps are done in this order, for every object. Each step produces a small artefact on the brief or the sheet. Steps 1–6 happen **before** modelling. Steps 7–8 happen on the model.
+The steps are done in this order. Steps 1–6 happen **before** modelling. Steps 7–8 happen on the model. The depth scales with the object's largest scale tier (P9): an object seen at hero scale needs every artefact; an object seen only at district scale needs steps 1, 5 and 8 (landmarks, envelopes, the read at scale) and may skip the rest.
 
 | Step | Decide | Artefact |
 |---|---|---|
@@ -108,10 +117,10 @@ A mass whose function changes along its spine changes the **shape** of its secti
 
 - **Fail:** B-2 v5 head and body, one pentagon scaled through every station, banded from the top and a block from the front. V3 car `tub`, one band section repeated.
 - **Pass:** a raven body whose breast section is deep and round-bottomed, whose back section is broad and flat-topped with the dorsal ridge, and whose rump section flattens into the tail; a car whose body section has tumblehome above the beltline and flares over the wheel arches, different at the bonnet, the cabin and the boot.
-- **Future diagnostic: section-shape variation.** Normalise each section by its width and height, then compare shape descriptors along the spine (aspect, peak position, side lean, fill ratio). Flag a mass whose normalised descriptors stay within ε over more than two landmarks.
+- **Future diagnostic: section-shape variation.** Measure each keyframe section in the mass's own rest frame (before any pose, bank or twist), with its width w and height h. Shape descriptors, all scale-free: **fill** = area / (w·h); **side lean** = the angle between the vertical and the line from the widest point to the top; **shoulder height** = the height of the widest point as a fraction of h; and, for asymmetric masses only, **peak offset** = the across-position of the highest point as a fraction of w. Aspect h/w is recorded but **not** counted, because one profile stretched differently in height and width is still one profile (B-2 v5's pentagon varied its aspect from 1.22 to 0.74 and still banded). Flag a mass whose shape descriptors all stay within ε over more than two landmarks. (Revised after round-1 review M3; the first wording normalised aspect away and used a peak position that is always on the centreline of a symmetric mass.)
   - Scope: primary masses with a stated change of function along the spine.
   - Counterexample (does not apply): a genuinely prismatic part, such as a beam, a pipe, a column, an extruded rail, or a wall of rectangular architecture. There the brief declares the mass prismatic and the variation moves up a level (setbacks, the top, the openings).
-  - Threshold rationale: ε of about 0.1 on aspect and on peak position is the proposed start. That is roughly the change a reader notices at mid scale (about 96 px): 10% of a 40 px section is 4 px. At district scale only silhouettes survive, so the diagnostic is run at mid and hero scale only.
+  - Threshold rationale: ε of about 0.1 on each shape descriptor is the proposed start. That is roughly the change a reader notices at mid scale (about 96 px): 10% of a 40 px section is 4 px. At district scale only silhouettes survive, so the diagnostic is run at mid and hero scale only.
 
 ### P2. Outlines converge or break with purpose
 
@@ -130,7 +139,7 @@ Where two parts meet, either a plane or a tangent flows across (C), or there is 
 
 - **Fail:** V3 car cabin as a box on a slab (front view a tower); B-2 v5 fingers starting abruptly after rounded inner blades; B-2 v5 tail root pinhole.
 - **Pass:** a windscreen and A-pillars that carry the bonnet line up into the roof (C); a beltline step that is a stated break with a shoulder plane (B); a raven nape fold that is a stated break from crown to neck (B); inner primaries whose trailing edge continues the secondaries' line into the fingers (C).
-- **Future diagnostic: junction table and step ratio.** For each junction, the change of section size divided by the length over which it happens. A step ratio above 1 (the change is larger than the distance it happens over) must be a declared B.
+- **Future diagnostic: junction table and step ratio.** For each junction, the change of section size divided by the length over which it happens. A step ratio above 1 (the change is larger than the distance it happens over) must be a declared B. The ratio applies along a spine, between consecutive masses (head to neck, bonnet to cabin, tier to tier). It does not apply where a limb leaves a mass (a wing root, a branch base): those are attachments, judged under P8.
   - Scope: every junction between masses, and between a mass and a limb.
   - Counterexample: a designed overhang (eaves, a cantilevered floor, a raven tail past folded wings) is a B by design and passes when declared.
   - Threshold rationale: 1 means the change happens over a distance no longer than its own size, which reads as a step from every view. The value is geometric, so it does not depend on scale; whether the step is visible does, and that is judged at the declared scale tier.
@@ -144,7 +153,7 @@ A plane break, and therefore a line, sits at a landmark and is declared in the c
 - **Future diagnostics.**
   - *Undeclared fold count:* edges between non-coplanar faces whose two faces lie in one declared panel and whose dihedral is above the bend allowance. Proposed flag: any.
   - *Developability of a bent panel:* the angle defect at each interior vertex of a declared bent panel (360° minus the sum of the face angles). Paper bends without stretching only where the defect is near zero. Proposed allowance: 2° per vertex, about the error of hand-placed maquette vertices. A larger defect means the panel is doubly curved and needs folds. This is a maquette aid and not a GEO-1 proof.
-  - *Line visibility:* a declared fold whose dihedral is below about 8° is flagged as a line that marks almost no form change. Rationale: under one key light, the tone difference between two faces is at most about the sine of their angle, and 8° gives about 14% of the full tone range, comfortably visible on paper tone at hero scale. A fold of 3° gives about 5% and reads as a stray ink line. The value is an estimate to be checked on the studies.
+  - *Line visibility:* a declared fold whose dihedral is below about 8° is flagged as a line that marks almost no form change. Rationale: under one key light, the tone difference between two faces is **at most** about the sine of their angle: about 14% of the full tone range for 8°, about 5% for 3°. The real difference is smaller when the light is not across the fold, so 8° is a lower bound for a fold that may show, not a guarantee that it does. The value is an estimate; the studies used it as a read-out only.
   - Scope: all panels of the maquette or the model.
   - Counterexample: a deliberate graphic line on a flat plane (a painted stripe) is not allowed by GEO-2.5 anyway. A crease scar after Rebirth (bible §2) is a declared, faint line with a stated meaning.
 
@@ -155,8 +164,8 @@ A tract of similar elements has a series law: size, orientation, spacing and ove
 - **Fail:** V3 primaries (equal, coplanar, equally spaced); B-2 v5 near hand (nearly equal widths, notch steps on one diagonal); Concept C comb; equal roof ribs; a tree whose branches are equal sticks at equal angles.
 - **Pass:** primaries that group into broad inner blades and slotted fingers, with the longest feather off-centre (P6/P7), overlap that tightens toward the wrist and notches that do not line up; a roof whose tiers shrink by a progression, whose eaves curve up at the corners and whose top tier is a different element (the finial); a tree whose branch length and angle change by generation and whose branches are not evenly spaced.
 - **Future diagnostics.**
-  - *Rake flag:* for a tract of four or more elements, the coefficients of variation of width, spacing and angle step. Proposed flag: all three below about 0.08, and no overlap.
-  - *End alignment (revised, §12):* measured **in the view where the tract is judged** (the hero or the principal orthographic view), not in the tract's own plane. Flag a **regular monotone progression**: the ends or notch points advance in element order along one direction, and the coefficient of variation of the gaps between them is below about 0.25. Rationale: the eye joins evenly stepped, monotone marks into one line or one arc (good continuation), whether or not they are collinear. The first proposal, a straight-line R² above 0.98, did not flag B-2 v5: R² 0.15 in the wing plane and 0.77 in the hero view, where the v5 reviewer saw "notch steps on one diagonal".
+  - *Rake flag:* for a tract of four or more elements, the coefficients of variation of width, spacing and angle step. Proposed flag: all three below about 0.08, and no overlap. The 0.08 has **no measured basis**: B-2 v5's fingers have a width variation of 0.19 and were still read as nearly equal in the hero view, where foreshortening hides the differences (§12). Treat the value as a placeholder.
+  - *End alignment:* a straight-line fit through the element ends or notch points, for four or more points. Proposed flag: R² above 0.98. **Known limit (§12):** this did not flag B-2 v5, whose notch points give R² 0.15 in the wing plane and 0.77 in the hero view, although the v5 reviewer saw them "on one diagonal". A replacement was tried and withdrawn (§12): it flagged the graduated progressions that bible §4.3 asks for. No working end-alignment diagnostic exists yet; the reviewer's eye is the only check.
   - *Grouping:* at least two groups that differ in kind (for example broad blades and slotted fingers; a roof body and a finial; trunk-like and twig-like branches) where the subject grammar (layer S) says so.
   - Scope: tracts of secondary elements.
   - Counterexample: a **deliberate tessellation** (a corrugated roof, a tile field, a Miura pattern). It is allowed when the brief declares it, the field is subordinate to its envelope, and the field's boundary follows a shaped envelope (P6). Then P5's flags are expected and are not defects; the envelope carries the variation. Bible §4.3 already allows corrugation where the subject is corrugated.
@@ -172,16 +181,16 @@ The positive envelope carries the silhouette landmarks. Every negative space is 
   - Rationale: 2 px at 400 px is 0.5% of the object's height, the smallest gap that is consistently visible at hero scale; anything smaller disappears at mid scale and is not a defect there. 1.5 px at 96 px is the width below which a part breaks into dots when downsampled.
   - Counterexample: a deliberate lattice or tracery (a window grille, the slots between fingers) is declared and passes.
 
-### P7. The primary mass reads as volume in every principal view
+### P7. The primary mass reads as volume where its function implies volume
 
-From every orthographic view where the primary mass is visible, it shows at least three plane families with distinct values (lit, half-tone, shade), and its depth is stated.
+In every principal view where the primary mass is visible and is **not** declared prismatic, the mass shows a change of plane: at least two plane families with distinct values plus the line between them (bible §4.5, "two values plus line"), so that the view does not read as one flat cut-out. Its depth is stated.
 
 - **Fail:** B-2 v5 front body a block of two tones; shallow depth; V3 car chassis a flat slab in the side view.
-- **Pass:** a raven body whose breast, flank and back each turn to the light differently in the front view; a car body whose bonnet, shoulder and side read as three values from the front.
-- **Future diagnostic: plane families per view.** Cluster the face normals of the primary mass, weighted by their projected area in that view. Proposed flag: fewer than three clusters at least 20° apart that each cover at least 10% of the projected area.
-  - Scope: primary masses only.
-  - Counterexample: a disc or a plate seen face-on (a wheel, a sign, a wing seen from directly above) reads flat by its nature; the diagnostic is not run on secondary sheets.
-  - Rationale: three values are the minimum that reads as a solid in a two-value-plus-line style (bible §4.5); 20° is roughly the smallest angle that gives a visible tone step under one key light (see P4).
+- **Pass:** a raven body whose breast and back turn to the light differently in the front view; a car body whose bonnet and side read as two values from the front.
+- **Future diagnostic: plane families per view.** Cluster the face normals of the primary mass, weighted by their projected area in that view. Proposed flag: fewer than two clusters at least 8° apart (the P4 lower bound) that each cover at least 10% of the projected area.
+  - Scope: primary masses that are not declared prismatic, in their principal views.
+  - Counterexample (does not apply): a box, a slab tower, a container or a beam seen square-on in an orthographic view shows one face by its nature, and its brief declares it prismatic (P1, P2); a disc or a plate seen face-on (a wheel, a sign, a wing seen from directly above).
+  - Rationale: two values plus line is the bible's own minimum for a solid (§4.5). (Revised after round-1 review M2; the first wording asked for three values and miscited §4.5, and it would have flagged every box.) There is **no read-out** for P7 yet (§12); it is judged by eye.
 
 ### P8. Every secondary element has an attachment frame
 
@@ -214,7 +223,7 @@ flowchart LR
 | Link | Exists today | Open |
 |---|---|---|
 | Panel family | No. Foldon definitions are immutable and concrete; a parameterised family is Q3 | Q3 |
-| Crease graph | Yes, as a **tree** rooted at a root panel, with the fold-angle convention in `AGENTS.md`. Closed networks are out of scope | Q4 for closed shells (raven head, car body, tower) |
+| Crease graph | Yes, as a **tree** rooted at a root panel, with the fold-angle convention in `AGENTS.md`. Closed networks are out of scope. Panels are planar | Q4 for closed shells (raven head and body, car body, tower, tree trunk and limbs); bent panels are an open question outside Q1–Q6 (above) |
 | Folded module | Yes: a Foldon definition folded by `poseGeometry` angles (GEO-4.1) | — |
 | Ports | Lattice placement (quarter turns about +Y) and the socket table. Non-axis seams are not decided | Q1 (non-axis seams), Q2 (a non-folding `join` edge) |
 | Composition graph | Experimental only, on draft PR #11: edge and section ports, `checkContract` rejections with reasons, `detach` and `attach` that keep instance and definition ids, a reuse table and provenance (PR #11 `lab/src/v3/assembly.ts`). Not production | Q5 (object grammar in Genesis) |
@@ -224,7 +233,7 @@ flowchart LR
 How the method maps to the chain:
 - **Section programs and outlines** (P1, P2) become parameters of a mass family and its keyframes. They are not one profile swept.
 - **Junctions** (P3) become typed ports with a continuity class: C ports must share an edge or a plane; B ports carry the transitional element.
-- **Edges** (P4) become the crease graph. Only declared folds are creases; a developable bend is one panel with a bend parameter or a few declared folds. A triangulation edge never becomes a crease.
+- **Edges** (P4) become the crease graph. Only declared folds are creases. **Open:** Foldon panels are planar and convex (GEO-1.1), so every panel boundary is a crease. A bent panel, as the maquettes draw it, has **no Foldon representation today**: it would have to be approximated by a few declared folds (each then a real crease), or a curved-panel kind would have to be decided. This question is outside Q1–Q6 and is not decided here.
 - **Tracts** (P5) become a family plus a series law evaluated by the composition, not by one instance repeated at a constant pitch.
 - **Envelopes** (P6) and **volume** (P7) are global constraints of the object, checked separately from local port compatibility (GEO-7.4).
 - **Attachment frames** (P8) are the ports themselves.
@@ -260,13 +269,14 @@ Every module instance keeps its definition id and its instance id when it is det
 
 ### 7.4 What WFC or a grammar can and cannot guarantee
 
-- **Can:** local adjacency (a port fits a port), finite catalog choices, counts and order (four fingers, two or three branch generations, tiers in decreasing order), and that a stated constraint eliminates a candidate (GEO-7.4, GEO-3.6).
+- **Can:** local adjacency (a port fits a port), finite catalog choices, and that a stated constraint eliminates a candidate (GEO-7.4, GEO-3.6). Counts and order (four fingers, two or three branch generations, tiers in decreasing order) only once an object grammar exists (Q5); today's wave solver places district tiles, not object parts.
+- **Needs a geometric proxy:** P6 (silhouette) and P7 (plane families) are defined on rendered views. The generation packages have no renderer (`AGENTS.md`), so a future global constraint would need a geometric proxy, such as a projected-outline test on the built geometry.
 - **Cannot, unless encoded as an explicit global constraint and checked:** that a section program changes shape with purpose, that junctions read continuous, that a series is structured rather than a ramp, that the silhouette has no undesigned holes, and that a view reads as volume. Local compatibility is satisfied by the V3 car, which fails all five.
 - **Never:** foldability, collision, closure or thickness. Those need GEO-1 evidence.
 
 ## 8. Transfer across categories
 
-The [design studies](form-studies/README.md) apply §5 unchanged to the raven (organic, articulated), a vehicle (mechanical, solid), and, as holdouts, a building (architectural, tiered) and a tree (branching). The [cross-object matrix](form-studies/README.md#transfer-matrix) shows, per principle, the application in each category, the reusable relationship or module family, or the reason reuse is not justified, and the proof still needed.
+The [design studies](form-studies/README.md) apply §5 to the raven (organic, articulated), a vehicle (mechanical, solid), a building (architectural, tiered) and a tree (branching). The building and the tree were not used to derive the principles, but they are not blind tests (see the status lines at the top). The [cross-object matrix](form-studies/README.md#transfer-matrix) shows, per principle, the application in each category, the reusable relationship or module family, or the reason reuse is not justified, and the proof still needed.
 
 ## 9. Distinctions
 
@@ -301,7 +311,7 @@ Only if the owner later authorizes Geometry V4 or an equivalent. Nothing here is
 | P4 undeclared folds and developability | the crease graph and the panel list | an undeclared non-coplanar edge inside a panel is reported; a bent panel with angle defect above the allowance is reported | a pentagon loft with no declared folds must be reported; a cylinder strip (developable) must not |
 | P5 rake and end alignment | the tract description | a tract with equal widths, spacing and angle steps, or with collinear ends, is reported unless declared a tessellation | four equal blades must be reported; a declared corrugated roof must not |
 | P6 silhouette topology | the capture script (GEO-5.3) | an undeclared hole at hero scale is reported | a pinhole made on purpose must be reported |
-| P7 plane families | the capture script | a primary mass with fewer than three families in a principal view is reported | a box seen face-on must be reported; a declared plate must not |
+| P7 plane families | the capture script, or a geometric proxy (§7.4) | a non-prismatic primary mass that shows a single plane family in a principal view is reported | a sphere approximated by one flat card must be reported; a declared prismatic box seen square-on must not |
 | P8 attachment audit | the composition graph | a secondary element without a host, or with negative clearance in its range, is reported | a free-floating blade must be reported |
 
 Each threshold would follow GEO §1.9: unit, object scale, reason, a counterexample just beyond it, and a negative control. Tests would follow `AGENTS.md`: the public seam only, no mocks, one cause and one outcome per test. The diagnostics report; they do not accept. GEO-2, GEO-5, GEO-7 and ART-5 stay human and owner decisions.
@@ -312,10 +322,13 @@ The method was committed in `449406b`, before any study or B-2 v6 artwork. Chang
 
 | Date | Principle | Change | Evidence | Category it came from |
 |---|---|---|---|---|
-| 2026-11-27 | P5 end alignment | Measured in the judged view; flags a regular monotone progression instead of a straight line only | v5 notch points: straight-line R² 0.15 in the wing plane, 0.77 in the hero view; the reviewer still saw one diagonal. The original test would have passed v5 ([B-2 v6 brief](raven-concepts/b2-v6-flight-brief.md) §11, round v6-6) | raven (derivation) |
+| 2026-11-27 | P5 end alignment | **First revised, then withdrawn.** The revision (measure in the judged view; flag a regular monotone progression) was fitted to one example, was never computed, and would flag the graduated tier progressions bible §4.3 asks for (round-1 review M1). Restored to the original straight-line test, with its known limit stated | v5 notch points: straight-line R² 0.15 in the wing plane, 0.77 in the hero view; the reviewer still saw one diagonal ([B-2 v6 brief](raven-concepts/b2-v6-flight-brief.md) §11, round v6-6). B-2 v6's non-monotone finger notches were a design choice made after seeing this result; they are not evidence for any diagnostic | raven (derivation) |
 | 2026-11-27 | P6 silhouette topology | No change. Reproduced a reviewer finding: v5 tail-root pinhole, 86 px² at 400 px height | B-2 v6 brief §11, round v6-5 | raven (derivation) |
 | 2026-11-27 | P4 line visibility | No change. Found seven declared folds under 8° on the first v6 maquette, each a line that marked almost no form change | B-2 v6 brief §11, round v6-3 | raven (derivation) |
 | 2026-11-27 | P5 rake flag | No change, but a limit is recorded: v5's near-hand widths have a coefficient of variation of 0.19, above the proposed 0.08, yet the reviewer read them as "nearly equal". Foreshortening in the judged view hides the differences. The width test, like end alignment, should be measured in the judged view; this is not yet tested | B-2 v6 method board, series panel | raven (derivation) |
+
+| 2026-11-27 | read-out tool | `formkit.diagnostics` gained, during the studies, a fold-only filter for the under-8° check (seams are cuts and need no dihedral) and a `hidden` list that leaves declared hidden surfaces out of the bend and defect counts and reports them apart. Neither was in the method text. The building's soffit was wrongly classed as hidden: it is visible under every eave (round-1 review M4). It is counted as visible from round 2 on | `docs/art/form-studies/source/formkit.py`; studies README | tool |
+| 2026-11-27 (round 2) | P1, P3, P4, P7, §4.0, §5, §7 | P1 descriptors defined in the rest frame, aspect not counted; P3 limited to spines; P4 rationale stated as a bound; P7 rescoped to two values plus line, prismatic masses exempt; §4.0 declaration test added; §5 depth by scale tier; §7 bent panels as an open question, §7.4 counts and order depend on Q5 | round-1 method review M2, M3, M6, M7 and minors (packet §9.2) | review |
 
 ### 12.1 Findings from the holdout categories (recorded, not applied)
 

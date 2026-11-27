@@ -59,7 +59,7 @@ Units: H = ground to the highest tip.
 | V-a | four identical wheels | P5 (series) | not a tract: identical parts doing the same job at different stations; reuse justified (method §7.1, level c) |
 | B-a | rectangular podium and walls | P1, P2 | declared prismatic by function; the variation moves to the roofs and the openings |
 | B-b | corrugated roof field | P5 | declared tessellation; the rake flags are expected and are not defects; the envelope carries the variation |
-| B-c | a symmetric tower | bible §4.1.3 (gesture), not a method principle | symmetry is right for a structural form; the method has no asymmetry rule. The raven's asymmetry comes from its pose (layer S and A), not from the method |
+| B-c | a symmetric tower | bible §4.1.3 (gesture), not a method principle | the method has no asymmetry rule. *Later note (round-1 review):* whether bible §4.1.3, "asymmetry and gesture beat symmetry", applies to a symmetric structural form is an **owner question**; this study does not decide it |
 | T-a | a broken, irregular dead tree | P5 grouping | irregularity is the subject; the series law still holds per generation |
 
 ## 5. Deliverables
@@ -78,3 +78,4 @@ The target above is fixed at the commit that adds this file.
 | 2 | building | Upturned corners erased the hip fold (0.5°); the flare was one sharp kink | Softer corner lift and a six-ring flare profile; finial bands as separate panels. 24 weak folds remain (S6) |
 | 1 | tree | One panel per pair of hexagon facets put 60° folds inside panels | One panel per facet: the lines are bark ridges along each limb |
 | 2 | tree | Buttress valleys faded through zero up the trunk | Upper trunk fluted so each valley stays a valley (finding S7) |
+| — | building | Logged deviations found by the round-1 review: the eaves were built at 0.33, 0.56 and 0.76 H (brief: 0.36, 0.60, 0.80) and the footprint at 0.62 H (brief: 0.55 H). Proportions were adjusted while modelling and not logged at the time | Logged here; values kept |
