@@ -310,7 +310,7 @@ export function vane(len: number, w: number, phi: number, shape: VaneShape): Mod
           ? [[0.62 * L, -1.02 * W], [0.9 * L, -0.86 * W]]
           : [[0.62 * L, -1.45 * W], [0.93 * L, -1.3 * W]];
   const tipY = shape === "blunt" ? -0.42 : shape === "spatulate" ? -0.62 : -0.16;
-  const points: Pt2[] = [[0, 0], [0, -W], ...trailing, [L, tipY * W], [0.5 * L, (shape === "blunt" || shape === "spatulate" ? 0.2 : 0.17) * W]];
+  const points: Pt2[] = [[0, 0], [0, -W], ...trailing, [L, tipY * W], [0.5 * L, (shape === "blunt" || shape === "spatulate" ? 0.28 : 0.22) * W]];
   const tip = points.length - 2;
   const b = points.length - 1;
   const A = [0, 1, ...trailing.map((_, i) => 2 + i), tip];

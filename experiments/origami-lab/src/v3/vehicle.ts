@@ -1,7 +1,8 @@
 import { err, ok, type Result, type Vec3 } from "@eschaton/foldon";
 import { createRng } from "../prng";
 import { add, dot, normal, panelDistance, scale, sub, unit } from "../v2/geom";
-import { assemblyContacts, clearance, placeAssembly, type Assembly, type Attachment, type Built, type Instance, type Seam } from "./assembly";
+import { assemblyContacts, clearance, compileAssembly, placeAssembly, type Assembly, type Attachment, type Built, type Instance, type Seam } from "./assembly";
+import { geo1Verdict, verifyCompiled } from "../v2/verify";
 import { arch, band, cap, mirrorDef, moduleIssues, plate, stitch, TUB_CROWN, vane, type ModuleDef, type Side } from "./module";
 import { nearest, solve, type Assignment, type Constraint, type SolveError, type SolveLog, type Variable } from "./solve";
 
@@ -35,7 +36,9 @@ export const TYRES = [0.3, 0.33, 0.36] as const;
 export const FENDER_GAPS = [0.04, 0.06, 0.08, 0.1] as const;
 export const ROOFS = [1.4, 1.44, 1.48, 1.52, 1.56] as const;
 export const HOODS = [1.35, 1.45, 1.55, 1.65, 1.75] as const;
-export const SLAT = { len: 0.36, w: 0.14 } as const;
+/** The shared short vane (bird alula): 0.26 × 0.119 cells; 0.119 is the crown rim edge at the nose scale. */
+export const SLAT = { len: 0.26, w: 0.119 } as const;
+const NOSE_SCALE = 0.85;
 const DECK = 0.8;
 const FLOOR_DROP = 0.38;
 /** Floor height is constant (the hangers hang exactly vertical, so tyres sit exactly on the ground); the deck follows the station scale. */
@@ -93,7 +96,7 @@ export function vehicleAssembly(t: VehicleTargets, a: Assignment): Result<Assemb
   const bays = t.cabin === "sedan" ? [0.1, 0.45, 0.08, cabinLen - 0.77, 0.14] : [0.12, cabinLen - 0.42, 0.3];
   const cabinStations = bays.reduce<number[]>((acc, len) => [...acc, (acc[acc.length - 1] ?? fR1) + len], [fR1]);
   const fixed: Station[] = [
-    { f: 0.06, s: 1, deck: DECK, tag: "nose" },
+    { f: 0.06, s: NOSE_SCALE, deck: deckAt(NOSE_SCALE), tag: "nose" },
     { f: fA1, s: AXLE_SCALE, deck: deckAt(AXLE_SCALE), tag: "axle1" },
     { f: hood, s: 1, deck: DECK, tag: "cowl" },
     ...cabinStations.map((f, i) => ({ f, s: 1, deck: DECK, tag: `cabin${i}` })),
@@ -248,7 +251,7 @@ export function vehicleAssembly(t: VehicleTargets, a: Assignment): Result<Assemb
     seams.push({ a: id("cabin/rear"), aPort: "base", b: id(`tub/${index("rearwindow") - 1}`), bPort: "crown.back" });
     for (let i = 1; i < 3; i++) {
       put(id(`grille/slat.${i}`), "grille.slat", m(slat), []);
-      attachments.push({ child: id(`grille/slat.${i}`), childPort: "root", parent: id("tub/0"), parentPort: `rim.front.${i}`, angle: 258 });
+      attachments.push({ child: id(`grille/slat.${i}`), childPort: "root", parent: id("tub/0"), parentPort: `rim.front.${i}`, angle: 260 });
     }
     put(id("chassis/board"), "chassis.board", m(boardDef), ["wheelbase", "front.axle", "fender.gap"]);
     attachments.push({ child: id("chassis/board"), childPort: "inner.0", parent: id(`tub/${root}`), parentPort: "ridge.5", angle: 90, flip: true });
@@ -406,6 +409,14 @@ export function vehicleProblem(t: VehicleTargets): Readonly<{ variables: readonl
         if (!b.ok) return b.error;
         const c = assemblyContacts(b.value);
         return c.length === 0 ? true : `${c.length} contacts, e.g. ${c[0]?.a} / ${c[0]?.b} (${c[0]?.contact.kind})`;
+      } },
+      { name: "automated GEO-1 PASS (every sheet's fold and the rest pose certified)", scope: every, lazy: true, check: (a) => {
+        const asm = vehicleAssembly(t, { ...defaults, ...a });
+        if (!asm.ok) return asm.error;
+        const compiled = compileAssembly(asm.value, "vehicle", {});
+        if (!compiled.ok) return compiled.error.message;
+        const verdict = geo1Verdict(verifyCompiled(compiled.value.compiled));
+        return verdict.verdict === "PASS" ? true : `${verdict.verdict}: ${verdict.reasons.join("; ").slice(0, 160)}`;
       } },
     ],
   };

@@ -57,7 +57,7 @@ const panelsTouch = (def: ModuleDef): boolean => {
 test("every module of the crow is a tree of valid panels, so no seam can close inside a sheet", () => {
   const defs = new Map(bird("crow").assembly.instances.map((i) => [i.def.id, i.def] as const));
   expect([...defs.values()].flatMap((d) => [...moduleIssues(d), ...(panelsTouch(d) ? [`${d.family} panel graph is not a tree`] : [])])).toEqual([]);
-});
+}, 120_000);
 
 test("the crow compiles to one Foldon sheet per module instance and its automated GEO-1 is PASS: no collision and no sampled-only pair", () => {
   const d = bird("crow");
@@ -84,14 +84,14 @@ test("the same seed builds the same definitions and geometry; different seeds bu
   expect(a.built.vertices).toEqual(b.built.vertices);
   const spans = [1, 2, 3, 4, 5, 6, 7, 8].map((s) => bird(s).measures.spanRatio);
   expect(Math.max(...spans) - Math.min(...spans)).toBeGreaterThan(0.4);
-});
+}, 120_000);
 
 test("constraints eliminate candidates during the search: a covert lift that leaves less than the designed clearance over the secondaries is rejected", () => {
   const eliminated = bird("crow").log.decisions.flatMap((d) => d.eliminated.map((e) => `${d.variable}=${e.value}: ${e.by}`));
   expect(eliminated.some((e) => e.startsWith("primary.base=") && e.includes("measured span"))).toBe(true);
   const covert = bird(1).log.decisions.find((d) => d.variable === "covert.lift");
   expect(covert?.eliminated.some((e) => e.by.startsWith("covert layer clearance"))).toBe(true);
-});
+}, 120_000);
 
 test("the search proves unsatisfiability and reports it instead of returning the nearest assignment", () => {
   const r = solve(
@@ -131,7 +131,7 @@ test("a primary detached from the crow keeps its instance and definition ids and
   expect(moved.ok ? moved.value.instances.find((i) => i.id === "wingL/primary.2")?.def.id : moved.error.code).toBe(part.instances[0]?.def.id);
   const wrong = attach(split.value.rest, part, { childPort: "root", parent: "body/torso.L", parentPort: "ridge.2", angle: 180 });
   expect(wrong.ok ? "accepted" : wrong.error.code).toBe("kind-mismatch");
-});
+}, 120_000);
 
 test("the provenance DAG traces every instance to its parent port, definition and deciding variables, without cycles", () => {
   const nodes = provenance(bird("crow").assembly);
@@ -142,7 +142,7 @@ test("the provenance DAG traces every instance to its parent port, definition an
     return p === undefined ? 0 : 1 + depth(p, new Set([...seen, id]));
   };
   expect({ cyclic: nodes.some((n) => !Number.isFinite(depth(n.instance))), untraced: nodes.filter((n) => n.parent === undefined).map((n) => n.instance), primaries: nodes.find((n) => n.instance === "wingL/primary.0")?.decidedBy }).toEqual({ cyclic: false, untraced: ["body/torso.L"], primaries: ["primaries", "primary.base", "layer"] });
-});
+}, 120_000);
 
 test("thresholds have counterexamples: a 0.0039-cell sliver is degenerate and a non-convex plate is refused", () => {
   const sliver = plate("sliver", { points: [[0, 0], [1, 0], [0.5, 0.0039]], panels: [{ v: [0, 1, 2], part: "s" }], creases: [] }, []);
@@ -176,7 +176,7 @@ test("every vehicle variant (hero, seeds 1–8, both window corners) solves insi
 test("the bird's alula and the vehicle's grille slats are one concrete definition (cross-object reuse at the definition level)", () => {
   const shared = reuseTable([bird("crow").assembly, vehicle("hero").assembly]).filter((r) => Object.keys(r.uses).length > 1);
   expect(shared.map((r) => [r.family, Object.keys(r.uses).sort()])).toEqual([["vane", ["bird", "vehicle"]], ["vane", ["bird", "vehicle"]]]);
-});
+}, 120_000);
 
 test("a grille slat detached from the vehicle keeps its identity and plugs into the bird's alula socket", () => {
   const car = detach(vehicle("hero").assembly, "grille/slat.1.L");
@@ -185,4 +185,13 @@ test("a grille slat detached from the vehicle keeps its identity and plugs into 
   const slat = car.value.part;
   const moved = attach(crow.value.rest, slat, { childPort: "root", parent: "wingL/hand", parentPort: "alula", angle: 172 });
   expect(moved.ok ? moved.value.instances.find((i) => i.id === "grille/slat.1.L")?.def.id : moved.error.code).toBe(crow.value.part.instances[0]?.def.id);
-});
+}, 120_000);
+
+test("regression: the innermost secondary swept into the belly and tail plate during the flap (seeds 5, 7, min corner); every bird variant is now GEO-1 PASS including the flap sweep", () => {
+  const verdicts = (["crow", 1, 2, 3, 4, 5, 6, 7, 8, 101, 202, 303, "min", "max"] as const).map((v) => {
+    const compiled = compileAssembly(bird(v).assembly, "bird", {});
+    if (!compiled.ok) throw new Error(compiled.error.message);
+    return geo1Verdict(verifyCompiled(compiled.value.compiled)).verdict;
+  });
+  expect(verdicts.filter((v) => v !== "PASS")).toEqual([]);
+}, 300_000);

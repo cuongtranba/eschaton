@@ -1,7 +1,8 @@
 import { err, ok, type Result, type Vec3 } from "@eschaton/foldon";
 import { createRng } from "../prng";
 import { add, cross, dist, dot, normal, panelDistance, scale, sub, unit } from "../v2/geom";
-import { assemblyContacts, clearance, placeAssembly, type Assembly, type Attachment, type Built, type Instance, type Seam } from "./assembly";
+import { assemblyContacts, clearance, compileAssembly, placeAssembly, type Assembly, type Attachment, type Built, type Instance, type Seam } from "./assembly";
+import { geo1Verdict, verifyCompiled } from "../v2/verify";
 import { band, cap, fringe, mirrorDef, moduleIssues, plate, vane, type ModuleDef } from "./module";
 import { nearest, solve, type Assignment, type Constraint, type SolveError, type SolveLog, type Variable } from "./solve";
 
@@ -60,10 +61,10 @@ export function birdTargets(seed: number | "crow" | "min" | "max"): BirdTargets 
 /* ------------------------------------------------------------------ ladders (finite catalog choices) */
 
 export const RADII = [0.028, 0.034, 0.04, 0.046, 0.048, 0.056, 0.064, 0.074, 0.08, 0.088, 0.096] as const;
-export const ARM_SPANS = [0.18, 0.22, 0.26, 0.3, 0.34, 0.38, 0.42, 0.46] as const;
-export const WRIST_CHORDS = [0.14, 0.16, 0.18, 0.2] as const;
+export const ARM_SPANS = [0.18, 0.22, 0.26, 0.3, 0.34, 0.38, 0.42, 0.46, 0.5, 0.54] as const;
+export const WRIST_CHORDS = [0.12, 0.14, 0.16, 0.18] as const;
 export const HAND_OFFSETS = [0.02, 0.04, 0.06, 0.08, 0.1] as const;
-export const FAN_STEPS = [7, 8.5, 10] as const;
+export const FAN_STEPS = [4, 5, 6] as const;
 /** Ladders are finite; each half-step is below the tolerance of the landmark it serves (beak ±5 %, tail ±3 %). */
 export const BEAKS = Array.from({ length: 20 }, (_, i) => r3(0.055 + 0.005 * i));
 export const VANE_LENGTHS = [0.96, 1.2, 1.44, 1.68, 1.92, 2.16, 2.4, 2.64] as const;
@@ -74,9 +75,9 @@ export const SECONDARIES = [0.09, 0.11, 0.13] as const;
 export const DIHEDRALS = [-4, -2, 0, 2, 4, 6, 8, 10, 12] as const;
 export const HAND_DIHEDRALS = [-10, -8, -6, -4, -2, 0, 2, 4, 6] as const;
 export const PRIMARY_WIDTH = 0.26;
-/** The short vane shared with the vehicle grille (same definition id): 0.36 × 0.14 cells, blunt. */
-export const ALULA = { len: 0.36, w: 0.14 } as const;
-export const TAIL_VANE_WIDTH = 0.26;
+/** The short vane shared with the vehicle grille (same definition id): 0.26 × 0.119 cells, blunt (0.119 = the tub crown rim at nose scale 0.85). */
+export const ALULA = { len: 0.26, w: 0.119 } as const;
+export const TAIL_VANE_WIDTH = 0.22;
 
 /** Primary length shapes, inner → outer, as index offsets added to the `primary.base` index into VANE_LENGTHS. */
 export const PRIMARY_PATTERNS: Readonly<Record<4 | 5, readonly (readonly number[])[]>> = {
@@ -139,9 +140,9 @@ export function birdAssembly(t: BirdTargets, a: Assignment): Result<Assembly, st
   const [r2, r3v, r4, r5] = [num(a, "r.brow"), num(a, "r.nape"), num(a, "r.breast"), num(a, "r.belly")];
   const s1 = beak;
   const stations = [
-    { s: s1, r: 0.028, y: 0 },
-    { s: s1 + 0.04, r: r2, y: 0.012 },
-    { s: s1 + 0.13, r: r3v, y: 0.004 },
+    { s: s1, r: 0.032, y: 0.01 },
+    { s: s1 + 0.04, r: r2, y: 0.03 },
+    { s: s1 + 0.13, r: r3v, y: 0.022 },
     { s: 0.33, r: r4, y: 0 },
     { s: 0.5, r: r5, y: -0.002 },
     { s: 0.6, r: 0.04, y: 0.01 },
@@ -164,7 +165,7 @@ export function birdAssembly(t: BirdTargets, a: Assignment): Result<Assembly, st
   const bandNames = ["forehead", "crown", "neck", "torso", "belly"];
   const decide = ["beak", "r.brow", "r.nape", "r.breast", "r.belly"];
   bandNames.forEach((n, i) => { add2(`body/${n}.L`, `body.${n}`, at(bands, i), [decide[i] ?? "", decide[i + 1] ?? ""].filter((x) => x !== "")); });
-  const beakCap = cap("keel", 0.028 * L, beak * L, (-0.014 + lift(0) - at(st, 0).y) * L, 1);
+  const beakCap = cap("keel", 0.032 * L, beak * L, (-0.004 + lift(0) - at(st, 0).y) * L, 1);
   const rumpCap = cap("keel", 0.04 * L, -0.04 * L, (0.02 - at(st, 5).y) * L, -1);
   add2("body/beak.L", "body.beak", beakCap, ["beak"]);
   add2("body/rump.L", "body.rump", rumpCap, []);
@@ -201,7 +202,7 @@ export function birdAssembly(t: BirdTargets, a: Assignment): Result<Assembly, st
   const exact = (d: ModuleDef, x: number, y: number): number => dist(d.vertices[x] ?? [0, 0, 0], d.vertices[y] ?? [0, 0, 0]);
   const ls = exact(torso, shoulder.a, shoulder.b) / L;
   const [span, chord, hand0, fan] = [num(a, "arm.span"), num(a, "wrist.chord"), num(a, "hand.offset"), num(a, "fan.step")];
-  const arm2: Pt2[] = [[0, 0], [0, -ls], [span, 0.04 - chord], [span, 0.04]];
+  const arm2: Pt2[] = [[0, 0], [0, -ls], [span, 0.08 - chord], [span, 0.08]];
   const armDef = plate(
     "arm",
     { points: arm2.map(([x, y]): Pt2 => [x * L, y * L]), panels: [{ v: [0, 2, 3], part: "leading" }, { v: [0, 1, 2], part: "trailing" }], creases: [{ parent: 0, child: 1, angle: -10 }] },
@@ -250,10 +251,10 @@ export function birdAssembly(t: BirdTargets, a: Assignment): Result<Assembly, st
   const trailingLen = armDef.ports.find((p) => p.name === "trailing");
   const creaseLen = armDef.ports.find((p) => p.name === "crease");
   if (trailingLen?.type !== "edge" || creaseLen?.type !== "edge") return err("arm ports");
-  const secondaries = fringe(exact(armDef, trailingLen.a, trailingLen.b), 0.012 * L, 6, secLen * L, 1.0, [1, -1, 1, -1, 1, -1].map((x) => x - 2));
+  const secondaries = fringe(exact(armDef, trailingLen.a, trailingLen.b), 0.012 * L, 6, secLen * L, 1.0, [1, -1, 1, -1, 1, -1].map((x) => x - 2), 0.012, [0, 0.16]);
   const covertLift = num(a, "covert.lift");
-  const coverts = fringe(exact(armDef, creaseLen.a, creaseLen.b), 0.01 * L, 5, 0.45 * ls * L, 1.0, [-1, 1, -1, 1, -1].map((x) => x - covertLift / 3), 0.01, [0.3, 0.22]);
-  const primaryDefs = pattern.map((li, i) => vane(at(VANE_LENGTHS, li), PRIMARY_WIDTH, 22, i >= pattern.length - 3 ? "emarginate" : "blunt"));
+  const coverts = fringe(exact(armDef, creaseLen.a, creaseLen.b), 0.01 * L, 5, 0.45 * ls * L, 1.0, [-1, 1, -1, 1, -1].map((x) => x - covertLift / 3), 0.01, [0.3, 0.34]);
+  const primaryDefs = pattern.map((li, i) => vane(at(VANE_LENGTHS, li), PRIMARY_WIDTH, 35, i >= pattern.length - 3 ? "emarginate" : "blunt"));
   const alulaDef = vane(ALULA.len, ALULA.w, 25, "blunt");
 
   const wing = (side: "L" | "R"): void => {
@@ -269,7 +270,7 @@ export function birdAssembly(t: BirdTargets, a: Assignment): Result<Assembly, st
       attachments.push({ child: id(`primary.${i}`), childPort: "root", parent: id("hand"), parentPort: `socket.${i}`, angle: 180 + (i % 2 === 0 ? layer : -layer) - 2 });
     });
     add2(id("alula"), "wing.alula", m(alulaDef), []);
-    attachments.push({ child: id("alula"), childPort: "root", parent: id("hand"), parentPort: "alula", angle: 172 });
+    attachments.push({ child: id("alula"), childPort: "root", parent: id("hand"), parentPort: "alula", angle: 168 });
     add2(id("secondaries"), "wing.secondaries", m(secondaries), ["secondaries"]);
     attachments.push({ child: id("secondaries"), childPort: "root", parent: id("arm"), parentPort: "trailing", angle: 184 });
     add2(id("coverts"), "wing.coverts", m(coverts), ["covert.lift"]);
@@ -330,7 +331,7 @@ export function birdAssembly(t: BirdTargets, a: Assignment): Result<Assembly, st
   const base = num(a, "tail.len");
   const tailLayer = num(a, "tail.layer");
   const tpat = TAIL_SHAPES[t.tailShape].map((f) => Math.round((base * f) / 0.04) * 0.04);
-  const tailVanes = tpat.map((len) => vane(r3(len), TAIL_VANE_WIDTH, 12, "spatulate"));
+  const tailVanes = tpat.map((len) => vane(r3(len), TAIL_VANE_WIDTH, 20, "spatulate"));
   seams.push({ a: "tail/plate.R", aPort: "inner", b: "tail/plate.L", bPort: "inner" });
   for (const side of ["L", "R"] as const) {
     const m = (d: ModuleDef): ModuleDef => (side === "L" ? d : mirrorDef(d));
@@ -381,18 +382,18 @@ export function birdVariables(t: BirdTargets): readonly (Variable & Readonly<{ s
   const radii = [...RADII];
   return [
     { stage: "body", name: "tail.layer", domain: [-3.5, -2, -5, 2, 3.5, 5] },
-    { stage: "body", name: "tail.fan", domain: nearest([4, 5.5, 7], t.tailFan - 2) },
+    { stage: "body", name: "tail.fan", domain: nearest([3, 4, 5], t.tailFan - 3) },
     { stage: "body", name: "tail.len", domain: nearest(TAIL_LENGTHS, t.tail * L - 0.26) },
     { stage: "body", name: "beak", domain: nearest(BEAKS, t.beak) },
-    { stage: "body", name: "r.brow", domain: nearest(radii, 0.048 * t.head) },
+    { stage: "body", name: "r.brow", domain: nearest(radii, 0.056 * t.head) },
     { stage: "body", name: "r.nape", domain: nearest(radii, 0.046 * t.head) },
     { stage: "body", name: "r.breast", domain: nearest(radii, 0.088 * t.breast) },
     { stage: "body", name: "r.belly", domain: nearest(radii, 0.074 * t.breast) },
     { stage: "wings", name: "dihedral.arm", domain: nearest(DIHEDRALS, t.dihedralArm) },
     { stage: "wings", name: "dihedral.hand", domain: nearest(HAND_DIHEDRALS, t.dihedralHand) },
-    { stage: "wings", name: "fan.step", domain: nearest(FAN_STEPS, 7) },
+    { stage: "wings", name: "fan.step", domain: nearest(FAN_STEPS, 5) },
     { stage: "wings", name: "hand.offset", domain: nearest(HAND_OFFSETS, 0.04) },
-    { stage: "wings", name: "wrist.chord", domain: nearest(WRIST_CHORDS, 0.16) },
+    { stage: "wings", name: "wrist.chord", domain: nearest(WRIST_CHORDS, 0.14) },
     { stage: "wings", name: "primaries", domain: PRIMARY_PATTERNS[t.primaries].map((_, i) => i) },
     { stage: "wings", name: "arm.span", domain: nearest(ARM_SPANS, 0.19 * t.span) },
     { stage: "wings", name: "primary.base", domain: nearest([0, 1, 2, 3, 4], 1 + Math.round((t.span - 2) * 3)) },
@@ -443,13 +444,13 @@ export function birdProblem(t: BirdTargets, stage: BirdStage, fixed: Assignment 
     return {
       variables,
       constraints: [
-        { name: "forehead step", scope: ["r.brow"], check: (a) => (num(a, "r.brow") > 0.028 ? true : "brow not larger than the gape") },
-        { name: "nape waist", scope: ["r.brow", "r.nape"], check: (a) => (num(a, "r.nape") <= num(a, "r.brow") ? true : "nape wider than brow") },
+        { name: "forehead step", scope: ["r.brow"], check: (a) => (num(a, "r.brow") > 0.034 ? true : "brow not clearly larger than the gape") },
+        { name: "nape waist", scope: ["r.brow", "r.nape"], check: (a) => (num(a, "r.nape") < num(a, "r.brow") ? true : "no waist between head and neck") },
         { name: "breast largest", scope: ["r.nape", "r.breast"], check: (a) => (num(a, "r.breast") > num(a, "r.nape") ? true : "breast not larger than nape") },
         { name: "belly taper", scope: ["r.breast", "r.belly"], check: (a) => (num(a, "r.belly") <= num(a, "r.breast") && num(a, "r.belly") > 0.04 ? true : "belly not between vent and breast") },
         { name: "head/breast width", scope: ["r.brow", "r.breast"], check: (a) => {
           const ratio = num(a, "r.brow") / num(a, "r.breast");
-          return ratio >= 0.48 && ratio <= 0.66 ? true : `head/breast ${ratio.toFixed(3)} outside [0.48, 0.66]`;
+          return ratio >= 0.55 && ratio <= 0.72 ? true : `head/breast ${ratio.toFixed(3)} outside [0.55, 0.72]`;
         } },
         measured(["beak", "tail.len", "tail.fan"], "measured tail ±3 %", (m) => (within(m.tailRatio, t.tail, 0.03) ? true : `tail ${m.tailRatio.toFixed(3)} vs target ${t.tail}`)),
         measured(["beak", "tail.len"], "measured beak ±5 %", (m) => (within(m.beakRatio, t.beak, 0.05) ? true : `beak ${m.beakRatio.toFixed(3)} vs target ${t.beak}`)),
@@ -471,6 +472,10 @@ export function birdProblem(t: BirdTargets, stage: BirdStage, fixed: Assignment 
   return {
     variables,
     constraints: [
+      { name: "primaries at most 1.3 × the arm (no needle hands)", scope: ["arm.span", "primaries", "primary.base"], check: (a) => {
+        const longest = Math.max(...at(PRIMARY_PATTERNS[t.primaries], num(a, "primaries")).map((o) => at(VANE_LENGTHS, o + num(a, "primary.base"))));
+        return longest / L <= 1.3 * num(a, "arm.span") ? true : `primary ${longest.toFixed(2)} cells vs arm ${(num(a, "arm.span") * L).toFixed(2)}`;
+      } },
       { name: "hand and arm plates valid", scope: ["wrist.chord", "hand.offset", "fan.step", "arm.span"], check: (a) => {
         const b = build(a);
         return b.ok ? true : b.error;
@@ -487,6 +492,14 @@ export function birdProblem(t: BirdTargets, stage: BirdStage, fixed: Assignment 
         if (!b.ok) return b.error;
         const c = assemblyContacts(b.value);
         return c.length === 0 ? true : `${c.length} contacts, e.g. ${c[0]?.a} / ${c[0]?.b} (${c[0]?.contact.kind})`;
+      } },
+      { name: "automated GEO-1 PASS (every sheet's fold, the flap sweep and the rest pose certified)", scope: names, lazy: true, check: (a) => {
+        const asm = birdAssembly(t, { ...defaults, ...fixed, ...a });
+        if (!asm.ok) return asm.error;
+        const compiled = compileAssembly(asm.value, "bird", {});
+        if (!compiled.ok) return compiled.error.message;
+        const verdict = geo1Verdict(verifyCompiled(compiled.value.compiled));
+        return verdict.verdict === "PASS" ? true : `${verdict.verdict}: ${verdict.reasons.join("; ").slice(0, 160)}`;
       } },
     ],
   };

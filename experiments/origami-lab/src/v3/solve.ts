@@ -12,7 +12,7 @@ export type Variable = Readonly<{ name: string; domain: readonly Value[] }>;
  * reason it is violated. Constraints are local (ports, sequences) or global (measured geometry); the solver treats both
  * the same way, the object plan owns them.
  */
-export type Constraint = Readonly<{ name: string; scope: readonly string[]; check: (a: Assignment) => true | string }>;
+export type Constraint = Readonly<{ name: string; scope: readonly string[]; check: (a: Assignment) => true | string; /** Expensive: checked only on complete assignments of its scope, never during forward pruning. */ lazy?: boolean }>;
 
 export type SolveLog = Readonly<{ decisions: readonly Decision[]; nodes: number; backtracks: number; eliminations: number }>;
 export type SolveError = Readonly<{ code: "unsatisfiable" | "budget"; message: string; log: SolveLog }>;
@@ -39,6 +39,7 @@ export function solve(variables: readonly Variable[], constraints: readonly Cons
   const prune = (assignment: Record<string, Value>, domains: Domains): Domains | undefined => {
     const next = new Map(domains);
     for (const c of constraints) {
+      if (c.lazy === true) continue;
       const open = c.scope.filter((s) => !(s in assignment));
       if (open.length === 0) continue;
       if (open.length > 1) continue;

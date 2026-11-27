@@ -109,7 +109,7 @@ const C = CENTRE[object];
 const CAMERAS = {
   threeQuarter: { kind: "persp", azimuth: 38, elevation: 24, distance: object === "bird" ? 10.5 : 9.5, fov: 32, target: C },
   front: { kind: "ortho", dir: [1, 0, 0], halfHeight: object === "bird" ? 2.6 : 1.3, target: C },
-  side: { kind: "ortho", dir: [0, 0, 1], halfHeight: object === "bird" ? 1.45 : 1.3, target: object === "bird" ? [-0.2, 0.1, 0] : C },
+  side: { kind: "ortho", dir: [0, 0, 1], halfHeight: object === "bird" ? 1.45 : 1.75, target: object === "bird" ? [-0.2, 0.1, 0] : C },
   top: { kind: "ortho", dir: [0, 1, 0], up: [1, 0, 0], halfHeight: object === "bird" ? 5.4 : 2.6, target: object === "bird" ? [-0.4, 0, 0] : [0, 0, 0] },
   below: { kind: "ortho", dir: [0, -1, 0], up: [1, 0, 0], halfHeight: object === "bird" ? 5.4 : 2.6, target: object === "bird" ? [-0.4, 0, 0] : [0, 0, 0] },
   rear: { kind: "ortho", dir: [-1, 0, 0], halfHeight: 1.3, target: C },
@@ -219,7 +219,7 @@ function comparePage(): void {
   const before = object === "bird" ? v2Compiled() : undefined;
   const specs = object === "bird"
     ? ([["three-quarter", CAMERAS.threeQuarter], ["side", CAMERAS.side], ["front", CAMERAS.front], ["below (silhouette)", CAMERAS.below]] as const)
-    : ([["three-quarter", CAMERAS.threeQuarter], ["side", { ...CAMERAS.side, halfHeight: 1.75 }], ["front", CAMERAS.front], ["top", CAMERAS.top]] as const);
+    : ([["three-quarter", { ...CAMERAS.threeQuarter, distance: 19 }], ["side", { ...CAMERAS.side, halfHeight: 3 }], ["front", { ...CAMERAS.front, halfHeight: 2.6 }], ["top", { ...CAMERAS.top, halfHeight: 4.6 }]] as const);
   for (const [label, spec] of specs) {
     const look: Look = label.includes("silhouette") ? "silhouette" : "clay";
     const a = tile(object === "bird" ? `V2 crow (e8082a8 geometry, raw render) · ${label}` : `V1 vehicle seed 1 (73b612b code, ground-aligned and centred) · ${label}`, spec, 300);
