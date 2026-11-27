@@ -1,0 +1,1937 @@
+{
+ "build": "experiment/origami-lab-v3 @ b1b4a41 · served 2026-11-27T06:06:14.387Z",
+ "generated": "v3.html?object=bird&mode=evidence",
+ "object": "bird",
+ "variants": [
+  {
+   "variant": "crow baseline",
+   "instances": 42,
+   "sheets": 42,
+   "panels": 112,
+   "definitions": 40,
+   "buildMs": 149,
+   "verifyMs": 147,
+   "geo1": {
+    "verdict": "PASS",
+    "reasons": []
+   },
+   "counts": {
+    "analytic": 380,
+    "static": 7818,
+    "certified": 4368,
+    "sampled": 0,
+    "collision": 0
+   },
+   "witnesses": [],
+   "panelIssues": [],
+   "thinAnnotated": 8,
+   "minAngleDeg": 4.413665457699435,
+   "minAltitude": 0.0496,
+   "flat": {
+    "maxOffPlane": 9.726359856410127e-10,
+    "overlaps": 0
+   },
+   "rigidity": 1.14362050385175e-9,
+   "seamGap": {
+    "rest": 2.6330810218366517e-9,
+    "articulated": 2.6330810218366517e-9
+   },
+   "definitionsInvalid": [],
+   "targets": {
+    "span": 2,
+    "tail": 0.365,
+    "beak": 0.1,
+    "head": 1,
+    "breast": 1,
+    "primaries": 5,
+    "tailShape": "rounded",
+    "dihedralArm": 8,
+    "dihedralHand": 2,
+    "headPitch": 0,
+    "tailFan": 7
+   },
+   "assignment": {
+    "tail.layer": -3.5,
+    "tail.fan": 5.5,
+    "tail.len": 1.24,
+    "beak": 0.1,
+    "r.brow": 0.048,
+    "r.nape": 0.046,
+    "r.breast": 0.088,
+    "r.belly": 0.074,
+    "dihedral.arm": 8,
+    "dihedral.hand": 2,
+    "fan.step": 7,
+    "hand.offset": 0.04,
+    "wrist.chord": 0.16,
+    "primaries": 0,
+    "arm.span": 0.38,
+    "primary.base": 1,
+    "secondaries": 0.11,
+    "covert.lift": 4,
+    "layer": 3
+   },
+   "measures": {
+    "spanRatio": 1.9754576159939736,
+    "tailRatio": 0.3579452582740307,
+    "beakRatio": 0.10032105339468268,
+    "headBreast": 0.5454545454545454,
+    "length": 3.98719896237853,
+    "span": 7.876542556713936
+   },
+   "solver": {
+    "nodes": 21,
+    "backtracks": 2,
+    "eliminations": 80
+   }
+  },
+  {
+   "variant": "seed 1",
+   "instances": 42,
+   "sheets": 42,
+   "panels": 112,
+   "definitions": 40,
+   "buildMs": 123,
+   "verifyMs": 138,
+   "geo1": {
+    "verdict": "PASS",
+    "reasons": []
+   },
+   "counts": {
+    "analytic": 380,
+    "static": 7818,
+    "certified": 4368,
+    "sampled": 0,
+    "collision": 0
+   },
+   "witnesses": [],
+   "panelIssues": [],
+   "thinAnnotated": 8,
+   "minAngleDeg": 4.010854846169001,
+   "minAltitude": 0.04960000000000002,
+   "flat": {
+    "maxOffPlane": 9.63257432151643e-10,
+    "overlaps": 0
+   },
+   "rigidity": 1.1825339735205276e-9,
+   "seamGap": {
+    "rest": 1.3706439454496314e-9,
+    "articulated": 1.3706440384188372e-9
+   },
+   "definitionsInvalid": [],
+   "targets": {
+    "span": 2.339,
+    "tail": 0.274,
+    "beak": 0.098,
+    "head": 1.004,
+    "breast": 1.044,
+    "primaries": 5,
+    "tailShape": "wedge",
+    "dihedralArm": -3.862,
+    "dihedralHand": -7.979,
+    "headPitch": -3.267,
+    "tailFan": 8.785
+   },
+   "assignment": {
+    "tail.layer": -3.5,
+    "tail.fan": 7,
+    "tail.len": 0.8,
+    "beak": 0.09,
+    "r.brow": 0.048,
+    "r.nape": 0.046,
+    "r.breast": 0.088,
+    "r.belly": 0.08,
+    "dihedral.arm": -4,
+    "dihedral.hand": -8,
+    "fan.step": 7,
+    "hand.offset": 0.04,
+    "wrist.chord": 0.16,
+    "primaries": 0,
+    "arm.span": 0.46,
+    "primary.base": 1,
+    "secondaries": 0.11,
+    "covert.lift": 6,
+    "layer": 3
+   },
+   "measures": {
+    "spanRatio": 2.37817012503759,
+    "tailRatio": 0.27846068869423235,
+    "beakRatio": 0.10146646565237354,
+    "headBreast": 0.5454545454545454,
+    "length": 3.5479702351451583,
+    "span": 8.437676817744808
+   },
+   "solver": {
+    "nodes": 20,
+    "backtracks": 1,
+    "eliminations": 61
+   }
+  },
+  {
+   "variant": "seed 2",
+   "instances": 42,
+   "sheets": 42,
+   "panels": 112,
+   "definitions": 40,
+   "buildMs": 123,
+   "verifyMs": 136,
+   "geo1": {
+    "verdict": "PASS",
+    "reasons": []
+   },
+   "counts": {
+    "analytic": 380,
+    "static": 7818,
+    "certified": 4368,
+    "sampled": 0,
+    "collision": 0
+   },
+   "witnesses": [],
+   "panelIssues": [],
+   "thinAnnotated": 6,
+   "minAngleDeg": 5.14094891248779,
+   "minAltitude": 0.04959999999999999,
+   "flat": {
+    "maxOffPlane": 1.229172520711419e-9,
+    "overlaps": 0
+   },
+   "rigidity": 9.112248178233529e-10,
+   "seamGap": {
+    "rest": 2.633081021233812e-9,
+    "articulated": 2.633081021233812e-9
+   },
+   "definitionsInvalid": [],
+   "targets": {
+    "span": 1.817,
+    "tail": 0.335,
+    "beak": 0.106,
+    "head": 1.092,
+    "breast": 1.055,
+    "primaries": 5,
+    "tailShape": "rounded",
+    "dihedralArm": 2.719,
+    "dihedralHand": -9.896,
+    "headPitch": -6.241,
+    "tailFan": 7.559
+   },
+   "assignment": {
+    "tail.layer": -3.5,
+    "tail.fan": 5.5,
+    "tail.len": 1.08,
+    "beak": 0.105,
+    "r.brow": 0.056,
+    "r.nape": 0.048,
+    "r.breast": 0.096,
+    "r.belly": 0.08,
+    "dihedral.arm": 2,
+    "dihedral.hand": -10,
+    "fan.step": 7,
+    "hand.offset": 0.04,
+    "wrist.chord": 0.16,
+    "primaries": 0,
+    "arm.span": 0.34,
+    "primary.base": 0,
+    "secondaries": 0.11,
+    "covert.lift": 4,
+    "layer": 3
+   },
+   "measures": {
+    "spanRatio": 1.852604317017234,
+    "tailRatio": 0.3312719330311639,
+    "beakRatio": 0.1097131984870747,
+    "headBreast": 0.5833333333333334,
+    "length": 3.8281629356515414,
+    "span": 7.092071180833413
+   },
+   "solver": {
+    "nodes": 19,
+    "backtracks": 0,
+    "eliminations": 40
+   }
+  },
+  {
+   "variant": "seed 3",
+   "instances": 40,
+   "sheets": 40,
+   "panels": 108,
+   "definitions": 38,
+   "buildMs": 107,
+   "verifyMs": 132,
+   "geo1": {
+    "verdict": "PASS",
+    "reasons": []
+   },
+   "counts": {
+    "analytic": 370,
+    "static": 7342,
+    "certified": 3976,
+    "sampled": 0,
+    "collision": 0
+   },
+   "witnesses": [],
+   "panelIssues": [],
+   "thinAnnotated": 2,
+   "minAngleDeg": 5.140948912487786,
+   "minAltitude": 0.04959999999999995,
+   "flat": {
+    "maxOffPlane": 9.97330878473035e-10,
+    "overlaps": 0
+   },
+   "rigidity": 9.982841220335104e-10,
+   "seamGap": {
+    "rest": 2.6330810598949687e-9,
+    "articulated": 2.6330810598949687e-9
+   },
+   "definitionsInvalid": [],
+   "targets": {
+    "span": 1.695,
+    "tail": 0.29,
+    "beak": 0.127,
+    "head": 0.882,
+    "breast": 1.028,
+    "primaries": 4,
+    "tailShape": "rounded",
+    "dihedralArm": 0.089,
+    "dihedralHand": 2.572,
+    "headPitch": 1.429,
+    "tailFan": 7.527
+   },
+   "assignment": {
+    "tail.layer": -3.5,
+    "tail.fan": 5.5,
+    "tail.len": 0.88,
+    "beak": 0.12,
+    "r.brow": 0.04,
+    "r.nape": 0.04,
+    "r.breast": 0.08,
+    "r.belly": 0.074,
+    "dihedral.arm": 0,
+    "dihedral.hand": 2,
+    "fan.step": 7,
+    "hand.offset": 0.04,
+    "wrist.chord": 0.16,
+    "primaries": 0,
+    "arm.span": 0.26,
+    "primary.base": 0,
+    "secondaries": 0.11,
+    "covert.lift": 4,
+    "layer": 3
+   },
+   "measures": {
+    "spanRatio": 1.6894571271874315,
+    "tailRatio": 0.2946430152705044,
+    "beakRatio": 0.1322544346367804,
+    "headBreast": 0.4999999999999999,
+    "length": 3.6293679022428056,
+    "span": 6.131661469629405
+   },
+   "solver": {
+    "nodes": 22,
+    "backtracks": 3,
+    "eliminations": 58
+   }
+  },
+  {
+   "variant": "seed 4",
+   "instances": 40,
+   "sheets": 40,
+   "panels": 108,
+   "definitions": 38,
+   "buildMs": 116,
+   "verifyMs": 128,
+   "geo1": {
+    "verdict": "PASS",
+    "reasons": []
+   },
+   "counts": {
+    "analytic": 370,
+    "static": 7342,
+    "certified": 3976,
+    "sampled": 0,
+    "collision": 0
+   },
+   "witnesses": [],
+   "panelIssues": [],
+   "thinAnnotated": 4,
+   "minAngleDeg": 4.781523323795227,
+   "minAltitude": 0.049600000000000095,
+   "flat": {
+    "maxOffPlane": 8.989940580156341e-10,
+    "overlaps": 0
+   },
+   "rigidity": 1.0102235992182074e-9,
+   "seamGap": {
+    "rest": 1.949203619356998e-9,
+    "articulated": 1.949203619356998e-9
+   },
+   "definitionsInvalid": [],
+   "targets": {
+    "span": 1.923,
+    "tail": 0.333,
+    "beak": 0.125,
+    "head": 0.898,
+    "breast": 0.961,
+    "primaries": 4,
+    "tailShape": "rounded",
+    "dihedralArm": -2.966,
+    "dihedralHand": 0.227,
+    "headPitch": 9.674,
+    "tailFan": 6.007
+   },
+   "assignment": {
+    "tail.layer": -3.5,
+    "tail.fan": 4,
+    "tail.len": 1.08,
+    "beak": 0.125,
+    "r.brow": 0.046,
+    "r.nape": 0.04,
+    "r.breast": 0.088,
+    "r.belly": 0.074,
+    "dihedral.arm": -2,
+    "dihedral.hand": 0,
+    "fan.step": 7,
+    "hand.offset": 0.04,
+    "wrist.chord": 0.16,
+    "primaries": 0,
+    "arm.span": 0.38,
+    "primary.base": 0,
+    "secondaries": 0.11,
+    "covert.lift": 4,
+    "layer": 3
+   },
+   "measures": {
+    "spanRatio": 1.865656385070239,
+    "tailRatio": 0.33160419691845067,
+    "beakRatio": 0.13054605528936514,
+    "headBreast": 0.5227272727272727,
+    "length": 3.8300659402669233,
+    "span": 7.145586976699034
+   },
+   "solver": {
+    "nodes": 19,
+    "backtracks": 0,
+    "eliminations": 41
+   }
+  },
+  {
+   "variant": "seed 5",
+   "instances": 42,
+   "sheets": 42,
+   "panels": 112,
+   "definitions": 40,
+   "buildMs": 108,
+   "verifyMs": 133,
+   "geo1": {
+    "verdict": "FAIL",
+    "reasons": [
+     "2 collisions"
+    ]
+   },
+   "counts": {
+    "analytic": 380,
+    "static": 7818,
+    "certified": 4362,
+    "sampled": 4,
+    "collision": 2
+   },
+   "witnesses": [
+    {
+     "sweep": "articulation phase 0→1 at t = 1",
+     "a": "body/belly.L#0",
+     "b": "wingL/secondaries#6",
+     "intervals": [
+      [
+       0.65625,
+       1
+      ]
+     ]
+    },
+    {
+     "sweep": "articulation phase 0→1 at t = 1",
+     "a": "body/belly.L#1",
+     "b": "wingL/secondaries#6",
+     "intervals": [
+      [
+       0,
+       1
+      ]
+     ]
+    },
+    {
+     "sweep": "articulation phase 0→1 at t = 1",
+     "a": "body/belly.R#0",
+     "b": "wingR/secondaries#6",
+     "intervals": [
+      [
+       0.65625,
+       1
+      ]
+     ]
+    },
+    {
+     "sweep": "articulation phase 0→1 at t = 1",
+     "a": "body/belly.R#1",
+     "b": "wingR/secondaries#6",
+     "intervals": [
+      [
+       0,
+       1
+      ]
+     ]
+    }
+   ],
+   "panelIssues": [],
+   "thinAnnotated": 6,
+   "minAngleDeg": 5.140948912487798,
+   "minAltitude": 0.049599999999999964,
+   "flat": {
+    "maxOffPlane": 8.401993198403623e-10,
+    "overlaps": 0
+   },
+   "rigidity": 9.518354993076628e-10,
+   "seamGap": {
+    "rest": 1.372252981159261e-9,
+    "articulated": 1.3722531111075188e-9
+   },
+   "definitionsInvalid": [],
+   "targets": {
+    "span": 1.92,
+    "tail": 0.307,
+    "beak": 0.101,
+    "head": 0.951,
+    "breast": 0.895,
+    "primaries": 5,
+    "tailShape": "forked",
+    "dihedralArm": 5.826,
+    "dihedralHand": 5.566,
+    "headPitch": 1.3,
+    "tailFan": 8.71
+   },
+   "assignment": {
+    "tail.layer": -3.5,
+    "tail.fan": 7,
+    "tail.len": 0.96,
+    "beak": 0.095,
+    "r.brow": 0.046,
+    "r.nape": 0.046,
+    "r.breast": 0.08,
+    "r.belly": 0.064,
+    "dihedral.arm": 6,
+    "dihedral.hand": 6,
+    "fan.step": 7,
+    "hand.offset": 0.04,
+    "wrist.chord": 0.16,
+    "primaries": 0,
+    "arm.span": 0.34,
+    "primary.base": 0,
+    "secondaries": 0.11,
+    "covert.lift": 4,
+    "layer": 3
+   },
+   "measures": {
+    "spanRatio": 1.9172636217889378,
+    "tailRatio": 0.2999253122139925,
+    "beakRatio": 0.10391733646823546,
+    "headBreast": 0.575,
+    "length": 3.65675269319624,
+    "span": 7.010958912543876
+   },
+   "solver": {
+    "nodes": 20,
+    "backtracks": 1,
+    "eliminations": 48
+   }
+  },
+  {
+   "variant": "seed 6",
+   "instances": 42,
+   "sheets": 42,
+   "panels": 112,
+   "definitions": 40,
+   "buildMs": 108,
+   "verifyMs": 150,
+   "geo1": {
+    "verdict": "NOT VERIFIED",
+    "reasons": [
+     "4 pairs (0 sharing a design vertex) are certified only for u < 0.0000; above it they were tested exactly at interval midpoints (1/64) with no collision found"
+    ]
+   },
+   "counts": {
+    "analytic": 380,
+    "static": 7818,
+    "certified": 4364,
+    "sampled": 4,
+    "collision": 0
+   },
+   "witnesses": [
+    {
+     "sweep": "articulation phase 0→1 at t = 1",
+     "a": "body/belly.L#1",
+     "b": "wingL/secondaries#6",
+     "intervals": [
+      [
+       0,
+       0.3125
+      ]
+     ]
+    },
+    {
+     "sweep": "articulation phase 0→1 at t = 1",
+     "a": "body/belly.R#1",
+     "b": "wingR/secondaries#6",
+     "intervals": [
+      [
+       0,
+       0.3125
+      ]
+     ]
+    },
+    {
+     "sweep": "articulation phase 0→1 at t = 1",
+     "a": "body/belly.L#0",
+     "b": "wingL/secondaries#6",
+     "intervals": [
+      [
+       0,
+       0.1875
+      ]
+     ]
+    },
+    {
+     "sweep": "articulation phase 0→1 at t = 1",
+     "a": "body/belly.R#0",
+     "b": "wingR/secondaries#6",
+     "intervals": [
+      [
+       0,
+       0.1875
+      ]
+     ]
+    }
+   ],
+   "panelIssues": [],
+   "thinAnnotated": 8,
+   "minAngleDeg": 3.8660260939770894,
+   "minAltitude": 0.04960000000000001,
+   "flat": {
+    "maxOffPlane": 8.839305893140748e-10,
+    "overlaps": 0
+   },
+   "rigidity": 9.735995620818727e-10,
+   "seamGap": {
+    "rest": 2.6330810218366517e-9,
+    "articulated": 2.6330810218366517e-9
+   },
+   "definitionsInvalid": [],
+   "targets": {
+    "span": 2.303,
+    "tail": 0.296,
+    "beak": 0.13,
+    "head": 1.115,
+    "breast": 1.008,
+    "primaries": 5,
+    "tailShape": "wedge",
+    "dihedralArm": 1.621,
+    "dihedralHand": -9.227,
+    "headPitch": -4.422,
+    "tailFan": 7.292
+   },
+   "assignment": {
+    "tail.layer": -3.5,
+    "tail.fan": 5.5,
+    "tail.len": 0.92,
+    "beak": 0.125,
+    "r.brow": 0.056,
+    "r.nape": 0.048,
+    "r.breast": 0.088,
+    "r.belly": 0.074,
+    "dihedral.arm": 2,
+    "dihedral.hand": -10,
+    "fan.step": 7,
+    "hand.offset": 0.04,
+    "wrist.chord": 0.16,
+    "primaries": 0,
+    "arm.span": 0.42,
+    "primary.base": 2,
+    "secondaries": 0.11,
+    "covert.lift": 6,
+    "layer": 3
+   },
+   "measures": {
+    "spanRatio": 2.3478503586827366,
+    "tailRatio": 0.30228633036016894,
+    "beakRatio": 0.13627220110152952,
+    "headBreast": 0.6363636363636365,
+    "length": 3.669126908924553,
+    "span": 8.614560929170992
+   },
+   "solver": {
+    "nodes": 19,
+    "backtracks": 0,
+    "eliminations": 41
+   }
+  },
+  {
+   "variant": "seed 7",
+   "instances": 42,
+   "sheets": 42,
+   "panels": 112,
+   "definitions": 36,
+   "buildMs": 236,
+   "verifyMs": 155,
+   "geo1": {
+    "verdict": "FAIL",
+    "reasons": [
+     "2 collisions"
+    ]
+   },
+   "counts": {
+    "analytic": 380,
+    "static": 7818,
+    "certified": 4362,
+    "sampled": 4,
+    "collision": 2
+   },
+   "witnesses": [
+    {
+     "sweep": "articulation phase 0→1 at t = 1",
+     "a": "body/belly.L#0",
+     "b": "wingL/secondaries#6",
+     "intervals": [
+      [
+       0,
+       1
+      ]
+     ]
+    },
+    {
+     "sweep": "articulation phase 0→1 at t = 1",
+     "a": "body/belly.L#1",
+     "b": "wingL/secondaries#6",
+     "intervals": [
+      [
+       0,
+       1
+      ]
+     ]
+    },
+    {
+     "sweep": "articulation phase 0→1 at t = 1",
+     "a": "body/belly.R#0",
+     "b": "wingR/secondaries#6",
+     "intervals": [
+      [
+       0,
+       1
+      ]
+     ]
+    },
+    {
+     "sweep": "articulation phase 0→1 at t = 1",
+     "a": "body/belly.R#1",
+     "b": "wingR/secondaries#6",
+     "intervals": [
+      [
+       0,
+       1
+      ]
+     ]
+    }
+   ],
+   "panelIssues": [],
+   "thinAnnotated": 10,
+   "minAngleDeg": 3.096661137579896,
+   "minAltitude": 0.04960000000000006,
+   "flat": {
+    "maxOffPlane": 7.763494291879169e-10,
+    "overlaps": 0
+   },
+   "rigidity": 9.316780680279635e-10,
+   "seamGap": {
+    "rest": 1.5298760613815336e-9,
+    "articulated": 1.529876185948696e-9
+   },
+   "definitionsInvalid": [],
+   "targets": {
+    "span": 2.334,
+    "tail": 0.414,
+    "beak": 0.113,
+    "head": 1.13,
+    "breast": 0.901,
+    "primaries": 5,
+    "tailShape": "square",
+    "dihedralArm": 10.013,
+    "dihedralHand": -6.449,
+    "headPitch": -2.222,
+    "tailFan": 8.253
+   },
+   "assignment": {
+    "tail.layer": -3.5,
+    "tail.fan": 7,
+    "tail.len": 1.56,
+    "beak": 0.12,
+    "r.brow": 0.056,
+    "r.nape": 0.048,
+    "r.breast": 0.088,
+    "r.belly": 0.064,
+    "dihedral.arm": 10,
+    "dihedral.hand": -6,
+    "fan.step": 7,
+    "hand.offset": 0.04,
+    "wrist.chord": 0.16,
+    "primaries": 0,
+    "arm.span": 0.46,
+    "primary.base": 4,
+    "secondaries": 0.11,
+    "covert.lift": 6,
+    "layer": 3
+   },
+   "measures": {
+    "spanRatio": 2.2976362582496215,
+    "tailRatio": 0.40504271609470294,
+    "beakRatio": 0.11155449073224323,
+    "headBreast": 0.6363636363636365,
+    "length": 4.302829916117961,
+    "span": 9.886338028353805
+   },
+   "solver": {
+    "nodes": 27,
+    "backtracks": 8,
+    "eliminations": 202
+   }
+  },
+  {
+   "variant": "seed 8",
+   "instances": 42,
+   "sheets": 42,
+   "panels": 112,
+   "definitions": 40,
+   "buildMs": 118,
+   "verifyMs": 148,
+   "geo1": {
+    "verdict": "PASS",
+    "reasons": []
+   },
+   "counts": {
+    "analytic": 380,
+    "static": 7818,
+    "certified": 4368,
+    "sampled": 0,
+    "collision": 0
+   },
+   "witnesses": [],
+   "panelIssues": [],
+   "thinAnnotated": 6,
+   "minAngleDeg": 5.140948912487781,
+   "minAltitude": 0.04960000000000006,
+   "flat": {
+    "maxOffPlane": 1.2227222428995432e-9,
+    "overlaps": 0
+   },
+   "rigidity": 9.094935915499036e-10,
+   "seamGap": {
+    "rest": 2.970177237331095e-9,
+    "articulated": 2.9701775011040874e-9
+   },
+   "definitionsInvalid": [],
+   "targets": {
+    "span": 1.807,
+    "tail": 0.317,
+    "beak": 0.117,
+    "head": 0.851,
+    "breast": 1.108,
+    "primaries": 5,
+    "tailShape": "wedge",
+    "dihedralArm": 7.601,
+    "dihedralHand": -2.736,
+    "headPitch": -3.006,
+    "tailFan": 8.701
+   },
+   "assignment": {
+    "tail.layer": -3.5,
+    "tail.fan": 7,
+    "tail.len": 1,
+    "beak": 0.115,
+    "r.brow": 0.04,
+    "r.nape": 0.04,
+    "r.breast": 0.08,
+    "r.belly": 0.08,
+    "dihedral.arm": 8,
+    "dihedral.hand": -2,
+    "fan.step": 7,
+    "hand.offset": 0.04,
+    "wrist.chord": 0.16,
+    "primaries": 0,
+    "arm.span": 0.34,
+    "primary.base": 0,
+    "secondaries": 0.11,
+    "covert.lift": 4,
+    "layer": 3
+   },
+   "measures": {
+    "spanRatio": 1.8610364374064914,
+    "tailRatio": 0.3167170156548756,
+    "beakRatio": 0.12277741124951459,
+    "headBreast": 0.5,
+    "length": 3.7466175196116853,
+    "span": 6.9725917210228765
+   },
+   "solver": {
+    "nodes": 19,
+    "backtracks": 0,
+    "eliminations": 43
+   }
+  },
+  {
+   "variant": "seed 101",
+   "instances": 42,
+   "sheets": 42,
+   "panels": 112,
+   "definitions": 40,
+   "buildMs": 135,
+   "verifyMs": 144,
+   "geo1": {
+    "verdict": "PASS",
+    "reasons": []
+   },
+   "counts": {
+    "analytic": 380,
+    "static": 7818,
+    "certified": 4368,
+    "sampled": 0,
+    "collision": 0
+   },
+   "witnesses": [],
+   "panelIssues": [],
+   "thinAnnotated": 8,
+   "minAngleDeg": 4.413665457699429,
+   "minAltitude": 0.04959999999999997,
+   "flat": {
+    "maxOffPlane": 1.161619939127334e-9,
+    "overlaps": 0
+   },
+   "rigidity": 1.061739585139776e-9,
+   "seamGap": {
+    "rest": 2.6576884608627956e-9,
+    "articulated": 2.6576886369446226e-9
+   },
+   "definitionsInvalid": [],
+   "targets": {
+    "span": 2.095,
+    "tail": 0.301,
+    "beak": 0.11,
+    "head": 1.187,
+    "breast": 1.163,
+    "primaries": 5,
+    "tailShape": "wedge",
+    "dihedralArm": 7.205,
+    "dihedralHand": 5.768,
+    "headPitch": 4.178,
+    "tailFan": 6.385
+   },
+   "assignment": {
+    "tail.layer": -3.5,
+    "tail.fan": 4,
+    "tail.len": 0.92,
+    "beak": 0.105,
+    "r.brow": 0.056,
+    "r.nape": 0.056,
+    "r.breast": 0.096,
+    "r.belly": 0.088,
+    "dihedral.arm": 8,
+    "dihedral.hand": 6,
+    "fan.step": 7,
+    "hand.offset": 0.04,
+    "wrist.chord": 0.16,
+    "primaries": 0,
+    "arm.span": 0.38,
+    "primary.base": 1,
+    "secondaries": 0.11,
+    "covert.lift": 4,
+    "layer": 3
+   },
+   "measures": {
+    "spanRatio": 2.1533027409702865,
+    "tailRatio": 0.30263074844844134,
+    "beakRatio": 0.11441214283267756,
+    "headBreast": 0.5833333333333334,
+    "length": 3.67093902449,
+    "span": 7.904643063369107
+   },
+   "solver": {
+    "nodes": 20,
+    "backtracks": 1,
+    "eliminations": 60
+   }
+  },
+  {
+   "variant": "seed 202",
+   "instances": 40,
+   "sheets": 40,
+   "panels": 108,
+   "definitions": 34,
+   "buildMs": 123,
+   "verifyMs": 139,
+   "geo1": {
+    "verdict": "PASS",
+    "reasons": []
+   },
+   "counts": {
+    "analytic": 370,
+    "static": 7342,
+    "certified": 3976,
+    "sampled": 0,
+    "collision": 0
+   },
+   "witnesses": [],
+   "panelIssues": [],
+   "thinAnnotated": 8,
+   "minAngleDeg": 4.363864770177758,
+   "minAltitude": 0.049599999999999984,
+   "flat": {
+    "maxOffPlane": 8.728323064310928e-10,
+    "overlaps": 0
+   },
+   "rigidity": 1.1105918962250882e-9,
+   "seamGap": {
+    "rest": 1.4186211602403179e-9,
+    "articulated": 1.4186215571568528e-9
+   },
+   "definitionsInvalid": [],
+   "targets": {
+    "span": 2.128,
+    "tail": 0.336,
+    "beak": 0.077,
+    "head": 0.963,
+    "breast": 1.082,
+    "primaries": 4,
+    "tailShape": "square",
+    "dihedralArm": 7.145,
+    "dihedralHand": -0.225,
+    "headPitch": -2.856,
+    "tailFan": 8.823
+   },
+   "assignment": {
+    "tail.layer": -3.5,
+    "tail.fan": 7,
+    "tail.len": 1.08,
+    "beak": 0.075,
+    "r.brow": 0.046,
+    "r.nape": 0.046,
+    "r.breast": 0.088,
+    "r.belly": 0.08,
+    "dihedral.arm": 8,
+    "dihedral.hand": 0,
+    "fan.step": 7,
+    "hand.offset": 0.04,
+    "wrist.chord": 0.16,
+    "primaries": 0,
+    "arm.span": 0.42,
+    "primary.base": 1,
+    "secondaries": 0.11,
+    "covert.lift": 6,
+    "layer": 3
+   },
+   "measures": {
+    "spanRatio": 2.0776872527585906,
+    "tailRatio": 0.3309072506619465,
+    "beakRatio": 0.07840930656305316,
+    "headBreast": 0.5227272727272727,
+    "length": 3.8260764333982964,
+    "span": 7.949390233751693
+   },
+   "solver": {
+    "nodes": 19,
+    "backtracks": 0,
+    "eliminations": 43
+   }
+  },
+  {
+   "variant": "seed 303",
+   "instances": 42,
+   "sheets": 42,
+   "panels": 112,
+   "definitions": 36,
+   "buildMs": 141,
+   "verifyMs": 159,
+   "geo1": {
+    "verdict": "NOT VERIFIED",
+    "reasons": [
+     "4 pairs (0 sharing a design vertex) are certified only for u < 0.0000; above it they were tested exactly at interval midpoints (1/64) with no collision found"
+    ]
+   },
+   "counts": {
+    "analytic": 380,
+    "static": 7818,
+    "certified": 4364,
+    "sampled": 4,
+    "collision": 0
+   },
+   "witnesses": [
+    {
+     "sweep": "articulation phase 0→1 at t = 1",
+     "a": "body/belly.L#0",
+     "b": "wingL/secondaries#6",
+     "intervals": [
+      [
+       0,
+       1
+      ]
+     ]
+    },
+    {
+     "sweep": "articulation phase 0→1 at t = 1",
+     "a": "body/belly.L#1",
+     "b": "wingL/secondaries#6",
+     "intervals": [
+      [
+       0,
+       1
+      ]
+     ]
+    },
+    {
+     "sweep": "articulation phase 0→1 at t = 1",
+     "a": "body/belly.R#0",
+     "b": "wingR/secondaries#6",
+     "intervals": [
+      [
+       0,
+       1
+      ]
+     ]
+    },
+    {
+     "sweep": "articulation phase 0→1 at t = 1",
+     "a": "body/belly.R#1",
+     "b": "wingR/secondaries#6",
+     "intervals": [
+      [
+       0,
+       1
+      ]
+     ]
+    }
+   ],
+   "panelIssues": [],
+   "thinAnnotated": 8,
+   "minAngleDeg": 4.0108548461689955,
+   "minAltitude": 0.04959999999999997,
+   "flat": {
+    "maxOffPlane": 9.568937552051349e-10,
+    "overlaps": 0
+   },
+   "rigidity": 9.87329329404929e-10,
+   "seamGap": {
+    "rest": 1.9492033729987714e-9,
+    "articulated": 1.9492033729987714e-9
+   },
+   "definitionsInvalid": [],
+   "targets": {
+    "span": 2.327,
+    "tail": 0.276,
+    "beak": 0.111,
+    "head": 0.896,
+    "breast": 0.864,
+    "primaries": 5,
+    "tailShape": "square",
+    "dihedralArm": 2.17,
+    "dihedralHand": -0.929,
+    "headPitch": -6.633,
+    "tailFan": 5.13
+   },
+   "assignment": {
+    "tail.layer": -3.5,
+    "tail.fan": 4,
+    "tail.len": 0.8,
+    "beak": 0.1,
+    "r.brow": 0.046,
+    "r.nape": 0.04,
+    "r.breast": 0.074,
+    "r.belly": 0.064,
+    "dihedral.arm": 2,
+    "dihedral.hand": 0,
+    "fan.step": 7,
+    "hand.offset": 0.04,
+    "wrist.chord": 0.16,
+    "primaries": 0,
+    "arm.span": 0.46,
+    "primary.base": 1,
+    "secondaries": 0.11,
+    "covert.lift": 6,
+    "layer": 3
+   },
+   "measures": {
+    "spanRatio": 2.364618633936121,
+    "tailRatio": 0.27919685723730725,
+    "beakRatio": 0.11262549105667077,
+    "headBreast": 0.6216216216216217,
+    "length": 3.5515938376573075,
+    "span": 8.398164968697168
+   },
+   "solver": {
+    "nodes": 21,
+    "backtracks": 2,
+    "eliminations": 85
+   }
+  },
+  {
+   "variant": "extreme: window minimum",
+   "instances": 40,
+   "sheets": 40,
+   "panels": 108,
+   "definitions": 38,
+   "buildMs": 174,
+   "verifyMs": 145,
+   "geo1": {
+    "verdict": "FAIL",
+    "reasons": [
+     "2 collisions"
+    ]
+   },
+   "counts": {
+    "analytic": 370,
+    "static": 7342,
+    "certified": 3974,
+    "sampled": 0,
+    "collision": 2
+   },
+   "witnesses": [],
+   "panelIssues": [],
+   "thinAnnotated": 2,
+   "minAngleDeg": 5.140948912487793,
+   "minAltitude": 0.04959999999999993,
+   "flat": {
+    "maxOffPlane": 7.697952414398301e-10,
+    "overlaps": 0
+   },
+   "rigidity": 1.1163905910827054e-9,
+   "seamGap": {
+    "rest": 1.9492033729987714e-9,
+    "articulated": 1.9492033729987714e-9
+   },
+   "definitionsInvalid": [],
+   "targets": {
+    "span": 1.55,
+    "tail": 0.26,
+    "beak": 0.07,
+    "head": 0.85,
+    "breast": 0.85,
+    "primaries": 4,
+    "tailShape": "forked",
+    "dihedralArm": -4,
+    "dihedralHand": -10,
+    "headPitch": -8,
+    "tailFan": 5
+   },
+   "assignment": {
+    "tail.layer": -3.5,
+    "tail.fan": 4,
+    "tail.len": 0.72,
+    "beak": 0.06,
+    "r.brow": 0.04,
+    "r.nape": 0.04,
+    "r.breast": 0.074,
+    "r.belly": 0.064,
+    "dihedral.arm": -4,
+    "dihedral.hand": -10,
+    "fan.step": 7,
+    "hand.offset": 0.04,
+    "wrist.chord": 0.16,
+    "primaries": 0,
+    "arm.span": 0.18,
+    "primary.base": 0,
+    "secondaries": 0.11,
+    "covert.lift": 6,
+    "layer": 3
+   },
+   "measures": {
+    "spanRatio": 1.5319267325511416,
+    "tailRatio": 0.25862654233860033,
+    "beakRatio": 0.06950376165575615,
+    "headBreast": 0.5405405405405405,
+    "length": 3.453050515289966,
+    "span": 5.289820393222193
+   },
+   "solver": {
+    "nodes": 28,
+    "backtracks": 9,
+    "eliminations": 134
+   }
+  },
+  {
+   "variant": "extreme: window maximum",
+   "instances": 42,
+   "sheets": 42,
+   "panels": 112,
+   "definitions": 40,
+   "buildMs": 302,
+   "verifyMs": 159,
+   "geo1": {
+    "verdict": "PASS",
+    "reasons": []
+   },
+   "counts": {
+    "analytic": 380,
+    "static": 7818,
+    "certified": 4368,
+    "sampled": 0,
+    "collision": 0
+   },
+   "witnesses": [],
+   "panelIssues": [],
+   "thinAnnotated": 10,
+   "minAngleDeg": 2.816226101391148,
+   "minAltitude": 0.04959999999999999,
+   "flat": {
+    "maxOffPlane": 1.4499004913348656e-9,
+    "overlaps": 0
+   },
+   "rigidity": 9.909679743458355e-10,
+   "seamGap": {
+    "rest": 3.178248413740832e-9,
+    "articulated": 3.178248473024282e-9
+   },
+   "definitionsInvalid": [],
+   "targets": {
+    "span": 2.45,
+    "tail": 0.42,
+    "beak": 0.13,
+    "head": 1.2,
+    "breast": 1.2,
+    "primaries": 5,
+    "tailShape": "wedge",
+    "dihedralArm": 12,
+    "dihedralHand": 6,
+    "headPitch": 10,
+    "tailFan": 9
+   },
+   "assignment": {
+    "tail.layer": -3.5,
+    "tail.fan": 7,
+    "tail.len": 1.6,
+    "beak": 0.135,
+    "r.brow": 0.056,
+    "r.nape": 0.056,
+    "r.breast": 0.096,
+    "r.belly": 0.088,
+    "dihedral.arm": 12,
+    "dihedral.hand": 6,
+    "fan.step": 7,
+    "hand.offset": 0.04,
+    "wrist.chord": 0.16,
+    "primaries": 1,
+    "arm.span": 0.46,
+    "primary.base": 4,
+    "secondaries": 0.11,
+    "covert.lift": 6,
+    "layer": 3
+   },
+   "measures": {
+    "spanRatio": 2.4104553738971153,
+    "tailRatio": 0.41048589550433345,
+    "beakRatio": 0.12435063141705466,
+    "headBreast": 0.5833333333333334,
+    "length": 4.342559373011267,
+    "span": 10.467545577142296
+   },
+   "solver": {
+    "nodes": 37,
+    "backtracks": 18,
+    "eliminations": 260
+   }
+  }
+ ],
+ "silhouetteIoU": {
+  "view": "top",
+  "seeds": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8
+  ],
+  "matrix": [
+   [
+    1,
+    0.675,
+    0.524,
+    0.67,
+    0.668,
+    0.705,
+    0.604,
+    0.616
+   ],
+   [
+    0.675,
+    1,
+    0.66,
+    0.774,
+    0.895,
+    0.698,
+    0.556,
+    0.699
+   ],
+   [
+    0.524,
+    0.66,
+    1,
+    0.653,
+    0.667,
+    0.539,
+    0.397,
+    0.713
+   ],
+   [
+    0.67,
+    0.774,
+    0.653,
+    1,
+    0.715,
+    0.686,
+    0.56,
+    0.797
+   ],
+   [
+    0.668,
+    0.895,
+    0.667,
+    0.715,
+    1,
+    0.673,
+    0.529,
+    0.692
+   ],
+   [
+    0.705,
+    0.698,
+    0.539,
+    0.686,
+    0.673,
+    1,
+    0.582,
+    0.612
+   ],
+   [
+    0.604,
+    0.556,
+    0.397,
+    0.56,
+    0.529,
+    0.582,
+    1,
+    0.479
+   ],
+   [
+    0.616,
+    0.699,
+    0.713,
+    0.797,
+    0.692,
+    0.612,
+    0.479,
+    1
+   ]
+  ]
+ },
+ "reuse": [],
+ "provenance": [
+  {
+   "instance": "body/forehead.L",
+   "slot": "body.forehead",
+   "definition": "9cb88f6f3cea2eef",
+   "family": "band",
+   "parent": "body/crown.L",
+   "via": "back→front",
+   "decidedBy": [
+    "beak",
+    "r.brow"
+   ]
+  },
+  {
+   "instance": "body/crown.L",
+   "slot": "body.crown",
+   "definition": "266185141574f1fe",
+   "family": "band",
+   "parent": "body/neck.L",
+   "via": "back→front",
+   "decidedBy": [
+    "r.brow",
+    "r.nape"
+   ]
+  },
+  {
+   "instance": "body/neck.L",
+   "slot": "body.neck",
+   "definition": "783dde78fcd9d08f",
+   "family": "band",
+   "parent": "body/torso.L",
+   "via": "back→front",
+   "decidedBy": [
+    "r.nape",
+    "r.breast"
+   ]
+  },
+  {
+   "instance": "body/torso.L",
+   "slot": "body.torso",
+   "definition": "51da45d7488546b2",
+   "family": "band",
+   "decidedBy": [
+    "r.breast",
+    "r.belly"
+   ]
+  },
+  {
+   "instance": "body/belly.L",
+   "slot": "body.belly",
+   "definition": "3590b87885f6c142",
+   "family": "band",
+   "parent": "body/torso.L",
+   "via": "front→back",
+   "decidedBy": [
+    "r.belly"
+   ]
+  },
+  {
+   "instance": "body/beak.L",
+   "slot": "body.beak",
+   "definition": "821d9b9ebe3dd681",
+   "family": "cap",
+   "parent": "body/forehead.L",
+   "via": "base→front",
+   "decidedBy": [
+    "beak"
+   ]
+  },
+  {
+   "instance": "body/rump.L",
+   "slot": "body.rump",
+   "definition": "4ba4e2042c0f8015",
+   "family": "cap",
+   "parent": "body/belly.L",
+   "via": "base→back",
+   "decidedBy": []
+  },
+  {
+   "instance": "body/forehead.R",
+   "slot": "body.forehead",
+   "definition": "efd29dff0e8a881d",
+   "family": "band",
+   "parent": "body/forehead.L",
+   "via": "midline→midline",
+   "decidedBy": [
+    "beak",
+    "r.brow"
+   ]
+  },
+  {
+   "instance": "body/crown.R",
+   "slot": "body.crown",
+   "definition": "e097d919cdcf9518",
+   "family": "band",
+   "parent": "body/crown.L",
+   "via": "midline→midline",
+   "decidedBy": [
+    "r.brow",
+    "r.nape"
+   ]
+  },
+  {
+   "instance": "body/neck.R",
+   "slot": "body.neck",
+   "definition": "42dee45cc7834aab",
+   "family": "band",
+   "parent": "body/neck.L",
+   "via": "midline→midline",
+   "decidedBy": [
+    "r.nape",
+    "r.breast"
+   ]
+  },
+  {
+   "instance": "body/torso.R",
+   "slot": "body.torso",
+   "definition": "c6ead7e3b4a1eb48",
+   "family": "band",
+   "parent": "body/torso.L",
+   "via": "midline→midline",
+   "decidedBy": [
+    "r.breast",
+    "r.belly"
+   ]
+  },
+  {
+   "instance": "body/belly.R",
+   "slot": "body.belly",
+   "definition": "e8d560ae77770556",
+   "family": "band",
+   "parent": "body/belly.L",
+   "via": "midline→midline",
+   "decidedBy": [
+    "r.belly"
+   ]
+  },
+  {
+   "instance": "body/beak.R",
+   "slot": "body.beak",
+   "definition": "98d770d75b2aaa1d",
+   "family": "cap",
+   "parent": "body/beak.L",
+   "via": "midline→midline",
+   "decidedBy": [
+    "beak"
+   ]
+  },
+  {
+   "instance": "body/rump.R",
+   "slot": "body.rump",
+   "definition": "c7a8be54f5a97b0b",
+   "family": "cap",
+   "parent": "body/rump.L",
+   "via": "midline→midline",
+   "decidedBy": []
+  },
+  {
+   "instance": "wingL/arm",
+   "slot": "wing.arm",
+   "definition": "217b14c197b7752b",
+   "family": "plate",
+   "parent": "body/torso.L",
+   "via": "root→ridge.1@142°",
+   "decidedBy": [
+    "arm.span",
+    "wrist.chord",
+    "dihedral.arm"
+   ]
+  },
+  {
+   "instance": "wingL/hand",
+   "slot": "wing.hand",
+   "definition": "2b1c3d60ac8a7648",
+   "family": "plate",
+   "parent": "wingL/arm",
+   "via": "root→wrist@186°",
+   "decidedBy": [
+    "hand.offset",
+    "fan.step",
+    "dihedral.hand"
+   ]
+  },
+  {
+   "instance": "wingL/primary.0",
+   "slot": "wing.primary",
+   "definition": "3dc18ff85dadd5f0",
+   "family": "vane",
+   "parent": "wingL/hand",
+   "via": "root→socket.0@181°",
+   "decidedBy": [
+    "primaries",
+    "primary.base",
+    "layer"
+   ]
+  },
+  {
+   "instance": "wingL/primary.1",
+   "slot": "wing.primary",
+   "definition": "6c51e8fce33ede48",
+   "family": "vane",
+   "parent": "wingL/hand",
+   "via": "root→socket.1@175°",
+   "decidedBy": [
+    "primaries",
+    "primary.base",
+    "layer"
+   ]
+  },
+  {
+   "instance": "wingL/primary.2",
+   "slot": "wing.primary",
+   "definition": "243a4c9e8a019174",
+   "family": "vane",
+   "parent": "wingL/hand",
+   "via": "root→socket.2@181°",
+   "decidedBy": [
+    "primaries",
+    "primary.base",
+    "layer"
+   ]
+  },
+  {
+   "instance": "wingL/primary.3",
+   "slot": "wing.primary",
+   "definition": "243a4c9e8a019174",
+   "family": "vane",
+   "parent": "wingL/hand",
+   "via": "root→socket.3@175°",
+   "decidedBy": [
+    "primaries",
+    "primary.base",
+    "layer"
+   ]
+  },
+  {
+   "instance": "wingL/primary.4",
+   "slot": "wing.primary",
+   "definition": "ec8a955c2e83e4c2",
+   "family": "vane",
+   "parent": "wingL/hand",
+   "via": "root→socket.4@181°",
+   "decidedBy": [
+    "primaries",
+    "primary.base",
+    "layer"
+   ]
+  },
+  {
+   "instance": "wingL/alula",
+   "slot": "wing.alula",
+   "definition": "fee2e3413fbbc136",
+   "family": "vane",
+   "parent": "wingL/hand",
+   "via": "root→alula@172°",
+   "decidedBy": []
+  },
+  {
+   "instance": "wingL/secondaries",
+   "slot": "wing.secondaries",
+   "definition": "acd164bbe61eb546",
+   "family": "fringe",
+   "parent": "wingL/arm",
+   "via": "root→trailing@184°",
+   "decidedBy": [
+    "secondaries"
+   ]
+  },
+  {
+   "instance": "wingL/coverts",
+   "slot": "wing.coverts",
+   "definition": "c83139ce45dd4f09",
+   "family": "fringe",
+   "parent": "wingL/arm",
+   "via": "root→crease@186°",
+   "decidedBy": [
+    "covert.lift"
+   ]
+  },
+  {
+   "instance": "wingR/arm",
+   "slot": "wing.arm",
+   "definition": "3320f7f02e819271",
+   "family": "plate",
+   "parent": "body/torso.R",
+   "via": "root→ridge.1@142°",
+   "decidedBy": [
+    "arm.span",
+    "wrist.chord",
+    "dihedral.arm"
+   ]
+  },
+  {
+   "instance": "wingR/hand",
+   "slot": "wing.hand",
+   "definition": "a03b051e86d1053e",
+   "family": "plate",
+   "parent": "wingR/arm",
+   "via": "root→wrist@186°",
+   "decidedBy": [
+    "hand.offset",
+    "fan.step",
+    "dihedral.hand"
+   ]
+  },
+  {
+   "instance": "wingR/primary.0",
+   "slot": "wing.primary",
+   "definition": "4fb898939dd095b2",
+   "family": "vane",
+   "parent": "wingR/hand",
+   "via": "root→socket.0@181°",
+   "decidedBy": [
+    "primaries",
+    "primary.base",
+    "layer"
+   ]
+  },
+  {
+   "instance": "wingR/primary.1",
+   "slot": "wing.primary",
+   "definition": "91d2481b2ae3996a",
+   "family": "vane",
+   "parent": "wingR/hand",
+   "via": "root→socket.1@175°",
+   "decidedBy": [
+    "primaries",
+    "primary.base",
+    "layer"
+   ]
+  },
+  {
+   "instance": "wingR/primary.2",
+   "slot": "wing.primary",
+   "definition": "e1ab3d99eb8ba186",
+   "family": "vane",
+   "parent": "wingR/hand",
+   "via": "root→socket.2@181°",
+   "decidedBy": [
+    "primaries",
+    "primary.base",
+    "layer"
+   ]
+  },
+  {
+   "instance": "wingR/primary.3",
+   "slot": "wing.primary",
+   "definition": "e1ab3d99eb8ba186",
+   "family": "vane",
+   "parent": "wingR/hand",
+   "via": "root→socket.3@175°",
+   "decidedBy": [
+    "primaries",
+    "primary.base",
+    "layer"
+   ]
+  },
+  {
+   "instance": "wingR/primary.4",
+   "slot": "wing.primary",
+   "definition": "21650cb6c31c8dfc",
+   "family": "vane",
+   "parent": "wingR/hand",
+   "via": "root→socket.4@181°",
+   "decidedBy": [
+    "primaries",
+    "primary.base",
+    "layer"
+   ]
+  },
+  {
+   "instance": "wingR/alula",
+   "slot": "wing.alula",
+   "definition": "5793ed8b788f874c",
+   "family": "vane",
+   "parent": "wingR/hand",
+   "via": "root→alula@172°",
+   "decidedBy": []
+  },
+  {
+   "instance": "wingR/secondaries",
+   "slot": "wing.secondaries",
+   "definition": "07d6a9305150ec98",
+   "family": "fringe",
+   "parent": "wingR/arm",
+   "via": "root→trailing@184°",
+   "decidedBy": [
+    "secondaries"
+   ]
+  },
+  {
+   "instance": "wingR/coverts",
+   "slot": "wing.coverts",
+   "definition": "8b7afa72ae12d73b",
+   "family": "fringe",
+   "parent": "wingR/arm",
+   "via": "root→crease@186°",
+   "decidedBy": [
+    "covert.lift"
+   ]
+  },
+  {
+   "instance": "tail/plate.L",
+   "slot": "tail.plate",
+   "definition": "2fbfe815738a27d3",
+   "family": "plate",
+   "parent": "body/rump.L",
+   "via": "root→ridge.1@137.5°",
+   "decidedBy": [
+    "tail.fan"
+   ]
+  },
+  {
+   "instance": "tail/vane.L0",
+   "slot": "tail.vane",
+   "definition": "1ddf34e539284db1",
+   "family": "vane",
+   "parent": "tail/plate.L",
+   "via": "root→socket.0@185°",
+   "decidedBy": [
+    "tail.len",
+    "tail.layer"
+   ]
+  },
+  {
+   "instance": "tail/vane.L1",
+   "slot": "tail.vane",
+   "definition": "0edbfce5fb166b67",
+   "family": "vane",
+   "parent": "tail/plate.L",
+   "via": "root→socket.1@181.5°",
+   "decidedBy": [
+    "tail.len",
+    "tail.layer"
+   ]
+  },
+  {
+   "instance": "tail/vane.L2",
+   "slot": "tail.vane",
+   "definition": "0f846ed5d6edeeef",
+   "family": "vane",
+   "parent": "tail/plate.L",
+   "via": "root→socket.2@178°",
+   "decidedBy": [
+    "tail.len",
+    "tail.layer"
+   ]
+  },
+  {
+   "instance": "tail/plate.R",
+   "slot": "tail.plate",
+   "definition": "d52032cf9e888069",
+   "family": "plate",
+   "parent": "body/rump.R",
+   "via": "root→ridge.1@137.5°",
+   "decidedBy": [
+    "tail.fan"
+   ]
+  },
+  {
+   "instance": "tail/vane.R0",
+   "slot": "tail.vane",
+   "definition": "4c7069bfdfc122d3",
+   "family": "vane",
+   "parent": "tail/plate.R",
+   "via": "root→socket.0@182°",
+   "decidedBy": [
+    "tail.len",
+    "tail.layer"
+   ]
+  },
+  {
+   "instance": "tail/vane.R1",
+   "slot": "tail.vane",
+   "definition": "3c4ae0feff1c0eb1",
+   "family": "vane",
+   "parent": "tail/plate.R",
+   "via": "root→socket.1@178.5°",
+   "decidedBy": [
+    "tail.len",
+    "tail.layer"
+   ]
+  },
+  {
+   "instance": "tail/vane.R2",
+   "slot": "tail.vane",
+   "definition": "976bcdfec4f90ff9",
+   "family": "vane",
+   "parent": "tail/plate.R",
+   "via": "root→socket.2@175°",
+   "decidedBy": [
+    "tail.len",
+    "tail.layer"
+   ]
+  }
+ ]
+}
