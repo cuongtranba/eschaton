@@ -370,3 +370,17 @@ The following supersede the text above.
 4. **Determinism.** Quantising inputs does not make floating-point predicates exact. P3D-6 needs exact predicates, for example integer or rational arithmetic on the quantised inputs.
 5. **Warp metric.** The loft-quad warp depends on which corner is measured: 0.71 to 1.15 for square→diamond. For v5 in the actual `kit.loft` frames, it is up to 0.0089 L corner-to-plane, or 0.0032 L between diagonals, not 0.0039 L. A fixture must name its metric. **Proposed metric:** the distance between the two diagonals.
 6. **O1-a** (aspect-only families give triangles) was already stated in §3.1. The holdout additionally measured that most of those folds are below 8° (holdout composition §1.1).
+
+## 10. M0–M1 laboratory results for O1 (2026-11-28)
+
+Under owner decisions D-1 and D-3 (decision packet §0.3), O1 was narrowed to a frozen contract and tested. The contract is [`geometry-operator-lab/m0-o1-contract.md`](geometry-operator-lab/m0-o1-contract.md) v1.1, frozen before any script and independently reviewed. Scope: parallel planes, strictly convex sections, or one point or segment. The laboratory results are in [`geometry-operator-lab/README.md`](geometry-operator-lab/README.md).
+
+The contract's corrections **C1–C16** supersede §3.1 and §3.4 above within that scope. Among them:
+- near-parallel directions give small dihedral angles, not slivers;
+- an axis-aligned rectangle with only its aspect changed gives trapezoids, not triangles;
+- caps and wedges are not intrinsically flat;
+- a pairwise plane condition does not make a chain of tilted bands globally non-intersecting;
+- the predicates are exact, not quantisation alone;
+- the complexity is O(m + n) only for the merge.
+
+O1 stays a **research direction** (D-1), not a production API. Results 1–6 hold exactly on every tested case within that scope. Nothing here is claimed for tilted planes, non-convex sections, O2 or O3.

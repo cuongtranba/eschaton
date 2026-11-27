@@ -120,3 +120,15 @@ No absolute millisecond budget is set before a measurement exists.
 - **M3 milestone.** The off-path ring is a **seam** between band sheets, not a fold ([operators §9](geometry-operators.md#9-errata-after-the-independent-review-2026-11-27) item 1). The decisive question becomes: are the seams at off-path rings reported as seams with their dihedral and angle defect, and is the on-path ring reported as a tessellation ring?
 - **M1 fixture.** The warp metric must be named; proposed: the distance between the diagonals. The v5 warp figure is replaced by the reviewer's actual-frame values.
 - **Determinism.** It needs exact predicates, not quantisation alone (operators §9 item 4).
+
+## 9. Status after M0–M1 (2026-11-28)
+
+- **Authorization.** Owner decision D-3 (decision packet §0.3) authorized M0 and M1 only, in isolation.
+- **M0.** The O1 contract was frozen in [`geometry-operator-lab/m0-o1-contract.md`](geometry-operator-lab/m0-o1-contract.md): v1 at `58b424f`, then v1.1 at `33e7f67` after an independent mathematical review returned GO WITH AMENDMENTS. The freeze came before any script.
+- **M1.** It was implemented test-first under [`geometry-operator-lab/`](geometry-operator-lab/README.md) as standalone Python scripts (D-5).
+- **Differences from this proposal.** They are listed in contract §9 (C10–C16), with their reasons:
+  - the `thin-panel` control is reversed by the mathematics (C13);
+  - the "exact 2D triangle-pair" overlap test becomes a float separating-axis test with a stated band (C14);
+  - planarity and slices are checked exactly (C15);
+  - two-engine determinism is claimed only for what was compared (C16).
+- **Not started.** M2–M5, O2 and O3 need a new owner decision.
