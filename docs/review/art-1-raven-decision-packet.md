@@ -1,6 +1,6 @@
 # ART-1 Raven: owner decision packet (2026-11-27)
 
-- Status: **PARTLY DECIDED.** The owner decided ART-D1, ART-D2, ART-D3a and ART-D3b on 2026-11-27 (§0). *Later (§9.5): the generic-method round ended NO-GO for owner approval. B-2 v6 and v7 and the method were each reviewed NEEDS REVISION twice; bounded next actions are listed.* ART-D3c is not authorized. The B-2 flight revision went through two independent reviews (§7). Its latest reviewed version, **B-2 v5, was reviewed NEEDS REVISION and then NOT APPROVED by the owner** (ART-D3b, second ruling, §0.1): the concept is to be revised by a method that is generic for all objects, not bird-specific. The proposed generic method, the next B-2 version and their reviews are in §9. Open owner decisions and feasibility hypotheses are in §8. §1–§6 are the original decision request, kept as the record of what the owner was shown. Later edits to them are only notes marked as later: two link and status notes in §1 for the adopted files, a finger-count update in §6, and the base note below.
+- Status: **PARTLY DECIDED.** The owner decided ART-D1, ART-D2, ART-D3a and ART-D3b on 2026-11-27 (§0). *Later (§9.5): the generic-method round ended NO-GO for owner approval. B-2 v6 and v7 and the method were each reviewed NEEDS REVISION twice; bounded next actions are listed. Later (§0.2): the owner did **not approve B-2 v7** and redirected the work to method correction and geometry-operator research (§10).* ART-D3c is not authorized. The B-2 flight revision went through two independent reviews (§7). Its latest reviewed version, **B-2 v5, was reviewed NEEDS REVISION and then NOT APPROVED by the owner** (ART-D3b, second ruling, §0.1): the concept is to be revised by a method that is generic for all objects, not bird-specific. The proposed generic method, the next B-2 version and their reviews are in §9. Open owner decisions and feasibility hypotheses are in §8. §1–§6 are the original decision request, kept as the record of what the owner was shown. Later edits to them are only notes marked as later: two link and status notes in §1 for the adopted files, a finger-count update in §6, and the base note below.
 
 ## 0. Owner decisions recorded (2026-11-27)
 
@@ -37,6 +37,17 @@ What the ruling instructs, as recorded:
 - The perched direction (Sheet B) stays selected. Whether the perched sheets and the flight sheets are one folding stays unverified (§8.2, H8).
 
 B-2 v3, v4 and v5, their digests and their review records (§3 and §7) are kept unchanged as history. A next B-2 version is a new file with a new digest and inherits nothing (ART §2.5). The ruling authorizes the agent to record it and to revise the design. It does not adopt any new policy, approve any artwork, or authorize a merge, Geometry V4, Phase 4 or any phase transition.
+
+### 0.2 ART-D3b, third ruling: B-2 v7 not approved; method and operator research (2026-11-27)
+
+**Source.** The owner's explicit message, relayed to the agent in the Kanna handoff "Mathematical Geometry Operators research & laboratory proposal" dated 2026-11-27, issued against `main` @ `5886475d04db76f58105080f63d01426d2d72311` with draft PR #14 at `e2b018b609f85db57a84c502184f170df2274189`. **Recorded by the agent.** It is not a GitHub review and the identity is not cryptographically verified.
+
+| ID | Decision | Exactly what it covers | What it does not cover |
+|---|---|---|---|
+| **ART-D3b (v7)** | **NOT APPROVED** | Sheet B-2 v7, `docs/art/raven-concepts/raven-concept-b2-sumi-flight-v7.png`, SHA-256 `2f1dc0a790fc8dbe6a8e6f3ca6a7731ba9fceaa43ce38db5d8b172bf935f9e77`, first committed in evidence commit `418e2430d8a84025c9af49071e85e4fd47592bd4` (digest and commit re-verified against the file on 2026-11-27). Its compare and method boards (`2d2fa598…bb52f0`, `2eae501c…2a9c`, same commit) carry no approval either | Sheet B (perched), which stays the selected direction under ART-D3a at `554069333c47…4f74f`; v4 and v6 (still undecided, not approved); ART-D3c; Q1–Q6; ADR 0018 and 0019; the Phase 3 exit |
+| Scope of the round | **No more bird-specific artwork this round.** Correct P1, P7 and the §4.0 declaration rule of the proposed method; research composable geometry operators; write a Geometry Operator Laboratory **proposal only**; check transfer on a previously unused object category at design level | design and research documents on PR #14 | any runtime or experimental implementation, any new package or app, Geometry V4, Phase 4, Kanna Home, any merge, any visual approval, any change to an adopted policy. PR #14 and PR #11 stay drafts; PR #11 is untouched |
+
+The earlier rejection and pending statuses stand as recorded: v3 not approved as drawn, v5 not approved, v4 and v6 never decided. No concept is approved by this ruling. The work it authorizes is in §10.
 
 The original request follows.
 
@@ -261,7 +272,7 @@ The panel is labelled as a self-assessment. Its pixels were left unchanged so th
 
 | ID | Question | State |
 |---|---|---|
-| ART-1, B-2 | Approve, revise or reject the flight concept. **B-2 v5: NOT APPROVED** by the owner (§0.1). The next version is in §9 | open for the next version |
+| ART-1, B-2 | Approve, revise or reject the flight concept. **B-2 v5: NOT APPROVED** by the owner (§0.1). The next version is in §9. *Later (§0.2): **B-2 v7 NOT APPROVED**; no bird artwork this round* | open; no B-2 version is approved |
 | ART-D3c | Numerical tolerances for ART-4 (concept README §E.0) | not authorized; open |
 | B caveats | Whether B's bib, front column and dark triangles (§3) need a revision of Sheet B | open (not raised by the owner) |
 | ADR 0006 | Whether moving pieces, such as a flying raven, carry hatching | open |
