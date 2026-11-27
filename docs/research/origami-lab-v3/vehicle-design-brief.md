@@ -126,3 +126,17 @@ The count is about 66 sheets: about 24 for the wheels, 14 for the body and 8 for
 2. **One lofted body with wheel arches cut into it.** Non-convex panels and a target-mesh source.
 3. **Flat faceted disc wheels (V1).** They have no thickness and read as decals from the side.
 4. **Fully enclosed 1950s pontoon body.** It needs wheel-arch cut-outs and hides the parts that make the kit modular.
+
+## 9. Iteration log (changes made during implementation, after the brief commit `0c9db3d`)
+
+Logged per GEO §1.8. Each change was forced by a check or by the implementer's look at the clay images.
+
+| # | Change | Why |
+|---|---|---|
+| 1 | Constant floor height 0.42; the deck follows each station's scale; the floor is flat (B and K both at −0.38). Narrowing at the axle stations removed | A sloped floor tilted the hanger, so the tyres missed the ground by 6.4e-4. Now hangers hang exactly vertical (90°) and axles sit at exactly 112.5°, the tyre octagon's 22.5° facet. Tyres touch the ground to 2.5e-11 |
+| 2 | Fenders 0.30 wide on chamfered running-board ends, 0.06 outboard of the body side | Flush fenders lay along the body side (edge contact, exact test) whenever a full-width station fell inside a wheel well |
+| 3 | Cabin centre window changed from ±0.30 to between 0.50 behind and 0.30 ahead of the wheelbase midpoint | The reference cars (1940 Chevrolet) sit the cabin about 0.1 L behind; the original ±0.30 rejected the brief's own hero targets |
+| 4 | Grille: two slats per side on the outer crown rims; slats are the shared 0.36 × 0.14 blunt vane | The innermost pair crossed at the midline (mirror images). Pointed 0.48 slats hung below the floor as fangs |
+| 5 | A running-board end within 0.06 of another station snaps onto it, and that fender's radius follows. A rear axle under the rear window becomes the rear-window base. The windshield and rear window use an explicit rising triangulation | Derived stations colliding with cabin stations made most targets infeasible. The greedy stitch produced a glass triangle lying in a tub crown facet (coplanar overlap) |
+| 6 | The cabin is segmented at every tub station between roof front and rear; pillars and window bays are inherited per segment | A pillar spanning two tub edges is a T-junction (open seam) |
+| 7 | Sheet count about 80–92 (output) | Wheels (6 sheets each plus axle and hanger) and per-station body bands dominate. No sheet closes on itself |

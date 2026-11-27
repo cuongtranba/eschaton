@@ -153,3 +153,20 @@ Total: about 41 sheets, each a designed module (V2 had 48, about 20 of them left
 1. **Keep the V2 loft and fix only the listed defects.** Rejected: it still violates GEO-7.
 2. **Primaries as one fringe sheet.** Rejected for the primaries: separate vanes give independent layering and are detachable, the natural unit for Collapse. Fringes are kept for secondaries and coverts, where the row reads as one tract.
 3. **A separate hood-shaped head module over the body front.** Rejected: its edges would leave a hollow throat visible from below. The head is two band segments plus the beak cap.
+
+## 8. Iteration log (changes made during implementation, after the brief commit `0c9db3d`)
+
+Logged per GEO §1.8. These changes do not retroactively satisfy GEO-0 for the code written before them. Each was forced by a check (contact, validity, solver infeasibility) or by the implementer's look at the clay images, and each is recorded here with its reason.
+
+| # | Change | Why |
+|---|---|---|
+| 1 | Spine heights S5 −0.002, S6 0.010, rump 0.020 (were 0.010, 0.016, 0.024) | With the tabled values the back was level from S4 to S5, which repeated V2's flat back. The back now falls from the shoulder hump to the tail |
+| 2 | Arm camber crease runs corner to corner, from the shoulder's leading corner to the wrist's trailing corner (was 35 % chord root → 35 % wrist) | A port must be one panel's edge; a crease ending mid-edge splits both the shoulder and the wrist port |
+| 3 | Covert row stops short of both ends (fringe insets 0.30 at the wrist and 0.22 at the shoulder) | The innermost tongue crossed the torso (exact contact test). At the wrist the crease meets the trailing edge, so coverts there sat on the secondaries' roots |
+| 4 | Fringe tongues side by side (spread 1.0) with blunt tips | Tongues of one sheet cannot overlap in the flat sheet (paper cannot overlap itself; the compiler split the sheet). Overlap now happens only between separate modules (coverts over secondaries, vanes) |
+| 5 | Primaries 0.26 cells wide; blunt (inner) and emarginate (outer) tips. Lengths = a shape of index offsets + a solver-chosen base on the ladder 0.96–2.64 | The first clay images read as needles and splinters. Index offsets let the span constraint pick length without changing the stagger |
+| 6 | Ladders refined and widened: beak 0.055–0.15 (step 0.005), tail vane 0.64–1.84 (0.04), arm span 0.18–0.46, primary fan 7 / 8.5 / 10°, covert lift 4–12° | The solver reported windows unreachable and ladder steps coarser than the tolerances. Beak/L is measured on the built bird, so the parameter ladder must extend past the window. Each half-step is now under its tolerance |
+| 7 | Tail vanes 0.26 cells wide, spatulate, stacked monotonically (each outer vane lower; step chosen by the solver from ±2 / 3.5 / 5°) | Alternating layering crossed for short tails (exact contact test). Shingle stacking is how a fanned tail overlaps |
+| 8 | Alula 0.36 × 0.14 cells, blunt (was 0.48 pointed) | Shared definition with the vehicle grille slats; pointed slats read as fangs on the car |
+| 9 | Two-stage search (body and tail, then wings against the fixed body) with the plan's coupled-first variable order; each geometric constraint scoped to the variables that change it | One-stage search with whole-bird constraints exhausted its budget, and MRV ordering thrashed on body radii that cannot fix a tail dead end |
+| 10 | Covert clearance measured against the secondaries only (sheets without a shared port), as the construction brief §4 states | The first implementation measured coverts against the arm they are hinged to, where clearance is zero at the root by construction |
