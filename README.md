@@ -37,6 +37,7 @@ Open the URL, pick items in the left catalog, drag the **Fold** slider or press 
 | Physical WebGPU manual test (Apple M5 Pro run reported; the owner's RTX 5070 run is pending) | [`docs/testing/webgpu-manual-test.md`](docs/testing/webgpu-manual-test.md) |
 | Architecture overview: dependency graph, data flows, Genesis worker contracts | [`docs/architecture/overview.md`](docs/architecture/overview.md) |
 | Decision records and the pending list | [`docs/decisions/`](docs/decisions/README.md) |
+| Geometry quality gates GEO-0…GEO-7 (adopted standard for judging object geometry; approves no model) | [`docs/governance/geometry-quality-gates.md`](docs/governance/geometry-quality-gates.md) |
 | Research notes | [`docs/research/phase-0.md`](docs/research/phase-0.md), [`docs/research/look-dev.md`](docs/research/look-dev.md) |
 | Benchmarks (recorded evidence, methodology) | [`benchmarks/README.md`](benchmarks/README.md); Phase 3 district workload [`benchmarks/phase-3/`](benchmarks/phase-3/README.md); Phase 0 baseline [`benchmarks/phase-0/2026-11-24-e9e50c527/report.md`](benchmarks/phase-0/2026-11-24-e9e50c527/report.md) |
 | Screenshots | [`docs/screenshots/`](docs/screenshots/) |
