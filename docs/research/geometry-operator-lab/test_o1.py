@@ -86,10 +86,13 @@ class Fixtures(unittest.TestCase):
                 self.assertEqual((kinds.count("triangle"), kinds.count("trapezoid")), (exp["triangle"], exp["trapezoid"]))
                 if "owners" in exp:
                     self.assertEqual([f["owner"] for f in band["faces"]], exp["owners"])
+                for key in ("area_a", "area_b", "area_mid", "volume"):
+                    num, den = band[key]
+                    self.assertTrue(den > 0 and math.gcd(num, den) == 1, (key, band[key]))
                 if "area_mid" in exp:
-                    self.assertEqual(band["area_mid"], exp["area_mid"])
+                    self.assertEqual(Fraction(*band["area_mid"]), Fraction(*exp["area_mid"]))
                 if "volume" in exp:
-                    self.assertEqual(band["volume"], exp["volume"])
+                    self.assertEqual(Fraction(*band["volume"]), Fraction(*exp["volume"]))
                 self.assertEqual(orc.surface_topology([f["vertices"] for f in band["faces"]])["chi"], exp["chi"])
 
     def test_f1_faces_lie_in_the_frozen_planes(self):
@@ -175,6 +178,22 @@ class Chains(unittest.TestCase):
             drop = max(range(3), key=lambda i: abs(n[i]))
             proj = {tuple(c for i, c in enumerate(p) if i != drop): p for p in merged[n]}
             self.assertEqual({proj[v] for v in orc.hull2(list(proj))}, {tuple(v) for v in f["vertices"]})
+
+    def test_on_path_rings_have_every_edge_dissolvable_and_every_vertex_flat(self):
+        """Contract 5 consistency check; added after the first green run (disclosed in the README)."""
+        for i, (a, b) in enumerate(R1[:40]):
+            with self.subTest(i):
+                lo, hi = (a, b) if a["z"] < b["z"] else (b, a)
+                va = [(2 * x, 2 * y) for x, y in lo["vertices"]]
+                vb = [(2 * x, 2 * y) for x, y in hi["vertices"]]
+                mid = [[int(x), int(y)] for x, y in orc.minkowski_hull(va, vb, Fraction(1, 2))]
+                h = hi["z"] - lo["z"]
+                res = o1.chain([{"z": 0, "vertices": [list(v) for v in va]}, {"z": h, "vertices": mid},
+                                {"z": 2 * h, "vertices": [list(v) for v in vb]}])
+                ring = res["chain"]["rings"][0]
+                self.assertEqual(ring["kind"], "tessellation-ring")
+                self.assertTrue(all(c == "dissolvable" for _, c in ring["edges"]))
+                self.assertTrue(all(ring["vertex_flat"]), ring["vertex_angle_deg"])
 
     def test_mixed_ring_dissolves_only_the_flat_y_edges(self):
         fx = FX["chains"]["F12"]

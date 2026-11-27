@@ -1,0 +1,22 @@
+# M1 green runs (Python 3.9.6)
+# command: python3 -m unittest discover -s docs/research/geometry-operator-lab -p 'test_*.py'
+
+## Run 1: first run of the implementation against the red-commit tests (0770c03), unchanged
+Ran 24 tests in 16.669s
+FAILED (failures=4)
+FAIL: test_fixture_bands_have_the_frozen_topology_counts_owners_areas_and_volumes (test_o1.Fixtures) [F1]
+AssertionError: Lists differ: [3500000000000, 1] != [7000000000000, 2]
+FAIL: test_fixture_bands_have_the_frozen_topology_counts_owners_areas_and_volumes (test_o1.Fixtures) [F4]
+AssertionError: Lists differ: [2250000000000, 1] != [9000000000000, 4]
+FAIL: test_fixture_bands_have_the_frozen_topology_counts_owners_areas_and_volumes (test_o1.Fixtures) [F5]
+AssertionError: Lists differ: [2500000000000, 1] != [5000000000000, 2]
+FAIL: test_fixture_bands_have_the_frozen_topology_counts_owners_areas_and_volumes (test_o1.Fixtures) [F8]
+AssertionError: Lists differ: [1500000000000, 1] != [3000000000000, 2]
+
+Cause: the fixture literals for area_mid were not in lowest terms (e.g. [7000000000000, 2]); the implementation returns the
+contract's lowest-terms form ([3500000000000, 1]). The values are equal. Resolution: the test compares the rational values and
+asserts the lowest-terms promise (den > 0, gcd = 1) on every rational field. fixtures.json, the oracles and every tolerance are unchanged.
+
+## Run 2: after the comparison fix, plus the contract-5 on-path consistency test that the red commit had omitted
+Ran 25 tests in 22.205s
+OK
