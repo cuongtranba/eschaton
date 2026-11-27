@@ -94,3 +94,16 @@ Also rejected: bell, folding fan or umbrella, shell or insect, furniture, and th
 | 5 | Rose and Kapuscinski, Stanford, *Biwa* (gagaku strings) | <https://gagaku.stanford.edu/en/strings/biwa> | facts only | about 106 cm long; flat back, shallower than a Western lute; four strings and four raised frets |
 
 **Not sourced:** the body depth on its own (the recorded depths are overall figures and disagree between records) and the pegbox angle. The brief marks every value it derives from these as a design assumption.
+
+## 4. Independent review
+
+*Pending: recorded after a separate reviewer has inspected the sheet pixels and the reasoning.*
+
+## 5. Files
+
+| File | What | Commit order |
+|---|---|---|
+| [`brief.md`](brief.md) | design target: frozen M3 §5 steps 1–6, with the report plan fixed in advance | `ff0b4a2`, before any drawing or computation |
+| [`holdout-biwa-sheet.png`](holdout-biwa-sheet.png) | original design drawing: front, side, end view, three-quarter sketch, section strip, pegbox flat pattern, silhouettes at 96/48/24 px, read-outs | after the brief |
+| [`source/holdout_sheet.py`](source/holdout_sheet.py) | draws the sheet from the brief's numbers (Pillow). It contains no operator or diagnostic code | after the brief |
+| [`composition.md`](composition.md) | worked O1/O2/O3 composition, frozen-principle read-outs, transfer against expectation, failures and limits | after the brief |
