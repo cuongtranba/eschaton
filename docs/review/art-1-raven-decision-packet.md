@@ -1,6 +1,29 @@
 # ART-1 Raven: owner decision packet (2026-11-27)
 
-- Status: **DECISION REQUEST. Nothing here is decided, approved or adopted.** This packet asks the owner for three separate decisions:
+- Status: **PARTLY DECIDED.** The owner decided ART-D1, ART-D2, ART-D3a and ART-D3b on 2026-11-27 (§0). ART-D3c is not authorized. A revised B-2 flight concept is pending a new owner ART-1 decision (§7). §1–§6 are the original decision request, kept unchanged as the record of what the owner was shown.
+
+## 0. Owner decisions recorded (2026-11-27)
+
+**Source.** The owner's explicit message, relayed to the agent in the Kanna handoff "Art Direction adoption, Concept B flight revision, and PR #13 merge" dated 2026-11-27. **Recorded by the agent.** This is not a GitHub human review and the identity is not cryptographically verified.
+
+| ID | Decision | Exactly what it covers | What it does not cover |
+|---|---|---|---|
+| **ART-D1** | **Adopt ART-0…ART-5** | The gates, now at [`docs/governance/art-quality-gates.md`](../governance/art-quality-gates.md), with an "Art direction" section in `AGENTS.md` (to which `CLAUDE.md` is a symlink) | Any change to GEO-0…GEO-7, which ART complements and never replaces or weakens; any automated enforcement or ruleset change (none was made) |
+| **ART-D2** | **Adopt the Visual Bible** | [`docs/art/visual-bible.md`](../art/visual-bible.md) as the artistic reference for object form | Precedence over the master plan or accepted ADRs; any claim of physical feasibility |
+| **ART-D3a** | **Select Concept B, "Sumi Sculptural Raven", perched, as the artistic direction** | Sheet B v4, `docs/art/raven-concepts/raven-concept-b-sumi.png`, SHA-256 `554069333c47d2c8adde05f0fa4866be5d278d27873807cac7e76a694ec4f74f` (verified against the file on 2026-11-27; first committed in `e777efd`) | Final object quality; geometry; foldability; A or C (neither is approved); B's open defects in §3 (the hackle bib, the front column and the dark triangles stay open and are not silently redesigned); the tolerances of ART-D3c |
+| **ART-D3b** | **Revise B-2's wing and flight pose before approval** | B-2 v3 (`raven-concept-b2-sumi-flight.png`, SHA-256 `60887d90…2122672`) is **not approved as drawn**. B-2 stays pending revision and review | It is not an approved flight design. A revised B-2 does not inherit any approval |
+| ART-D3c | Numerical tolerances for ART-4 | **Not authorized.** The values in the concept README §E.0 stay proposals | — |
+| Merge | PR #13 may be merged after the decisions are recorded and review and CI are satisfactory | **This PR only** | Under GOV-1, the merge approves no concept, no tolerance, no geometry and no phase gate |
+
+**Unchanged by these decisions:**
+- Phase 3 stays open, and Phase 4 is not authorized. P3D-2 has not been given.
+- Q1–Q6 and ADR 0019 keep their current statuses.
+- No Geometry V4 work is authorized. PR #11 is untouched.
+- Historical sheets, review records, digests and provenance are kept. A new sheet version or a material change (ART §2.5) is a new file with a new digest. It is `NOT VERIFIED` until the owner decides on it.
+
+The original request follows.
+
+- Original status (before §0): **DECISION REQUEST. Nothing here is decided, approved or adopted.** This packet asks the owner for three separate decisions:
   - an ART-1 concept choice;
   - whether to adopt the ART gates;
   - whether to adopt the Visual Bible.
@@ -27,8 +50,8 @@ The three sheets and the two comparison boards are open in this order:
 5. [Why V3 failed, against A and B](../art/raven-concepts/v3-failure-anatomy.png)
 
 Supporting documents:
-- [Visual Bible (proposed)](../art/visual-bible.md)
-- [ART-0…ART-5 proposal](../governance/art-quality-gates-proposal.md)
+- [Visual Bible](../art/visual-bible.md) (proposed at the time; adopted since, §0)
+- [ART-0…ART-5](../governance/art-quality-gates.md) (proposed at the time as `art-quality-gates-proposal.md`; adopted and renamed since, §0)
 - [Concept README with construction feasibility](../art/raven-concepts/README.md) (§E)
 - [Sources](../research/art-direction-sources.md)
 

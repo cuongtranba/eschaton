@@ -1,11 +1,13 @@
-# Art quality gates (ART-0 … ART-5): proposal
+# Art quality gates (ART-0 … ART-5): adopted standard
 
-- Status: **PROPOSAL, design only, not adopted.** Prepared 2026-11-27 against `main` @ `583d563` for the owner's decision. Nothing here is in force. `AGENTS.md`, the adopted geometry gates and CI are unchanged.
+- Status: **ADOPTED** by owner decision **ART-D1** on 2026-11-27. The owner adopted the **rules**; no concept, model or verdict is approved by that decision. Decision record: [`docs/review/art-1-raven-decision-packet.md`](../review/art-1-raven-decision-packet.md) §0 (the owner's explicit message relayed in the 2026-11-27 handoff, recorded by the agent; it is not a GitHub human review and not a cryptographically verified identity).
+- In force: repository-wide once this file and the matching section in `AGENTS.md` are merged into `main`. Enforcement is by review against this document. **No automated enforcement exists** and none was added: no CI job reads this file and no repository ruleset changed.
+- History: drafted as `docs/governance/art-quality-gates-proposal.md` on PR #13 against `main` @ `583d563`; renamed here on adoption. The text of §1–§6 is unchanged by adoption.
 - Relationship: these gates **complement** the adopted [geometry quality gates](geometry-quality-gates.md) (GEO-0…GEO-7). They do not replace, weaken or reinterpret any GEO rule. Where the two could be read differently, GEO wins until the owner says otherwise.
 - Prefix: `ART-` is not used by any other label set in the repository (GOV, CL, GEO, G, W, D, R, C and P3D are taken).
 - Scope: any new or changed **visible object design** (creatures, vehicles, architecture, plants, props) intended for production or presented for visual acceptance.
 - Out of scope: phase gates, ADRs, merges, Q1–Q6, ADR 0019, and every construction contract decision. Those stay with their own processes (GOV-1: merge, gate, ADR, visual, next-phase authorisation and release are separate decisions).
-- Design reference: the proposed [Visual Bible](../art/visual-bible.md).
+- Design reference: the adopted [Visual Bible](../art/visual-bible.md) (ART-D2).
 
 ## 1. Why
 
@@ -160,20 +162,33 @@ flowchart LR
 - **ART-4 FAIL (4.4).** The implementation lengthens the tail by 20% to satisfy a port constraint, and the change is not sent back for re-approval.
 - **ART-5 NOT VERIFIED (5.1).** The ink shader changed after the reviewer's pass, so the verdict returns to `NOT VERIFIED`.
 
-## 7. Minimal integration, if the owner adopts this
+## 7. Integration on adoption
 
-Nothing below is done by this proposal.
+Done on adoption (2026-11-27):
 
-1. Add one line to `AGENTS.md` that points to this file and the Visual Bible, as was done for GEO.
-2. Rename this file to `art-quality-gates.md` with status "adopted", and record the decision identity.
-3. Optionally add an `ART-1` field to the GEO reporting template (GEO §10).
+1. `AGENTS.md` (to which `CLAUDE.md` is a symlink) has an "Art direction" section that points to this file and to the Visual Bible, as was done for GEO.
+2. This file was renamed from `art-quality-gates-proposal.md` and carries the decision identity above.
 
-No CI enforcement is proposed. As with GEO, enforcement is by review.
+Not done: an `ART-1` field in the GEO reporting template (GEO §10) was optional and was not added. No CI enforcement exists; as with GEO, enforcement is by review.
 
-## 8. Decisions requested from the owner
+## 8. Owner decisions
 
-| ID | Question | Options |
+| ID | Question | State (2026-11-27) |
 |---|---|---|
-| ART-D1 | ART gates | adopt · edit · defer · reject |
-| ART-D2 | Visual Bible as the canonical art-direction reference for object form | adopt · edit · defer · reject |
-| ART-D3 | Raven concept (ART-1) | see [`docs/review/art-1-raven-decision-packet.md`](../review/art-1-raven-decision-packet.md) |
+| ART-D1 | ART gates | **adopted** (this file) |
+| ART-D2 | Visual Bible as the canonical art-direction reference for object form | **adopted** ([`visual-bible.md`](../art/visual-bible.md)) |
+| ART-D3a | Raven concept (ART-1) | **Concept B (perched) selected as the artistic direction**, at the sheet digest recorded in the [decision packet](../review/art-1-raven-decision-packet.md) §0 |
+| ART-D3b | B-2 flight wing and pose | **revise before approval**; not approved as drawn. Any revised B-2 is pending a new owner ART-1 decision |
+| ART-D3c | Numerical tolerances for ART-4 | **not authorized**; the proposed values stay proposals |
+
+## 9. Current ART gate state for the Raven
+
+| Gate | State | Why |
+|---|---|---|
+| ART-0 | research recorded, not graded | sources in [`art-direction-sources.md`](../research/art-direction-sources.md) |
+| ART-1, B perched | **direction selected by the owner** (1.4 recorded for the artistic direction only) | selecting a direction does not approve final object quality or geometry; B's open defects are listed in the packet §3 |
+| ART-1, B-2 flight | `NOT VERIFIED` | revision requested (ART-D3b); a revised sheet needs independent review and a new owner decision |
+| ART-1 tolerances | `NOT VERIFIED` | ART-D3c not authorized |
+| ART-2 … ART-5 | `NOT VERIFIED` | no implementation exists; Geometry V4 is not authorized |
+
+A material change (§2.5) to the selected B sheet, or a new version of any sheet, does not inherit an earlier decision. It is a new file with a new digest, and it stays `NOT VERIFIED` until the owner decides on it.

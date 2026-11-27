@@ -1,6 +1,8 @@
 # Raven concepts A · B (+ B-2) · C (ART-1 candidates)
 
-> **Status: PROPOSED CONCEPT ARTWORK — pending owner ART-1 review. Not approved. Not implemented geometry.** The sheets are design artifacts. They are not production meshes, not geometry contracts, and not evidence for any GEO gate. Physical foldability, collision, closure and structural bonds are **NOT VERIFIED** for any concept. They apply the proposed [Visual Bible](../visual-bible.md). The owner decision packet is [`docs/review/art-1-raven-decision-packet.md`](../../review/art-1-raven-decision-packet.md).
+> **Status: CONCEPT ARTWORK. Not implemented geometry.** On 2026-11-27 the owner selected **Concept B (perched), Sheet B v4 at SHA-256 `554069333c47d2c8adde05f0fa4866be5d278d27873807cac7e76a694ec4f74f`, as the artistic direction** (ART-D3a). That selects a direction. It does not approve final object quality, geometry or foldability. **B-2 v3 is not approved** (ART-D3b: revise before approval), and any revised B-2 is pending a new owner ART-1 decision. A and C are not approved. ART-D3c (tolerances) is not authorized. Record: [decision packet](../../review/art-1-raven-decision-packet.md) §0.
+>
+> The sheets are design artifacts. They are not production meshes, not geometry contracts, and not evidence for any GEO gate. Physical foldability, collision, closure and structural bonds are **NOT VERIFIED** for any concept. The sheets apply the adopted [Visual Bible](../visual-bible.md). The labels printed on the historical sheets ("pending owner ART-1 review") describe their state when they were drawn, and the images are kept unchanged.
 
 ## Artwork
 

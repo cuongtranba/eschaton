@@ -1,14 +1,14 @@
 # Eschaton Visual Bible
 
-> **Status: PROPOSED — not adopted.** This is a design proposal prepared on 2026-11-27 for the owner's review. It does not change any adopted rule, gate, ADR, or phase decision. The adopted geometry gates (GEO-0…GEO-7, [`docs/governance/geometry-quality-gates.md`](../governance/geometry-quality-gates.md)) stay authoritative and unchanged. The companion gate proposal is [`docs/governance/art-quality-gates-proposal.md`](../governance/art-quality-gates-proposal.md). Sources, with use and licence status, are listed in [`docs/research/art-direction-sources.md`](../research/art-direction-sources.md). The three Raven concepts that apply this bible are in [`docs/art/raven-concepts/`](raven-concepts/README.md).
+> **Status: ADOPTED as the artistic reference for object form** by owner decision **ART-D2** on 2026-11-27 (record: [`docs/review/art-1-raven-decision-packet.md`](../review/art-1-raven-decision-packet.md) §0). Adoption makes this the art-direction reference; it does not change any other adopted rule, gate, ADR or phase decision. The adopted geometry gates (GEO-0…GEO-7, [`docs/governance/geometry-quality-gates.md`](../governance/geometry-quality-gates.md)) stay authoritative and unchanged. The companion gates are the adopted [ART-0…ART-5](../governance/art-quality-gates.md). Sources, with use and licence status, are listed in [`docs/research/art-direction-sources.md`](../research/art-direction-sources.md). The Raven concepts that apply this bible are in [`docs/art/raven-concepts/`](raven-concepts/README.md).
 
-This document is meant to be the single canonical art-direction reference **for object form and design intent**. It builds on, and does not replace:
+This document is the canonical art-direction reference **for object form and design intent**. It builds on, and does not replace:
 
 - master plan §2 (art direction, tokens and composition);
 - ADR 0006 (the ink rendering strategy);
 - [`docs/research/look-dev.md`](../research/look-dev.md) (P0.5 look-dev notes).
 
-If the owner adopts it, other documents link here instead of restating it.
+**Precedence.** The master plan and accepted ADRs outrank this bible: where they conflict, they win and this bible is corrected. The bible is an **artistic** reference. It describes what objects should look like, not what can be built: physical feasibility (foldability, collision, closure, bonds, thickness) is decided only by evidence under the GEO gates and by future construction contracts (Q1–Q6, ADR 0019), never by this document or by concept artwork (§10). Other documents link here instead of restating it.
 
 ## 1. Why this exists
 

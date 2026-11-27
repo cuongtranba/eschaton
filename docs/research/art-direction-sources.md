@@ -1,6 +1,6 @@
 # Art direction sources: origami, ink, corvids, design
 
-- Status: research note, 2026-11-27. It supports the **proposed** [Visual Bible](../art/visual-bible.md) and the Raven concepts. It is not a decision.
+- Status: research note, 2026-11-27. It supports the [Visual Bible](../art/visual-bible.md) (adopted 2026-11-27, ART-D2) and the Raven concepts. It is not a decision.
 - **Verified** means the page or file was opened on 2026-11-27 and the stated fact was read there. **Unverified** means the page was blocked, timed out or was seen only in search results.
 - No external artwork is reproduced in this repository. Public-domain museum images were downloaded **for private study only**, into a scratch folder outside the repository, and are not committed.
 

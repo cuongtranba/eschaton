@@ -41,6 +41,10 @@ Run lint, typecheck, test and build before declaring work done. Never report a c
 
 New or changed object geometry is judged only under [`docs/governance/geometry-quality-gates.md`](docs/governance/geometry-quality-gates.md) (GEO-0…GEO-7, adopted rules; no model is approved by them): verdicts PASS/FAIL/NOT VERIFIED at an exact evidence SHA, the design brief committed before the implementing commit, and owner sign-off for GEO-2, GEO-5 and GEO-7. Experiments may report partial results but claim no acceptance.
 
+## Art direction
+
+Visible object design (creatures, vehicles, architecture, plants, props) follows the [Visual Bible](docs/art/visual-bible.md) and is judged under [`docs/governance/art-quality-gates.md`](docs/governance/art-quality-gates.md) (ART-0…ART-5, adopted 2026-11-27; they complement GEO and never replace or weaken it). An owner ART-1 concept approval, naming exact sheet digests, precedes any object implementation; a new sheet version or material change does not inherit an earlier approval. Owner decisions: [`docs/review/art-1-raven-decision-packet.md`](docs/review/art-1-raven-decision-packet.md) §0.
+
 ## Tests
 
 - Vitest; TDD at public seams. Behavioral tests import **only** package entry points (`@eschaton/foldon`, `@eschaton/world`, `@eschaton/wave`, `@eschaton/genesis`), never internal modules (lint-enforced via relative-import ban).
