@@ -1,6 +1,6 @@
 # ART-1 Raven: owner decision packet (2026-11-27)
 
-- Status: **PARTLY DECIDED.** The owner decided ART-D1, ART-D2, ART-D3a and ART-D3b on 2026-11-27 (§0). ART-D3c is not authorized. The B-2 flight revision went through two independent reviews (§7). Its latest version, **B-2 v5, is reviewed NEEDS REVISION** and is pending the owner's ART-1 decision. Open owner decisions and feasibility hypotheses are in §8. §1–§6 are the original decision request, kept as the record of what the owner was shown. The only edit to them is a link update for the renamed gates file.
+- Status: **PARTLY DECIDED.** The owner decided ART-D1, ART-D2, ART-D3a and ART-D3b on 2026-11-27 (§0). ART-D3c is not authorized. The B-2 flight revision went through two independent reviews (§7). Its latest version, **B-2 v5, is reviewed NEEDS REVISION** and is pending the owner's ART-1 decision. Open owner decisions and feasibility hypotheses are in §8. §1–§6 are the original decision request, kept as the record of what the owner was shown. Later edits to them are only notes marked as later: two link and status notes in §1 for the adopted files, a finger-count update in §6, and the base note below.
 
 ## 0. Owner decisions recorded (2026-11-27)
 
@@ -29,7 +29,7 @@ The original request follows.
   - whether to adopt the Visual Bible.
 
   None of them is implied by the owner having asked for this work, by the independent reviewer's recommendation, or by a merge of this documentation (GOV-1).
-- Base: `main` @ `583d56328016c7529fcb405900f09ba4492c9a9a` (main CI run 45945237316, green). Branch `docs/art-direction-visual-bible`. This is a docs and artwork change only. `packages/*`, `apps/*`, `experiments/*`, `AGENTS.md` and the adopted GEO gates are unchanged.
+- Base: `main` @ `583d56328016c7529fcb405900f09ba4492c9a9a` (main CI run 45945237316, green). Branch `docs/art-direction-visual-bible`. This is a docs and artwork change only. `packages/*`, `apps/*`, `experiments/*`, `AGENTS.md` and the adopted GEO gates are unchanged. *(This was true at the time of the request. After §0, `AGENTS.md` gained the "Art direction" section, and `README.md` gained index rows. The code and the GEO gates are still unchanged.)*
 - Experimental evidence referenced, all read-only and untouched:
   - draft PR #11 @ `616b0cfd316522d038e804cab9eaf04bc715bb59` (CI run 45952369746 green);
   - V3 gate evidence: `docs/research/origami-lab-v3/gate-evidence.md` on that branch, with screenshots under `docs/screenshots/exp-origami-v3-*`.

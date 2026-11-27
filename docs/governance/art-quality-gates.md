@@ -191,4 +191,8 @@ Not done: an `ART-1` field in the GEO reporting template (GEO §10) was optional
 | ART-1 tolerances | `NOT VERIFIED` | ART-D3c not authorized |
 | ART-2 … ART-5 | `NOT VERIFIED` | no implementation exists; Geometry V4 is not authorized |
 
+**ART-1 for implementation.** No Raven concept meets ART-1 as the precondition for object implementation (1.4, 1.5). The selection under ART-D3a fixes an artistic direction only. Implementation is not authorized in any case: Geometry V4 and Phase 4 are not authorized.
+
+**Relationship to GEO-0.4 (clarification, under the header rule that GEO wins).** §4 says approved ART-1 sheets "are" the GEO-0.4 targets. Read with GEO, they **feed** GEO-0.4 and do not satisfy it. GEO-0.4 still needs its own numeric targets and tolerances in the design brief, and ART-D3c is not authorized.
+
 A material change (§2.5) to the selected B sheet, or a new version of any sheet, does not inherit an earlier decision. It is a new file with a new digest, and it stays `NOT VERIFIED` until the owner decides on it.

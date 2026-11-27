@@ -14,7 +14,7 @@ This document is the canonical art-direction reference **for object form and des
 
 Three geometry iterations (V1, V2, V3 on draft PR #11) each became more technically valid and each failed visual review. V3 passed its own geometry certificate for 14 birds and 11 cars under its stated assumptions. The independent pixel reviewer still failed it on GEO-2, because the forms were wrong: a conical head without a nape, a plank arm, a rake of planar primaries, a bell-shaped tail, a heraldic silhouette, and a ridge line that meant nothing. The car had a plank chassis, a tower cabin and a fang grille.
 
-The lesson is one of ordering. **Design intent has to exist, and be approved, before construction starts.** Geometry validity is necessary, but it is not sufficient. This bible says what the objects should look like and why. The proposed ART gates say when that intent is approved and how the implementation is held to it.
+The lesson is one of ordering. **Design intent has to exist, and be approved, before construction starts.** Geometry validity is necessary, but it is not sufficient. This bible says what the objects should look like and why. The adopted ART gates say when that intent is approved and how the implementation is held to it.
 
 ## 2. The world: Creation, Collapse, Rebirth
 
@@ -167,7 +167,7 @@ These are aids for review. None of them is a beauty score, and passing them does
 
 ## 11. Deferred integrations
 
-These are named so that nobody assumes them, and each is out of scope for this proposal:
+These are named so that nobody assumes them, and each is out of scope for this bible:
 
 - Production LOD rules.
 - Shader and ink rendering in the Studio renderer.
