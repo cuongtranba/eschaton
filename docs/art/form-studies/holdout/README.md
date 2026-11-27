@@ -37,4 +37,60 @@ The commit that adds this file freezes these three files. That commit is recorde
 
 ## 3. Selection log
 
-*Pending: filled in by the commit after the freeze.*
+**Frozen commit:** `8c2bd53de3000fa0df19b03557d1242b339252ca` (pushed to PR #14 before the selector ran).
+
+**Selector.** A separate agent, 2026-11-27. It wrote none of the method, operators, studies or B-2 artwork, and it read the repository at `8c2bd53` only. Its report is summarised below; the full report is kept in the session record, not in the repository.
+
+**Disclosure.** The request to the selector listed example candidate types: "freestanding vessels, musical instruments, furniture, lamps, tools, armour, boats, shells, insects". The owner's handoff had also named "a freestanding vessel or instrument" as examples. So the instrument family was suggested to the selector, together with eight others. The protocol (§2.2) said that the selector would receive only the paths and the repository. This list deviates from that, and the deviation is recorded here.
+
+**Leakage search.**
+- **Method.** Case-insensitive whole-word matching, plurals included, over:
+  - the frozen files;
+  - the studies README and brief, the Visual Bible, the raven READMEs and briefs, and the decision packet;
+  - the PR #11 lab `docs/research/**` and `experiments/origami-lab/src/**`;
+  - the study and raven sources;
+  - the first 200 subjects of `git log --all`;
+  - a repository-wide `git grep` at `8c2bd53`.
+- **Categories found in use:**
+  - raven, bird and crow;
+  - vehicle, car, bus and truck;
+  - building, tower, house, pagoda and roof;
+  - tree, pine and plant;
+  - incidental examples: door, window, sign, shipping container, pipe, column, shaft, flat roof plate, "sail-like panel", sphere, cube, box, Miura field, wheel, grille, shingle, eave, finial, fan;
+  - similes: bell tail, kite, shield, horn, glove, crane, fish, hull, barrel.
+- **Terms of the chosen category with zero hits everywhere:** biwa, pipa, lute, instrument, musical, soundboard, pegbox, fret, peg, plectrum, crescent, tailpiece, headstock, nut, reflex, chordophone.
+- **Generic words that do appear** (neck, shoulder, body, belly, waist, mouth, lip, rib, bridge, string) appear only in raven or vehicle anatomy, as code types, or as verbs.
+- **"Convex hull"** in the operator document is a geometric term, not a category leak. "Hull" and "keel" used as body metaphors count as a partial leak against boats.
+
+**Candidates.**
+
+| Candidate | Decision | Reason |
+|---|---|---|
+| Short-necked plucked lute (biwa type) | **chosen** | — |
+| Wheel-thrown storage jar | rejected | circular sections that change only in size: too close to the F1 derivation case |
+| Anvil | rejected | no attached or layered element |
+| Japanese helmet | rejected | its neck lames repeat the derived "cover vane" tract, and it is shaped around a head |
+| Stone lantern | rejected | column, firebox, eaves and finial repeat the building study |
+| Boat | rejected | keel, sail and hull leak |
+
+Also rejected: bell, folding fan or umbrella, shell or insect, furniture, and the named examples (door, sign, container, pipe, column).
+
+**Chosen: the short-necked plucked lute of the biwa type.** The selector's rationale is that it is a fair test, not an easy one:
+- the body is a shallow, flat-backed hollow resonator, a closed shell (Q4);
+- the reflex pegbox has a hollow, non-convex section, bent sharply against the neck;
+- the crescent sound holes are non-convex designed negative spaces;
+- each string spans two hosts, the tailpiece and a peg;
+- the frets are a series graded by function;
+- the soundboard is a slightly curved sheet.
+
+**References.** Cited only; no image or geometry is imported or traced.
+
+| # | Source | URL | Use | What it gives |
+|---|---|---|---|---|
+| 1 | Tokyo National Research Institute for Cultural Properties, with craftsman Katsuyoshi Ishida, *Techniques that Support Japanese Performing Arts I: Biwa (Japanese short-necked lute)*, 2023 | <https://tobunken.repo.nii.ac.jp/record/2000017/files/Techniques%20That%20Support%20Japanese%20Performing%20Arts%E2%85%A0%20Biwa%20[Japanese%20short-necked%20lute].pdf> | © TNRICP; facts only | Construction and parts: a carved shell; a tie and post inside; a steamed, slightly curved soundboard; crescent inlays (hangetsu); a tailpiece; a headstock glued and wedged onto the neck; the shrimp-tail end (ebio); octagonal pegs; an ivory nut and first fret, with magnolia frets adjusted in height |
+| 2 | The Metropolitan Museum of Art, *Satsuma Biwa*, about 1800, acc. 68.62.1 | <https://www.metmuseum.org/art/collection/search/503051> | Open Access, CC0. Verified through the Met Collection API, because the web page returned HTTP 429 | 88.9 × 30.8 × 29.2 cm |
+| 3 | The Metropolitan Museum of Art, *Heike Biwa*, about 1835, acc. 89.4.123 | <https://www.metmuseum.org/art/collection/search/500681> | CC0 | 80 × 30 × 3.4 cm |
+| 4 | Horniman Museum and Gardens, *Biwa; lute*, M26-1994 | <https://www.horniman.ac.uk/object/M26-1994/> | facts only | "pear-shaped body in three sections … sharkskin band (bachimen) … two crescent-shaped sound holes, four wooden frets, the reflex pegbox terminating in a simple pentangular finial, four strings … large fluted pegs"; 330 × 900 × 205 mm |
+| 5 | Rose and Kapuscinski, Stanford, *Biwa* (gagaku strings) | <https://gagaku.stanford.edu/en/strings/biwa> | facts only | about 106 cm long; flat back, shallower than a Western lute; four strings and four raised frets |
+
+**Not sourced:** the body depth on its own (the recorded depths are overall figures and disagree between records) and the pegbox angle. The brief marks every value it derives from these as a design assumption.
