@@ -294,3 +294,47 @@ None of this is evidence for any GEO gate. These are the hypotheses a later Geom
 ## 9. Generic form method and the next B-2 version (under ART-D3b, second ruling)
 
 Design only. No Foldon, package, app or Geometry V4 change. Nothing in this section is approved. It is filled in by the later commits of the same branch, in order: the proposed method, the briefs committed before any artwork, the cross-category design studies, the next B-2 version, and the independent reviews.
+
+### 9.1 What was produced (round 1, evidence `57da41b`)
+
+| Item | File | SHA-256 | Commit |
+|---|---|---|---|
+| Proposed method (not adopted) | [`docs/art/form-construction-method.md`](../art/form-construction-method.md) | — (text) | `449406b`, before any study or v6 artwork |
+| B-2 v6 brief | [`b2-v6-flight-brief.md`](../art/raven-concepts/b2-v6-flight-brief.md) | — (text) | `a400997`, before any v6 artwork |
+| Sheet B-2 v6 | `raven-concept-b2-sumi-flight-v6.png` | `793ecc828cc26496730c242367c6d515eb4bc75547e5945c8457b494929dd7ea` | `6c2334a` |
+| v5 beside v6 | `raven-concept-b2-v6-compare.png` | `12ba8c8f4f208ea8a963deb742609545c6c584bd6ee461229bf9433d18b07c39` | `6c2334a` |
+| v6 method board | `raven-concept-b2-v6-method.png` | `24e77fd7b9813f5659dbc5ce092f3dcbd29070b0feabc38f02bb3823f8b23440` | `6c2334a` |
+| Form studies (vehicle, building, tree) | [`docs/art/form-studies/`](../art/form-studies/README.md) | listed there | `57da41b` |
+
+### 9.2 Independent reviews, round 1
+
+Three reviewers, each a separate agent that made none of the artwork and none of the method. The two pixel reviewers were told not to read the sources, briefs or method before writing their pixel findings. The method reviewer read the method, the adopted bible and gates, the evidence and the git history. Their crops were kept outside the repository (`/tmp/review-*`). Every verdict is a recommendation.
+
+**B-2 v6: NEEDS REVISION.**
+
+| Item | Finding |
+|---|---|
+| Fixed, and confirmed as form changes (they survive the old drawing in the control panel) | the inner arm converges to the wrist; the tail-root pinhole is gone; the underside covert panel has no straight ends; the near-hand notches are staggered |
+| Partly fixed | head bands (2–3 left from the top, and the old drawing brings the rings back, so part of this was a drawing change); the front body is a faceted lump rather than a block; slivers at the mouth and a tan strip at the wrist remain; lines that end mid-panel (underside coverts, side wing, tail close-up); volume mostly from shading; finger roots still meet at one wrist point in the hero and from below; inner blades still jump to fingers on the far hand |
+| Blocker | the hero crops the far wing's longest fingertips, so the label "fingers P6–P9, P7 longest" cannot be checked |
+| Major | the eye is missing in every view (identity with Sheet B weakened); smooth shading across the crown, throat and belly reads as computer-modelled shells, which the reviewer calls shader rescue (ART-2.5) and a step away from B's flat planes (R5); in the top-view hierarchy diagram, wing-root and fairing parts lie over the back and halve the visible body |
+| Overclaims | the sheet says 94 declared panels, the method board 102; "roots spread"; "tab and slivers to rooted covert leaf"; "head from above: crown plane" (a smooth bulge); "lines only on declared edges"; "deep breast, broad back" from above; the drawing control summarised as clean support when it is mixed |
+| ART-2 | 2.1 PASS (weak) · 2.2 PASS (weak), dark-field small sizes not shown · **2.3 FAIL** · 2.4 PASS (weak) · **2.5 FAIL** · 2.6 PASS |
+| R1–R9 | R1, R2, R4, R8 PASS (weak) · R6, R7 PASS · **R3, R5, R9 FAIL** |
+
+**Form studies:** vehicle **CREDIBLE STUDY** (major: the top view runs off its panel and is at a different scale; the arch lips read as hoops standing off the body). Building **CREDIBLE STUDY** (major: the corrugation radiates from the finial through the corners, so the hips do not read and the top view is a sunburst). Tree **NEEDS REVISION** (major: the crown lies nearly in one plane, which is the heraldic-spread anti-pattern in the front and top views; the fork reads as prisms pushed into a stump). The reviewer also found README overclaims about the tree fork, the vehicle lips and the vehicle plan.
+
+**Method: NEEDS REVISION.** The reviewer kept the layers, vocabulary, junction, envelope and attachment ideas and the "decide before the tool decides" procedure as object-generic, and found the status labels disciplined. The findings were:
+- **B1:** the holdouts were not blind. The committed method already described the building and tree solutions, and the befores are reconstructions. They show that the procedure can be executed, not that the principles transfer blind.
+- **M1:** the P5 revision was fitted to one example. It has no negative control, it was never computed, and it would flag the tier progressions that bible §4.3 endorses.
+- **M2:** P7 flags any box in an orthographic view and misreads bible §4.5 ("two values plus line").
+- **M3:** the P1 descriptors are ill-defined: normalised aspect, peak degenerate on symmetric masses, frame unstated.
+- **M4:** a hidden-surface exemption was added to the tool mid-study without a §12 entry, and the building's visible soffit was classed as hidden.
+- **M5:** pixel contradictions in the transfer matrix.
+- **M6:** a bent panel has no Foldon representation (panels are planar), and this was not listed as open.
+- **M7:** declarations (prismatic, tessellation, B junction, hidden, fold) act as escape hatches without a legitimacy test.
+- Minors: brief deviations not logged; a study brief reinterpreting the bible's asymmetry rule; the §5 "every object" wording; P3 undefined at limb roots; weak threshold reasons.
+
+### 9.3 Bounded response
+
+One revision round answers these findings. Then one re-review, and the work stops at that result, whatever it is. The round-1 files and their digests stay unchanged as the reviewed record. The response is in §9.4.
