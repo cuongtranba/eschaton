@@ -1,6 +1,6 @@
 # ART-1 Raven: owner decision packet (2026-11-27)
 
-- Status: **PARTLY DECIDED.** The owner decided ART-D1, ART-D2, ART-D3a and ART-D3b on 2026-11-27 (§0). ART-D3c is not authorized. The B-2 flight revision went through two independent reviews (§7). Its latest version, **B-2 v5, is reviewed NEEDS REVISION** and is pending the owner's ART-1 decision. Open owner decisions and feasibility hypotheses are in §8. §1–§6 are the original decision request, kept as the record of what the owner was shown. Later edits to them are only notes marked as later: two link and status notes in §1 for the adopted files, a finger-count update in §6, and the base note below.
+- Status: **PARTLY DECIDED.** The owner decided ART-D1, ART-D2, ART-D3a and ART-D3b on 2026-11-27 (§0). ART-D3c is not authorized. The B-2 flight revision went through two independent reviews (§7). Its latest reviewed version, **B-2 v5, was reviewed NEEDS REVISION and then NOT APPROVED by the owner** (ART-D3b, second ruling, §0.1): the concept is to be revised by a method that is generic for all objects, not bird-specific. The proposed generic method, the next B-2 version and their reviews are in §9. Open owner decisions and feasibility hypotheses are in §8. §1–§6 are the original decision request, kept as the record of what the owner was shown. Later edits to them are only notes marked as later: two link and status notes in §1 for the adopted files, a finger-count update in §6, and the base note below.
 
 ## 0. Owner decisions recorded (2026-11-27)
 
@@ -20,6 +20,23 @@
 - Q1–Q6 and ADR 0019 keep their current statuses.
 - No Geometry V4 work is authorized. PR #11 is untouched.
 - Historical sheets, review records, digests and provenance are kept. A new sheet version or a material change (ART §2.5) is a new file with a new digest. It is `NOT VERIFIED` until the owner decides on it.
+
+### 0.1 ART-D3b, second ruling: B-2 v5 not approved (2026-11-27)
+
+**Source.** The owner's explicit message, relayed to the agent in the Kanna handoff "Generalized Object Form & Construction Design, B-2 V5 rejection" dated 2026-11-27, issued against `main` @ `5886475d04db76f58105080f63d01426d2d72311` (the PR #13 merge). **Recorded by the agent.** This is an owner instruction relayed to the agent. It is not a GitHub review or approval, and the identity is not cryptographically verified.
+
+| ID | Decision | Exactly what it covers | What it does not cover |
+|---|---|---|---|
+| **ART-D3b (v5)** | **NOT APPROVED; revise the concept** | Sheet B-2 v5, `docs/art/raven-concepts/raven-concept-b2-sumi-flight-v5.png`, SHA-256 `888cf4a5bb0178057914847f0ffea9d581540c0f6c411f821fedea752c2b0942`, and its details board `raven-concept-b2-v5-details.png`, SHA-256 `dfb18c3ce480af64bda9de1318dcd63c66146ea375a982eec5e03416205e02b9`. Both were first committed in `41c383f`; the digests were re-verified against the files at `5886475` | Sheet B (perched): it stays the selected direction under ART-D3a at `554069333c47…4f74f`. ART-D3c: it stays undecided. Any change to a policy, gate or standard |
+
+The owner's words, verbatim: *"kêu kanna sửa lại theo đánh giá của bạn, nhưng hướng sửa phải là generic cho toàn bộ vật thể chứ không gói gọn theo hình chim"*. In English: have the agent revise according to the reviewer's assessment, but the direction of the fix must be generic for all objects, not confined to the bird shape.
+
+What the ruling instructs, as recorded:
+- The revision answers the independent round-2 review of v5 (§7.2) **and** the owner's reading of the v5 pixels relayed in the handoff. The wing layering and the silhouette improved. Still wrong: the head reads banded from the top and from below; the front body reads as a block; the inner arm is close to a rectangle; there is a pinhole at the tail root; there are slivers at the mouth and the wrist; there are lines that mark no form change; and the depth is shallow.
+- The method of the fix must be a generic form-design method that applies to every object category. Raven-only corrections do not meet it.
+- The perched direction (Sheet B) stays selected. Whether the perched sheets and the flight sheets are one folding stays unverified (§8.2, H8).
+
+B-2 v3, v4 and v5, their digests and their review records (§3 and §7) are kept unchanged as history. A next B-2 version is a new file with a new digest and inherits nothing (ART §2.5). The ruling authorizes the agent to record it and to revise the design. It does not adopt any new policy, approve any artwork, or authorize a merge, Geometry V4, Phase 4 or any phase transition.
 
 The original request follows.
 
@@ -233,6 +250,7 @@ The panel is labelled as a self-assessment. Its pixels were left unchanged so th
 
 ### 7.3 State of the flight concept
 
+- *Later note (2026-11-27, §0.1):* the owner did **not approve** B-2 v5 and asked for a revision by a generic method. The bullets below are the state as it was recorded before that ruling.
 - **B-2 is not credible yet.** v3 is not approved (ART-D3b). v4 and v5 are both NEEDS REVISION. The revision was stopped at v5 to keep the handoff bounded; it was not forced to a pass. The open defects are the §7.2 list. They are cleanup-level in the reviewer's judgement and do not need a wing redesign, but **that judgement is not an approval**.
 - Every B-2 file stays **`NOT VERIFIED` for ART-1** until the owner decides. A later B-2 v6 would be a new file with a new digest and would need its own independent review. None of v3, v4 or v5 inherits anything.
 - **Sheet B (perched)** stays the selected direction (ART-D3a) at `554069333c47…4f74f`. B-2 v4 and v5 reuse B's head profile but **do not change Sheet B**. B's own open caveats (§3) are still open.
@@ -243,7 +261,7 @@ The panel is labelled as a self-assessment. Its pixels were left unchanged so th
 
 | ID | Question | State |
 |---|---|---|
-| ART-1, B-2 | Approve, revise or reject the flight concept. **B-2 v5** is the latest; its independent review says NEEDS REVISION (§7.2) | open |
+| ART-1, B-2 | Approve, revise or reject the flight concept. **B-2 v5: NOT APPROVED** by the owner (§0.1). The next version is in §9 | open for the next version |
 | ART-D3c | Numerical tolerances for ART-4 (concept README §E.0) | not authorized; open |
 | B caveats | Whether B's bib, front column and dark triangles (§3) need a revision of Sheet B | open (not raised by the owner) |
 | ADR 0006 | Whether moving pieces, such as a flying raven, carry hatching | open |
@@ -272,3 +290,7 @@ None of this is evidence for any GEO gate. These are the hypotheses a later Geom
 | H9 | The maquette's planes can become valid Foldon panels | GEO-1 | **No.** The maquettes guarantee neither planarity nor convexity (the primary-covert leaf is a concave polygon). Overlapping layers have zero thickness, and collision is not checked |
 
 **Material change rule (ART §2.5, GEO §1.10).** Any change to the silhouette, proportions, hierarchy, pose or plane language of a reviewed sheet returns its verdicts to `NOT VERIFIED`, until a reviewer inspects the new pixels. An owner approval would be voided the same way. A new version is a new file, and it inherits nothing.
+
+## 9. Generic form method and the next B-2 version (under ART-D3b, second ruling)
+
+Design only. No Foldon, package, app or Geometry V4 change. Nothing in this section is approved. It is filled in by the later commits of the same branch, in order: the proposed method, the briefs committed before any artwork, the cross-category design studies, the next B-2 version, and the independent reviews.
