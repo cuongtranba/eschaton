@@ -20,3 +20,7 @@ asserts the lowest-terms promise (den > 0, gcd = 1) on every rational field. fix
 ## Run 2: after the comparison fix, plus the contract-5 on-path consistency test that the red commit had omitted
 Ran 25 tests in 22.205s
 OK
+
+## Run 3: after the independent M1 review (bounded revision: count-bound codes; R6 permutes both sections; R7 includes chains; area oracles; an overlapping-net case)
+Ran 28 tests in 20.615s
+OK

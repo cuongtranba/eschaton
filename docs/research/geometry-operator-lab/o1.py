@@ -84,8 +84,8 @@ def _parse(sec, label):
     if not _is_int(sec["z"]):
         raise _Reject("malformed-input", "%s: z is not an integer" % label)
     vs = sec["vertices"]
-    if not isinstance(vs, list) or not vs:
-        raise _Reject("malformed-input", "%s: vertices is not a non-empty list" % label)
+    if not isinstance(vs, list):
+        raise _Reject("malformed-input", "%s: vertices is not a list" % label)
     for i, v in enumerate(vs):
         if not isinstance(v, list) or len(v) != 2 or not all(_is_int(c) for c in v):
             raise _Reject("malformed-input", "%s: vertex %d is not two integers" % (label, i))
@@ -101,8 +101,8 @@ def _parse_altitude(t):
 
 
 def _bounds(sec, label):
-    if len(sec["vertices"]) > VERTEX_MAX:
-        raise _Reject("out-of-bounds", "%s: more than %d vertices" % (label, VERTEX_MAX))
+    if not 1 <= len(sec["vertices"]) <= VERTEX_MAX:
+        raise _Reject("out-of-bounds", "%s: vertex count outside 1..%d" % (label, VERTEX_MAX))
     if abs(sec["z"]) > COORD_MAX or any(abs(c) > COORD_MAX for v in sec["vertices"] for c in v):
         raise _Reject("out-of-bounds", "%s: a coordinate beyond %d q" % (label, COORD_MAX))
 
@@ -355,13 +355,13 @@ def chain(stations, min_altitude=None):
     """Bands between consecutive stations at strictly monotone heights, and a classification of every
     interior ring; contract v1.1 sections 3.5 and 5."""
     try:
-        if not isinstance(stations, list) or len(stations) < 2:
-            raise _Reject("malformed-input", "stations must be a list of at least two sections")
+        if not isinstance(stations, list):
+            raise _Reject("malformed-input", "stations must be a list of sections")
         for i, s in enumerate(stations):
             _parse(s, "station %d" % i)
         _parse_altitude(min_altitude)
-        if len(stations) > STATIONS_MAX:
-            raise _Reject("out-of-bounds", "more than %d stations" % STATIONS_MAX)
+        if not 2 <= len(stations) <= STATIONS_MAX:
+            raise _Reject("out-of-bounds", "station count outside 2..%d" % STATIONS_MAX)
         for i, s in enumerate(stations):
             _bounds(s, "station %d" % i)
         _bounds_altitude(min_altitude)

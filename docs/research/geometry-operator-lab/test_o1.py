@@ -324,18 +324,22 @@ class Randomized(unittest.TestCase):
         for i, (a, b) in enumerate(R1[:100] + R1_DEGENERATE[:50]):
             with self.subTest(i):
                 ref = o1.digest(o1.section_transition(a, b))
-                va = a["vertices"]
-                for rot in range(len(va)):
-                    for rev in (False, True):
-                        vv = va[rot:] + va[:rot]
-                        vv = vv[::-1] if rev else vv
-                        aa = {"z": a["z"], "vertices": vv}
-                        self.assertEqual(o1.digest(o1.section_transition(aa, b)), ref)
-                        self.assertEqual(o1.digest(o1.section_transition(b, aa)), ref)
+                for which in (0, 1):
+                    sec = (a, b)[which]
+                    vs = sec["vertices"]
+                    for rot in range(len(vs)):
+                        for rev in (False, True):
+                            vv = vs[rot:] + vs[:rot]
+                            pv = {"z": sec["z"], "vertices": vv[::-1] if rev else vv}
+                            aa, bb = (pv, b) if which == 0 else (a, pv)
+                            self.assertEqual(o1.digest(o1.section_transition(aa, bb)), ref)
+                            self.assertEqual(o1.digest(o1.section_transition(bb, aa)), ref)
 
     def test_r7_digests_do_not_depend_on_the_hash_seed(self):
         code = ("import json,sys;sys.path.insert(0,%r);import o1;fx=json.load(open(%r));"
-                "print(json.dumps({k:o1.digest(o1.section_transition(v['a'],v['b'])) for k,v in fx['bands'].items()},sort_keys=True))"
+                "d={k:o1.digest(o1.section_transition(v['a'],v['b'])) for k,v in fx['bands'].items()};"
+                "d.update({k:o1.digest(o1.chain(v['stations'])) for k,v in fx['chains'].items()});"
+                "print(json.dumps(d,sort_keys=True))"
                 % (HERE, os.path.join(HERE, "fixtures.json")))
         outs = set()
         for seed in ("0", "12345"):
@@ -350,6 +354,36 @@ class Randomized(unittest.TestCase):
                 self.assertLessEqual(net["congruence_residual"], net["tau"])
                 self.assertLessEqual(max(net["seam_residuals"]), net["tau"])
 
+
+class ReviewRegressions(unittest.TestCase):
+    """Added after the independent M1 review (packet section 11); none changes a frozen fixture."""
+
+    def test_vertex_and_station_counts_outside_their_bounds_are_out_of_bounds(self):
+        sq = [[Q, Q], [-Q, Q], [-Q, -Q], [Q, -Q]]
+        self.assertEqual(o1.section_transition({"z": 0, "vertices": []}, {"z": 1, "vertices": sq})["error"]["code"],
+                         "out-of-bounds")
+        for stations in ([], [{"z": 0, "vertices": sq}]):
+            self.assertEqual(o1.chain(stations)["error"]["code"], "out-of-bounds")
+
+    def test_section_and_midsection_areas_equal_their_oracles(self):
+        for i, (a, b) in enumerate(R1 + R1_DEGENERATE):
+            with self.subTest(i):
+                lo, hi = (a, b) if a["z"] < b["z"] else (b, a)
+                band = o1.section_transition(a, b)["band"]
+                for key, sec in (("area_a", lo), ("area_b", hi)):
+                    want = abs(orc.shoelace([tuple(v) for v in sec["vertices"]])) if len(sec["vertices"]) >= 3 else 0
+                    self.assertEqual(Fraction(*band[key]), want)
+                mid = orc.minkowski_hull([tuple(v) for v in lo["vertices"]], [tuple(v) for v in hi["vertices"]], Fraction(1, 2))
+                self.assertEqual(Fraction(*band["area_mid"]), abs(orc.shoelace(mid)) if len(mid) >= 3 else 0)
+
+    def test_a_valid_band_whose_net_overlaps_is_reported_as_overlapping(self):
+        """Seed 20261202 search, trial 492: a nearly flat band between thin crossing sections."""
+        a = {"z": 0, "vertices": [[-50755, 541767], [176109, 757352], [170969, 1122359], [133757, 1067814]]}
+        b = {"z": 1000, "vertices": [[-270622, -542571], [-269131, -566166], [-108218, -200515], [27707, 194477],
+                                     [235281, 864778], [339709, 1337474], [121998, 799854], [-169703, -124365]]}
+        net = o1.cut_open_net(o1.section_transition(a, b)["band"])
+        self.assertGreaterEqual(net["classes"]["overlap"], 1)
+        self.assertEqual(net["classes"]["overlap"], len(orc.net_pairs_overlapping(net["faces"], net["tau"])))
 
 if __name__ == "__main__":
     unittest.main()

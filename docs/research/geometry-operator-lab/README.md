@@ -13,7 +13,9 @@
 | Independent math review of v1 | — | GO WITH AMENDMENTS (15 findings), contract §12 |
 | **M0 freeze, contract v1.1** | `33e7f67` | amendments applied, no fixture value changed; M0 decision **GO** |
 | M1 red | `0770c03` | `fixtures.json`, `oracles.py`, `test_o1.py` and a stub `o1.py`; red run in `evidence/m1-red.txt` |
-| M1 green | the commit that adds this README | `o1.py` implemented; green runs in `evidence/m1-green.txt` |
+| M1 green | `44cfd68` | `o1.py` implemented; green runs 1 and 2 in `evidence/m1-green.txt` |
+| Independent M1 review | — | PASS WITH FINDINGS (packet §11) |
+| Bounded revision after the review | the commit that records the review | count-bound error codes fixed in `o1.py` (the one implementation revision §10 allows); tests widened; run 3 in `m1-green.txt` |
 
 ## Files
 
@@ -23,14 +25,14 @@
 | `o1.py` | the implementation: `section_transition`, `chain`, `cut_open_net`, `canonical_json`, `digest` |
 | `oracles.py` | independent oracles. They never import `o1.py`, and a test checks that |
 | `fixtures.json` | the frozen inputs, in integer quanta (1 q = 1e-6 L), with their expected values |
-| `test_o1.py` | 25 tests through the public functions only; no mocks, no sleeps, seeded generators |
+| `test_o1.py` | 28 tests through the public functions only; no mocks, no sleeps, seeded generators |
 | `run_evidence.py` | writes `evidence/m1-evidence.json` |
 | `evidence/` | `m1-red.txt`, `m1-green.txt` and `m1-evidence.json` |
 
 ## Reproduce (from the repository root)
 
 ```sh
-python3 -m unittest discover -s docs/research/geometry-operator-lab -p 'test_*.py'   # 25 tests, about 20 s
+python3 -m unittest discover -s docs/research/geometry-operator-lab -p 'test_*.py'   # 28 tests, about 20 s
 python3 docs/research/geometry-operator-lab/run_evidence.py                          # about 3 s; rewrites evidence/m1-evidence.json
 ```
 
@@ -48,16 +50,18 @@ PASS means the contract item held on every case listed, against its oracle. It i
 | Chains F10–F14, F17: ring kind, exact `on_path`, edge classes, vertex angles | **PASS** | 360°, 420°, 306.8699°, 456.3794°, 263.6206°, 327.4796° |
 | On-path consistency (contract §5) | **PASS** | 40 seeded on-path chains: every edge dissolvable, every vertex flat within 1e-9°. *This test was added after the first green run* (`m1-green.txt`) |
 | Negative controls N1–N14, plus the precedence cases P1 and P2, in both argument orders | **PASS** | each control returns exactly its code |
+| Count bounds (contract §2): an empty vertex list; fewer than 2 stations | **FAIL at `44cfd68`, PASS after the revision** | returned `malformed-input` instead of `out-of-bounds`. Found by the independent review; fixed in the bounded revision, with a regression test |
 | R1: faces equal the brute-force hull; canonical-form oracle C′ | **PASS** | 300 polygon pairs and 200 caps and wedges (degenerate section lower or upper): 0 mismatches |
 | R2: face count \|D_A ∪ D_B\|, 3–4 vertices; 20 large pairs with supporting planes | **PASS** | exact; up to 1024 vertices per section |
 | R3: slices at t = 1/7, 1/2, 5/6 equal the Minkowski combination | **PASS** | exact rationals, 1500 slices |
 | R4: prismoidal volume = tetrahedral volume; χ, orientability, boundary loops | **PASS** | exact, on 500 random cases and all fixtures |
 | R5: translation, quarter turn, mirror, scaling × 7 (volume × 343) | **PASS** | exact, 50 cases each |
-| R6: allowed permutations give an identical digest | **PASS** | 150 cases, every cyclic rotation and orientation, both argument orders |
-| R7: digest independent of `PYTHONHASHSEED` (0 and 12345) | **PASS** | all fixture bands |
-| R8: net congruence and seam copies within τ | **PASS** | 500 nets; worst residual 5.7e-7 τ (seam 4.9e-7 τ); 0 overlapping, 0 inconclusive, 0 touching pairs |
-| Timing (contract C16) | **measured** | median ms per band at m = n: 0.47 (8), 3.85 (64), 29.8 (512), 63.9 (1024). Fitted exponent 1.01 from 64 to 1024. No budget was set, and none is claimed |
-| Cross-engine determinism (P3D-6) | **NOT VERIFIED** here | one engine only (CPython). See the independent review in packet §11 |
+| R6: allowed permutations give an identical digest | **PASS** | 150 cases; every cyclic rotation and orientation of **each** section, in both argument orders. At `44cfd68` only the first section was permuted; widened after the review |
+| R7: digest independent of `PYTHONHASHSEED` (0 and 12345) | **PASS** | all fixture bands and chains (chains added after the review) |
+| Areas against oracle Ar and the Minkowski hull | **PASS** | `area_a`, `area_b` and `area_mid` on all 500 random cases (added after the review) |
+| R8: net congruence and seam copies within τ | **PASS** | 500 nets; worst residual 5.7e-7 τ (seam 4.9e-7 τ). On these 500 nets: 0 overlapping, 0 inconclusive, 0 touching pairs. **Non-overlap is not a property of O1 nets.** The reviewer found 104 overlapping nets among 9000 nearly flat bands, all flagged. A frozen overlapping case is now a test. The `inconclusive` class has never occurred, so it is untested |
+| Timing (contract C16) | **measured** | median ms per band at m = n, as in the committed `evidence/m1-evidence.json`: 0.58 (8), 4.19 (64), 33.6 (512), 63.3 (1024). Fitted exponent 0.98 from 64 to 1024. Reruns vary by about ±15% (the reviewer measured exponents 1.03–1.05). No budget was set, and none is claimed |
+| Cross-engine agreement (P3D-6, tested property) | **PASS for 806 inputs** | the independent reviewer's own BigInt implementation on Node 24 (V8), written from the contract alone, against `o1.py` on CPython 3.9.6. 736 `ok` digests were byte-identical, often from permuted inputs, and 70 error codes were identical. This is evidence for exactly those inputs: floats, error details, other Python versions and other platforms were not compared (packet §11) |
 | Rigid folding path, collision, physical seam closure, single-sheet foldability of a chain | **NOT VERIFIED; not claimed** | contract §6.3. A non-overlapping net is only a flat layout of one band cut open |
 | Hausdorff approximation bound against a design target | **NOT VERIFIED** | out of M1 scope (contract §1) |
 | Non-parallel planes, non-convex sections, matched partitions | **rejected or deferred** | `unsupported-plane`, `non-convex-section`; partitions deferred (contract §1) |

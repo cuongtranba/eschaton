@@ -637,19 +637,19 @@
  "sha256": {
   "fixtures.json": "e1cf07b50827233eb5c88365224a948d23461ef3ac1b73199538ad09170f1ebf",
   "m0-o1-contract.md": "a70ca40c6ed8360c03a9c35364b96b801eb058b5d74cbc9f74c353aa3edbce10",
-  "o1.py": "dec12d5497455c57f33ce54acaece9615b683ea1e6d59491516bdef675c91e98",
+  "o1.py": "b659f7a684e0fb4b97f13a3f2e84620746b0164b0105a2845a0bd4f2122e2eb9",
   "oracles.py": "cf1def30868e2af07003580fe3b7a04019789ef9e8305143c5e9d0773850c4c4",
   "run_evidence.py": "720ce8490f692525483582ce5127f4d2427c60546bb1aca6ce8793ae77dab28c",
-  "test_o1.py": "240af41c3d0d762efd0d665e2cba64f770551e92e803ebb0525b3d1ab73cb3f0"
+  "test_o1.py": "23eff96adf255afa7a7da9aac62e1e12f1a1a4d90b77646dc5cf7cdbddfb871c"
  },
  "system": "Darwin",
  "timing": {
   "conditions": "section_transition only (validation, merge, exact areas and volume, exact altitudes, dihedrals); single process, CPython 3.9.6, arm64; median of 5 runs over 3 seeded pairs",
-  "fitted_exponent_64_to_1024": 0.9202833138360247,
+  "fitted_exponent_64_to_1024": 0.9797738323957408,
   "rows": [
    {
     "m_equals_n_at_most": 8,
-    "median_ms": 1.930819333333389,
+    "median_ms": 0.5761529999999867,
     "vertices_used": [
      8,
      8
@@ -657,7 +657,7 @@
    },
    {
     "m_equals_n_at_most": 64,
-    "median_ms": 9.424055666666634,
+    "median_ms": 4.186499999999982,
     "vertices_used": [
      64,
      64
@@ -665,7 +665,7 @@
    },
    {
     "m_equals_n_at_most": 512,
-    "median_ms": 44.651153,
+    "median_ms": 33.610264,
     "vertices_used": [
      512,
      512
@@ -673,7 +673,7 @@
    },
    {
     "m_equals_n_at_most": 1024,
-    "median_ms": 120.88415266666664,
+    "median_ms": 63.33099999999995,
     "vertices_used": [
      1024,
      1024
