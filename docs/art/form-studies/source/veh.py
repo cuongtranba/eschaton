@@ -201,4 +201,4 @@ def build_after():
     strip_glass = [("windscreen head", GLASS_KEYS[1][1]), ("roof rear", GLASS_KEYS[3][1])]
     sections = {lab: fk.descriptors(fk.mirror_half(h), 1.0, 1.0) for lab, h in strip}
     return m, {}, spec({"section_strip": strip, "glass_strip": strip_glass, "sections": sections,
-                        "hidden_panels": ["well", "under", "cabin.base", "fascia", "tailpanel"]})
+                        "hidden_panels": ["under", "cabin.base"]})

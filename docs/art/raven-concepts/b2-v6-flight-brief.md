@@ -28,6 +28,8 @@ The defects are the round-2 reviewer's (packet §7.2) and the owner's (packet §
 
 ## 3. Step 2: section program (P1)
 
+*Later note (round-2 method review):* this section and §1, §6 and §8 cite P1, P5 and P7 as first committed in `449406b`. The method revised P1 and P7 and withdrew the P5 replacement in `09591cf` (method §12). The v7 target (§12) keeps these sections unchanged, so the v7 brief and the method disagree on those three principles. This is recorded, not reconciled (packet §9.5).
+
 Each keyframe is a different **shape**, not a scaled copy. Shapes are described by aspect (height to width), peak (where the top is), side lean, and fill (boxy or pointed).
 
 | Keyframe | Aspect h/w | Shape, and why |

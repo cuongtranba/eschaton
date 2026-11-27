@@ -1,6 +1,6 @@
 # ART-1 Raven: owner decision packet (2026-11-27)
 
-- Status: **PARTLY DECIDED.** The owner decided ART-D1, ART-D2, ART-D3a and ART-D3b on 2026-11-27 (§0). ART-D3c is not authorized. The B-2 flight revision went through two independent reviews (§7). Its latest reviewed version, **B-2 v5, was reviewed NEEDS REVISION and then NOT APPROVED by the owner** (ART-D3b, second ruling, §0.1): the concept is to be revised by a method that is generic for all objects, not bird-specific. The proposed generic method, the next B-2 version and their reviews are in §9. Open owner decisions and feasibility hypotheses are in §8. §1–§6 are the original decision request, kept as the record of what the owner was shown. Later edits to them are only notes marked as later: two link and status notes in §1 for the adopted files, a finger-count update in §6, and the base note below.
+- Status: **PARTLY DECIDED.** The owner decided ART-D1, ART-D2, ART-D3a and ART-D3b on 2026-11-27 (§0). *Later (§9.5): the generic-method round ended NO-GO for owner approval. B-2 v6 and v7 and the method were each reviewed NEEDS REVISION twice; bounded next actions are listed.* ART-D3c is not authorized. The B-2 flight revision went through two independent reviews (§7). Its latest reviewed version, **B-2 v5, was reviewed NEEDS REVISION and then NOT APPROVED by the owner** (ART-D3b, second ruling, §0.1): the concept is to be revised by a method that is generic for all objects, not bird-specific. The proposed generic method, the next B-2 version and their reviews are in §9. Open owner decisions and feasibility hypotheses are in §8. §1–§6 are the original decision request, kept as the record of what the owner was shown. Later edits to them are only notes marked as later: two link and status notes in §1 for the adopted files, a finger-count update in §6, and the base note below.
 
 ## 0. Owner decisions recorded (2026-11-27)
 
@@ -338,3 +338,89 @@ Three reviewers, each a separate agent that made none of the artwork and none of
 ### 9.3 Bounded response
 
 One revision round answers these findings. Then one re-review, and the work stops at that result, whatever it is. The round-1 files and their digests stay unchanged as the reviewed record. The response is in §9.4.
+
+### 9.4 Round 2: what was produced, and the independent reviews (evidence `418e243`)
+
+| Item | File | SHA-256 | Commit |
+|---|---|---|---|
+| Method, round-2 revision | `docs/art/form-construction-method.md` (§12 change log) | — (text) | `09591cf` |
+| Form studies, round 2 | `docs/art/form-studies/form-study-{vehicle,building,tree}.png` | listed in the [studies README](../art/form-studies/README.md) | `7a61392` |
+| B-2 v7 target | [`b2-v6-flight-brief.md`](../art/raven-concepts/b2-v6-flight-brief.md) §12 | — (text) | `898a0c0`, before any v7 drawing |
+| Sheet B-2 v7 | `raven-concept-b2-sumi-flight-v7.png` | `2f1dc0a790fc8dbe6a8e6f3ca6a7731ba9fceaa43ce38db5d8b172bf935f9e77` | `418e243` |
+| v5 beside v7 | `raven-concept-b2-v7-compare.png` | `2d2fa598d58562c2186e0a50d9cc7056fe32c0b4443fcfdfa2936ba875bb52f0` | `418e243` |
+| v7 method board | `raven-concept-b2-v7-method.png` | `2eae501cf86c07249eb88bdc97a8a180be98a336c4a9956d58bbd71a450f2a9c` | `418e243` |
+
+Three new reviewers, each a separate agent that made none of the work and saw neither the round-1 reviewers' process nor the author's. The pixel reviewers read no source, brief or method before writing their pixel findings. Every verdict is a recommendation.
+
+**B-2 v7: NEEDS REVISION** ("not a NO-GO: the bird reads as a raven, it is the same bird as B, and the direction is improving").
+- Fixed: the cropped hero fingertips (the v6 blocker), the tail-root pinhole, the arm's taper to the wrist (wrist/root chord about 0.72), the panel-count mismatch, and the "roots spread" caption.
+- Still present, by part and view:
+  - the front body reads as a block, now a hexagonal prism (front);
+  - all finger roots meet at one wrist point (hero, top);
+  - rounded inner blades jump to needle fingers (both hands);
+  - a tan strip at the hero wrist;
+  - line stubs that end mid-panel (hero inner blades and back, underside coverts);
+  - slivers at the mouth corner and the wing root;
+  - volume carried by gradients rather than planes (crown highlight band, belly);
+  - the body halved in the top-view hierarchy diagram.
+- New: the eye geometry juts past the head outline as small spurs, and is about 3 px in the hero; the tail label covers the hero tail tip; a dithered smudge in the underside coverts; an asymmetric dark slab at the vent; a floating fragment at the elbow from above.
+- Overclaims:
+  - "continuous shading only inside developable panels". The v7 read-out has no angle defect over 2°, but 14 tessellation edges bend more than 20° (max 53.9°). The v7 method board also still prints a sentence carried over from v6 saying the crown, throat and belly are "mildly doubly curved". That is a stale caption, and the two statements contradict each other;
+  - "eye restored" holds in the side view only;
+  - "wing root under the back" is contradicted by the hierarchy diagram;
+  - the drawing controls are too small to separate form from drawing, and the flat-face row shows part of the cleaner look comes from hiding tessellation edges.
+- ART-2: 2.1 PASS (weak) · 2.2 NOT VERIFIED (no dark-field small sizes; the tail is hidden in the hero) · **2.3 FAIL** · 2.4 PASS (weak) · **2.5 FAIL** · 2.6 PASS.
+- R1–R9: R1, R2, R4, R7, R8 PASS (weak) · R6 PASS · **R3, R5, R9 FAIL**.
+
+**Form studies, round 2: vehicle, building and tree each NEEDS REVISION.** The reviewer confirmed that side, front and top now share one scale.
+- **Vehicle:** the clipped top view and the plan width are fixed. The arch lips still stand off the body in three of four views. New: the car reads tall and narrow, with a flat body side.
+- **Building:** the hips now read from the top, and the soffit is visible and counted. The three-quarter view still shows radiating pleats. The section strip still says nothing about the roof, and the equal-tooth eave fringe reads as repeated noise.
+- **Tree:** the trunk is slender and the fork no longer shows end faces. But the crown is still nearly planar from the top (about 4.5:1), the hero three-quarter view is edge-on, and the fork collar reads as a pasted box.
+- Overclaims in the studies README: the tree crown "spreads in depth"; the vehicle lip "lies on the body side"; the fork "no butt joint"; tree 24 px readability. The vehicle's fascia, tail panel and wheel wells were also classed as hidden although they are visible, which repeats the soffit error.
+
+**Method, round 2: NEEDS REVISION.** Resolved: M1 (the P5 revision withdrawn), M6 (bent panels listed as open), the asymmetry question sent to the owner, P3 at limb roots, and the logged brief deviations. Partly resolved: B1, M3, M4, M5, M7. Not resolved: M2. New problems:
+- **P7 and P1 now pass B-2 v5,** their own fail examples. P7 went from three plane families at 20° to two at 8°, so v5's two-tone block passes. Its bible §4.5 citation is still a misreading. P1's "side lean" brings aspect back, and ε has no unit.
+- **§4.0 test 2 lets declarations be added after a diagnostic fires,** which conflicts with GEO §1.8.
+- **Holdout wording** remains in several places, including the round-2 sheet banners ("designed with the method exactly as committed in `449406b`"), which is false for round 2.
+- **The v7 target keeps v6 brief text** that cites the old P1 and P7.
+- **The §12 table is split by a blank line.**
+- **A slab tower exempted by declaration** sits against bible §8 ("towers taper and break"). That question should go to the owner.
+
+### 9.5 Outcome: NO-GO for owner approval at this stage (bounded stop)
+
+Under §9.3 the work stops at the round-2 result. **No B-2 version, study or method text in this record is put forward as ready for approval.** B-2 v7 is the latest flight concept and stays `NOT VERIFIED` for ART-1. Every file and digest above is kept unchanged as the reviewed record.
+
+Bounded next actions, if the owner wants another round (each one named by a reviewer):
+1. **Method.**
+   - Restate P7 so a two-tone block fails, and P1 so aspect cannot return through side lean (ε with units). Check every fail example against every principle and report the v5 and v6 results.
+   - Make §4.0 non-retroactive, in line with GEO §1.8. Have a reviewer confirm declarations, and forbid a declaration that reproduces a bible §5 anti-pattern.
+   - Turn bends over the allowance into P4 flags.
+2. **B-2.**
+   - Front body as planes that read from the front.
+   - Finger roots spread along the hand, so they do not meet at one point.
+   - A transitional blade between the inner primaries and the fingers.
+   - Remove the wrist strip, the line stubs, the slivers and the eye spurs.
+   - Shade only true planes, or show the faceted drawing as the main image.
+   - A hierarchy diagram that matches the top view, and dark-field small sizes.
+3. **Studies.**
+   - Vehicle: lips as body-side flares, sedan proportions.
+   - Building: a section strip that shows the roof-to-wall relation; an eave edge that is not an equal-tooth fringe.
+   - Tree: a crown with real depth in the top view, and a fork without a collar box.
+4. **Owner questions surfaced:**
+   - whether a slab tower may be exempt against bible §8 "towers taper and break";
+   - how broad a declared tessellation may be against bible §4.3;
+   - the bible §4.1.3 asymmetry question (studies brief, B-c).
+
+Factual corrections made after the round-2 review, with no change to any reviewed image, any design or any principle text, are listed in §9.6.
+
+### 9.6 Factual corrections after the round-2 review
+
+These change no reviewed image, design or principle text. They correct statements that the round-2 reviewers found contradicted by the pixels or the data.
+
+| Where | Correction |
+|---|---|
+| Studies README: matrix, read-out table | The vehicle lip, the tree crown depth, the tree fork and the tree 24 px claims now state what the reviewer saw. The vehicle's wheel wells, fascia and tail panel are visible, so they are no longer classed as hidden, and the building's podium top likewise. The corrected vehicle read-out is **161 visible bends over 20° (max 82.1°) and 45 vertices with an angle defect over 2° (max 20°)**, against the 18 and 0 that the round-2 sheet still prints. The sheet image is unchanged as the reviewed record |
+| Studies brief; method status, §8, §12, §12.1 | "Holdout" wording that the reviews showed to be untrue is corrected: not blind; round 2 used the method as revised in `09591cf`. The round-2 sheet banners still carry the old wording and are superseded by these notes |
+| Method §12 | The table no longer splits at a blank line. A new §12.2 lists what stays open after the round-2 review |
+| B-2 v6 brief §3 | A note that §1, §3, §6 and §8 cite P1, P5 and P7 as first committed, which the method has since revised. The v7 target inherits them; this is recorded, not reconciled |
+| B-2 v7 method board | Its read-out panel prints a sentence carried over from v6 ("the merged crown, throat and belly panels are mildly doubly curved"). The v7 read-out file (`renders/b2v7/diagnostics.json`) shows **no** angle defect over 2°, 14 edges bending over 20° (max 53.9°), and one declared fold under 8°. The image is unchanged as the reviewed record; this note supersedes the sentence |

@@ -159,4 +159,4 @@ def build_after():
              ("roof 1, steep to flared", roof_sec),
              ("tier 2 wall", [(0, 0.52), (0.167, 0.52), (0.167, 0.392), (0, 0.392)]),
              ("tier 3 wall", [(0, 0.70), (0.119, 0.70), (0.119, 0.608), (0, 0.608)])]
-    return m, {}, spec({"section_strip": strip, "hidden_panels": ["podium.t", "plinth.t"]})
+    return m, {}, spec({"section_strip": strip, "hidden_panels": []})

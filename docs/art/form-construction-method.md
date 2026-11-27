@@ -26,7 +26,7 @@ Paths marked "PR #11" are on draft PR #11 @ `616b0cfd316522d038e804cab9eaf04bc71
 | F7 | **Shallow volume**: a primary mass that shows one or two tones from a principal view | raven: B-2 v5 shallow depth, block-like front body (§0.1); V2 "the back is still flat" (PR #11 V2 record line 98). vehicle: V3 plank in the side view | The mass is designed in the hero view. The orthographic views come from the same maquette, so they are **consistent**, but nobody designed what they show | ART-2.6 asks that views **agree**. One maquette guarantees agreement and says nothing about whether each view reads as volume |
 | F8 | **Floating attachment**: a secondary element with no stated root, overlap or clearance | raven: B-2 v5 "tan tab at the hero wrist", "loose strips under the arm"; v4 floating sliver; V3 "thumb alula" (V3 record line 155). vehicle: V3 running boards as "loose planks" | Secondary parts are positioned by coordinates, not by a frame on their host | Nothing names a host, a root frame or a minimum overlap |
 
-The building and the tree exist only in V1 (PR #11 `lab/src/objects/house.ts` and `pine.ts`), which the owner rejected as a whole ("ugly, coarse, simplistic", PR #11 `docs/research/geometry-quality-gates.md` line 4). They received no per-object review. They were **not** used to derive this method and serve as holdouts (§8).
+The building and the tree exist only in V1 (PR #11 `lab/src/objects/house.ts` and `pine.ts`), which the owner rejected as a whole ("ugly, coarse, simplistic", PR #11 `docs/research/geometry-quality-gates.md` line 4). They received no per-object review. They were **not** used to derive this method; they are not blind holdouts (see the status lines at the top).
 
 ### 2.1 Why the current workflow still lets bad form pass
 
@@ -318,7 +318,7 @@ Each threshold would follow GEO §1.9: unit, object scale, reason, a counterexam
 
 ## 12. Change log and findings from applying the method
 
-The method was committed in `449406b`, before any study or B-2 v6 artwork. Changes after that commit are listed here with their evidence. None comes from a holdout category (building, tree).
+The method was committed in `449406b`, before any study or B-2 v6 artwork. Changes after that commit are listed here with their evidence. None was made to fit the building or tree studies, but the round-2 P7 exemption for declared prismatic masses answers the box case that the building raised (round-2 review).
 
 | Date | Principle | Change | Evidence | Category it came from |
 |---|---|---|---|---|
@@ -326,16 +326,22 @@ The method was committed in `449406b`, before any study or B-2 v6 artwork. Chang
 | 2026-11-27 | P6 silhouette topology | No change. Reproduced a reviewer finding: v5 tail-root pinhole, 86 px² at 400 px height | B-2 v6 brief §11, round v6-5 | raven (derivation) |
 | 2026-11-27 | P4 line visibility | No change. Found seven declared folds under 8° on the first v6 maquette, each a line that marked almost no form change | B-2 v6 brief §11, round v6-3 | raven (derivation) |
 | 2026-11-27 | P5 rake flag | No change, but a limit is recorded: v5's near-hand widths have a coefficient of variation of 0.19, above the proposed 0.08, yet the reviewer read them as "nearly equal". Foreshortening in the judged view hides the differences. The width test, like end alignment, should be measured in the judged view; this is not yet tested | B-2 v6 method board, series panel | raven (derivation) |
-
 | 2026-11-27 | read-out tool | `formkit.diagnostics` gained, during the studies, a fold-only filter for the under-8° check (seams are cuts and need no dihedral) and a `hidden` list that leaves declared hidden surfaces out of the bend and defect counts and reports them apart. Neither was in the method text. The building's soffit was wrongly classed as hidden: it is visible under every eave (round-1 review M4). It is counted as visible from round 2 on | `docs/art/form-studies/source/formkit.py`; studies README | tool |
 | 2026-11-27 (round 2) | P1, P3, P4, P7, §4.0, §5, §7 | P1 descriptors defined in the rest frame, aspect not counted; P3 limited to spines; P4 rationale stated as a bound; P7 rescoped to two values plus line, prismatic masses exempt; §4.0 declaration test added; §5 depth by scale tier; §7 bent panels as an open question, §7.4 counts and order depend on Q5 | round-1 method review M2, M3, M6, M7 and minors (packet §9.2) | review |
 
-### 12.1 Findings from the holdout categories (recorded, not applied)
+### 12.1 Findings from the building and tree studies (recorded, not applied)
 
-The building and the tree were designed with the method as committed in `449406b`. Their findings are listed in the [studies README](form-studies/README.md#findings-recorded-the-principle-text-is-not-changed-for-holdouts) (S4–S7, S10) and are **not** written into §3–§11, so that the holdout stays a holdout. In short:
+The building and the tree were designed with the method as committed in `449406b`. Their findings are listed in the [studies README](form-studies/README.md#findings-recorded-the-principle-text-is-not-changed-for-holdouts) (S4–S7, S10–S13) and are **not** written into §3–§11. *Correction after the round-2 review:* round 2 of the studies used the method as revised in `09591cf`, and the round-1 review had already shown the holdouts were not blind. In short:
 - S4: §4.1 should say that a boundary is a free edge of a sheet, never a T-junction inside one plane.
 - S5: P5's tessellation exception does not exempt P4 (line visibility).
 - S7, a new candidate rule from the tree: a declared fold keeps its sign along its length, or it is split where the sign changes.
 - S10: the declared-prismatic counterexample of P1 and P2 transferred as written.
 
 Two limits apply to every category: P4 gives no numeric bend allowance for a bent panel (the studies used 20° as a maquette parameter; S8), and P7 has no read-out (S9). P6 detects enclosed holes only (S3, from the vehicle).
+
+### 12.2 Open after the round-2 review (not fixed; the work stopped here, packet §9.5)
+
+- **P7 and P1 pass their own fail example.** The round-2 P7 (two plane families at 8°) passes B-2 v5's two-tone front block. The round-1 wording (three at 20°) flagged boxes. Neither version is right. The bible §4.5 citation is a misreading: §4.5 is about two values plus line as a drawing style, not a minimum for reading a solid. P1's side lean depends on aspect, so aspect comes back in, and ε has no unit. On the committed data, v5's fill (0.706) and shoulder height (0.632) are constant.
+- **§4.0 test 2** lets a declaration be added after a diagnostic fires. That conflicts with GEO §1.8. Declarations are not confirmed by anyone, and nothing forbids a declaration that reproduces a bible §5 anti-pattern.
+- **Bends over the allowance are reported, not flagged as P4 undeclared folds.** The allowance itself is undecided (S8).
+- **Owner questions:** whether a slab tower may be exempted against bible §8 ("towers taper and break"), and how broad a declared tessellation may be against bible §4.3.

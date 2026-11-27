@@ -205,10 +205,7 @@
  ],
  "panel_edges_bending_over_20_deg": 244,
  "max_panel_bend_deg": 52.8,
- "hidden_panels": [
-  "podium.t",
-  "plinth.t"
- ],
+ "hidden_panels": [],
  "hidden_panel_edges_bending_over_20_deg": 0,
  "interior_vertices_defect_over_2_deg": 0,
  "max_defect_deg": 0.0,

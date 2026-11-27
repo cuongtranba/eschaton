@@ -2,18 +2,15 @@
  "panels": 61,
  "declared_edges": 686,
  "declared_folds_below_8_deg": [],
- "panel_edges_bending_over_20_deg": 18,
- "max_panel_bend_deg": 61.9,
+ "panel_edges_bending_over_20_deg": 161,
+ "max_panel_bend_deg": 82.1,
  "hidden_panels": [
-  "well",
   "under",
-  "cabin.base",
-  "fascia",
-  "tailpanel"
+  "cabin.base"
  ],
- "hidden_panel_edges_bending_over_20_deg": 152,
- "interior_vertices_defect_over_2_deg": 0,
- "max_defect_deg": 0.0,
+ "hidden_panel_edges_bending_over_20_deg": 9,
+ "interior_vertices_defect_over_2_deg": 45,
+ "max_defect_deg": 20.0,
  "series": [],
  "sections": {
   "nose": {

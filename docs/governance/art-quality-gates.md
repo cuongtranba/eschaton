@@ -187,7 +187,7 @@ Not done: an `ART-1` field in the GEO reporting template (GEO §10) was optional
 |---|---|---|
 | ART-0 | research recorded, not graded | sources in [`art-direction-sources.md`](../research/art-direction-sources.md) |
 | ART-1, B perched | **direction selected by the owner** (1.4 recorded for the artistic direction only) | selecting a direction does not approve final object quality or geometry; B's open defects are listed in the packet §3 |
-| ART-1, B-2 flight | `NOT VERIFIED` | revision requested (ART-D3b). Revisions v4 and v5 were each independently reviewed **NEEDS REVISION** (packet §7). The owner did **not approve v5** and asked for a revision by a generic method (packet §0.1); the owner has not decided on v4, and no later version is approved |
+| ART-1, B-2 flight | `NOT VERIFIED` | revision requested (ART-D3b). Revisions v4 and v5 were each independently reviewed **NEEDS REVISION** (packet §7). The owner did **not approve v5** and asked for a revision by a generic method (packet §0.1). v6 and v7 were each independently reviewed **NEEDS REVISION** (packet §9); the owner has not decided on v4, v6 or v7, and no version is approved |
 | ART-1 tolerances | `NOT VERIFIED` | ART-D3c not authorized |
 | ART-2 … ART-5 | `NOT VERIFIED` | no implementation exists; Geometry V4 is not authorized |
 
