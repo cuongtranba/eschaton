@@ -1,0 +1,2007 @@
+{
+ "build": "experiment/origami-lab-v3 @ 74c686f · served 2026-11-27T06:23:50.906Z",
+ "generated": "v3.html?object=vehicle&mode=evidence",
+ "object": "vehicle",
+ "variants": [
+  {
+   "variant": "hero sedan",
+   "instances": 90,
+   "sheets": 90,
+   "panels": 378,
+   "definitions": 60,
+   "buildMs": 1918,
+   "verifyMs": 1290,
+   "geo1": {
+    "verdict": "PASS",
+    "reasons": []
+   },
+   "counts": {
+    "analytic": 1768,
+    "static": 141046,
+    "certified": 424,
+    "sampled": 0,
+    "collision": 0
+   },
+   "witnesses": [],
+   "panelIssues": [],
+   "thinAnnotated": 0,
+   "minAngleDeg": 7.275473981554022,
+   "minAltitude": 0.030614527793189867,
+   "flat": {
+    "maxOffPlane": 7.740640350917261e-10,
+    "overlaps": 0
+   },
+   "rigidity": 8.162882036977237e-10,
+   "seamGap": {
+    "rest": 5.981911135678705e-9,
+    "articulated": 5.981911135678705e-9
+   },
+   "definitionsInvalid": [],
+   "targets": {
+    "wheelbase": 2.6,
+    "frontAxle": 0.78,
+    "tyre": 0.33,
+    "roof": 1.48,
+    "hood": 1.55,
+    "cabin": "sedan",
+    "fenderSegments": 5
+   },
+   "assignment": {
+    "tyre": 0.33,
+    "fender.gap": 0.1,
+    "fender.segments": 5,
+    "front.axle": 0.78,
+    "wheelbase": 2.6,
+    "hood": 1.55,
+    "roof": 1.48
+   },
+   "measures": {
+    "length": 4.36472627761899,
+    "wheelbase": 2.5999999999999996,
+    "wheelbaseRatio": 0.5956845480395921,
+    "height": 1.48,
+    "heightRatio": 0.3390819734994602,
+    "hoodRatio": 0.34703809157198545,
+    "tyreDiameter": 0.6599999999557769,
+    "track": 1.48,
+    "groundClearance": 0.25346300629644347,
+    "tyreGround": 2.4791724229089596e-11,
+    "fenderClearance": 0.07880911822694474,
+    "cabinOffset": -0.385000463050602
+   },
+   "solver": {
+    "nodes": 7,
+    "backtracks": 0,
+    "eliminations": 1
+   }
+  },
+  {
+   "variant": "seed 1",
+   "instances": 92,
+   "sheets": 92,
+   "panels": 390,
+   "definitions": 62,
+   "buildMs": 1855,
+   "verifyMs": 1218,
+   "geo1": {
+    "verdict": "PASS",
+    "reasons": []
+   },
+   "counts": {
+    "analytic": 1846,
+    "static": 150192,
+    "certified": 432,
+    "sampled": 0,
+    "collision": 0
+   },
+   "witnesses": [],
+   "panelIssues": [],
+   "thinAnnotated": 0,
+   "minAngleDeg": 7.275473981554022,
+   "minAltitude": 0.020000000000000014,
+   "flat": {
+    "maxOffPlane": 1.0022896679284798e-9,
+    "overlaps": 0
+   },
+   "rigidity": 8.981466126378734e-10,
+   "seamGap": {
+    "rest": 5.981911129386951e-9,
+    "articulated": 5.981911129386951e-9
+   },
+   "definitionsInvalid": [],
+   "targets": {
+    "wheelbase": 2.687,
+    "frontAxle": 0.826,
+    "tyre": 0.326,
+    "roof": 1.525,
+    "hood": 1.565,
+    "cabin": "sedan",
+    "fenderSegments": 4
+   },
+   "assignment": {
+    "tyre": 0.33,
+    "fender.gap": 0.1,
+    "fender.segments": 4,
+    "front.axle": 0.82,
+    "wheelbase": 2.7,
+    "hood": 1.55,
+    "roof": 1.52
+   },
+   "measures": {
+    "length": 4.365801963943522,
+    "wheelbase": 2.7,
+    "wheelbaseRatio": 0.6184430769647546,
+    "height": 1.52,
+    "heightRatio": 0.34816054703201,
+    "hoodRatio": 0.3471989743149813,
+    "tyreDiameter": 0.6599999999557769,
+    "track": 1.48,
+    "groundClearance": 0.25269710110461796,
+    "tyreGround": 2.4791724229089596e-11,
+    "fenderClearance": 0.07286339437848625,
+    "cabinOffset": -0.3550004630506022
+   },
+   "solver": {
+    "nodes": 7,
+    "backtracks": 0,
+    "eliminations": 1
+   }
+  },
+  {
+   "variant": "seed 2",
+   "instances": 90,
+   "sheets": 90,
+   "panels": 374,
+   "definitions": 60,
+   "buildMs": 1327,
+   "verifyMs": 941,
+   "geo1": {
+    "verdict": "PASS",
+    "reasons": []
+   },
+   "counts": {
+    "analytic": 1756,
+    "static": 138050,
+    "certified": 412,
+    "sampled": 0,
+    "collision": 0
+   },
+   "witnesses": [],
+   "panelIssues": [],
+   "thinAnnotated": 0,
+   "minAngleDeg": 7.275473981554022,
+   "minAltitude": 0.030614527793189867,
+   "flat": {
+    "maxOffPlane": 1.3446544641637637e-9,
+    "overlaps": 0
+   },
+   "rigidity": 8.981466126378734e-10,
+   "seamGap": {
+    "rest": 5.981911356792973e-9,
+    "articulated": 5.981911356792973e-9
+   },
+   "definitionsInvalid": [],
+   "targets": {
+    "wheelbase": 2.716,
+    "frontAxle": 0.714,
+    "tyre": 0.322,
+    "roof": 1.534,
+    "hood": 1.638,
+    "cabin": "sedan",
+    "fenderSegments": 4
+   },
+   "assignment": {
+    "tyre": 0.33,
+    "fender.gap": 0.1,
+    "fender.segments": 4,
+    "front.axle": 0.7,
+    "wheelbase": 2.7,
+    "hood": 1.65,
+    "roof": 1.52
+   },
+   "measures": {
+    "length": 4.3621727602270415,
+    "wheelbase": 2.7,
+    "wheelbaseRatio": 0.6189576040219624,
+    "height": 1.52,
+    "heightRatio": 0.34845020670866034,
+    "hoodRatio": 0.369580218125779,
+    "tyreDiameter": 0.6599999999557769,
+    "track": 1.48,
+    "groundClearance": 0.25269710110461796,
+    "tyreGround": 2.4791724229089596e-11,
+    "fenderClearance": 0.07286339437848621,
+    "cabinOffset": -0.47500046305060173
+   },
+   "solver": {
+    "nodes": 7,
+    "backtracks": 0,
+    "eliminations": 3
+   }
+  },
+  {
+   "variant": "seed 3",
+   "instances": 84,
+   "sheets": 84,
+   "panels": 360,
+   "definitions": 52,
+   "buildMs": 1420,
+   "verifyMs": 1004,
+   "geo1": {
+    "verdict": "PASS",
+    "reasons": []
+   },
+   "counts": {
+    "analytic": 1688,
+    "static": 127840,
+    "certified": 404,
+    "sampled": 0,
+    "collision": 0
+   },
+   "witnesses": [],
+   "panelIssues": [],
+   "thinAnnotated": 0,
+   "minAngleDeg": 7.275473981554022,
+   "minAltitude": 0.020000000000000073,
+   "flat": {
+    "maxOffPlane": 9.375270421108084e-10,
+    "overlaps": 0
+   },
+   "rigidity": 7.916985955702671e-10,
+   "seamGap": {
+    "rest": 6.656192199922475e-9,
+    "articulated": 6.656192199922475e-9
+   },
+   "definitionsInvalid": [],
+   "targets": {
+    "wheelbase": 2.466,
+    "frontAxle": 0.707,
+    "tyre": 0.349,
+    "roof": 1.498,
+    "hood": 1.456,
+    "cabin": "coupe",
+    "fenderSegments": 5
+   },
+   "assignment": {
+    "tyre": 0.36,
+    "fender.gap": 0.1,
+    "fender.segments": 5,
+    "front.axle": 0.7,
+    "wheelbase": 2.5,
+    "hood": 1.45,
+    "roof": 1.48
+   },
+   "measures": {
+    "length": 4.3621727602270415,
+    "wheelbase": 2.5000000000000004,
+    "wheelbaseRatio": 0.5731088926129283,
+    "height": 1.48,
+    "heightRatio": 0.3392804644268535,
+    "hoodRatio": 0.3237315067167448,
+    "tyreDiameter": 0.7199999999517567,
+    "track": 1.48,
+    "groundClearance": 0.284016078352309,
+    "tyreGround": 2.680178301517344e-11,
+    "fenderClearance": 0.07842262346182297,
+    "cabinOffset": -0.35000046305060184
+   },
+   "solver": {
+    "nodes": 7,
+    "backtracks": 0,
+    "eliminations": 1
+   }
+  },
+  {
+   "variant": "seed 4",
+   "instances": 90,
+   "sheets": 90,
+   "panels": 378,
+   "definitions": 58,
+   "buildMs": 1794,
+   "verifyMs": 1240,
+   "geo1": {
+    "verdict": "PASS",
+    "reasons": []
+   },
+   "counts": {
+    "analytic": 1768,
+    "static": 141046,
+    "certified": 424,
+    "sampled": 0,
+    "collision": 0
+   },
+   "witnesses": [],
+   "panelIssues": [],
+   "thinAnnotated": 0,
+   "minAngleDeg": 7.275473981554022,
+   "minAltitude": 0.030614527793189867,
+   "flat": {
+    "maxOffPlane": 7.740638269249089e-10,
+    "overlaps": 0
+   },
+   "rigidity": 7.095973253434806e-10,
+   "seamGap": {
+    "rest": 5.981912353310051e-9,
+    "articulated": 5.981912353310051e-9
+   },
+   "definitionsInvalid": [],
+   "targets": {
+    "wheelbase": 2.427,
+    "frontAxle": 0.756,
+    "tyre": 0.344,
+    "roof": 1.445,
+    "hood": 1.595,
+    "cabin": "sedan",
+    "fenderSegments": 5
+   },
+   "assignment": {
+    "tyre": 0.33,
+    "fender.gap": 0.1,
+    "fender.segments": 5,
+    "front.axle": 0.74,
+    "wheelbase": 2.4,
+    "hood": 1.45,
+    "roof": 1.44
+   },
+   "measures": {
+    "length": 4.363524377741543,
+    "wheelbase": 2.3999999999999995,
+    "wheelbaseRatio": 0.550014115251072,
+    "height": 1.44,
+    "heightRatio": 0.3300084691506433,
+    "hoodRatio": 0.32394098333722376,
+    "tyreDiameter": 0.6599999999557769,
+    "track": 1.48,
+    "groundClearance": 0.25346300629644347,
+    "tyreGround": 2.4791613206787133e-11,
+    "fenderClearance": 0.07880911822694474,
+    "cabinOffset": -0.35500046305060196
+   },
+   "solver": {
+    "nodes": 7,
+    "backtracks": 0,
+    "eliminations": 3
+   }
+  },
+  {
+   "variant": "seed 5",
+   "instances": 80,
+   "sheets": 80,
+   "panels": 342,
+   "definitions": 50,
+   "buildMs": 1685,
+   "verifyMs": 944,
+   "geo1": {
+    "verdict": "PASS",
+    "reasons": []
+   },
+   "counts": {
+    "analytic": 1608,
+    "static": 115296,
+    "certified": 372,
+    "sampled": 0,
+    "collision": 0
+   },
+   "witnesses": [],
+   "panelIssues": [],
+   "thinAnnotated": 0,
+   "minAngleDeg": 7.275473981554022,
+   "minAltitude": 0.030614527793189867,
+   "flat": {
+    "maxOffPlane": 1.0022896679284798e-9,
+    "overlaps": 0
+   },
+   "rigidity": 8.981466126378734e-10,
+   "seamGap": {
+    "rest": 5.98191179319416e-9,
+    "articulated": 5.98191179319416e-9
+   },
+   "definitionsInvalid": [],
+   "targets": {
+    "wheelbase": 2.799,
+    "frontAxle": 0.835,
+    "tyre": 0.341,
+    "roof": 1.536,
+    "hood": 1.636,
+    "cabin": "coupe",
+    "fenderSegments": 4
+   },
+   "assignment": {
+    "tyre": 0.33,
+    "fender.gap": 0.1,
+    "fender.segments": 4,
+    "front.axle": 0.82,
+    "wheelbase": 2.8,
+    "hood": 1.45,
+    "roof": 1.52
+   },
+   "measures": {
+    "length": 4.365801963943522,
+    "wheelbase": 2.8,
+    "wheelbaseRatio": 0.6413483761115972,
+    "height": 1.52,
+    "heightRatio": 0.34816054703201,
+    "hoodRatio": 0.32429367516813856,
+    "tyreDiameter": 0.6599999999557769,
+    "track": 1.48,
+    "groundClearance": 0.25269710110461796,
+    "tyreGround": 2.4791724229089596e-11,
+    "fenderClearance": 0.06439760545552768,
+    "cabinOffset": -0.08000046305060204
+   },
+   "solver": {
+    "nodes": 10,
+    "backtracks": 3,
+    "eliminations": 16
+   }
+  },
+  {
+   "variant": "seed 6",
+   "instances": 80,
+   "sheets": 80,
+   "panels": 340,
+   "definitions": 50,
+   "buildMs": 1348,
+   "verifyMs": 792,
+   "geo1": {
+    "verdict": "PASS",
+    "reasons": []
+   },
+   "counts": {
+    "analytic": 1594,
+    "static": 113938,
+    "certified": 372,
+    "sampled": 0,
+    "collision": 0
+   },
+   "witnesses": [],
+   "panelIssues": [],
+   "thinAnnotated": 0,
+   "minAngleDeg": 7.275473981554022,
+   "minAltitude": 0.0299999999999998,
+   "flat": {
+    "maxOffPlane": 7.740637436581821e-10,
+    "overlaps": 0
+   },
+   "rigidity": 8.162882036977237e-10,
+   "seamGap": {
+    "rest": 5.859396543051731e-9,
+    "articulated": 5.859396543051731e-9
+   },
+   "definitionsInvalid": [],
+   "targets": {
+    "wheelbase": 2.583,
+    "frontAxle": 0.782,
+    "tyre": 0.308,
+    "roof": 1.416,
+    "hood": 1.411,
+    "cabin": "coupe",
+    "fenderSegments": 4
+   },
+   "assignment": {
+    "tyre": 0.3,
+    "fender.gap": 0.1,
+    "fender.segments": 4,
+    "front.axle": 0.78,
+    "wheelbase": 2.6,
+    "hood": 1.65,
+    "roof": 1.4
+   },
+   "measures": {
+    "length": 4.36472627761899,
+    "wheelbase": 2.5999999999999996,
+    "wheelbaseRatio": 0.5956845480395921,
+    "height": 1.4,
+    "heightRatio": 0.32075321817516506,
+    "hoodRatio": 0.3699490357273543,
+    "tyreDiameter": 0.599999999959797,
+    "track": 1.48,
+    "groundClearance": 0.23088663101951765,
+    "tyreGround": 2.278166544300575e-11,
+    "fenderClearance": 0.06321446211986362,
+    "cabinOffset": -0.42000046305060157
+   },
+   "solver": {
+    "nodes": 10,
+    "backtracks": 3,
+    "eliminations": 15
+   }
+  },
+  {
+   "variant": "seed 7",
+   "instances": 80,
+   "sheets": 80,
+   "panels": 346,
+   "definitions": 50,
+   "buildMs": 1579,
+   "verifyMs": 997,
+   "geo1": {
+    "verdict": "PASS",
+    "reasons": []
+   },
+   "counts": {
+    "analytic": 1620,
+    "static": 118036,
+    "certified": 384,
+    "sampled": 0,
+    "collision": 0
+   },
+   "witnesses": [],
+   "panelIssues": [],
+   "thinAnnotated": 0,
+   "minAngleDeg": 7.275473981554022,
+   "minAltitude": 0.020000000000000073,
+   "flat": {
+    "maxOffPlane": 7.740639032527419e-10,
+    "overlaps": 0
+   },
+   "rigidity": 9.494984243296756e-10,
+   "seamGap": {
+    "rest": 6.656191220702719e-9,
+    "articulated": 6.656191220702719e-9
+   },
+   "definitionsInvalid": [],
+   "targets": {
+    "wheelbase": 2.752,
+    "frontAxle": 0.755,
+    "tyre": 0.356,
+    "roof": 1.491,
+    "hood": 1.47,
+    "cabin": "coupe",
+    "fenderSegments": 5
+   },
+   "assignment": {
+    "tyre": 0.36,
+    "fender.gap": 0.1,
+    "fender.segments": 5,
+    "front.axle": 0.74,
+    "wheelbase": 2.8,
+    "hood": 1.35,
+    "roof": 1.48
+   },
+   "measures": {
+    "length": 4.363524377741543,
+    "wheelbase": 2.8000000000000003,
+    "wheelbaseRatio": 0.6416831344595842,
+    "height": 1.48,
+    "heightRatio": 0.33917537107149454,
+    "hoodRatio": 0.3010237285350958,
+    "tyreDiameter": 0.7199999999517567,
+    "track": 1.48,
+    "groundClearance": 0.28401607835230913,
+    "tyreGround": 2.6801560970568516e-11,
+    "fenderClearance": 0.05333732164609714,
+    "cabinOffset": -0.060000463050601915
+   },
+   "solver": {
+    "nodes": 9,
+    "backtracks": 2,
+    "eliminations": 10
+   }
+  },
+  {
+   "variant": "seed 8",
+   "instances": 82,
+   "sheets": 82,
+   "panels": 348,
+   "definitions": 52,
+   "buildMs": 1593,
+   "verifyMs": 1022,
+   "geo1": {
+    "verdict": "PASS",
+    "reasons": []
+   },
+   "counts": {
+    "analytic": 1630,
+    "static": 119404,
+    "certified": 384,
+    "sampled": 0,
+    "collision": 0
+   },
+   "witnesses": [],
+   "panelIssues": [],
+   "thinAnnotated": 0,
+   "minAngleDeg": 7.275473981554022,
+   "minAltitude": 0.030614527793189867,
+   "flat": {
+    "maxOffPlane": 7.740637991693333e-10,
+    "overlaps": 0
+   },
+   "rigidity": 8.162882036977237e-10,
+   "seamGap": {
+    "rest": 5.981910914018122e-9,
+    "articulated": 5.981910914018122e-9
+   },
+   "definitionsInvalid": [],
+   "targets": {
+    "wheelbase": 2.633,
+    "frontAxle": 0.761,
+    "tyre": 0.339,
+    "roof": 1.432,
+    "hood": 1.73,
+    "cabin": "coupe",
+    "fenderSegments": 5
+   },
+   "assignment": {
+    "tyre": 0.33,
+    "fender.gap": 0.1,
+    "fender.segments": 5,
+    "front.axle": 0.78,
+    "wheelbase": 2.6,
+    "hood": 1.75,
+    "roof": 1.44
+   },
+   "measures": {
+    "length": 4.36472627761899,
+    "wheelbase": 2.5999999999999996,
+    "wheelbaseRatio": 0.5956845480395921,
+    "height": 1.44,
+    "heightRatio": 0.3299175958373126,
+    "hoodRatio": 0.3928599798827233,
+    "tyreDiameter": 0.6599999999557769,
+    "track": 1.48,
+    "groundClearance": 0.25346300629644347,
+    "tyreGround": 2.4791724229089596e-11,
+    "fenderClearance": 0.07880911822694463,
+    "cabinOffset": -0.48500046305060174
+   },
+   "solver": {
+    "nodes": 7,
+    "backtracks": 0,
+    "eliminations": 0
+   }
+  },
+  {
+   "variant": "extreme: window minimum",
+   "instances": 80,
+   "sheets": 80,
+   "panels": 340,
+   "definitions": 50,
+   "buildMs": 1359,
+   "verifyMs": 822,
+   "geo1": {
+    "verdict": "PASS",
+    "reasons": []
+   },
+   "counts": {
+    "analytic": 1594,
+    "static": 113938,
+    "certified": 372,
+    "sampled": 0,
+    "collision": 0
+   },
+   "witnesses": [],
+   "panelIssues": [],
+   "thinAnnotated": 0,
+   "minAngleDeg": 7.275473981554022,
+   "minAltitude": 0.030614527793189867,
+   "flat": {
+    "maxOffPlane": 7.740635563080467e-10,
+    "overlaps": 0
+   },
+   "rigidity": 7.916985955702671e-10,
+   "seamGap": {
+    "rest": 5.859397216219057e-9,
+    "articulated": 5.859397216219057e-9
+   },
+   "definitionsInvalid": [],
+   "targets": {
+    "wheelbase": 2.4,
+    "frontAxle": 0.7,
+    "tyre": 0.3,
+    "roof": 1.4,
+    "hood": 1.35,
+    "cabin": "coupe",
+    "fenderSegments": 4
+   },
+   "assignment": {
+    "tyre": 0.3,
+    "fender.gap": 0.1,
+    "fender.segments": 4,
+    "front.axle": 0.7,
+    "wheelbase": 2.4,
+    "hood": 1.35,
+    "roof": 1.4
+   },
+   "measures": {
+    "length": 4.3621727602270415,
+    "wheelbase": 2.3999999999999995,
+    "wheelbaseRatio": 0.550184536908411,
+    "height": 1.4,
+    "heightRatio": 0.3209409798632398,
+    "hoodRatio": 0.30080715101222766,
+    "tyreDiameter": 0.599999999959797,
+    "track": 1.48,
+    "groundClearance": 0.23088663101951765,
+    "tyreGround": 2.278166544300575e-11,
+    "fenderClearance": 0.0737047355763106,
+    "cabinOffset": -0.30000046305060196
+   },
+   "solver": {
+    "nodes": 7,
+    "backtracks": 0,
+    "eliminations": 1
+   }
+  },
+  {
+   "variant": "extreme: window maximum",
+   "instances": 86,
+   "sheets": 86,
+   "panels": 364,
+   "definitions": 58,
+   "buildMs": 1308,
+   "verifyMs": 942,
+   "geo1": {
+    "verdict": "PASS",
+    "reasons": []
+   },
+   "counts": {
+    "analytic": 1704,
+    "static": 130726,
+    "certified": 404,
+    "sampled": 0,
+    "collision": 0
+   },
+   "witnesses": [],
+   "panelIssues": [],
+   "thinAnnotated": 0,
+   "minAngleDeg": 7.275473981554022,
+   "minAltitude": 0.020000000000000073,
+   "flat": {
+    "maxOffPlane": 1.029608356906131e-9,
+    "overlaps": 0
+   },
+   "rigidity": 7.278468938665128e-10,
+   "seamGap": {
+    "rest": 6.6561916568102335e-9,
+    "articulated": 6.6561916568102335e-9
+   },
+   "definitionsInvalid": [],
+   "targets": {
+    "wheelbase": 2.8,
+    "frontAxle": 0.86,
+    "tyre": 0.36,
+    "roof": 1.56,
+    "hood": 1.75,
+    "cabin": "sedan",
+    "fenderSegments": 5
+   },
+   "assignment": {
+    "tyre": 0.36,
+    "fender.gap": 0.1,
+    "fender.segments": 5,
+    "front.axle": 0.86,
+    "wheelbase": 2.8,
+    "hood": 1.75,
+    "roof": 1.56
+   },
+   "measures": {
+    "length": 4.3667702775805655,
+    "wheelbase": 2.8000000000000003,
+    "wheelbaseRatio": 0.6412061597046861,
+    "height": 1.56,
+    "heightRatio": 0.3572434318354679,
+    "hoodRatio": 0.39314417027949355,
+    "tyreDiameter": 0.7199999999517567,
+    "track": 1.48,
+    "groundClearance": 0.28271290254258324,
+    "tyreGround": 2.680178301517344e-11,
+    "fenderClearance": 0.061739531966080986,
+    "cabinOffset": -0.44500046305060237
+   },
+   "solver": {
+    "nodes": 7,
+    "backtracks": 0,
+    "eliminations": 1
+   }
+  }
+ ],
+ "silhouetteIoU": {
+  "view": "side",
+  "seeds": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8
+  ],
+  "matrix": [
+   [
+    1,
+    0.803,
+    0.66,
+    0.69,
+    0.747,
+    0.747,
+    0.722,
+    0.739
+   ],
+   [
+    0.803,
+    1,
+    0.709,
+    0.683,
+    0.688,
+    0.779,
+    0.704,
+    0.766
+   ],
+   [
+    0.66,
+    0.709,
+    1,
+    0.829,
+    0.822,
+    0.748,
+    0.827,
+    0.715
+   ],
+   [
+    0.69,
+    0.683,
+    0.829,
+    1,
+    0.705,
+    0.739,
+    0.708,
+    0.755
+   ],
+   [
+    0.747,
+    0.688,
+    0.822,
+    0.705,
+    1,
+    0.729,
+    0.853,
+    0.693
+   ],
+   [
+    0.747,
+    0.779,
+    0.748,
+    0.739,
+    0.729,
+    1,
+    0.719,
+    0.892
+   ],
+   [
+    0.722,
+    0.704,
+    0.827,
+    0.708,
+    0.853,
+    0.719,
+    1,
+    0.695
+   ],
+   [
+    0.739,
+    0.766,
+    0.715,
+    0.755,
+    0.693,
+    0.892,
+    0.695,
+    1
+   ]
+  ]
+ },
+ "reuse": [
+  {
+   "id": "2c983de2c28393b1",
+   "family": "vane",
+   "params": "{\"len\":0.26,\"w\":0.119,\"phi\":25,\"shape\":\"blunt\"}",
+   "uses": {
+    "bird": 1,
+    "vehicle": 2
+   }
+  },
+  {
+   "id": "96d40e024a51e18d",
+   "family": "vane",
+   "params": "{\"len\":0.26,\"w\":0.119,\"phi\":25,\"shape\":\"blunt\",\"mirror\":1}",
+   "mirrorOf": "2c983de2c28393b1",
+   "uses": {
+    "bird": 1,
+    "vehicle": 2
+   }
+  }
+ ],
+ "provenance": [
+  {
+   "instance": "tub/0.L",
+   "slot": "body.tub",
+   "definition": "5f4af268d913a2df",
+   "family": "band",
+   "parent": "tub/1.L",
+   "via": "back→front",
+   "decidedBy": [
+    "wheelbase",
+    "front.axle",
+    "hood",
+    "fender.gap"
+   ]
+  },
+  {
+   "instance": "tub/1.L",
+   "slot": "body.tub",
+   "definition": "223d3498c92ebcd9",
+   "family": "band",
+   "parent": "tub/2.L",
+   "via": "back→front",
+   "decidedBy": [
+    "wheelbase",
+    "front.axle",
+    "hood",
+    "fender.gap"
+   ]
+  },
+  {
+   "instance": "tub/2.L",
+   "slot": "body.tub",
+   "definition": "b576cc6a8dac8be2",
+   "family": "band",
+   "decidedBy": [
+    "wheelbase",
+    "front.axle",
+    "hood",
+    "fender.gap"
+   ]
+  },
+  {
+   "instance": "tub/3.L",
+   "slot": "body.tub",
+   "definition": "87225c4279b28f21",
+   "family": "band",
+   "parent": "tub/2.L",
+   "via": "front→back",
+   "decidedBy": [
+    "wheelbase",
+    "front.axle",
+    "hood",
+    "fender.gap"
+   ]
+  },
+  {
+   "instance": "tub/4.L",
+   "slot": "body.tub",
+   "definition": "b301bf08fdf38b7b",
+   "family": "band",
+   "parent": "tub/3.L",
+   "via": "front→back",
+   "decidedBy": [
+    "wheelbase",
+    "front.axle",
+    "hood",
+    "fender.gap"
+   ]
+  },
+  {
+   "instance": "tub/5.L",
+   "slot": "body.tub",
+   "definition": "b730efc726a93c4b",
+   "family": "band",
+   "parent": "tub/4.L",
+   "via": "front→back",
+   "decidedBy": [
+    "wheelbase",
+    "front.axle",
+    "hood",
+    "fender.gap"
+   ]
+  },
+  {
+   "instance": "tub/6.L",
+   "slot": "body.tub",
+   "definition": "1eb64f15bee9e2d0",
+   "family": "band",
+   "parent": "tub/5.L",
+   "via": "front→back",
+   "decidedBy": [
+    "wheelbase",
+    "front.axle",
+    "hood",
+    "fender.gap"
+   ]
+  },
+  {
+   "instance": "tub/7.L",
+   "slot": "body.tub",
+   "definition": "5733dceefa872383",
+   "family": "band",
+   "parent": "tub/6.L",
+   "via": "front→back",
+   "decidedBy": [
+    "wheelbase",
+    "front.axle",
+    "hood",
+    "fender.gap"
+   ]
+  },
+  {
+   "instance": "tub/8.L",
+   "slot": "body.tub",
+   "definition": "d9b0ce4e32b7d5b7",
+   "family": "band",
+   "parent": "tub/7.L",
+   "via": "front→back",
+   "decidedBy": [
+    "wheelbase",
+    "front.axle",
+    "hood",
+    "fender.gap"
+   ]
+  },
+  {
+   "instance": "tub/9.L",
+   "slot": "body.tub",
+   "definition": "4844c40f16acdbc5",
+   "family": "band",
+   "parent": "tub/8.L",
+   "via": "front→back",
+   "decidedBy": [
+    "wheelbase",
+    "front.axle",
+    "hood",
+    "fender.gap"
+   ]
+  },
+  {
+   "instance": "tub/10.L",
+   "slot": "body.tub",
+   "definition": "9fb4fe92f5c1af8a",
+   "family": "band",
+   "parent": "tub/9.L",
+   "via": "front→back",
+   "decidedBy": [
+    "wheelbase",
+    "front.axle",
+    "hood",
+    "fender.gap"
+   ]
+  },
+  {
+   "instance": "tub/11.L",
+   "slot": "body.tub",
+   "definition": "94b5e4ea16c7f8ff",
+   "family": "band",
+   "parent": "tub/10.L",
+   "via": "front→back",
+   "decidedBy": [
+    "wheelbase",
+    "front.axle",
+    "hood",
+    "fender.gap"
+   ]
+  },
+  {
+   "instance": "tub/nose.L",
+   "slot": "body.nose",
+   "definition": "7982bf1648ace3fb",
+   "family": "cap",
+   "parent": "tub/0.L",
+   "via": "base→front",
+   "decidedBy": []
+  },
+  {
+   "instance": "tub/tail.L",
+   "slot": "body.tail",
+   "definition": "9ec3d9e20a7f5f3b",
+   "family": "cap",
+   "parent": "tub/11.L",
+   "via": "base→back",
+   "decidedBy": []
+  },
+  {
+   "instance": "cabin/windshield.L",
+   "slot": "cabin.windshield",
+   "definition": "46e5b956fc0202fa",
+   "family": "stitch",
+   "parent": "tub/3.L",
+   "via": "base→crown.front",
+   "decidedBy": [
+    "hood",
+    "roof"
+   ]
+  },
+  {
+   "instance": "cabin/0.L",
+   "slot": "cabin.pillar",
+   "definition": "79c4a23adde71003",
+   "family": "band",
+   "parent": "cabin/windshield.L",
+   "via": "front→top",
+   "decidedBy": [
+    "roof",
+    "hood",
+    "wheelbase"
+   ]
+  },
+  {
+   "instance": "cabin/1.L",
+   "slot": "cabin.window",
+   "definition": "6f6eac6a674924bc",
+   "family": "band",
+   "parent": "cabin/0.L",
+   "via": "front→back",
+   "decidedBy": [
+    "roof",
+    "hood",
+    "wheelbase"
+   ]
+  },
+  {
+   "instance": "cabin/2.L",
+   "slot": "cabin.pillar",
+   "definition": "6ac8069b5c9de068",
+   "family": "band",
+   "parent": "cabin/1.L",
+   "via": "front→back",
+   "decidedBy": [
+    "roof",
+    "hood",
+    "wheelbase"
+   ]
+  },
+  {
+   "instance": "cabin/3.L",
+   "slot": "cabin.window",
+   "definition": "22e2da15ffa2da34",
+   "family": "band",
+   "parent": "cabin/2.L",
+   "via": "front→back",
+   "decidedBy": [
+    "roof",
+    "hood",
+    "wheelbase"
+   ]
+  },
+  {
+   "instance": "cabin/4.L",
+   "slot": "cabin.window",
+   "definition": "724bf3e4d6c07fb8",
+   "family": "band",
+   "parent": "cabin/3.L",
+   "via": "front→back",
+   "decidedBy": [
+    "roof",
+    "hood",
+    "wheelbase"
+   ]
+  },
+  {
+   "instance": "cabin/5.L",
+   "slot": "cabin.pillar",
+   "definition": "ff858a1f3fcd5691",
+   "family": "band",
+   "parent": "cabin/4.L",
+   "via": "front→back",
+   "decidedBy": [
+    "roof",
+    "hood",
+    "wheelbase"
+   ]
+  },
+  {
+   "instance": "cabin/rear.L",
+   "slot": "cabin.rear-window",
+   "definition": "7eab8fb702661304",
+   "family": "stitch",
+   "parent": "cabin/5.L",
+   "via": "top→back",
+   "decidedBy": [
+    "roof"
+   ]
+  },
+  {
+   "instance": "grille/slat.1.L",
+   "slot": "grille.slat",
+   "definition": "2c983de2c28393b1",
+   "family": "vane",
+   "parent": "tub/0.L",
+   "via": "root→rim.front.1@260°",
+   "decidedBy": []
+  },
+  {
+   "instance": "grille/slat.2.L",
+   "slot": "grille.slat",
+   "definition": "2c983de2c28393b1",
+   "family": "vane",
+   "parent": "tub/0.L",
+   "via": "root→rim.front.2@260°",
+   "decidedBy": []
+  },
+  {
+   "instance": "chassis/board.L",
+   "slot": "chassis.board",
+   "definition": "a6fa005374946c4e",
+   "family": "plate",
+   "parent": "tub/2.L",
+   "via": "inner.0→ridge.5@90°",
+   "decidedBy": [
+    "wheelbase",
+    "front.axle",
+    "fender.gap"
+   ]
+  },
+  {
+   "instance": "fender/front.L",
+   "slot": "fender",
+   "definition": "45b7d3541d6eee04",
+   "family": "arch",
+   "parent": "chassis/board.L",
+   "via": "start→front@120°",
+   "decidedBy": [
+    "tyre",
+    "fender.gap",
+    "fender.segments"
+   ]
+  },
+  {
+   "instance": "fender/rear.L",
+   "slot": "fender",
+   "definition": "45b7d3541d6eee04",
+   "family": "arch",
+   "parent": "chassis/board.L",
+   "via": "start→rear@120°",
+   "decidedBy": [
+    "tyre",
+    "fender.gap",
+    "fender.segments"
+   ]
+  },
+  {
+   "instance": "wheel/front/hanger.L",
+   "slot": "wheel.hanger",
+   "definition": "c1c309443464de5c",
+   "family": "plate",
+   "parent": "tub/0.L",
+   "via": "top→rim.back.5@90°",
+   "decidedBy": [
+    "front.axle",
+    "wheelbase",
+    "tyre"
+   ]
+  },
+  {
+   "instance": "wheel/front/axleA.L",
+   "slot": "wheel.axle",
+   "definition": "f9a2a9bb12145616",
+   "family": "band",
+   "parent": "wheel/front/hanger.L",
+   "via": "line.top→bottom@112.5°",
+   "decidedBy": [
+    "tyre"
+   ]
+  },
+  {
+   "instance": "wheel/front/sidewallA.L",
+   "slot": "wheel.sidewall",
+   "definition": "f81b141d6a479711",
+   "family": "band",
+   "parent": "wheel/front/axleA.L",
+   "via": "front→back",
+   "decidedBy": [
+    "tyre"
+   ]
+  },
+  {
+   "instance": "wheel/front/treadA.L",
+   "slot": "wheel.tread",
+   "definition": "62a9f6444b4800a1",
+   "family": "band",
+   "parent": "wheel/front/sidewallA.L",
+   "via": "front→back",
+   "decidedBy": [
+    "tyre"
+   ]
+  },
+  {
+   "instance": "wheel/front/hubA.L",
+   "slot": "wheel.hub",
+   "definition": "bb467b771e9f4afe",
+   "family": "cap",
+   "parent": "wheel/front/treadA.L",
+   "via": "base→back",
+   "decidedBy": [
+    "tyre"
+   ]
+  },
+  {
+   "instance": "wheel/front/axleB.L",
+   "slot": "wheel.axle",
+   "definition": "20dc2a239a5a72a4",
+   "family": "band",
+   "parent": "wheel/front/axleA.L",
+   "via": "midline→midline",
+   "decidedBy": [
+    "tyre"
+   ]
+  },
+  {
+   "instance": "wheel/front/sidewallB.L",
+   "slot": "wheel.sidewall",
+   "definition": "47c2f63b3417223d",
+   "family": "band",
+   "parent": "wheel/front/axleB.L",
+   "via": "front→back",
+   "decidedBy": [
+    "tyre"
+   ]
+  },
+  {
+   "instance": "wheel/front/treadB.L",
+   "slot": "wheel.tread",
+   "definition": "28584bdb54ab4985",
+   "family": "band",
+   "parent": "wheel/front/sidewallB.L",
+   "via": "front→back",
+   "decidedBy": [
+    "tyre"
+   ]
+  },
+  {
+   "instance": "wheel/front/hubB.L",
+   "slot": "wheel.hub",
+   "definition": "caa18667e9ac9c6a",
+   "family": "cap",
+   "parent": "wheel/front/treadB.L",
+   "via": "base→back",
+   "decidedBy": [
+    "tyre"
+   ]
+  },
+  {
+   "instance": "wheel/rear/hanger.L",
+   "slot": "wheel.hanger",
+   "definition": "c1c309443464de5c",
+   "family": "plate",
+   "parent": "tub/10.L",
+   "via": "top→rim.back.5@90°",
+   "decidedBy": [
+    "front.axle",
+    "wheelbase",
+    "tyre"
+   ]
+  },
+  {
+   "instance": "wheel/rear/axleA.L",
+   "slot": "wheel.axle",
+   "definition": "f9a2a9bb12145616",
+   "family": "band",
+   "parent": "wheel/rear/hanger.L",
+   "via": "line.top→bottom@112.5°",
+   "decidedBy": [
+    "tyre"
+   ]
+  },
+  {
+   "instance": "wheel/rear/sidewallA.L",
+   "slot": "wheel.sidewall",
+   "definition": "f81b141d6a479711",
+   "family": "band",
+   "parent": "wheel/rear/axleA.L",
+   "via": "front→back",
+   "decidedBy": [
+    "tyre"
+   ]
+  },
+  {
+   "instance": "wheel/rear/treadA.L",
+   "slot": "wheel.tread",
+   "definition": "62a9f6444b4800a1",
+   "family": "band",
+   "parent": "wheel/rear/sidewallA.L",
+   "via": "front→back",
+   "decidedBy": [
+    "tyre"
+   ]
+  },
+  {
+   "instance": "wheel/rear/hubA.L",
+   "slot": "wheel.hub",
+   "definition": "bb467b771e9f4afe",
+   "family": "cap",
+   "parent": "wheel/rear/treadA.L",
+   "via": "base→back",
+   "decidedBy": [
+    "tyre"
+   ]
+  },
+  {
+   "instance": "wheel/rear/axleB.L",
+   "slot": "wheel.axle",
+   "definition": "20dc2a239a5a72a4",
+   "family": "band",
+   "parent": "wheel/rear/axleA.L",
+   "via": "midline→midline",
+   "decidedBy": [
+    "tyre"
+   ]
+  },
+  {
+   "instance": "wheel/rear/sidewallB.L",
+   "slot": "wheel.sidewall",
+   "definition": "47c2f63b3417223d",
+   "family": "band",
+   "parent": "wheel/rear/axleB.L",
+   "via": "front→back",
+   "decidedBy": [
+    "tyre"
+   ]
+  },
+  {
+   "instance": "wheel/rear/treadB.L",
+   "slot": "wheel.tread",
+   "definition": "28584bdb54ab4985",
+   "family": "band",
+   "parent": "wheel/rear/sidewallB.L",
+   "via": "front→back",
+   "decidedBy": [
+    "tyre"
+   ]
+  },
+  {
+   "instance": "wheel/rear/hubB.L",
+   "slot": "wheel.hub",
+   "definition": "caa18667e9ac9c6a",
+   "family": "cap",
+   "parent": "wheel/rear/treadB.L",
+   "via": "base→back",
+   "decidedBy": [
+    "tyre"
+   ]
+  },
+  {
+   "instance": "tub/0.R",
+   "slot": "body.tub",
+   "definition": "35773d1cd4315b59",
+   "family": "band",
+   "parent": "tub/0.L",
+   "via": "midline→midline",
+   "decidedBy": [
+    "wheelbase",
+    "front.axle",
+    "hood",
+    "fender.gap"
+   ]
+  },
+  {
+   "instance": "tub/1.R",
+   "slot": "body.tub",
+   "definition": "7567dcc68c23c79b",
+   "family": "band",
+   "parent": "tub/1.L",
+   "via": "midline→midline",
+   "decidedBy": [
+    "wheelbase",
+    "front.axle",
+    "hood",
+    "fender.gap"
+   ]
+  },
+  {
+   "instance": "tub/2.R",
+   "slot": "body.tub",
+   "definition": "1258afa6af85d0ae",
+   "family": "band",
+   "parent": "tub/2.L",
+   "via": "midline→midline",
+   "decidedBy": [
+    "wheelbase",
+    "front.axle",
+    "hood",
+    "fender.gap"
+   ]
+  },
+  {
+   "instance": "tub/3.R",
+   "slot": "body.tub",
+   "definition": "059639658af73dc3",
+   "family": "band",
+   "parent": "tub/3.L",
+   "via": "midline→midline",
+   "decidedBy": [
+    "wheelbase",
+    "front.axle",
+    "hood",
+    "fender.gap"
+   ]
+  },
+  {
+   "instance": "tub/4.R",
+   "slot": "body.tub",
+   "definition": "a884767fc3dcefd5",
+   "family": "band",
+   "parent": "tub/4.L",
+   "via": "midline→midline",
+   "decidedBy": [
+    "wheelbase",
+    "front.axle",
+    "hood",
+    "fender.gap"
+   ]
+  },
+  {
+   "instance": "tub/5.R",
+   "slot": "body.tub",
+   "definition": "4e404e2f066cc865",
+   "family": "band",
+   "parent": "tub/5.L",
+   "via": "midline→midline",
+   "decidedBy": [
+    "wheelbase",
+    "front.axle",
+    "hood",
+    "fender.gap"
+   ]
+  },
+  {
+   "instance": "tub/6.R",
+   "slot": "body.tub",
+   "definition": "876b0781a0c79dbc",
+   "family": "band",
+   "parent": "tub/6.L",
+   "via": "midline→midline",
+   "decidedBy": [
+    "wheelbase",
+    "front.axle",
+    "hood",
+    "fender.gap"
+   ]
+  },
+  {
+   "instance": "tub/7.R",
+   "slot": "body.tub",
+   "definition": "b8b826f168b92e7d",
+   "family": "band",
+   "parent": "tub/7.L",
+   "via": "midline→midline",
+   "decidedBy": [
+    "wheelbase",
+    "front.axle",
+    "hood",
+    "fender.gap"
+   ]
+  },
+  {
+   "instance": "tub/8.R",
+   "slot": "body.tub",
+   "definition": "b5bb2fac301ac481",
+   "family": "band",
+   "parent": "tub/8.L",
+   "via": "midline→midline",
+   "decidedBy": [
+    "wheelbase",
+    "front.axle",
+    "hood",
+    "fender.gap"
+   ]
+  },
+  {
+   "instance": "tub/9.R",
+   "slot": "body.tub",
+   "definition": "d5034f6e2a301337",
+   "family": "band",
+   "parent": "tub/9.L",
+   "via": "midline→midline",
+   "decidedBy": [
+    "wheelbase",
+    "front.axle",
+    "hood",
+    "fender.gap"
+   ]
+  },
+  {
+   "instance": "tub/10.R",
+   "slot": "body.tub",
+   "definition": "bb61d26034c3fa56",
+   "family": "band",
+   "parent": "tub/10.L",
+   "via": "midline→midline",
+   "decidedBy": [
+    "wheelbase",
+    "front.axle",
+    "hood",
+    "fender.gap"
+   ]
+  },
+  {
+   "instance": "tub/11.R",
+   "slot": "body.tub",
+   "definition": "7f3015e5a95eca9d",
+   "family": "band",
+   "parent": "tub/11.L",
+   "via": "midline→midline",
+   "decidedBy": [
+    "wheelbase",
+    "front.axle",
+    "hood",
+    "fender.gap"
+   ]
+  },
+  {
+   "instance": "tub/nose.R",
+   "slot": "body.nose",
+   "definition": "53609b4da62f5331",
+   "family": "cap",
+   "parent": "tub/nose.L",
+   "via": "midline→midline",
+   "decidedBy": []
+  },
+  {
+   "instance": "tub/tail.R",
+   "slot": "body.tail",
+   "definition": "9a2818d1c7ba74b5",
+   "family": "cap",
+   "parent": "tub/tail.L",
+   "via": "midline→midline",
+   "decidedBy": []
+  },
+  {
+   "instance": "cabin/windshield.R",
+   "slot": "cabin.windshield",
+   "definition": "712bdefd03868aee",
+   "family": "stitch",
+   "parent": "tub/3.R",
+   "via": "base→crown.front",
+   "decidedBy": [
+    "hood",
+    "roof"
+   ]
+  },
+  {
+   "instance": "cabin/0.R",
+   "slot": "cabin.pillar",
+   "definition": "fd4f31f94c41f241",
+   "family": "band",
+   "parent": "cabin/windshield.R",
+   "via": "front→top",
+   "decidedBy": [
+    "roof",
+    "hood",
+    "wheelbase"
+   ]
+  },
+  {
+   "instance": "cabin/1.R",
+   "slot": "cabin.window",
+   "definition": "3c6d06f0b4becd36",
+   "family": "band",
+   "parent": "cabin/0.R",
+   "via": "front→back",
+   "decidedBy": [
+    "roof",
+    "hood",
+    "wheelbase"
+   ]
+  },
+  {
+   "instance": "cabin/2.R",
+   "slot": "cabin.pillar",
+   "definition": "c044bf85cb8d398c",
+   "family": "band",
+   "parent": "cabin/1.R",
+   "via": "front→back",
+   "decidedBy": [
+    "roof",
+    "hood",
+    "wheelbase"
+   ]
+  },
+  {
+   "instance": "cabin/3.R",
+   "slot": "cabin.window",
+   "definition": "ea85a46b7e801eee",
+   "family": "band",
+   "parent": "cabin/2.R",
+   "via": "front→back",
+   "decidedBy": [
+    "roof",
+    "hood",
+    "wheelbase"
+   ]
+  },
+  {
+   "instance": "cabin/4.R",
+   "slot": "cabin.window",
+   "definition": "70548c28345841b2",
+   "family": "band",
+   "parent": "cabin/3.R",
+   "via": "front→back",
+   "decidedBy": [
+    "roof",
+    "hood",
+    "wheelbase"
+   ]
+  },
+  {
+   "instance": "cabin/5.R",
+   "slot": "cabin.pillar",
+   "definition": "836a02378262d857",
+   "family": "band",
+   "parent": "cabin/4.R",
+   "via": "front→back",
+   "decidedBy": [
+    "roof",
+    "hood",
+    "wheelbase"
+   ]
+  },
+  {
+   "instance": "cabin/rear.R",
+   "slot": "cabin.rear-window",
+   "definition": "3a76ebdb387f9586",
+   "family": "stitch",
+   "parent": "cabin/5.R",
+   "via": "top→back",
+   "decidedBy": [
+    "roof"
+   ]
+  },
+  {
+   "instance": "grille/slat.1.R",
+   "slot": "grille.slat",
+   "definition": "96d40e024a51e18d",
+   "family": "vane",
+   "parent": "tub/0.R",
+   "via": "root→rim.front.1@260°",
+   "decidedBy": []
+  },
+  {
+   "instance": "grille/slat.2.R",
+   "slot": "grille.slat",
+   "definition": "96d40e024a51e18d",
+   "family": "vane",
+   "parent": "tub/0.R",
+   "via": "root→rim.front.2@260°",
+   "decidedBy": []
+  },
+  {
+   "instance": "chassis/board.R",
+   "slot": "chassis.board",
+   "definition": "87b9dbc10627d8f0",
+   "family": "plate",
+   "parent": "tub/2.R",
+   "via": "inner.0→ridge.5@90°",
+   "decidedBy": [
+    "wheelbase",
+    "front.axle",
+    "fender.gap"
+   ]
+  },
+  {
+   "instance": "fender/front.R",
+   "slot": "fender",
+   "definition": "aa729f9433b1ac8a",
+   "family": "arch",
+   "parent": "chassis/board.R",
+   "via": "start→front@120°",
+   "decidedBy": [
+    "tyre",
+    "fender.gap",
+    "fender.segments"
+   ]
+  },
+  {
+   "instance": "fender/rear.R",
+   "slot": "fender",
+   "definition": "aa729f9433b1ac8a",
+   "family": "arch",
+   "parent": "chassis/board.R",
+   "via": "start→rear@120°",
+   "decidedBy": [
+    "tyre",
+    "fender.gap",
+    "fender.segments"
+   ]
+  },
+  {
+   "instance": "wheel/front/hanger.R",
+   "slot": "wheel.hanger",
+   "definition": "ccb7f3dc488f99ee",
+   "family": "plate",
+   "parent": "tub/0.R",
+   "via": "top→rim.back.5@90°",
+   "decidedBy": [
+    "front.axle",
+    "wheelbase",
+    "tyre"
+   ]
+  },
+  {
+   "instance": "wheel/front/axleA.R",
+   "slot": "wheel.axle",
+   "definition": "20dc2a239a5a72a4",
+   "family": "band",
+   "parent": "wheel/front/hanger.R",
+   "via": "line.top→bottom@112.5°",
+   "decidedBy": [
+    "tyre"
+   ]
+  },
+  {
+   "instance": "wheel/front/sidewallA.R",
+   "slot": "wheel.sidewall",
+   "definition": "47c2f63b3417223d",
+   "family": "band",
+   "parent": "wheel/front/axleA.R",
+   "via": "front→back",
+   "decidedBy": [
+    "tyre"
+   ]
+  },
+  {
+   "instance": "wheel/front/treadA.R",
+   "slot": "wheel.tread",
+   "definition": "28584bdb54ab4985",
+   "family": "band",
+   "parent": "wheel/front/sidewallA.R",
+   "via": "front→back",
+   "decidedBy": [
+    "tyre"
+   ]
+  },
+  {
+   "instance": "wheel/front/hubA.R",
+   "slot": "wheel.hub",
+   "definition": "caa18667e9ac9c6a",
+   "family": "cap",
+   "parent": "wheel/front/treadA.R",
+   "via": "base→back",
+   "decidedBy": [
+    "tyre"
+   ]
+  },
+  {
+   "instance": "wheel/front/axleB.R",
+   "slot": "wheel.axle",
+   "definition": "20dc2a239a5a72a4",
+   "family": "band",
+   "parent": "wheel/front/axleA.R",
+   "via": "midline→midline",
+   "decidedBy": [
+    "tyre"
+   ]
+  },
+  {
+   "instance": "wheel/front/sidewallB.R",
+   "slot": "wheel.sidewall",
+   "definition": "47c2f63b3417223d",
+   "family": "band",
+   "parent": "wheel/front/axleB.R",
+   "via": "front→back",
+   "decidedBy": [
+    "tyre"
+   ]
+  },
+  {
+   "instance": "wheel/front/treadB.R",
+   "slot": "wheel.tread",
+   "definition": "28584bdb54ab4985",
+   "family": "band",
+   "parent": "wheel/front/sidewallB.R",
+   "via": "front→back",
+   "decidedBy": [
+    "tyre"
+   ]
+  },
+  {
+   "instance": "wheel/front/hubB.R",
+   "slot": "wheel.hub",
+   "definition": "caa18667e9ac9c6a",
+   "family": "cap",
+   "parent": "wheel/front/treadB.R",
+   "via": "base→back",
+   "decidedBy": [
+    "tyre"
+   ]
+  },
+  {
+   "instance": "wheel/rear/hanger.R",
+   "slot": "wheel.hanger",
+   "definition": "ccb7f3dc488f99ee",
+   "family": "plate",
+   "parent": "tub/10.R",
+   "via": "top→rim.back.5@90°",
+   "decidedBy": [
+    "front.axle",
+    "wheelbase",
+    "tyre"
+   ]
+  },
+  {
+   "instance": "wheel/rear/axleA.R",
+   "slot": "wheel.axle",
+   "definition": "20dc2a239a5a72a4",
+   "family": "band",
+   "parent": "wheel/rear/hanger.R",
+   "via": "line.top→bottom@112.5°",
+   "decidedBy": [
+    "tyre"
+   ]
+  },
+  {
+   "instance": "wheel/rear/sidewallA.R",
+   "slot": "wheel.sidewall",
+   "definition": "47c2f63b3417223d",
+   "family": "band",
+   "parent": "wheel/rear/axleA.R",
+   "via": "front→back",
+   "decidedBy": [
+    "tyre"
+   ]
+  },
+  {
+   "instance": "wheel/rear/treadA.R",
+   "slot": "wheel.tread",
+   "definition": "28584bdb54ab4985",
+   "family": "band",
+   "parent": "wheel/rear/sidewallA.R",
+   "via": "front→back",
+   "decidedBy": [
+    "tyre"
+   ]
+  },
+  {
+   "instance": "wheel/rear/hubA.R",
+   "slot": "wheel.hub",
+   "definition": "caa18667e9ac9c6a",
+   "family": "cap",
+   "parent": "wheel/rear/treadA.R",
+   "via": "base→back",
+   "decidedBy": [
+    "tyre"
+   ]
+  },
+  {
+   "instance": "wheel/rear/axleB.R",
+   "slot": "wheel.axle",
+   "definition": "20dc2a239a5a72a4",
+   "family": "band",
+   "parent": "wheel/rear/axleA.R",
+   "via": "midline→midline",
+   "decidedBy": [
+    "tyre"
+   ]
+  },
+  {
+   "instance": "wheel/rear/sidewallB.R",
+   "slot": "wheel.sidewall",
+   "definition": "47c2f63b3417223d",
+   "family": "band",
+   "parent": "wheel/rear/axleB.R",
+   "via": "front→back",
+   "decidedBy": [
+    "tyre"
+   ]
+  },
+  {
+   "instance": "wheel/rear/treadB.R",
+   "slot": "wheel.tread",
+   "definition": "28584bdb54ab4985",
+   "family": "band",
+   "parent": "wheel/rear/sidewallB.R",
+   "via": "front→back",
+   "decidedBy": [
+    "tyre"
+   ]
+  },
+  {
+   "instance": "wheel/rear/hubB.R",
+   "slot": "wheel.hub",
+   "definition": "caa18667e9ac9c6a",
+   "family": "cap",
+   "parent": "wheel/rear/treadB.R",
+   "via": "base→back",
+   "decidedBy": [
+    "tyre"
+   ]
+  }
+ ]
+}

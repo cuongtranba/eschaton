@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EXPERIMENTAL — Origami geometry expressiveness lab</title>
+    <style>
+      :root { color-scheme: dark; --paper: #f4efe6; --ink: #1c1c1f; --bg: #17181b; --panel: #202227; --line: #34363d; }
+      * { box-sizing: border-box; }
+      body { margin: 0; background: var(--bg); color: #d9d6cf; font: 13px/1.4 ui-sans-serif, system-ui, sans-serif; }
+      #banner { position: relative; z-index: 3; background: #7a2e12; color: #fff3e6; padding: 6px 12px; font-weight: 600; letter-spacing: 0.02em; display: flex; justify-content: space-between; gap: 12px; }
+      #banner small { font-weight: 400; opacity: 0.85; }
+      #controls { position: relative; z-index: 3; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; padding: 8px 12px; background: var(--panel); border-bottom: 1px solid var(--line); }
+      #controls label { display: inline-flex; gap: 4px; align-items: center; white-space: nowrap; }
+      #controls input[type="number"] { width: 64px; }
+      #controls input[type="range"] { width: 140px; }
+      button, input, select { background: #2b2d34; color: #e6e3dc; border: 1px solid #44464f; border-radius: 4px; padding: 3px 8px; font: inherit; }
+      button { cursor: pointer; }
+      .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 2px; border: 1px solid #0006; }
+      main { display: grid; grid-template-columns: minmax(0, 1fr) 340px; min-height: calc(100vh - 100px); }
+      #stage { position: relative; padding: 8px; }
+      #canvas { position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 0; }
+      #views { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+      #views.single { grid-template-columns: minmax(0, 1fr); }
+      .view { position: relative; height: 380px; border: 1px solid var(--line); border-radius: 6px; background: transparent; cursor: grab; }
+      #views.single .view { height: 640px; }
+      .view.selected { border-color: #e0a35a; }
+      .view .label { position: absolute; left: 8px; top: 6px; font-weight: 600; text-shadow: 0 1px 2px #000; pointer-events: none; }
+      .view .flat { position: absolute; right: 6px; bottom: 6px; width: 46%; max-height: 62%; background: #17181bdd; border: 1px solid var(--line); border-radius: 4px; pointer-events: none; }
+      #flatSection { position: relative; z-index: 1; background: var(--bg); margin-top: 8px; }
+      .flats { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 6px; }
+      .flats figure { margin: 0; background: #202227; border: 1px solid var(--line); padding: 4px; }
+      .flats figcaption { font-size: 11px; color: #a9a59c; }
+      #before { position: relative; z-index: 1; margin-top: 8px; }
+      #before h3, aside h3 { margin: 8px 0 4px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: #a9a59c; }
+      #strip { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 6px; }
+      #strip .view { height: 110px; }
+      aside { padding: 8px 12px; border-left: 1px solid var(--line); background: var(--panel); overflow: auto; max-height: calc(100vh - 100px); position: sticky; top: 0; z-index: 2; }
+      aside pre { white-space: pre-wrap; word-break: break-word; font: 11px/1.35 ui-monospace, monospace; margin: 4px 0; }
+      aside table { border-collapse: collapse; width: 100%; font-size: 11px; }
+      aside td, aside th { border-bottom: 1px solid var(--line); padding: 1px 4px; text-align: left; }
+    </style>
+  </head>
+  <body>
+    <div id="banner"><span>EXPERIMENTAL — Geometry expressiveness lab (not production, not an approved contract)</span><small id="build"></small></div>
+    <div id="controls"></div>
+    <main>
+      <div id="stage">
+        <canvas id="canvas"></canvas>
+        <div id="views"></div>
+        <div id="flatSection" hidden></div>
+        <div id="before"><h3>Before — current catalog P01–P09 at t = 1 (same material)</h3><div id="strip"></div></div>
+      </div>
+      <aside id="inspector"></aside>
+    </main>
+    <script type="module" src="/web/main.ts"></script>
+  </body>
+</html>
