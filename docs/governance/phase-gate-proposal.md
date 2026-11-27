@@ -1,6 +1,6 @@
 # Shared Phase Gate: governance proposal
 
-- Status: **PROPOSAL (design only).** No ruleset, branch protection, workflow, credential or policy has been changed. Nothing here is in force until the owner decides it, item by item (§9).
+- Status: **PROPOSAL (design only), except GOV-1.** The owner **adopted GOV-1 on 2026-11-27** as a policy: merge, gate, ADR, visual, next-phase authorization and release are separate decisions, and none implies another (record: [`../review/phase-3-owner-decision-packet.md`](../review/phase-3-owner-decision-packet.md) §0). Everything else here, including the ledger, the entry schema and the "Bound to" column of §2, stays a proposal (GOV-2…GOV-8). No ruleset, branch protection, workflow or credential has been changed. Nothing else is in force until the owner decides it, item by item (§9).
 - Date: 2026-11-26. Repository `cuongtranba/eschaton`, `main` @ `870ef62`.
 - Why now: four phases have passed through gates whose decisions are recorded only as prose written by the agent. One identity performed every PR, merge and approval-relevant action. A provenance audit found that this cannot be told apart from the owner acting alone, or from the agent acting without the owner.
 
@@ -218,7 +218,7 @@ Each claim has a source. "Verified" means that docs.github.com was read for this
 
 | Id | Decision | Alternatives | Recommended default |
 |---|---|---|---|
-| GOV-1 | Adopt the separate decision kinds (§2) | Adopt; adopt a subset; keep prose only | Adopt |
+| GOV-1 | Adopt the separate decision kinds (§2) | Adopt; adopt a subset; keep prose only | Adopt. **Adopted by the owner on 2026-11-27**, as policy only: the kinds merge, gate, ADR, visual, next-phase authorization and release are kept apart. Release is not a row of §2; GOV-1 names it as a separate kind, and no release exists |
 | GOV-2 | Ledger format and location | `governance/ledger.jsonl` with hash chain; one YAML file per decision; GitHub Issues as the ledger | JSONL with hash chain (diffable, offline, CAS-friendly) |
 | GOV-3 | Separate agent identity | GitHub App; machine user with a fine-grained token; keep the owner's identity (status quo) | GitHub App (short-lived tokens, no seat, clear audit trail) |
 | GOV-4a | Make enforcement possible at all (§6) | GitHub Pro; make the repository public; advisory CI only | Owner's call (cost versus visibility); no default |
