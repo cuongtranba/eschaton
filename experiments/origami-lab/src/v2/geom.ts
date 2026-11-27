@@ -51,6 +51,20 @@ export function dihedral(parent: readonly Vec3[], e0: number, e1: number, child:
   return Math.atan2(dot(cross(np, nc), axis), dot(np, nc));
 }
 
+/**
+ * Signed angle about the line p0 → p1 from the half-plane holding panel A to the half-plane holding panel B, each
+ * half-plane given by its panel's centroid. Independent of front orientation; the half-planes coincide exactly at 0 mod 2π.
+ */
+export function openingAngle(p0: Vec3, p1: Vec3, a: readonly Vec3[], b: readonly Vec3[]): number {
+  const e = unit(sub(p1, p0));
+  const across = (poly: readonly Vec3[]): Vec3 => {
+    const d = sub(centroid(poly), p0);
+    return unit(sub(d, scale(e, dot(d, e))));
+  };
+  const [wa, wb] = [across(a), across(b)];
+  return Math.atan2(dot(cross(wa, wb), e), dot(wa, wb));
+}
+
 export type Rigid = Readonly<{ r: readonly [Vec3, Vec3, Vec3]; t: Vec3 }>;
 export const IDENTITY: Rigid = { r: [[1, 0, 0], [0, 1, 0], [0, 0, 1]], t: [0, 0, 0] };
 export const apply = (m: Rigid, p: Vec3): Vec3 => add([dot(m.r[0], p), dot(m.r[1], p), dot(m.r[2], p)], m.t);

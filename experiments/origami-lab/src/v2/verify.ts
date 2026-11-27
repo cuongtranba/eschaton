@@ -1,6 +1,6 @@
 import { validateFoldon, type Vec3 } from "@eschaton/foldon";
 import { poseCompiled, posePieces, seamGap, type Compiled } from "./compile";
-import { boxGap, boxOf, dihedral, dist, dot, normal, panelContact, panelDistance, panelQuality, sectorGap, sub, type Contact } from "./geom";
+import { boxGap, boxOf, dist, dot, normal, openingAngle, panelContact, panelDistance, panelQuality, sectorGap, sub, type Contact } from "./geom";
 
 /** Hard numeric limits (geometry-quality-gates.md GEO-1). Lengths are in cells. */
 export const LIMITS = {
@@ -21,6 +21,8 @@ export type SweepReport = Readonly<{
   counts: Readonly<Record<PairStatus, number>>;
   collisions: readonly Collision[];
   sampledPairs: readonly (readonly [string, string])[];
+  /** Every sampled-only pair with the merged parameter intervals on which no certificate held (exact tests only at their 1/2^maxDepth midpoints). */
+  witnesses: readonly Readonly<{ a: string; b: string; intervals: readonly (readonly [number, number])[] }>[];
   /** Sampled-only pairs that share a design vertex; the rest approach each other only near a seam. */
   sampledTouching: number;
   /** Smallest u from which some sampled pair is no longer certified (1 when every pair is certified everywhere). */
@@ -90,16 +92,17 @@ function relativeBound(a: readonly Step[], b: readonly Step[]): number {
 type PoseAt = (u: number) => ReadonlyMap<number, readonly Vec3[]>;
 
 /**
- * Conservative swept collision check over u in [0, 1]. Hinged pairs are certified analytically (two convex panels that
- * share a full hinge edge meet only on that edge unless the dihedral reaches ±180°). Other pairs are certified on an
+ * Conservative swept collision check over u in [0, 1]. Pairs sharing a full edge whose relative motion is rotation about
+ * it are decided exactly from the unwrapped opening angle (`coHinged`). Other pairs are certified on an
  * interval when their distance at its midpoint exceeds the summed rigid speed bound times the half-width; otherwise the
  * interval is bisected to depth `maxDepth`, and pairs still open there have only been tested exactly at sample points.
  */
-function sweep(c: Compiled, name: string, faces: readonly number[], poseAt: PoseAt, steps: ReadonlyMap<number, readonly Step[]>, hingeAngles: (face: number) => readonly [number, number]): SweepReport {
+function sweep(c: Compiled, name: string, faces: readonly number[], poseAt: PoseAt, steps: ReadonlyMap<number, readonly Step[]>): SweepReport {
   const idOf = (f: number): string => c.design.faces[f]?.id ?? String(f);
   const counts: Record<PairStatus, number> = { analytic: 0, static: 0, certified: 0, sampled: 0, collision: 0 };
   const collisions: Collision[] = [];
   const sampled: (readonly [string, string])[] = [];
+  const leaves = new Map<string, [number, number][]>();
   const quality = new Map(faces.map((f) => [f, panelQuality(facePositions(c, f))]));
   const open: { a: number; b: number; bound: number; apex?: Readonly<{ v: number; spin: number }> }[] = [];
   const cache = new Map<number, ReadonlyMap<number, readonly Vec3[]>>();
@@ -132,23 +135,51 @@ function sweep(c: Compiled, name: string, faces: readonly number[], poseAt: Pose
     return { apex: { v, spin: moving.reduce((s2, st) => s2 + Math.abs(st.rate), 0) } };
   };
   /**
-   * Two convex panels that share a full edge and whose only relative motion is rotation about that edge meet only on it
-   * unless their dihedral reaches ±180°; the dihedral is affine in u, so its two end values decide.
+   * Two convex panels that share a full edge lie in two half-planes bounded by the edge's line. Whatever their front
+   * orientation, they meet off that edge only when the half-planes coincide (opening angle ≡ 0 mod 2π): both then lie on
+   * the same side of the edge in one plane and overlap near it. Signed fold angles are not used, because the fold angle
+   * at coincidence is ±180° only for consistently oriented faces and 0° for inconsistently oriented ones (three faces on
+   * one edge cannot all be consistent). When the only relative motion is rotation about that edge, the opening angle is
+   * affine in u with |slope| ≤ S (summed relative rates). It is unwrapped from samples spaced so that S × spacing < π/2
+   * (each wrapped step is then the true step), so the exact path either avoids every multiple of 2π ("analytic") or
+   * reaches one at a computed u (a collision). Wrapped end values alone are not enough: a swing of S ≥ π can wrap to a
+   * small difference, the V2 certificate's blind spot.
    */
-  const coHinged = (a: number, b: number): boolean => {
+  const coHinged = (a: number, b: number): "analytic" | Readonly<{ u: number; at: Vec3 }> | undefined => {
     const [fa, fb] = [c.design.faces[a], c.design.faces[b]];
-    if (fa === undefined || fb === undefined || quality.get(a)?.convex !== true || quality.get(b)?.convex !== true) return false;
+    if (fa === undefined || fb === undefined || quality.get(a)?.convex !== true || quality.get(b)?.convex !== true) return undefined;
     const slot = fa.v.findIndex((x, k) => {
       const y = fa.v[(k + 1) % fa.v.length] ?? x;
       return fb.v.includes(x) && fb.v.includes(y);
     });
-    if (slot < 0) return false;
-    const edge = [fa.v[slot] ?? 0, fa.v[(slot + 1) % fa.v.length] ?? 0];
+    if (slot < 0) return undefined;
+    const edge = [fa.v[slot] ?? 0, fa.v[(slot + 1) % fa.v.length] ?? 0] as const;
     const moving = relative(a, b).filter((st) => st.rate !== 0);
-    if (!moving.every((st) => edge.every((x) => c.links.get(st.hinge)?.edge.includes(x) === true))) return false;
-    const angleAt = (u: number): number => dihedral(at(u).get(a) ?? [], slot, (slot + 1) % fa.v.length, at(u).get(b) ?? []);
-    const [t0, t1] = [angleAt(0), angleAt(1)];
-    return Math.max(Math.abs(t0), Math.abs(t1)) < Math.PI - 1e-6 && Math.abs(t1 - t0) < Math.PI;
+    if (!moving.every((st) => edge.every((x) => c.links.get(st.hinge)?.edge.includes(x) === true))) return undefined;
+    const swing = moving.reduce((s, st) => s + Math.abs(st.rate), 0);
+    const angleAt = (u: number): number => {
+      const [pa, pb] = [at(u).get(a) ?? [], at(u).get(b) ?? []];
+      return openingAngle(pa[slot] ?? [0, 0, 0], pa[(slot + 1) % pa.length] ?? [0, 0, 0], pa, pb);
+    };
+    const count = Math.max(1, Math.ceil((2 * swing) / Math.PI) + 1);
+    const start = angleAt(0);
+    let [end, previous] = [start, start];
+    for (let k = 1; k <= count; k++) {
+      const next = angleAt(k / count);
+      end += Math.atan2(Math.sin(next - previous), Math.cos(next - previous));
+      previous = next;
+    }
+    const change = end - start;
+    if (Math.abs(change) > swing + 1e-9) return undefined;
+    const TAU = 2 * Math.PI;
+    const margin = 1e-6;
+    const [lo, hi] = [Math.min(start, end) - margin, Math.max(start, end) + margin];
+    const k = Math.ceil(lo / TAU);
+    if (k * TAU > hi) return "analytic";
+    const u = Math.abs(change) < 1e-12 ? 0 : Math.min(1, Math.max(0, (k * TAU - start) / change));
+    const [p, q] = [at(u).get(a) ?? [], at(u).get(b) ?? []];
+    const n = p.length + q.length;
+    return { u, at: [...p, ...q].reduce<Vec3>((s, v) => [s[0] + v[0] / n, s[1] + v[1] / n, s[2] + v[2] / n], [0, 0, 0]) };
   };
   const corner = (f: number, v: number, vs: readonly Vec3[]): readonly [Vec3, Vec3, Vec3] => {
     const ids = c.design.faces[f]?.v ?? [];
@@ -160,19 +191,14 @@ function sweep(c: Compiled, name: string, faces: readonly number[], poseAt: Pose
     for (let j = i + 1; j < faces.length; j++) {
       const [a, b] = [faces[i] ?? 0, faces[j] ?? 0];
       const key = `${a}|${b}`;
-      const la = c.links.get(a);
-      const lb = c.links.get(b);
-      const hinged = la?.parent === b || lb?.parent === a;
-      if (hinged && quality.get(a)?.convex === true && quality.get(b)?.convex === true) {
-        const child = la?.parent === b ? a : b;
-        const [t0, t1] = hingeAngles(child);
-        if (Math.max(Math.abs(t0), Math.abs(t1)) < Math.PI - 1e-6) {
-          status.set(key, "analytic");
-          continue;
-        }
-      }
-      if (coHinged(a, b)) {
+      const shared = coHinged(a, b);
+      if (shared === "analytic") {
         status.set(key, "analytic");
+        continue;
+      }
+      if (shared !== undefined) {
+        status.set(key, "collision");
+        collisions.push({ a: idOf(a), b: idOf(b), u: shared.u, contact: { kind: "coplanar-overlap", at: shared.at, length: 0 } });
         continue;
       }
       const bound = relativeBound(steps.get(a) ?? [], steps.get(b) ?? []);
@@ -228,6 +254,7 @@ function sweep(c: Compiled, name: string, faces: readonly number[], poseAt: Pose
         const pair = open[index];
         if (pair === undefined) continue;
         const key = `${pair.a}|${pair.b}`;
+        leaves.set(key, [...(leaves.get(key) ?? []), [node.lo, node.hi]]);
         if (status.get(key) === "certified") {
           status.set(key, "sampled");
           sampled.push([idOf(pair.a), idOf(pair.b)]);
@@ -240,7 +267,19 @@ function sweep(c: Compiled, name: string, faces: readonly number[], poseAt: Pose
   for (const s of status.values()) counts[s] += 1;
   const vertsOf = (id: string): readonly number[] => c.design.faces.find((f) => f.id === id)?.v ?? [];
   const sampledTouching = sampled.filter(([x, y]) => vertsOf(x).some((v) => vertsOf(y).includes(v))).length;
-  return { name, pairs: status.size, counts, collisions, sampledPairs: sampled, sampledTouching, uncertifiedFrom, poses: cache.size };
+  const witnesses = [...leaves.entries()]
+    .filter(([key]) => status.get(key) === "sampled")
+    .map(([key, spans]) => {
+      const [a, b] = key.split("|").map(Number);
+      const merged: [number, number][] = [];
+      for (const [lo, hi] of spans.toSorted((x, y) => x[0] - y[0])) {
+        const last = merged.at(-1);
+        if (last !== undefined && lo <= last[1] + 1e-12) last[1] = Math.max(last[1], hi);
+        else merged.push([lo, hi]);
+      }
+      return { a: idOf(a ?? 0), b: idOf(b ?? 0), intervals: merged };
+    });
+  return { name, pairs: status.size, counts, collisions, sampledPairs: sampled, witnesses, sampledTouching, uncertifiedFrom, poses: cache.size };
 }
 
 const rad = (d: number): number => (d * Math.PI) / 180;
@@ -290,7 +329,7 @@ export function verifyCompiled(c: Compiled): GeoReport {
     for (const vs of flat.values()) for (const v of vs) maxOffPlane = Math.max(maxOffPlane, Math.abs(dot(sub(v, o), n)));
     checkRigid(flat);
     checkRigid(poseAt(0.5));
-    const report = sweep(c, `fold ${piece.id}`, piece.faces, poseAt, steps, (f) => [0, c.links.get(f)?.rest ?? 0]);
+    const report = sweep(c, `fold ${piece.id}`, piece.faces, poseAt, steps);
     for (const col of report.collisions) if (col.u === 0) flatOverlaps.push(col);
     sweeps.push(report);
   }
@@ -302,19 +341,12 @@ export function verifyCompiled(c: Compiled): GeoReport {
   };
   const phaseSteps = kinematics(c, all, articulationRate, () => true);
   const phasePose: PoseAt = (u) => new Map(poseCompiled(c, 1, u).faces.map((pf) => [pf.face, pf.vertices] as const));
-  const hingeRange = (f: number): readonly [number, number] => {
-    const link = c.links.get(f);
-    const rest = link?.rest ?? 0;
-    const art = link?.articulation;
-    const sense = link?.sense ?? 1;
-    return art === undefined ? [rest, rest] : [rest + sense * rad(art.lo), rest + sense * rad(art.hi)];
-  };
-  const articulation = sweep(c, "articulation phase 0→1 at t = 1", all, phasePose, phaseSteps, hingeRange);
+  const articulation = sweep(c, "articulation phase 0→1 at t = 1", all, phasePose, phaseSteps);
   sweeps.push(articulation);
   checkRigid(phasePose(0));
   checkRigid(phasePose(1));
   const restPose: PoseAt = () => new Map(poseCompiled(c, 1).faces.map((pf) => [pf.face, pf.vertices] as const));
-  const rest = sweep(c, "assembled rest pose (t = 1, no articulation)", all, restPose, kinematics(c, all, () => 0, () => true), (f) => [c.links.get(f)?.rest ?? 0, c.links.get(f)?.rest ?? 0]);
+  const rest = sweep(c, "assembled rest pose (t = 1, no articulation)", all, restPose, kinematics(c, all, () => 0, () => true));
 
   const invalid = c.pieces.filter((p) => !validateFoldon(p.definition).ok).map((p) => p.id);
   return {

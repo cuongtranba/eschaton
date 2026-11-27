@@ -180,9 +180,61 @@ test("regression: the flap rolled (left wing up while the right went down); both
   expect((heights[2]?.[0] ?? 0) - (heights[0]?.[0] ?? 0)).toBeGreaterThan(1);
 });
 
-test("regression: V1's 4 % centroid shrink hid a roof/wall interpenetration in the V1 house; the exact contact test reports it", () => {
-  const house = generate("house", 1);
-  if (!house.ok) throw new Error(house.error.message);
-  const crossings = posedContacts(poseObject(house.value, 1).panels).filter((c) => c.contact.kind === "crossing");
-  expect(crossings.map((c) => [c.a, c.b])).toEqual([["walls.right", "roof.overhang"]]);
+test("regression: V1's 4 % centroid shrink hid a roof/wall interpenetration in the V1 house; the exact contact test finds one crossing at t = 1 in seeds 1, 2, 3, 4, 6 and 8", () => {
+  const crossings = [1, 2, 3, 4, 5, 6, 7, 8].flatMap((seed) => {
+    const house = generate("house", seed);
+    if (!house.ok) throw new Error(house.error.message);
+    return [0, 0.25, 0.5, 0.75, 1].flatMap((t) =>
+      posedContacts(poseObject(house.value, t).panels)
+        .filter((c) => c.contact.kind === "crossing")
+        .map((c) => `${seed}@${t}:${c.a}/${c.b}`),
+    );
+  });
+  expect(crossings).toEqual([1, 2, 3, 4, 6, 8].map((seed) => `${seed}@1:walls.right/roof.overhang`));
+});
+
+/** Base floor, a wall glued upright on the floor's x = 0 edge and a flap articulated about that same edge through 200°. */
+function wrapFixture(): Design {
+  const b = createBuilder();
+  const p = (x: number, y: number, z: number): number => b.point([x, y, z]);
+  const [e0, e1] = [p(0, 0, 0), p(0, 0, 1)];
+  b.face("base", "floor", [e0, p(1, 0, 0), p(1, 0, 1), e1], () => [0, 1, 0]);
+  b.face("post", "wall", [e0, e1, p(0, 1, 1), p(0, 1, 0)], () => [1, 0, 0]);
+  b.face("flap", "blade", [e0, e1, p(-1, 0, 1), p(-1, 0, 0)], () => [0, 1, 0]);
+  return {
+    kind: "fixture",
+    version: 1,
+    params: {},
+    vertices: b.vertices(),
+    faces: b.faces(),
+    rootModule: "base",
+    rootPart: "floor",
+    joints: [
+      { module: "post", parent: "base", edge: [e0, e1] },
+      { module: "flap", parent: "base", edge: [e0, e1], articulation: { lo: -100, hi: 100, toward: [0, 1, 0] } },
+    ],
+    articulated: [],
+    landmarks: {},
+    sheets: {},
+  };
+}
+
+test("regression: the co-hinged certificate compared wrapped dihedrals, so a flap swinging 200° through a wall on its own hinge edge was certified; the pass-through is now reported at phase 0.95", () => {
+  const swept = verifyCompiled(compiled(wrapFixture())).sweeps.find((s) => s.name.startsWith("articulation"));
+  expect(swept?.collisions.map((c) => [[c.a, c.b].sort().join("/"), Math.round(c.u * 1000) / 1000])).toEqual([["flap.blade.0/post.wall.0", 0.95]]);
+});
+
+/** Four sides of a square tube in one sheet: unfolding must cut one side edge, which closes again only at u = 1. */
+function tubeFixture(): Design {
+  const b = createBuilder();
+  const ring = (z: number): readonly number[] => [b.point([1, 1, z]), b.point([-1, 1, z]), b.point([-1, -1, z]), b.point([1, -1, z])];
+  const [r0, r1] = [ring(0), ring(2)];
+  b.ringLoft("tube", "side", r0, r1, (c) => [c[0], c[1], 0]);
+  return { kind: "fixture", version: 1, params: {}, vertices: b.vertices(), faces: b.faces(), rootModule: "tube", rootPart: "side", joints: [], articulated: [], landmarks: {}, sheets: {} };
+}
+
+test("a seam that closes inside one sheet cannot be certified near u = 1, so the verdict stays NOT VERIFIED instead of PASS", () => {
+  const report = verifyCompiled(compiled(tubeFixture()));
+  const fold = report.sweeps.find((s) => s.name.startsWith("fold"));
+  expect({ verdict: geo1Verdict(report).verdict, sampled: fold?.sampledPairs.length, open: (fold?.uncertifiedFrom ?? 1) < 1 }).toEqual({ verdict: "NOT VERIFIED", sampled: 1, open: true });
 });
