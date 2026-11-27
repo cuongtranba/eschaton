@@ -16,6 +16,6 @@ function build(): string {
 export default defineConfig({
   define: { __BUILD__: JSON.stringify(build()) },
   server: { host: "127.0.0.1", port, strictPort: true },
-  build: { rolldownOptions: { input: { main: "index.html", v2: "v2.html" } } },
+  build: { rolldownOptions: { input: { main: "index.html", v2: "v2.html", v3: "v3.html" } } },
   preview: { host: "127.0.0.1", port, strictPort: true },
 });

@@ -17,7 +17,7 @@ const page = await browser.newPage({ viewport: { width: 1600, height: 1750 }, de
 for (const shot of shots) {
   const at = shot.indexOf("=");
   const [name, search] = [shot.slice(0, at), shot.slice(at + 1)];
-  await page.goto(`${base}/v2.html?${search}`);
+  await page.goto(search.includes(".html?") ? `${base}/${search}` : `${base}/v2.html?${search}`);
   await page.waitForSelector("body[data-ready='1']", { timeout: 300_000 });
   await page.evaluate(() => new Promise<void>((resolve) => { let n = 0; const tick = (): void => { n += 1; if (n > 30) resolve(); else requestAnimationFrame(tick); }; requestAnimationFrame(tick); }));
   if (name.endsWith(".json")) {

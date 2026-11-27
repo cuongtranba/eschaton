@@ -107,3 +107,23 @@ V1 findings that V2's contact test exposes:
 - **Exemptions and sampling.** Separately, V1 exempts every hinged and closing pair and samples only five fold times. The V2 tests show both blind spots with constructed cases.
 
 Details are in `gate-evidence.md`.
+
+## V3 (2026-11-27): bottom-up modular construction (EXPERIMENTAL, exploratory; not approved)
+
+V1 and V2 above are kept as baselines. V3 follows the adopted standard [`docs/governance/geometry-quality-gates.md`](../../docs/governance/geometry-quality-gates.md) (GEO-0…GEO-7) and the briefs in [`docs/research/origami-lab-v3/`](../../docs/research/origami-lab-v3/construction-brief.md), which were committed before the code.
+
+| File | Role |
+|---|---|
+| `src/v3/module.ts` | Module catalog. Families `band`, `cap`, `vane`, `fringe`, `plate`, `arch` and `stitch` produce definitions as plain data (folded panels, crease tree, named ports), with id = hash of family, version and quantised parameters. Also `mirrorDef`, `foldNet` (flat crease pattern → rest pose), `moduleIssues` and the contract ladders |
+| `src/v3/assembly.ts` | Part graph: placement through port contracts (orientation-free opening angles; section ports mate rigidly), welding only at declared ports, `toDesign`/`compileAssembly` (one Foldon sheet per instance), contacts, clearance, `detach`/`attach`, `reuseTable`, `provenance` |
+| `src/v3/solve.ts` | Finite-domain backtracking search with forward checking, MRV or static order, and an elimination log |
+| `src/v3/bird.ts` | Bird plan: seeded targets (a bounded sampler), ladders, a two-stage search with measured constraints, `designBird` |
+| `src/v3/vehicle.ts` | Vehicle plan: separate-fender sedan or coupé, wheels with real volume, `designVehicle` |
+| `v3.html`, `web/v3.ts` | Review page. Modes `study`, `sheet`, `fold`, `compare`, `modules`, `diagnosis` and `evidence`, plus `object=bird|vehicle` and `seed=crow|hero|min|max|N` |
+
+```sh
+ORIGAMI_LAB_PORT=5184 pnpm --filter @eschaton/exp-origami-lab dev    # http://127.0.0.1:5184/v3.html
+pnpm --filter @eschaton/exp-origami-lab test                        # V1 + V2 + V3
+node --experimental-strip-types experiments/origami-lab/capture/capture.ts http://127.0.0.1:5184 docs/screenshots \
+  exp-origami-v3-bird-study="v3.html?object=bird&mode=study&seed=crow"   # a query containing ".html?" picks the page
+```

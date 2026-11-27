@@ -170,7 +170,7 @@ function sweep(c: Compiled, name: string, faces: readonly number[], poseAt: Pose
       previous = next;
     }
     const change = end - start;
-    if (Math.abs(change) > swing + 1e-9) return undefined;
+    if (Math.abs(change) > swing + 1e-6) return undefined;
     const TAU = 2 * Math.PI;
     const margin = 1e-6;
     const [lo, hi] = [Math.min(start, end) - margin, Math.max(start, end) + margin];
