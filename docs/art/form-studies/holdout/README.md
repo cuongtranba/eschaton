@@ -97,7 +97,67 @@ Also rejected: bell, folding fan or umbrella, shell or insect, furniture, and th
 
 ## 4. Independent review
 
-*Pending: recorded after a separate reviewer has inspected the sheet pixels and the reasoning.*
+**Reviewer.** A separate agent that made none of the work, 2026-11-27. It inspected the sheet's pixels first (cropped at full resolution) and checked proportions against the Met record through its API, the Horniman record and the Tobunken PDF. It then read the protocol, the brief, the composition and the frozen texts, and recomputed the key numbers independently. Its crops are outside the repository (`/tmp/holdout-review/`).
+
+**Verdict: NEEDS REVISION** (no blocker). It does **support the "transfer partial" conclusion**, and judges the label suitably modest.
+
+### 4.1 Pixels
+
+The front, side, section strip and flat pattern agree with each other and with the brief. The front reads as a plausible original biwa-type lute, though to a layman it reads as "lute or mandolin".
+
+| Problem | Where |
+|---|---|
+| The end view overlays keyframe sections and leaves out the pegbox and pegs | end-view panel |
+| The hero sketch has no soundboard features and reads as a bottle | three-quarter panel |
+| The silhouettes are front-only, so the bent pegbox never shows; the crescents are not shown at 96 px | silhouette panel |
+| The body outline is coffin-like rather than a rounded teardrop | front view |
+| Frets are small and pegs are short against the satsuma reference | front and side views |
+| Labels overlap panel borders; the rim seam is an arbitrary inset | several panels |
+| Overclaims printed on the sheet: "signature: … bent pegbox", "graded tract" (the frets are drawn at equal heights), and "applied as written" | sheet text |
+
+### 4.2 Method transfer
+
+**What held.** The freeze, the ancestry and the leakage controls are confirmed, and the diff of the frozen files over `8c2bd53..a2ec1c1` is empty. The following reproduced independently:
+- P1, both stations (Δ 1.333 and 0.876 px);
+- O1 faces, areas and volume, and the 0.33% gap;
+- 13 of 21 folds below 8°;
+- the hero `e_v`;
+- the soundboard camber and folds;
+- the reflex-mate placement.
+
+**Findings it judged real under the frozen text:**
+- P7 fails a mass whose station sections fit inside its widest one;
+- P1 fails shallow masses;
+- no declaration route exists for equal functional elements (P5);
+- the two-host string;
+- holes against Q2;
+- soundboard camber against P4.
+
+**Majors:**
+1. The read-outs come from an unpublished scratch script. Three values do not reproduce (none changes a verdict):
+
+   | Value | Author | Reviewer |
+   |---|---|---|
+   | Largest K1→K2 fold | 76.4° | 103.6° (an absolute-value bug) |
+   | End-view `e_v` | 0.15 px | 0.04 px |
+   | Partition figures | 0.10 / 0.21 px | 0.00 / 0.055 px |
+
+2. The O3 "wedged joint" gap is mostly an artefact of putting the host port on the nut's top line. Operators §3.3 already provides an O1 collar. It should be **disputed**, not a gap.
+3. "Applied as written" overclaims. No independent confirmation of declarations was obtained (method §4.0 rule 5), and the §5 artefacts were given as tables instead of drawings. Neither deviation was disclosed.
+4. The P7 counterexample was overstated. A real end view shows the pegbox. The finding holds per mass only, and only under the unsourced depth assumption.
+5. The sheet does not demonstrate the tier reads.
+
+**Minors:**
+- O1-a, partition sensitivity and the closed shell are already in the frozen texts; the new part is that **adding a C junction empties both function programs**.
+- The P5 flag is designed behaviour; the gap is the missing declaration route.
+- K3→K4 is not a declared station; d(BODY, NECK) gives 1.93 px, still below 2 px.
+- The brief's "overall depth about 0.28 L" should be about 0.24 L.
+- The drawings and the composition share one commit, against protocol §2.4.
+- The pegs are not octagonal and not angled, against [1] and [4].
+
+### 4.3 Response (bounded; no redraw)
+
+The sheet and the composition text stay unchanged as the reviewed record. The corrections are in [`composition.md` §5](composition.md#5-corrections-after-the-independent-review-supersede-the-text-above), and they supersede the claims concerned. The sheet is **not** redrawn this round, because the owner asked to avoid another long cycle of object revisions. Its overclaims are superseded by §4.1 and composition §5.
 
 ## 5. Files
 

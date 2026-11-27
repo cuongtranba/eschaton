@@ -165,3 +165,24 @@ The method supplied only the procedure and the vocabulary. That is the intended 
 - O3: a typed two-host tension member, with a closure check.
 
 None of these is made here. The frozen M3 and its result above stay as recorded.
+
+## 5. Corrections after the independent review (supersede the text above)
+
+The text above, and the sheet, are kept as the reviewed record. Where they conflict with the following, the following holds.
+
+| # | Claim above | Correction |
+|---|---|---|
+| C1 | §1.1: largest fold 76.4° | **103.6°.** The scratch computation took \|n₁·n₂\|, which folds every angle into 0–90°. The counts below 8° and the median are unaffected |
+| C2 | §2: end view `e_v` = 0.15 px; partition figures 0.10 / 0.21 px | The reviewer's exact computation gives **0.04 px** and **0.00 / 0.055 px**. The author's values came from a 2400 px rasterisation. Every verdict is unchanged |
+| C3 | §1.4: O3 does not cover a wedged volumetric joint | **Disputed, not a gap.** The overlap lands above the fingerboard only because the host port was placed on the nut's top line. Operators §3.3 already gives an O1 collar for B junctions, and the nut is that collar. The finding about the two-host string stands |
+| C4 | §2 and §4: P7 end-view counterexample, "a real biwa seen end-on is a flat tray" | **Narrowed.** A real end view also shows the pegbox and pegs. The finding is per mass: *P7's end-view clause fails any mass whose station sections all fit inside its widest section.* For M1 that holds only under the **unsourced** assumption that the K3–K5 depths are no greater than K1's |
+| C5 | Sheet read-out and §3: "applied as written" | **Not fully.** Two deviations from the frozen procedure were not disclosed. First, the declarations were not confirmed by an independent reviewer before use (method §4.0 rule 5). Second, the §5 step artefacts (gesture drawing, planform and profile overlay, envelope and tract diagram, crease declaration map) were given as tables in the brief, not as drawings |
+| C6 | §4: "six concrete failures or gaps" | **Credited to the frozen texts where already stated:** O1-a (aspect-only families give triangles; operators §3.1), partition sensitivity (M3 P7 limits; check §5) and the closed shell (operators §3.1). **New from the holdout:** adding a C junction empties both function programs, so a verdict can be flipped by declaration; P7's nested-section clause; and P1 on shallow masses (d(BODY, NECK) = 0.219, giving 1.93 px, still below 2 px). The P5 flag is designed behaviour, and the gap is the missing declaration route for equal functional elements |
+| C7 | §2: P1 K3 → K4 graded | K4 is not a declared station. Only K2 → K3 is graded |
+| C8 | Brief §3: overall depth about 0.28 L | About **0.24 L**: the pegbox drop is measured from the soundboard line, and the drawing shows 0.239 L |
+| C9 | Sheet subtitle: "signature: … bent pegbox"; "4 frets (graded tract)" | Front silhouettes cannot show the bent pegbox, so the district-tier signature in brief §7 is **NOT VERIFIED**. The frets are drawn at equal heights, and their spacing was chosen at drawing time and is not in the brief; the graded law is **not** shown |
+| C10 | Protocol §2.4 | The drawings and the composition share commit `a2ec1c1`, against the protocol's separate commits. This was not disclosed |
+| C11 | Pegs | They are drawn short and not octagonal, and they are not angled as the sources describe [1][4] |
+
+**Reproducibility.** The read-outs were computed by a script outside the repository, because the ruling forbids a runnable lab or a runtime prototype. The reviewer re-derived the key numbers independently. Whether such diagnostic scripts may be committed under `docs/` as design artefacts is put to the owner (packet §10, decision D-5).
+
