@@ -166,3 +166,35 @@ Not asked here, and not affected by anything above: Q1–Q6, ADR 0019, Phase 3 e
 - **Finger count.** "About four fingers" comes from one verified source (Corvid Research) and has not been checked against specimens.
 - **Unavailable sources.** Cornell All About Birds pages could not be opened.
 - **Preview.** No local gallery is running. Another Eschaton chat reported, on 2026-11-27, that the owner had asked for every preview server to be stopped. The images are viewable directly from the paths above. A restart command for an optional loopback gallery is in the PR description.
+
+## 7. B-2 flight revision under ART-D3b (2026-11-27)
+
+Design only. No Foldon, package, app or Geometry V4 change. Nothing in this section is approved. B-2 stays **pending the owner's ART-1 decision**.
+
+- Design target: [`b2-v4-flight-brief.md`](../art/raven-concepts/b2-v4-flight-brief.md), committed in `6a26c50`, before any drawing.
+- Anatomy evidence: brief §3. The four-finger count rests on a verified but unsigned source (Corvid Research, 2018). The vane narrowing and the longest primary (P6 or P7) come from Featherbase, also verified.
+
+### 7.1 B-2 v4 and its independent review (round 1)
+
+| File | SHA-256 | Commit |
+|---|---|---|
+| `raven-concept-b2-sumi-flight-v4.png` (Sheet B-2 v4) | `a9a61b68971dd961224b771c4e6456e9a87f3cfd8688a0f9ac41a7bef5752e28` | `e519ea1` |
+| `raven-concept-b2-v4-details.png` | `1ac6100585994b976d664360a33d5f881ebf39704cbfd5b56e06294cc9991991` | `e519ea1` |
+
+The reviewer was a separate agent that made none of the artwork and read none of its sources or the brief. It judged the pixels of the files above, by crops, against ART-2, R1–R9 and the v3 defects D1–D6.
+
+**Verdict: NEEDS REVISION.**
+
+| Item | Finding |
+|---|---|
+| D1 rake hand | partly fixed: the fingers fan and graduate, but they are one repeated unit of equal width with the same notch step |
+| D2 hand plate | partly fixed from above; the underside still shows a rectangular arm and blades radiating from a wrist hub (glove read) |
+| D3 plank arm | partly fixed in the hero; constant chord in the top and underside views; the front-elevation hem reads as a slab |
+| D4 stray fragment | fixed |
+| D5 cylinder head | fixed in profile; head bands remain in the top and underside views |
+| D6 ruff debris | partly fixed: there is a see-through gap under the jaw, and the hackle strip stands off the neck as a hoop in the top and underside views |
+| New | Side view clipped at the top. A floating sliver in the side view. Dangling lines and an unreadable alula at the wrist. Far-hand close-up cropped. One "matched" before/after pair not matched. No dark-field silhouettes at 48 or 24 px. Thin hero tail. District caption overruns its frame (a template issue that B's sheet shares) |
+| ART-2 | 2.1 PASS · 2.2 NOT VERIFIED · 2.3 PASS (weak) · 2.4 PASS (weak) · 2.5 FAIL · 2.6 FAIL |
+| R1–R9 | R1, R2 (light), R3, R4 (weak), R5 (weak) and R7 PASS · R6, R8 and R9 FAIL |
+
+The reviewer also found the author's "What changed" panel overstated for D1, D3 and D6. B-2 v4 is kept unchanged as the reviewed record.

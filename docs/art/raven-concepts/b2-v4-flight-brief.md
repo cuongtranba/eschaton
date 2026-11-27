@@ -107,3 +107,17 @@ Each image carries the label "PROPOSED CONCEPT ARTWORK, pending owner ART-1 revi
 - That B-2 v4 folds from paper, or that it and Sheet B are one folding of the same sheets (concept README §E.2 stays a hypothesis).
 - Collision, closure, thickness or bond feasibility: all `NOT VERIFIED`.
 - Anything about Q1–Q6 or ADR 0019. The wing's non-axis root and wrist ports (Q1), the closed head and body shell (Q4) and detachment in Collapse (ADR 0019, Proposed) remain open owner decisions.
+
+## 10. Iteration log
+
+The target above (§1–§9) is unchanged since commit `6a26c50`, which precedes every B-2 v4 drawing and source file. The rounds below are the author's self-iteration on scratch renders before the first artwork commit (`e519ea1`). They are not review verdicts.
+
+| Round | Seen in the pixels (self-assessed) | Change |
+|---|---|---|
+| 1 | Hero cropped both wingtips. The free finger parts were too long and nearly parallel on the flexed near wing. The alula stuck forward like a horn in the top view. The primary-covert leaf was a tall box at the far wrist. Regular saw-teeth on the covert and secondary edges | Wider finger bases with emargination after mid-length; wider fan angles; alula laid along the leading edge; lower leaf; fewer, irregular notches; camera pulled back |
+| 2 | The head was about 0.85 of body depth, so it read as a box (B is about 0.65). The hem read as a plank. Close-up cameras framed nothing useful | B-proportioned head (0.69 of body depth); tapered hem; stronger camber; cameras re-aimed |
+| 3 | The far eye showed above the crown. A gap at the chin read as an open hole. The hem's dark underside tone read as a board edge | Eye moved onto the lower side face; lower mandible extended back and hackle strip moved up; hem fold in paper tone with a convex leading edge |
+| 4 | The wrist leaf pointed inward like an arrowhead. From the front, the arm read as a straight board | Blunt inner edge and lower lift on the leaf; slight elbow arch along the arm; camber tapering to the wrist |
+| 5 | Presentation: an arrow glyph rendered as tofu; the ink raven was cropped; the "P10" callout pointed at a barely visible feather | Captions reworded; optional ink scale; the P10 callout dropped from the hero (P10 is shown in the close-ups) |
+
+**Measured deviation from §6.** The bill is 0.12 L, against an intent of about 0.10. It is B's own bill, scaled by 1.12 with the rest of B's head; identity with B was kept rather than the number. The other intents are met: span 2.00 L, tail 0.33 L, arm : hand 33 : 67, head : body depth 0.69.

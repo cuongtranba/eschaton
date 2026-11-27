@@ -10,7 +10,9 @@
 |---|---|
 | [`raven-concept-a-anatomical.png`](raven-concept-a-anatomical.png) | **Sheet A v4**: anatomical folded raven, gliding |
 | [`raven-concept-b-sumi.png`](raven-concept-b-sumi.png) | **Sheet B v4**: sumi sculptural raven, perched and calling |
-| [`raven-concept-b2-sumi-flight.png`](raven-concept-b2-sumi-flight.png) | **Sheet B-2 v3**: the same sumi raven in a banked glide (flight study) |
+| [`raven-concept-b2-sumi-flight.png`](raven-concept-b2-sumi-flight.png) | **Sheet B-2 v3**: the same sumi raven in a banked glide (flight study). **Not approved** (ART-D3b: revise before approval); kept unchanged as history |
+| [`raven-concept-b2-sumi-flight-v4.png`](raven-concept-b2-sumi-flight-v4.png) | **Sheet B-2 v4**: the flight revision under ART-D3b, drawn after the committed [brief](b2-v4-flight-brief.md). **Pending owner ART-1**; not approved |
+| [`raven-concept-b2-v4-details.png`](raven-concept-b2-v4-details.png) | B-2 v4 close-ups (near and far hand, wrist, arm front elevation, head), v3 beside v4 at matched views, clay beside ink, silhouettes |
 | [`raven-concept-c-modular.png`](raven-concept-c-modular.png) | **Sheet C v2**: modular tessellated raven, upstroke. Independent review: NO-GO as a separate direction |
 | [`raven-concepts-comparison.png`](raven-concepts-comparison.png) | A, B, B-2 and C side by side: hero, ink context, silhouette, district scale, hierarchy |
 | [`v3-failure-anatomy.png`](v3-failure-anatomy.png) | Actual V3 pixels (PR #11 @ `616b0cf`, captured at `74c686f`) beside A and B, per GEO-2 defect |
@@ -47,7 +49,13 @@ for c in c1_anatomical c2_sumi c2f_sumi_flight c3_modular; do
 done
 for c in c1 c2 c2f c3; do python3 sheet.py $c out/$c sheet-$c.png; done
 python3 compare.py <V3-worktree>/docs/screenshots .
+# B-2 v4 (2026-11-27), rendered outside the repository:
+/Applications/Blender.app/Contents/MacOS/Blender -b --factory-startup --python render.py -- c2f4_sumi_flight <scratch>/c2f4
+python3 sheet.py c2f4 <scratch>/c2f4 sheet-c2f4.png
+python3 b2v4_boards.py <scratch>/c2f <scratch>/c2f4 b2v4-details.png   # <scratch>/c2f is the unchanged v3 maquette
 ```
+
+`sheet.py` gained two optional `concepts.json` fields for the ink study, `ink_scale` and `ink_left`. Their defaults reproduce the earlier sheets; only `c2f4` sets them.
 
 The committed PNGs were then palette-quantised to 256 colours to keep the repository small (2.7 MB in total). Render outputs are not committed, apart from `renders/*/projection.json` (landmark projections and bounds) and `renders/*/spec.json` (hierarchy classes and module counts).
 
@@ -72,6 +80,8 @@ Every round was judged on pixels: by me first, then by an independent reviewer w
 | Independent round 3 | **A:** regressed (dorsal spikes larger, box hull). **B:** credible. **B-2:** palm plate. **C:** NO-GO. |
 | Revision 4 | A v4 (rounded section, wing root on the flank, hackle strip); B v4 (hackle strip, covert leaf moved); B-2 v3 (diagonal hand taper, graduated fan). |
 | Independent round 4 (final) | **B:** CREDIBLE. **B-2:** needs revision (show as a flagged sketch). **A:** needs revision. **C:** NO-GO. Details are in the [decision packet](../../review/art-1-raven-decision-packet.md) §3. |
+| Owner decisions (2026-11-27) | ART-D3a selects **B (perched)** as the direction; ART-D3b: **revise B-2** before approval. See the packet §0. |
+| Revision 5 | [Brief](b2-v4-flight-brief.md) committed before drawing; bounded wing-anatomy research verified the four-finger claim's source and the wing formula. **B-2 v4**: new maquette `c2f4_sumi_flight.py`, B's own head profile, a cambered layered arm, a bridged wrist, and a graduated fanned hand. B, B-2 v3, A and C are unchanged. |
 
 ## The directions
 
@@ -119,13 +129,16 @@ Everything in this section is **hypothesis**. The unit "sheet" means a proposed 
 
 **Units.** 1.0 L means bill tip to tail tip. A Common Raven is 54–71 cm long. Ratios are targets for ART-1 tolerances; they are **not** measured geometry.
 
-| Landmark ratio | Target | Tolerance proposed for ART-4 | A | B | B-2 | C |
-|---|---|---|---|---|---|---|
-| Span / L (flight) | 1.9–2.05 | ±0.08 | 1.94 | — | ≈1.9 | 1.77 (flexed upstroke) |
-| Tail / L | 0.30–0.40 (wedge, central longest) | ±0.03 | 0.37 | ≈0.31 (shortened in v3) | ≈0.36 | ≈0.33 |
-| Bill / L | 0.09–0.12, culmen arched | ±0.015 | ≈0.10 | ≈0.11 | ≈0.10 | ≈0.10 |
-| Head : body depth | 0.65–0.8 | ±0.08 | ≈0.7 | ≈0.65 | ≈0.7 | ≈0.7 |
-| Visible long fingers | 4, plus a short P10 | exact | 4 + 1 | folded (n/a) | 4 + 1 | 9 L-modules fanned (≈4 read as fingers) |
+| Landmark ratio | Target | Tolerance proposed for ART-4 (**not authorized**, ART-D3c) | A | B | B-2 v3 | B-2 v4 | C |
+|---|---|---|---|---|---|---|---|
+| Span / L (flight) | 1.9–2.05 | ±0.08 | 1.94 | — | ≈1.9 | 2.00 | 1.77 (flexed upstroke) |
+| Tail / L | 0.30–0.40 (wedge, central longest) | ±0.03 | 0.37 | ≈0.31 (shortened in v3) | ≈0.36 | 0.33 | ≈0.33 |
+| Bill / L | 0.09–0.12, culmen arched | ±0.015 | ≈0.10 | ≈0.11 | ≈0.10 | 0.12 (B's bill scaled ×1.12; above the brief's 0.10 intent) | ≈0.10 |
+| Head : body depth | 0.65–0.8 | ±0.08 | ≈0.7 | ≈0.65 | ≈0.7 | 0.69 | ≈0.7 |
+| Arm : hand along the span | about 35 : 65 (brief §3, from measured wing data) | — | — | — | — | 33 : 67 | — |
+| Visible long fingers | 4, plus a short P10 | exact | 4 + 1 | folded (n/a) | 4 + 1 | 4 graduated (P6/P7 longest) + 1 | 9 L-modules fanned (≈4 read as fingers) |
+
+The B-2 v4 figures are computed from the maquette's own coordinates before banking (bill tip to central tail tip, L = 1.027). They are reported, not fitted. The values in the target and tolerance columns stay **proposals**: ART-D3c was not authorized.
 
 **Semantic part graph, shared by all three concepts.** Each slot has a mirror relation L↔R where paired.
 
@@ -180,11 +193,17 @@ raven
   - Tail: three keeled blades.
   - Hackle fringe: one sheet per side.
   - Legs: two sheets.
-- **Flight modules (B-2).**
+- **Flight modules (B-2 v3, not approved).**
   - Arm: one sheet, a covert band folded over a tapered secondary plane with three pleats.
   - Primary-covert plate.
   - Four finger blades and a short P10.
   - Keeled three-blade tail.
+- **Flight modules (B-2 v4, pending owner ART-1).**
+  - Arm: a `hem` (leading-edge fold), a cambered covert `leaf` and a scalloped secondary `pleated-plane`. These are three layers per side.
+  - Wrist: an `alula` blade and a primary-covert `leaf`.
+  - Hand: four broad inner `blade`s and four emarginated finger `blade`s, plus a short P10. That is nine blades per side, in about three length classes.
+  - Tail: the same keeled three-blade wedge as B.
+  - This is more parts than B-2 v3 (about 350 faces against about 210). The added parts are hand and wrist layering, which the review asked for. It is still one `blade` family, so Q3 (parameterised families) matters more for v4 than for v3.
 - **Candidate modules.**
   - `blade` (long keeled vane), in two length classes.
   - `leaf` (covert), in two size classes.
@@ -244,6 +263,6 @@ raven
 | Needs new contracts | Q1, Q2, Q3, Q4 | Q1, Q4 (Q2 optional) | Q1, Q3, Q4 |
 | ADR 0019 (detach) | many small detachable parts | few large parts (clear collapse story) | rows detach as units |
 
-### E.5 Recommendation for owner ART-1 review
+### E.5 Recommendation for owner ART-1 review, and what the owner decided
 
-**B, with B-2 as its flight direction (hand open).** This is the agent's recommendation and the independent reviewer's first-ranked concept. It is a recommendation, not an acceptance. The reasons, the open defects and the owner's options are in the [decision packet](../../review/art-1-raven-decision-packet.md) §3–§5.
+The original recommendation was **B, with B-2 as its flight direction (hand open)**. On 2026-11-27 the owner selected **B (perched)** as the direction (ART-D3a). The owner asked for B-2 to be revised before approval (ART-D3b). The decision record is in the [decision packet](../../review/art-1-raven-decision-packet.md) §0. The B-2 v4 revision and its independent review are in the packet §7.
