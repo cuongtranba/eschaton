@@ -121,3 +121,20 @@ The target above (§1–§9) is unchanged since commit `6a26c50`, which precedes
 | 5 | Presentation: an arrow glyph rendered as tofu; the ink raven was cropped; the "P10" callout pointed at a barely visible feather | Captions reworded; optional ink scale; the P10 callout dropped from the hero (P10 is shown in the close-ups) |
 
 **Measured deviation from §6.** The bill is 0.12 L, against an intent of about 0.10. It is B's own bill, scaled by 1.12 with the rest of B's head; identity with B was kept rather than the number. The other intents are met: span 2.00 L, tail 0.33 L, arm : hand 33 : 67, head : body depth 0.69.
+
+### After independent review round 1 (B-2 v4: NEEDS REVISION, packet §7.1)
+
+B-2 v4 is kept unchanged as the reviewed record. **B-2 v5** answers the review in new files: `c2f5_sumi_flight.py`, derived from v4, `b2v5_boards.py`, and the v5 sheet and details board. The design target in §1–§9 is unchanged. Two choices narrow it, and both are recorded here rather than hidden:
+- **The alula is omitted.** The brief named it as a small tertiary blade. It read as an unreadable sliver at the wrist, and floated in the side view, so it did not earn its place (bible §4.2). The primary-covert leaf alone bridges the wrist, above and below.
+- **The arm's taper comes from the planform.** The leading edge bulges, and the trailing edge runs forward from a broad root to the wrist, in an S-curve. The chord shrinks from about 0.40 L to about 0.38 L. Combined with the bulge and the S-curve, it reads as a taper rather than a rectangle.
+
+| Round | Seen in the pixels (self-assessed) | Change |
+|---|---|---|
+| v5-1 | Answering the review: plank arm in top and underside, slab hem, glove hub underneath, repeated finger unit, jaw gap, neck hoop, head bands, thin tail, clipped side view | Broad arm root and S-curved trailing edge, stronger leading-edge bulge; hem as one bevel facet; under-wing covert leaves on arm and hand; each finger its own width, notch point and fan gap; hackle strip derived from the throat sections, set inside them; four head rings instead of six; tail fan ±0.24 rad; side, front and far-hand cameras re-framed |
+| v5-2 | The alula still read as a sliver (top: a forward spike; side: floating) | Alula removed |
+| v5-3 | The inner blades' raised spines pierced the primary-covert leaf: the review's "dangling lines". The hero touched the frame's bottom edge | Lower blade roots and ridges below the leaf (inner over outer kept); hero camera pulled back |
+| v5-4 | The wrist close-up did not show the leaf; a board caption overclaimed "same orthographic cameras" | Near-top-down wrist camera; caption now says "share orthographic view directions" |
+
+Measured on v5: span 2.00 L, tail 0.33 L, bill 0.12 L (B's bill, as in v4), arm : hand 33 : 67, head : body depth 0.70.
+
+**Independent review round 2 of v5: NEEDS REVISION** (packet §7.2). The revision stops at v5. The open defects are listed there, and B-2 stays pending the owner's ART-1 decision.

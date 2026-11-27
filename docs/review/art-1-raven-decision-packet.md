@@ -1,6 +1,6 @@
 # ART-1 Raven: owner decision packet (2026-11-27)
 
-- Status: **PARTLY DECIDED.** The owner decided ART-D1, ART-D2, ART-D3a and ART-D3b on 2026-11-27 (§0). ART-D3c is not authorized. A revised B-2 flight concept is pending a new owner ART-1 decision (§7). §1–§6 are the original decision request, kept unchanged as the record of what the owner was shown.
+- Status: **PARTLY DECIDED.** The owner decided ART-D1, ART-D2, ART-D3a and ART-D3b on 2026-11-27 (§0). ART-D3c is not authorized. The B-2 flight revision went through two independent reviews (§7). Its latest version, **B-2 v5, is reviewed NEEDS REVISION** and is pending the owner's ART-1 decision. Open owner decisions and feasibility hypotheses are in §8. §1–§6 are the original decision request, kept as the record of what the owner was shown. The only edit to them is a link update for the renamed gates file.
 
 ## 0. Owner decisions recorded (2026-11-27)
 
@@ -163,7 +163,7 @@ Not asked here, and not affected by anything above: Q1–Q6, ADR 0019, Phase 3 e
 - **Foldability.** No concept is shown to fold. All construction claims in the concept README §E are hypotheses: foldability, collision, closure, bonds, thickness, and the perched-to-flight re-fold of B and B-2.
 - **Medium.** These are maquette renders, not brush drawings. The ink panels approximate woodcut without gouge texture. The heroes are neutral cream paper, so the raven's black identity shows only in the silhouettes and the ink panels.
 - **Moving pieces.** Hatching for moving pieces, such as a flying raven, is an open owner question under ADR 0006.
-- **Finger count.** "About four fingers" comes from one verified source (Corvid Research) and has not been checked against specimens.
+- **Finger count.** "About four fingers" comes from one verified source (Corvid Research) and has not been checked against specimens. *Update, 2026-11-27 (§7):* a second Corvid Research post states it directly ("ravens only have four (feathers 6-9)"), and Featherbase's narrowing pattern (H6–H9 outer vanes, H5 only hinted) agrees. Both were verified, but neither is a specimen study, and the blog posts are unsigned.
 - **Unavailable sources.** Cornell All About Birds pages could not be opened.
 - **Preview.** No local gallery is running. Another Eschaton chat reported, on 2026-11-27, that the owner had asked for every preview server to be stopped. The images are viewable directly from the paths above. A restart command for an optional loopback gallery is in the PR description.
 
@@ -198,3 +198,77 @@ The reviewer was a separate agent that made none of the artwork and read none of
 | R1–R9 | R1, R2 (light), R3, R4 (weak), R5 (weak) and R7 PASS · R6, R8 and R9 FAIL |
 
 The reviewer also found the author's "What changed" panel overstated for D1, D3 and D6. B-2 v4 is kept unchanged as the reviewed record.
+
+### 7.2 B-2 v5 and its independent review (round 2)
+
+B-2 v5 answers the round-1 findings in new files. B-2 v4 is unchanged. The changes, and two narrowings of the brief, are in the brief §10: the alula was omitted because it did not read, and the arm's taper comes from the planform.
+
+| File | SHA-256 | Commit |
+|---|---|---|
+| `raven-concept-b2-sumi-flight-v5.png` (Sheet B-2 v5) | `888cf4a5bb0178057914847f0ffea9d581540c0f6c411f821fedea752c2b0942` | `41c383f` |
+| `raven-concept-b2-v5-details.png` | `dfb18c3ce480af64bda9de1318dcd63c66146ea375a982eec5e03416205e02b9` | `41c383f` |
+
+The reviewer was a new agent that made none of the artwork and saw neither the round-1 reviewer's process nor the author's. It read none of the sources, the brief or the README. It judged the pixels of the files above, by crops, against ART-2, R1–R9, D1–D6 and every §7.1 finding.
+
+**Verdict: NEEDS REVISION** ("close"; the remaining defects "look fixable as cleanup without redesigning the wing").
+
+| Item | Finding |
+|---|---|
+| Fixed since v4 | the jaw gap, the neck hoop, the side-view clipping, the floating sliver, the far-hand crop, the mismatched before/after pair, the missing dark-field 48/24 px silhouettes, the district caption |
+| D1 rake hand | partly fixed: the fingers fan about 35° and graduate in length; the near-hand widths stay nearly equal and the notch steps fall on one diagonal |
+| D2 hand plate | partly fixed: no plate, and the wrist hub is hidden from below; from above the primaries still spray from one wrist point |
+| D3 plank arm | partly fixed: the front view curves and tapers; the inner arm from above is close to a rectangle, and the underside shows a light rectangular panel with straight ends |
+| D5 head | partly fixed: B's dome and bill in profile; 4–5 bands across the head in the top and underside views |
+| D6 throat | partly fixed: the hero is clean; dark shards at the bill base (underside view) and pale slivers at the mouth corner (head close-ups) |
+| New | a pinhole at the tail root in the underside silhouettes; a tan tab at the hero wrist; loose strips under the arm (front-elevation close-up); broken dashes on the side-view lower wing; the front-view body reads as a block; the fingers start abruptly after the rounded inner blades; the head close-ups are captioned "B's profile" although they are three-quarter views; the "keeled wedge tail" label has no leader; the tail is lost at 24 px in three-quarter |
+| ART-2 | 2.1 PASS · 2.2 PASS (weak) · 2.3 PASS · 2.4 PASS (weak) · **2.5 FAIL** (lines marking no form change, banded head, single-point fan) · 2.6 PASS |
+| R1–R9 | R1, R3, R6 and R7 PASS · R2, R4, R5 and R8 PASS (weak) · **R9 FAIL** (D3 and D5 only partly fixed in the top and underside views) |
+
+The reviewer found three overclaims in the author's "What changed" panel on the v5 details board:
+- "fewer rings": the top view still has 4–5 bands;
+- "each has its own width and notch": the near-hand widths are nearly equal;
+- "coverts hide the wrist hub": true from below only.
+
+The panel is labelled as a self-assessment. Its pixels were left unchanged so that the reviewed file keeps its digest. **This record supersedes those three claims.**
+
+### 7.3 State of the flight concept
+
+- **B-2 is not credible yet.** v3 is not approved (ART-D3b). v4 and v5 are both NEEDS REVISION. The revision was stopped at v5 to keep the handoff bounded; it was not forced to a pass. The open defects are the §7.2 list. They are cleanup-level in the reviewer's judgement and do not need a wing redesign, but **that judgement is not an approval**.
+- Every B-2 file stays **`NOT VERIFIED` for ART-1** until the owner decides. A later B-2 v6 would be a new file with a new digest and would need its own independent review. None of v3, v4 or v5 inherits anything.
+- **Sheet B (perched)** stays the selected direction (ART-D3a) at `554069333c47…4f74f`. B-2 v4 and v5 reuse B's head profile but **do not change Sheet B**. B's own open caveats (§3) are still open.
+
+## 8. Open owner decisions and feasibility hypotheses
+
+### 8.1 What remains for the owner
+
+| ID | Question | State |
+|---|---|---|
+| ART-1, B-2 | Approve, revise or reject the flight concept. **B-2 v5** is the latest; its independent review says NEEDS REVISION (§7.2) | open |
+| ART-D3c | Numerical tolerances for ART-4 (concept README §E.0) | not authorized; open |
+| B caveats | Whether B's bib, front column and dark triangles (§3) need a revision of Sheet B | open (not raised by the owner) |
+| ADR 0006 | Whether moving pieces, such as a flying raven, carry hatching | open |
+
+Not affected by this packet or by the merge of PR #13 (GOV-1):
+- the Phase 3 exit (open) and P3D-2 (not given);
+- Phase 4 (not authorized), and any Geometry V4 work;
+- Q1–Q6 and ADR 0019 (Proposed), and ADR 0018 (Proposed);
+- PR #11 (draft, untouched);
+- final visual acceptance (ART-5).
+
+### 8.2 Feasibility hypotheses for B and B-2 (proposed, not proven)
+
+None of this is evidence for any GEO gate. These are the hypotheses a later Geometry V4 brief would have to test (GEO-0.5, GEO-0.6, GEO-1, GEO-7). Each names the open decision it depends on.
+
+| # | Hypothesis | Depends on | Known limitation now |
+|---|---|---|---|
+| H1 | The wing root, wrist and finger ports can be typed seams on **non-axis edges** (fingers fan at about −43° to −7° from the span) | **Q1** (non-axis seams) | Foldon placement is quarter turns about +Y on a cell lattice (`AGENTS.md`); a non-axis seam is undecided |
+| H2 | The covert leaves, the under-wing coverts and the hem attach without folding | **Q2** (`join` edge kind) | A non-folding `join` edge kind is undecided (Q2) |
+| H3 | The nine blades per wing are one **parameterised family** (length, width and notch position), not nine definitions | **Q3** (parameterised families) | Definitions are immutable; whether families exist is undecided (Q3) |
+| H4 | The pentagonal head and body shell can close | **Q4** (closed crease networks) | Creases form a tree (`AGENTS.md`); a closed shell leaves an open seam |
+| H5 | The raven is placed in districts as a single prop or agent | **Q5** (object grammar in Genesis) | Object grammar in Genesis is undecided (Q5) |
+| H6 | Its definitions version cleanly | **Q6** (catalog versioning) | Undecided |
+| H7 | Collapse releases tertiary layers, then secondary tiers, then the main mass, along existing creases (bible §7) | **ADR 0019** (support and bond failure; **Proposed**, not accepted) and Phase 4, which is not authorized | Detach semantics are proposed only (ADR 0019) |
+| H8 | B perched and B-2 in flight are **one folding of the same sheets** | — | **Weaker since v4.** B's folded wing has 3–5 sheets per side. B-2 v5 has about 13 parts per wing, including the under-wing coverts. Either they are hidden in the folded state, or the two poses are not one folding. Unproven |
+| H9 | The maquette's planes can become valid Foldon panels | GEO-1 | **No.** The maquettes guarantee neither planarity nor convexity (the primary-covert leaf is a concave polygon). Overlapping layers have zero thickness, and collision is not checked |
+
+**Material change rule (ART §2.5, GEO §1.10).** Any change to the silhouette, proportions, hierarchy, pose or plane language of a reviewed sheet returns its verdicts to `NOT VERIFIED`, until a reviewer inspects the new pixels. An owner approval would be voided the same way. A new version is a new file, and it inherits nothing.

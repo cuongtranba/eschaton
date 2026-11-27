@@ -127,7 +127,7 @@ The concept sheets include a strip at 96, 48, 24 and 12 px. A concept passes the
 **Raven.** The raven is the first hero creature.
 - Heavy, arched bill with nasal bristles covering roughly the proximal third.
 - Steep forehead, and shaggy throat hackles.
-- Long, slotted hand that shows about **four long fingers (P6–P9) plus a short P10**. A crow shows about five. This count comes from Corvid Research (2020) and has not been checked against specimens.
+- Long, slotted hand that shows about **four long fingers (P6–P9) plus a short P10**. A crow shows about five. This count comes from Corvid Research (2018, 2020): the sources are verified but unsigned blog posts. It agrees with Featherbase's narrowing pattern (outer vanes narrowed on H6–H9, only hinted on H5). The longest primary is P6 or P7, so the fingers graduate and are not equal. None of this has been checked against specimens ([sources](../research/art-direction-sources.md) §5).
 - Wedge-shaped tail with the central feathers longest.
 - Long neck and head projecting in flight.
 - Tell it apart from a crow, which has a fan or square tail, a slimmer bill and a smoother throat. Variants such as a juvenile, a moulting adult or a carrion crow must be labelled as variants, never as "raven".
