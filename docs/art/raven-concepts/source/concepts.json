@@ -1,0 +1,448 @@
+{
+ "c1": {
+  "title": "Raven Concept A — Anatomical Folded Raven",
+  "tagline": "Believable volume, a layered three-tier wing and a strong soaring profile. Gliding pose.",
+  "provenance": "Sheet A v4 (after independent review rounds 1–3) · 2026-11-27 · Blender 5.2.1 maquette render (c1_anatomical.py) + Pillow compositing · Common Raven (Corvus corax)",
+  "hero_sub": "neutral paper, single key light, crease lines drawn by the renderer",
+  "labels": {
+   "bill_tip": "heavy arched bill",
+   "nasal_bristles": "nasal-bristle flap (~1/3 bill)",
+   "forehead": "steep forehead",
+   "nape": "nape step",
+   "throat_hackles": "throat hackle ruff",
+   "wrist_R": "wrist / alula",
+   "finger_P7_R": "4 long fingers (P6–P9) + short P10",
+   "secondaries_R": "secondaries: rounded scallops",
+   "coverts_R": "covert tier over secondaries",
+   "tail_wedge_tip": "wedge tail: central pair longest",
+   "finger_P7_L": "upturned finger tips"
+  },
+  "turn": [
+   [
+    "front",
+    "Front"
+   ],
+   [
+    "side",
+    "Side"
+   ],
+   [
+    "top",
+    "Top"
+   ],
+   [
+    "under",
+    "Underside"
+   ]
+  ],
+  "fourth": "underside (flight)",
+  "close": [
+   [
+    "head",
+    "Head — bill, forehead, nape, hackles"
+   ],
+   [
+    "wing",
+    "Hand — fingers and coverts"
+   ],
+   [
+    "tail",
+    "Tail — graduated wedge"
+   ]
+  ],
+  "hier_view": "top",
+  "hier_text": [
+   "head–body–tail spine",
+   "wing tracts",
+   "fingers, hackles, bristles, eye"
+  ],
+  "ink_view": "hero",
+  "ink_mode": "sky",
+  "flock_view": "under",
+  "sil": [
+   "hero",
+   "side"
+  ],
+  "notes": [
+   "Pose: soaring glide, ~3° dihedral, slotted fingers, flat wings.",
+   "Primary: one continuous spine bill – nape – body – wedge tail,",
+   "  with a neck waist, nape step and rounded breast.",
+   "Secondary: thick leading-edge band, covert tier, rounded",
+   "  secondaries; 10 primaries: 4 long fingers (P6–P9), short P10.",
+   "Tertiary: bristle flap, throat hackles, eye facet, alula.",
+   "Maquette: span/length 1.94; tail 0.37 L; bill ~0.10 L.",
+   "Risk: ~1000 faces; tiers merge below ~24 px, so a district",
+   "  LOD keeps the spine, wedge and fingers only.",
+   "v2–v4 fixes: dorsal fin, bill hook, keel, rake, hackle strip.",
+   "Concept artwork only; foldability NOT VERIFIED."
+  ]
+ },
+ "c2": {
+  "title": "Raven Concept B — Sumi Sculptural Raven",
+  "tagline": "Few, large, purposeful folds and a bold silhouette. Perched on a ruin post, calling. Flight study on sheet B-2.",
+  "provenance": "Sheet B v4 (after independent review rounds 1–3) · 2026-11-27 · Blender 5.2.1 maquette render (c2_sumi.py) + Pillow compositing · Common Raven (Corvus corax)",
+  "hero_sub": "neutral paper; post is context only, not part of the concept",
+  "labels": {
+   "bill_tip": "open bill (calling)",
+   "forehead": "angular forehead plane",
+   "nape": "nape fold",
+   "throat_hackles": "hackle fringe (shaggy throat)",
+   "coverts_tier": "covert tier (leaf)",
+   "secondaries_tier": "secondary tier",
+   "primary_blades": "one primary blade group",
+   "tail_wedge_tip": "keeled wedge tail, modestly past wingtips",
+   "toes": "anisodactyl grip",
+   "eye": "eye facet"
+  },
+  "turn": [
+   [
+    "front",
+    "Front"
+   ],
+   [
+    "side",
+    "Side"
+   ],
+   [
+    "back",
+    "Back"
+   ],
+   [
+    "top",
+    "Top"
+   ]
+  ],
+  "fourth": "back and top (perched; no underside)",
+  "close": [
+   [
+    "head",
+    "Head — gape, forehead, hackle ruff"
+   ],
+   [
+    "wing",
+    "Folded wing — three tiers"
+   ],
+   [
+    "tail",
+    "Tail — pleated wedge"
+   ]
+  ],
+  "hier_view": "side",
+  "hier_text": [
+   "pentagonal body, head, bill, tail",
+   "wing tiers, post (context)",
+   "hackles, legs, eye"
+  ],
+  "ink_view": "side",
+  "ink_mode": "perch",
+  "flock_view": "side",
+  "sil": [
+   "side",
+   "hero"
+  ],
+  "notes": [
+   "Pose: perched, compact neck, bill open — the calling display.",
+   "Primary: plump pentagonal-section body, short neck, domed head",
+   "  with the eye mid-head (after Kyōsai's crows).",
+   "Secondary: covert leaf, secondary tier, one primary blade;",
+   "  keeled three-blade wedge tail extending past the wingtips.",
+   "Tertiary: five-shard hackle beard, stout legs, eye.",
+   "~260 faces: detail budget spent on gesture, not feathers.",
+   "Flight state: banked glide on sheet B-2, same plane language.",
+   "v2–v4 fixes: nape, eye, bill, hackle strip, tail, breast.",
+   "Post is context: hidden in silhouette and district tests.",
+   "Concept artwork only; foldability NOT VERIFIED."
+  ]
+ },
+ "c3": {
+  "title": "Raven Concept C — Modular Tessellated Raven",
+  "tagline": "One folded shingle module in three sizes, confined to wing and tail tracts over a calm hull. Upstroke.",
+  "provenance": "Sheet C v2 (after independent review round 1; round 2: NO-GO as a separate direction) · 2026-11-27 · Blender 5.2.1 maquette render (c3_modular.py) + Pillow compositing",
+  "hero_sub": "neutral paper; dark hull visible between shingle rows",
+  "labels": {
+   "bill_tip": "two-plate bill",
+   "head_helmet": "calm head (after A v2)",
+   "throat_hackles": "S-module hackles",
+   "leading_edge_S": "S row: leading edge",
+   "coverts_M": "M row: coverts",
+   "secondaries_L": "L row: secondaries",
+   "finger_P9_R": "L fan: fingers",
+   "tail_wedge_tip": "wedge from staggered roots",
+   "wrist_R": "wrist",
+   "hull_seam": "calm hull: no modules"
+  },
+  "turn": [
+   [
+    "front",
+    "Front"
+   ],
+   [
+    "side",
+    "Side"
+   ],
+   [
+    "top",
+    "Top"
+   ],
+   [
+    "under",
+    "Underside"
+   ]
+  ],
+  "fourth": "underside (flight)",
+  "close": [
+   [
+    "head",
+    "Head — calm hull, nape collar"
+   ],
+   [
+    "wing",
+    "Hand — pleated fan of L modules"
+   ],
+   [
+    "tail",
+    "Tail — wedge of L/M modules"
+   ]
+  ],
+  "hier_view": "top",
+  "hier_text": [
+   "hull, head, bill, tail",
+   "wing rows (S/M/L)",
+   "hackles, eye"
+  ],
+  "ink_view": "hero",
+  "ink_mode": "sky",
+  "flock_view": "under",
+  "sil": [
+   "hero",
+   "side"
+  ],
+  "notes": [
+   "Pose: upstroke, ~16° arm dihedral, hand swept back.",
+   "One module (folded chevron shingle) × three sizes S/M/L:",
+   "  95 placements (S 38, M 16, L 41), one definition.",
+   "Primary: calm hull + raven head (shared anatomy with A).",
+   "Secondary: S/M/L wing rows; tail wedge by root stagger.",
+   "Tertiary: S-module hackles, eye.",
+   "v2: body rings removed after review (pangolin read),",
+   "  conical head replaced, inner wing tapered.",
+   "Weakness kept: raised-wing side view is a dense comb.",
+   "Concept artwork only; foldability NOT VERIFIED."
+  ]
+ },
+ "c2f": {
+  "title": "Raven Concept B-2 — Sumi Sculptural Raven, flight study",
+  "tagline": "The same plane language in flight: banked glide, tapered folded arm, four finger blades, keeled wedge.",
+  "provenance": "Sheet B-2 v3 (after independent review rounds 2–3) · 2026-11-27 · Blender 5.2.1 maquette render (c2f_sumi_flight.py) + Pillow compositing · Common Raven (Corvus corax)",
+  "hero_sub": "banked 14° glide; neutral paper",
+  "labels": {
+   "bill_tip": "heavy bill",
+   "finger_R": "4 long fingers (P6–P9) + short P10",
+   "tail_wedge_tip": "keeled wedge tail",
+   "throat_hackles": "hackle fringe, sleeked"
+  },
+  "turn": [
+   [
+    "front",
+    "Front (banked)"
+   ],
+   [
+    "side",
+    "Side"
+   ],
+   [
+    "top",
+    "Top"
+   ],
+   [
+    "under",
+    "Underside"
+   ]
+  ],
+  "fourth": "underside (flight; model banked 14°)",
+  "close": [
+   [
+    "head",
+    "Head"
+   ],
+   [
+    "wing",
+    "Arm and hand — folded planes"
+   ],
+   [
+    "tail",
+    "Tail — keeled wedge"
+   ]
+  ],
+  "hier_view": "top",
+  "hier_text": [
+   "pentagonal body, head, bill, tail",
+   "arm planes, finger blades",
+   "hackles, eye"
+  ],
+  "ink_view": "hero",
+  "ink_mode": "sky",
+  "flock_view": "under",
+  "sil": [
+   "hero",
+   "under"
+  ],
+  "notes": [
+   "Purpose: show B can fly without changing its language.",
+   "Arm: covert band folded over a tapered secondary plane",
+   "  with three notched pleats; chord tapers root to wrist.",
+   "Hand: inner primaries continue the trailing edge as one",
+   "  tapering plane; 4 long fingers + short leading P10 beyond.",
+   "Tail: keeled three-blade wedge, diamond outline below.",
+   "Bank 14° gives the asymmetric signature (¾) silhouette.",
+   "~210 faces. v2/v3: no palm; diagonal hand taper; fanned fingers.",
+   "Concept artwork only; foldability NOT VERIFIED."
+  ]
+ },
+ "c2f4": {
+  "title": "Raven Concept B-2 v4 — Sumi Sculptural Raven, flight revision",
+  "tagline": "Revision under ART-D3b: cambered layered arm, bridged wrist, graduated fanned hand; B's head, bill and wedge kept.",
+  "provenance": "Sheet B-2 v4 · 2026-11-27 · brief b2-v4-flight-brief.md (committed before drawing) · Blender 5.2.1 maquette (c2f4_sumi_flight.py) + Pillow · Common Raven (Corvus corax)",
+  "hero_sub": "banked 20° glide turning toward the viewer; inner wing flexed at the wrist; neutral paper",
+  "labels": {
+   "bill_tip": "heavy arched bill (B's head)",
+   "finger_R": "4 graduated fingers P6–P9",
+   "tail_wedge_tip": "keeled wedge tail",
+   "throat_hackles": "hackles, sleeked",
+   "wrist_L": "wrist: alula + primary-covert leaf"
+  },
+  "turn": [
+   [
+    "front",
+    "Front (banked)"
+   ],
+   [
+    "side",
+    "Side"
+   ],
+   [
+    "top",
+    "Top"
+   ],
+   [
+    "under",
+    "Underside"
+   ]
+  ],
+  "fourth": "underside (flight; model banked 20°, pitched 3° nose-down)",
+  "close": [
+   [
+    "head",
+    "Head — B's profile, compact neck"
+   ],
+   [
+    "wing",
+    "Arm, wrist and hand, from above"
+   ],
+   [
+    "tail",
+    "Tail — keeled wedge"
+   ]
+  ],
+  "hier_view": "top",
+  "hier_text": [
+   "pentagonal body, head, bill, tail",
+   "hem, coverts, secondaries, primaries",
+   "alula, hackles, eye"
+  ],
+  "ink_view": "hero",
+  "ink_mode": "sky",
+  "flock_view": "under",
+  "sil": [
+   "hero",
+   "under"
+  ],
+  "notes": [
+   "Purpose: revise B-2's wing and pose (ART-D3b); same bird as B.",
+   "Arm: folded hem, cambered covert leaf, scalloped secondaries;",
+   "  chord tapers, elbow arches; three overlapping layers.",
+   "Wrist: alula and primary-covert leaf bridge arm and hand.",
+   "Hand: 4 inner blades graduate into 4 slotted fingers P6–P9",
+   "  (P6/P7 longest, fanned, curled, twisted) + short slim P10.",
+   "Pose: 20° bank, inner wing flexed, head and tail into turn.",
+   "~350 faces. Pending owner ART-1. Not approved.",
+   "Concept artwork only; foldability NOT VERIFIED."
+  ],
+  "ink_scale": 0.34,
+  "ink_left": 0.5
+ },
+ "c2f5": {
+  "title": "Raven Concept B-2 v5 — Sumi Sculptural Raven, flight revision",
+  "tagline": "Revision under ART-D3b after independent review of v4: tapered layered arm, covered wrist, varied fingers; B's head kept.",
+  "provenance": "Sheet B-2 v5 · 2026-11-27 · brief b2-v4-flight-brief.md + v4 review (packet §7.1) · Blender 5.2.1 maquette (c2f5_sumi_flight.py) + Pillow · Common Raven (Corvus corax)",
+  "hero_sub": "banked 20° glide turning toward the viewer; inner wing flexed at the wrist; neutral paper",
+  "labels": {
+   "bill_tip": "heavy arched bill (B's head)",
+   "finger_R": "4 graduated fingers P6–P9",
+   "tail_wedge_tip": "keeled wedge tail",
+   "throat_hackles": "hackle strip, sleeked",
+   "wrist_L": "wrist: primary-covert leaf"
+  },
+  "turn": [
+   [
+    "front",
+    "Front (banked)"
+   ],
+   [
+    "side",
+    "Side"
+   ],
+   [
+    "top",
+    "Top"
+   ],
+   [
+    "under",
+    "Underside"
+   ]
+  ],
+  "fourth": "underside (flight; model banked 20°, pitched 3° nose-down)",
+  "close": [
+   [
+    "head",
+    "Head — B's profile, compact neck"
+   ],
+   [
+    "wing",
+    "Arm, wrist and hand, from above"
+   ],
+   [
+    "tail",
+    "Tail — keeled wedge"
+   ]
+  ],
+  "hier_view": "top",
+  "hier_text": [
+   "pentagonal body, head, bill, tail",
+   "hem, coverts, secondaries, primaries",
+   "hackles, eye"
+  ],
+  "ink_view": "hero",
+  "ink_mode": "sky",
+  "flock_view": "under",
+  "sil": [
+   "hero",
+   "under"
+  ],
+  "notes": [
+   "Purpose: revise B-2's wing and pose (ART-D3b); same bird as B.",
+   "Arm: bevelled hem, cambered covert leaf over scalloped",
+   "  secondaries; broad root tapering to the wrist; elbow arch;",
+   "  under-wing covert band layers the underside too.",
+   "Wrist: one primary-covert leaf bridges arm and hand (above",
+   "  and below). Alula omitted: it did not read (v4 review).",
+   "Hand: 4 inner blades graduate into 4 slotted fingers P6–P9,",
+   "  each its own width and notch (P6/P7 longest) + short P10.",
+   "Pose: 20° bank, inner wing flexed, head and tail into turn.",
+   "~340 faces. Pending owner ART-1. Foldability NOT VERIFIED."
+  ],
+  "ink_scale": 0.34,
+  "ink_left": 0.5,
+  "district_sub": "96 / 48 / 24 / 12 px height (wide ones capped by width); context hidden"
+ }
+}

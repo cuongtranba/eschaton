@@ -1,0 +1,14 @@
+{
+ "hier": {
+  "body": 1,
+  "bill": 1,
+  "tail": 1,
+  "wing": 2,
+  "cov": 2,
+  "prim": 2,
+  "hem": 2,
+  "alula": 3,
+  "hackle": 3,
+  "eye": 3
+ }
+}
