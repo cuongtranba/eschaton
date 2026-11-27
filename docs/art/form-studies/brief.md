@@ -60,7 +60,7 @@ Units: H = ground to the highest tip.
 | V-a | four identical wheels | P5 (series) | not a tract: identical parts doing the same job at different stations; reuse justified (method §7.1, level c) |
 | B-a | rectangular podium and walls | P1, P2 | declared prismatic by function; the variation moves to the roofs and the openings |
 | B-b | corrugated roof field | P5 | declared tessellation; the rake flags are expected and are not defects; the envelope carries the variation |
-| B-c | a symmetric tower | bible §4.1.3 (gesture), not a method principle | the method has no asymmetry rule. *Later note (round-1 review):* whether bible §4.1.3, "asymmetry and gesture beat symmetry", applies to a symmetric structural form is an **owner question**; this study does not decide it |
+| B-c | a symmetric tower | bible §4.1.3 (gesture), not a method principle | the method has no asymmetry rule. *Later note (round-1 review):* whether bible §4.1.3, "asymmetry and gesture beat symmetry", applies to a symmetric structural form is an **owner question**; this study does not decide it. *Later note (2026-11-28):* the owner answered it under D-4b (packet §0.3, recorded on draft PR #14): asymmetry is not mandatory, and symmetric geometry is judged separately from gesture, pose and composition. The study's record is not re-graded |
 | T-a | a broken, irregular dead tree | P5 grouping | irregularity is the subject; the series law still holds per generation |
 
 ## 5. Deliverables

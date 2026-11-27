@@ -1,6 +1,6 @@
 # ART-1 Raven: owner decision packet (2026-11-27)
 
-- Status: **PARTLY DECIDED.** The owner decided ART-D1, ART-D2, ART-D3a and ART-D3b on 2026-11-27 (§0). *Later (§9.5): the generic-method round ended NO-GO for owner approval. B-2 v6 and v7 and the method were each reviewed NEEDS REVISION twice; bounded next actions are listed. Later (§0.2): the owner did **not approve B-2 v7** and redirected the work to method correction and geometry-operator research. That round's outputs, reviews (both NEEDS REVISION) and the open decisions D-1 to D-5 are in §10.* ART-D3c is not authorized. The B-2 flight revision went through two independent reviews (§7). Its latest reviewed version, **B-2 v5, was reviewed NEEDS REVISION and then NOT APPROVED by the owner** (ART-D3b, second ruling, §0.1): the concept is to be revised by a method that is generic for all objects, not bird-specific. The proposed generic method, the next B-2 version and their reviews are in §9. Open owner decisions and feasibility hypotheses are in §8. §1–§6 are the original decision request, kept as the record of what the owner was shown. Later edits to them are only notes marked as later: two link and status notes in §1 for the adopted files, a finger-count update in §6, and the base note below.
+- Status: **PARTLY DECIDED.** The owner decided ART-D1, ART-D2, ART-D3a and ART-D3b on 2026-11-27 (§0). *Later (§9.5): the generic-method round ended NO-GO for owner approval. B-2 v6 and v7 and the method were each reviewed NEEDS REVISION twice; bounded next actions are listed. Later (§0.2): the owner did **not approve B-2 v7** and redirected the work to method correction and geometry-operator research. That round's outputs, reviews (both NEEDS REVISION) and the open decisions D-1 to D-5 are in §10. Later (§0.3, 2026-11-28): the owner decided D-1 to D-5, recorded on this draft branch and not in force on `main` until a merge is authorized. The bounded M3.1 revision and the laboratory milestones M0–M1 done under them are in §11.* ART-D3c is not authorized. The B-2 flight revision went through two independent reviews (§7). Its latest reviewed version, **B-2 v5, was reviewed NEEDS REVISION and then NOT APPROVED by the owner** (ART-D3b, second ruling, §0.1): the concept is to be revised by a method that is generic for all objects, not bird-specific. The proposed generic method, the next B-2 version and their reviews are in §9. Open owner decisions and feasibility hypotheses are in §8. §1–§6 are the original decision request, kept as the record of what the owner was shown. Later edits to them are only notes marked as later: two link and status notes in §1 for the adopted files, a finger-count update in §6, and the base note below.
 
 ## 0. Owner decisions recorded (2026-11-27)
 
@@ -48,6 +48,30 @@ B-2 v3, v4 and v5, their digests and their review records (§3 and §7) are kept
 | Scope of the round | **No more bird-specific artwork this round.** Correct P1, P7 and the §4.0 declaration rule of the proposed method; research composable geometry operators; write a Geometry Operator Laboratory **proposal only**; check transfer on a previously unused object category at design level | design and research documents on PR #14 | any runtime or experimental implementation, any new package or app, Geometry V4, Phase 4, Kanna Home, any merge, any visual approval, any change to an adopted policy. PR #14 and PR #11 stay drafts; PR #11 is untouched |
 
 The earlier rejection and pending statuses stand as recorded: v3 not approved as drawn, v5 not approved, v4 and v6 never decided. No concept is approved by this ruling. The work it authorizes is in §10.
+
+### 0.3 Decisions D-1 to D-5 on the §10.4 questions (2026-11-28)
+
+**Source.** The owner's explicit message, relayed to the agent in the Kanna handoff "Geometry Operator Laboratory M0–M1 & bounded Form Method M3.1" dated 2026-11-28. It was issued against `main` @ `5886475d04db76f58105080f63d01426d2d72311`, with draft PR #14 at `0d7f2cc8b6787d6a766a2644b96d699d6e022dea` and draft PR #11 at `616b0cfd316522d038e804cab9eaf04bc715bb59`. **Recorded by the agent.** It is an owner instruction relayed to the agent. It is not a GitHub review or approval, and the identity is not cryptographically verified.
+
+**Where these decisions live.** They are recorded on the **draft branch** of PR #14. They are **not** in force on `main` until the owner separately authorizes a merge (GOV-1). The Visual Bible clarifications under D-4a and D-4b are written into the bible on this branch only. They are marked there in the same way.
+
+| ID | Decision | Exactly what it covers | What it does not cover |
+|---|---|---|---|
+| **D-1** | **Accept** O1 section transition, O2 crease insertion and O3 attach as a **research direction** | Further mathematical research on the three operators of [`geometry-operators.md`](../research/geometry-operators.md), with the seam erratum (§9 there) | A production API, a Foldon contract change, Geometry V4, or any answer to Q1–Q6 |
+| **D-2** | **Authorize one bounded revision M3.1** of the proposed form method, with one independent re-review and no artwork | P1 and P7 are restated as **conditional geometric diagnostics**: each is measured against a declared, subject-specific functional or form target. Neither is a universal aesthetic pass or fail, and neither requires shape variety for its own sake | Adoption of the method; any new gate; any artwork iteration; a second revision round |
+| **D-3** | **Authorize the Geometry Operator Laboratory, milestones M0 and M1 only, in isolation** | M0: freeze the O1 contract and its oracles before any executable script. M1: O1 only, as standalone mathematical scripts | O2 or O3 implementation, M2–M5, any package, app, experiment or runtime change, servers, a web UI, object modelling |
+| **D-4a** | Prismatic and box forms are **allowed when function and art direction justify them** (answers O-1) | Intentional functional rectangular or prismatic structures, declared before the artwork with their reason, for example a slab tower like those in the reference image | Unintended blockiness, which stays an anti-pattern (bible §5: voxel blockiness, extruded slab, plank limb) |
+| **D-4b** | Asymmetry is **not mandatory**. Geometric symmetry is judged separately from gesture, pose and composition (answers O-2) | Symmetric geometry can be correct. Bible §4.1.3 governs pose, gesture and the composition of a view or scene | The heraldic-spread anti-pattern for poses, which stands |
+| **D-5** | **Allow** reproducible mathematical diagnostic scripts to be committed under `docs/` as design and research artefacts | Standalone scripts with their input fixtures, expected outputs and generated evidence, labelled as design or research artefacts | Any import of these scripts by `packages/*`, `apps/*` or `experiments/*`; runtime use; a runnable lab outside what D-3 allows |
+
+**Unchanged by these decisions:**
+- B-2 v7 stays **NOT APPROVED**. B (perched) stays the selected direction only (ART-D3a).
+- ART-D3c, Q1–Q6, ADR 0018 and ADR 0019, and the Phase 3 exit stay pending.
+- No PR is merged. No Geometry V4, Phase 4, production runtime change, object implementation, visual approval or Kanna Home work is authorized.
+- The adopted ART and GEO gates are unchanged. Mathematical evidence, concept approval (ART-1) and final visual approval (ART-5, GEO-2, GEO-5, GEO-7) stay separate decisions.
+- The frozen M3 text, the frozen holdout record and every existing artwork file and digest are kept unchanged.
+
+The work done under these decisions is in §11.
 
 The original request follows.
 
@@ -488,6 +512,8 @@ Each reviewer was a separate agent that made none of the work and recomputed the
 - **No further revision this round,** so the work stops at the research approval boundary. No artwork, concept, gate, policy or phase decision changed.
 
 ### 10.4 Decisions for the owner (actionable only)
+
+*Later: the owner decided D-1 to D-5 on 2026-11-28, with D-4 split into D-4a and D-4b (§0.3). The table below is kept as the question that was asked.*
 
 | ID | Question | Options | Recommendation (not a decision) |
 |---|---|---|---|
