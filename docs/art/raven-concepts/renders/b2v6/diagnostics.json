@@ -1,0 +1,93 @@
+{
+ "panels": 102,
+ "declared_edges": 476,
+ "declared_below_8_deg": [],
+ "panel_edges_bending_over_20_deg": 28,
+ "max_panel_bend_deg": 30.7,
+ "interior_vertices_defect_over_2_deg": 9,
+ "max_defect_deg": 5.3,
+ "series": [
+  {
+   "name": "inner primaries P1-P5 (ends = tips)",
+   "cv_width": 0.041,
+   "cv_spacing": 0.071,
+   "cv_angle_step": 0.106,
+   "ends_r2": 0.9206
+  },
+  {
+   "name": "fingers P6-P9 (ends = notch points)",
+   "cv_width": 0.197,
+   "cv_spacing": 0.181,
+   "cv_angle_step": 0.138,
+   "ends_r2": 0.1915
+  }
+ ],
+ "sections": {
+  "+0.404": {
+   "aspect": 1.222,
+   "peak_y": 0,
+   "widest_z": 0.1,
+   "fill": 0.705
+  },
+  "+0.384": {
+   "aspect": 1.273,
+   "peak_y": 0,
+   "widest_z": 0.1,
+   "fill": 0.705
+  },
+  "+0.366": {
+   "aspect": 1.222,
+   "peak_y": 0,
+   "widest_z": 0.1,
+   "fill": 0.705
+  },
+  "+0.322": {
+   "aspect": 1.088,
+   "peak_y": 0,
+   "widest_z": 0.18,
+   "fill": 0.76
+  },
+  "+0.268": {
+   "aspect": 0.906,
+   "peak_y": 0,
+   "widest_z": 0.05,
+   "fill": 0.726
+  },
+  "+0.225": {
+   "aspect": 1.05,
+   "peak_y": 0,
+   "widest_z": 0.0,
+   "fill": 0.74
+  },
+  "+0.130": {
+   "aspect": 1.019,
+   "peak_y": 0,
+   "widest_z": -0.05,
+   "fill": 0.751
+  },
+  "+0.030": {
+   "aspect": 0.78,
+   "peak_y": 0,
+   "widest_z": 0.18,
+   "fill": 0.776
+  },
+  "-0.070": {
+   "aspect": 0.714,
+   "peak_y": 0,
+   "widest_z": 0.18,
+   "fill": 0.776
+  },
+  "-0.130": {
+   "aspect": 0.6,
+   "peak_y": 0,
+   "widest_z": 0.1,
+   "fill": 0.744
+  },
+  "-0.205": {
+   "aspect": 0.28,
+   "peak_y": 0,
+   "widest_z": 0.0,
+   "fill": 0.75
+  }
+ }
+}

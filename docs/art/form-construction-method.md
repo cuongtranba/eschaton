@@ -156,7 +156,7 @@ A tract of similar elements has a series law: size, orientation, spacing and ove
 - **Pass:** primaries that group into broad inner blades and slotted fingers, with the longest feather off-centre (P6/P7), overlap that tightens toward the wrist and notches that do not line up; a roof whose tiers shrink by a progression, whose eaves curve up at the corners and whose top tier is a different element (the finial); a tree whose branch length and angle change by generation and whose branches are not evenly spaced.
 - **Future diagnostics.**
   - *Rake flag:* for a tract of four or more elements, the coefficients of variation of width, spacing and angle step. Proposed flag: all three below about 0.08, and no overlap.
-  - *End alignment:* a straight-line fit through the element ends or notch points. Proposed flag: R² above 0.98 over four or more points, which is the "notch steps on one diagonal" that the v5 reviewer saw.
+  - *End alignment (revised, §12):* measured **in the view where the tract is judged** (the hero or the principal orthographic view), not in the tract's own plane. Flag a **regular monotone progression**: the ends or notch points advance in element order along one direction, and the coefficient of variation of the gaps between them is below about 0.25. Rationale: the eye joins evenly stepped, monotone marks into one line or one arc (good continuation), whether or not they are collinear. The first proposal, a straight-line R² above 0.98, did not flag B-2 v5: R² 0.15 in the wing plane and 0.77 in the hero view, where the v5 reviewer saw "notch steps on one diagonal".
   - *Grouping:* at least two groups that differ in kind (for example broad blades and slotted fingers; a roof body and a finial; trunk-like and twig-like branches) where the subject grammar (layer S) says so.
   - Scope: tracts of secondary elements.
   - Counterexample: a **deliberate tessellation** (a corrugated roof, a tile field, a Miura pattern). It is allowed when the brief declares it, the field is subordinate to its envelope, and the field's boundary follows a shaped envelope (P6). Then P5's flags are expected and are not defects; the envelope carries the variation. Bible §4.3 already allows corrugation where the subject is corrugated.
@@ -305,3 +305,14 @@ Only if the owner later authorizes Geometry V4 or an equivalent. Nothing here is
 | P8 attachment audit | the composition graph | a secondary element without a host, or with negative clearance in its range, is reported | a free-floating blade must be reported |
 
 Each threshold would follow GEO §1.9: unit, object scale, reason, a counterexample just beyond it, and a negative control. Tests would follow `AGENTS.md`: the public seam only, no mocks, one cause and one outcome per test. The diagnostics report; they do not accept. GEO-2, GEO-5, GEO-7 and ART-5 stay human and owner decisions.
+
+## 12. Change log and findings from applying the method
+
+The method was committed in `449406b`, before any study or B-2 v6 artwork. Changes after that commit are listed here with their evidence. None comes from a holdout category (building, tree).
+
+| Date | Principle | Change | Evidence | Category it came from |
+|---|---|---|---|---|
+| 2026-11-27 | P5 end alignment | Measured in the judged view; flags a regular monotone progression instead of a straight line only | v5 notch points: straight-line R² 0.15 in the wing plane, 0.77 in the hero view; the reviewer still saw one diagonal. The original test would have passed v5 ([B-2 v6 brief](raven-concepts/b2-v6-flight-brief.md) §11, round v6-6) | raven (derivation) |
+| 2026-11-27 | P6 silhouette topology | No change. Reproduced a reviewer finding: v5 tail-root pinhole, 86 px² at 400 px height | B-2 v6 brief §11, round v6-5 | raven (derivation) |
+| 2026-11-27 | P4 line visibility | No change. Found seven declared folds under 8° on the first v6 maquette, each a line that marked almost no form change | B-2 v6 brief §11, round v6-3 | raven (derivation) |
+| 2026-11-27 | P5 rake flag | No change, but a limit is recorded: v5's near-hand widths have a coefficient of variation of 0.19, above the proposed 0.08, yet the reviewer read them as "nearly equal". Foreshortening in the judged view hides the differences. The width test, like end alignment, should be measured in the judged view; this is not yet tested | B-2 v6 method board, series panel | raven (derivation) |
