@@ -1,5 +1,5 @@
 {
- "build": "experiment/origami-lab-v3 @ b1b4a41 · served 2026-11-27T06:06:14.387Z",
+ "build": "experiment/origami-lab-v3 @ 74c686f · served 2026-11-27T06:23:50.906Z",
  "generated": "v3.html?object=vehicle&mode=evidence",
  "object": "vehicle",
  "variants": [
@@ -9,8 +9,8 @@
    "sheets": 90,
    "panels": 378,
    "definitions": 60,
-   "buildMs": 485,
-   "verifyMs": 991,
+   "buildMs": 1918,
+   "verifyMs": 1290,
    "geo1": {
     "verdict": "PASS",
     "reasons": []
@@ -31,7 +31,7 @@
     "maxOffPlane": 7.740640350917261e-10,
     "overlaps": 0
    },
-   "rigidity": 7.095973253434806e-10,
+   "rigidity": 8.162882036977237e-10,
    "seamGap": {
     "rest": 5.981911135678705e-9,
     "articulated": 5.981911135678705e-9
@@ -56,17 +56,17 @@
     "roof": 1.48
    },
    "measures": {
-    "length": 4.414848208694393,
+    "length": 4.36472627761899,
     "wheelbase": 2.5999999999999996,
-    "wheelbaseRatio": 0.5889217198633653,
+    "wheelbaseRatio": 0.5956845480395921,
     "height": 1.48,
-    "heightRatio": 0.33523236361453107,
-    "hoodRatio": 0.35445119168823414,
+    "heightRatio": 0.3390819734994602,
+    "hoodRatio": 0.34703809157198545,
     "tyreDiameter": 0.6599999999557769,
     "track": 1.48,
     "groundClearance": 0.25346300629644347,
     "tyreGround": 2.4791724229089596e-11,
-    "fenderClearance": 0.07880911822694425,
+    "fenderClearance": 0.07880911822694474,
     "cabinOffset": -0.385000463050602
    },
    "solver": {
@@ -81,8 +81,8 @@
    "sheets": 92,
    "panels": 390,
    "definitions": 62,
-   "buildMs": 363,
-   "verifyMs": 981,
+   "buildMs": 1855,
+   "verifyMs": 1218,
    "geo1": {
     "verdict": "PASS",
     "reasons": []
@@ -100,7 +100,7 @@
    "minAngleDeg": 7.275473981554022,
    "minAltitude": 0.020000000000000014,
    "flat": {
-    "maxOffPlane": 8.554078417821742e-10,
+    "maxOffPlane": 1.0022896679284798e-9,
     "overlaps": 0
    },
    "rigidity": 8.981466126378734e-10,
@@ -128,17 +128,17 @@
     "roof": 1.52
    },
    "measures": {
-    "length": 4.414848208694394,
+    "length": 4.365801963943522,
     "wheelbase": 2.7,
-    "wheelbaseRatio": 0.6115725552427255,
+    "wheelbaseRatio": 0.6184430769647546,
     "height": 1.52,
-    "heightRatio": 0.3442926977662751,
-    "hoodRatio": 0.3544511916882342,
+    "heightRatio": 0.34816054703201,
+    "hoodRatio": 0.3471989743149813,
     "tyreDiameter": 0.6599999999557769,
     "track": 1.48,
     "groundClearance": 0.25269710110461796,
     "tyreGround": 2.4791724229089596e-11,
-    "fenderClearance": 0.07286339437848637,
+    "fenderClearance": 0.07286339437848625,
     "cabinOffset": -0.3550004630506022
    },
    "solver": {
@@ -153,8 +153,8 @@
    "sheets": 90,
    "panels": 374,
    "definitions": 60,
-   "buildMs": 317,
-   "verifyMs": 897,
+   "buildMs": 1327,
+   "verifyMs": 941,
    "geo1": {
     "verdict": "PASS",
     "reasons": []
@@ -200,17 +200,17 @@
     "roof": 1.52
    },
    "measures": {
-    "length": 4.414848208694393,
+    "length": 4.3621727602270415,
     "wheelbase": 2.7,
-    "wheelbaseRatio": 0.6115725552427256,
+    "wheelbaseRatio": 0.6189576040219624,
     "height": 1.52,
-    "heightRatio": 0.34429269776627514,
-    "hoodRatio": 0.3771020270675943,
+    "heightRatio": 0.34845020670866034,
+    "hoodRatio": 0.369580218125779,
     "tyreDiameter": 0.6599999999557769,
     "track": 1.48,
     "groundClearance": 0.25269710110461796,
     "tyreGround": 2.4791724229089596e-11,
-    "fenderClearance": 0.07286339437848628,
+    "fenderClearance": 0.07286339437848621,
     "cabinOffset": -0.47500046305060173
    },
    "solver": {
@@ -225,8 +225,8 @@
    "sheets": 84,
    "panels": 360,
    "definitions": 52,
-   "buildMs": 402,
-   "verifyMs": 805,
+   "buildMs": 1420,
+   "verifyMs": 1004,
    "geo1": {
     "verdict": "PASS",
     "reasons": []
@@ -247,7 +247,7 @@
     "maxOffPlane": 9.375270421108084e-10,
     "overlaps": 0
    },
-   "rigidity": 6.904301019794445e-10,
+   "rigidity": 7.916985955702671e-10,
    "seamGap": {
     "rest": 6.656192199922475e-9,
     "articulated": 6.656192199922475e-9
@@ -272,17 +272,17 @@
     "roof": 1.48
    },
    "measures": {
-    "length": 4.414848208694393,
+    "length": 4.3621727602270415,
     "wheelbase": 2.5000000000000004,
-    "wheelbaseRatio": 0.5662708844840053,
+    "wheelbaseRatio": 0.5731088926129283,
     "height": 1.48,
-    "heightRatio": 0.33523236361453107,
-    "hoodRatio": 0.3318003563088739,
+    "heightRatio": 0.3392804644268535,
+    "hoodRatio": 0.3237315067167448,
     "tyreDiameter": 0.7199999999517567,
     "track": 1.48,
     "groundClearance": 0.284016078352309,
     "tyreGround": 2.680178301517344e-11,
-    "fenderClearance": 0.07842262346182313,
+    "fenderClearance": 0.07842262346182297,
     "cabinOffset": -0.35000046305060184
    },
    "solver": {
@@ -297,8 +297,8 @@
    "sheets": 90,
    "panels": 378,
    "definitions": 58,
-   "buildMs": 414,
-   "verifyMs": 872,
+   "buildMs": 1794,
+   "verifyMs": 1240,
    "geo1": {
     "verdict": "PASS",
     "reasons": []
@@ -344,16 +344,16 @@
     "roof": 1.44
    },
    "measures": {
-    "length": 4.414848208694393,
+    "length": 4.363524377741543,
     "wheelbase": 2.3999999999999995,
-    "wheelbaseRatio": 0.5436200491046448,
+    "wheelbaseRatio": 0.550014115251072,
     "height": 1.44,
-    "heightRatio": 0.32617202946278695,
-    "hoodRatio": 0.3318003563088739,
+    "heightRatio": 0.3300084691506433,
+    "hoodRatio": 0.32394098333722376,
     "tyreDiameter": 0.6599999999557769,
     "track": 1.48,
     "groundClearance": 0.25346300629644347,
-    "tyreGround": 2.4791724229089596e-11,
+    "tyreGround": 2.4791613206787133e-11,
     "fenderClearance": 0.07880911822694474,
     "cabinOffset": -0.35500046305060196
    },
@@ -369,8 +369,8 @@
    "sheets": 80,
    "panels": 342,
    "definitions": 50,
-   "buildMs": 496,
-   "verifyMs": 730,
+   "buildMs": 1685,
+   "verifyMs": 944,
    "geo1": {
     "verdict": "PASS",
     "reasons": []
@@ -388,7 +388,7 @@
    "minAngleDeg": 7.275473981554022,
    "minAltitude": 0.030614527793189867,
    "flat": {
-    "maxOffPlane": 9.893157890128457e-10,
+    "maxOffPlane": 1.0022896679284798e-9,
     "overlaps": 0
    },
    "rigidity": 8.981466126378734e-10,
@@ -416,12 +416,12 @@
     "roof": 1.52
    },
    "measures": {
-    "length": 4.414848208694394,
+    "length": 4.365801963943522,
     "wheelbase": 2.8,
-    "wheelbaseRatio": 0.6342233906220857,
+    "wheelbaseRatio": 0.6413483761115972,
     "height": 1.52,
-    "heightRatio": 0.3442926977662751,
-    "hoodRatio": 0.33180035630887394,
+    "heightRatio": 0.34816054703201,
+    "hoodRatio": 0.32429367516813856,
     "tyreDiameter": 0.6599999999557769,
     "track": 1.48,
     "groundClearance": 0.25269710110461796,
@@ -441,8 +441,8 @@
    "sheets": 80,
    "panels": 340,
    "definitions": 50,
-   "buildMs": 505,
-   "verifyMs": 698,
+   "buildMs": 1348,
+   "verifyMs": 792,
    "geo1": {
     "verdict": "PASS",
     "reasons": []
@@ -463,7 +463,7 @@
     "maxOffPlane": 7.740637436581821e-10,
     "overlaps": 0
    },
-   "rigidity": 6.748656355970439e-10,
+   "rigidity": 8.162882036977237e-10,
    "seamGap": {
     "rest": 5.859396543051731e-9,
     "articulated": 5.859396543051731e-9
@@ -488,12 +488,12 @@
     "roof": 1.4
    },
    "measures": {
-    "length": 4.414848208694393,
+    "length": 4.36472627761899,
     "wheelbase": 2.5999999999999996,
-    "wheelbaseRatio": 0.5889217198633653,
+    "wheelbaseRatio": 0.5956845480395921,
     "height": 1.4,
-    "heightRatio": 0.3171116953110429,
-    "hoodRatio": 0.3771020270675943,
+    "heightRatio": 0.32075321817516506,
+    "hoodRatio": 0.3699490357273543,
     "tyreDiameter": 0.599999999959797,
     "track": 1.48,
     "groundClearance": 0.23088663101951765,
@@ -513,8 +513,8 @@
    "sheets": 80,
    "panels": 346,
    "definitions": 50,
-   "buildMs": 521,
-   "verifyMs": 734,
+   "buildMs": 1579,
+   "verifyMs": 997,
    "geo1": {
     "verdict": "PASS",
     "reasons": []
@@ -560,16 +560,16 @@
     "roof": 1.48
    },
    "measures": {
-    "length": 4.414848208694393,
+    "length": 4.363524377741543,
     "wheelbase": 2.8000000000000003,
-    "wheelbaseRatio": 0.6342233906220859,
+    "wheelbaseRatio": 0.6416831344595842,
     "height": 1.48,
-    "heightRatio": 0.33523236361453107,
-    "hoodRatio": 0.30914952092951375,
+    "heightRatio": 0.33917537107149454,
+    "hoodRatio": 0.3010237285350958,
     "tyreDiameter": 0.7199999999517567,
     "track": 1.48,
     "groundClearance": 0.28401607835230913,
-    "tyreGround": 2.680178301517344e-11,
+    "tyreGround": 2.6801560970568516e-11,
     "fenderClearance": 0.05333732164609714,
     "cabinOffset": -0.060000463050601915
    },
@@ -585,8 +585,8 @@
    "sheets": 82,
    "panels": 348,
    "definitions": 52,
-   "buildMs": 400,
-   "verifyMs": 733,
+   "buildMs": 1593,
+   "verifyMs": 1022,
    "geo1": {
     "verdict": "PASS",
     "reasons": []
@@ -607,7 +607,7 @@
     "maxOffPlane": 7.740637991693333e-10,
     "overlaps": 0
    },
-   "rigidity": 7.095974363657831e-10,
+   "rigidity": 8.162882036977237e-10,
    "seamGap": {
     "rest": 5.981910914018122e-9,
     "articulated": 5.981910914018122e-9
@@ -632,17 +632,17 @@
     "roof": 1.44
    },
    "measures": {
-    "length": 4.414848208694393,
+    "length": 4.36472627761899,
     "wheelbase": 2.5999999999999996,
-    "wheelbaseRatio": 0.5889217198633653,
+    "wheelbaseRatio": 0.5956845480395921,
     "height": 1.44,
-    "heightRatio": 0.32617202946278695,
-    "hoodRatio": 0.3997528624469545,
+    "heightRatio": 0.3299175958373126,
+    "hoodRatio": 0.3928599798827233,
     "tyreDiameter": 0.6599999999557769,
     "track": 1.48,
     "groundClearance": 0.25346300629644347,
     "tyreGround": 2.4791724229089596e-11,
-    "fenderClearance": 0.07880911822694399,
+    "fenderClearance": 0.07880911822694463,
     "cabinOffset": -0.48500046305060174
    },
    "solver": {
@@ -657,8 +657,8 @@
    "sheets": 80,
    "panels": 340,
    "definitions": 50,
-   "buildMs": 334,
-   "verifyMs": 706,
+   "buildMs": 1359,
+   "verifyMs": 822,
    "geo1": {
     "verdict": "PASS",
     "reasons": []
@@ -679,7 +679,7 @@
     "maxOffPlane": 7.740635563080467e-10,
     "overlaps": 0
    },
-   "rigidity": 6.748656633526195e-10,
+   "rigidity": 7.916985955702671e-10,
    "seamGap": {
     "rest": 5.859397216219057e-9,
     "articulated": 5.859397216219057e-9
@@ -704,12 +704,12 @@
     "roof": 1.4
    },
    "measures": {
-    "length": 4.414848208694393,
+    "length": 4.3621727602270415,
     "wheelbase": 2.3999999999999995,
-    "wheelbaseRatio": 0.5436200491046448,
+    "wheelbaseRatio": 0.550184536908411,
     "height": 1.4,
-    "heightRatio": 0.3171116953110429,
-    "hoodRatio": 0.30914952092951375,
+    "heightRatio": 0.3209409798632398,
+    "hoodRatio": 0.30080715101222766,
     "tyreDiameter": 0.599999999959797,
     "track": 1.48,
     "groundClearance": 0.23088663101951765,
@@ -729,8 +729,8 @@
    "sheets": 86,
    "panels": 364,
    "definitions": 58,
-   "buildMs": 381,
-   "verifyMs": 815,
+   "buildMs": 1308,
+   "verifyMs": 942,
    "geo1": {
     "verdict": "PASS",
     "reasons": []
@@ -776,12 +776,12 @@
     "roof": 1.56
    },
    "measures": {
-    "length": 4.414848208694394,
+    "length": 4.3667702775805655,
     "wheelbase": 2.8000000000000003,
-    "wheelbaseRatio": 0.6342233906220858,
+    "wheelbaseRatio": 0.6412061597046861,
     "height": 1.56,
-    "heightRatio": 0.35335303191801914,
-    "hoodRatio": 0.39975286244695457,
+    "heightRatio": 0.3572434318354679,
+    "hoodRatio": 0.39314417027949355,
     "tyreDiameter": 0.7199999999517567,
     "track": 1.48,
     "groundClearance": 0.28271290254258324,
@@ -811,101 +811,101 @@
   "matrix": [
    [
     1,
-    0.807,
-    0.665,
-    0.694,
-    0.75,
-    0.751,
-    0.726,
-    0.742
+    0.803,
+    0.66,
+    0.69,
+    0.747,
+    0.747,
+    0.722,
+    0.739
    ],
    [
-    0.807,
-    1,
-    0.712,
-    0.687,
-    0.692,
-    0.783,
-    0.707,
-    0.77
-   ],
-   [
-    0.665,
-    0.712,
-    1,
-    0.831,
-    0.825,
-    0.752,
-    0.829,
-    0.719
-   ],
-   [
-    0.694,
-    0.687,
-    0.831,
+    0.803,
     1,
     0.709,
-    0.743,
-    0.712,
-    0.759
+    0.683,
+    0.688,
+    0.779,
+    0.704,
+    0.766
    ],
    [
-    0.75,
-    0.692,
-    0.825,
+    0.66,
     0.709,
     1,
-    0.733,
-    0.855,
-    0.697
-   ],
-   [
-    0.751,
-    0.783,
-    0.752,
-    0.743,
-    0.733,
-    1,
-    0.724,
-    0.894
-   ],
-   [
-    0.726,
-    0.707,
     0.829,
-    0.712,
-    0.855,
-    0.724,
-    1,
-    0.699
+    0.822,
+    0.748,
+    0.827,
+    0.715
    ],
    [
-    0.742,
-    0.77,
+    0.69,
+    0.683,
+    0.829,
+    1,
+    0.705,
+    0.739,
+    0.708,
+    0.755
+   ],
+   [
+    0.747,
+    0.688,
+    0.822,
+    0.705,
+    1,
+    0.729,
+    0.853,
+    0.693
+   ],
+   [
+    0.747,
+    0.779,
+    0.748,
+    0.739,
+    0.729,
+    1,
     0.719,
-    0.759,
-    0.697,
-    0.894,
-    0.699,
+    0.892
+   ],
+   [
+    0.722,
+    0.704,
+    0.827,
+    0.708,
+    0.853,
+    0.719,
+    1,
+    0.695
+   ],
+   [
+    0.739,
+    0.766,
+    0.715,
+    0.755,
+    0.693,
+    0.892,
+    0.695,
     1
    ]
   ]
  },
  "reuse": [
   {
-   "id": "5793ed8b788f874c",
+   "id": "2c983de2c28393b1",
    "family": "vane",
-   "params": "{\"len\":0.36,\"w\":0.14,\"phi\":25,\"shape\":\"blunt\",\"mirror\":1}",
-   "mirrorOf": "fee2e3413fbbc136",
+   "params": "{\"len\":0.26,\"w\":0.119,\"phi\":25,\"shape\":\"blunt\"}",
    "uses": {
     "bird": 1,
     "vehicle": 2
    }
   },
   {
-   "id": "fee2e3413fbbc136",
+   "id": "96d40e024a51e18d",
    "family": "vane",
-   "params": "{\"len\":0.36,\"w\":0.14,\"phi\":25,\"shape\":\"blunt\"}",
+   "params": "{\"len\":0.26,\"w\":0.119,\"phi\":25,\"shape\":\"blunt\",\"mirror\":1}",
+   "mirrorOf": "2c983de2c28393b1",
    "uses": {
     "bird": 1,
     "vehicle": 2
@@ -916,7 +916,7 @@
   {
    "instance": "tub/0.L",
    "slot": "body.tub",
-   "definition": "438ef9addcfa49e5",
+   "definition": "5f4af268d913a2df",
    "family": "band",
    "parent": "tub/1.L",
    "via": "back→front",
@@ -1082,7 +1082,7 @@
   {
    "instance": "tub/nose.L",
    "slot": "body.nose",
-   "definition": "48ac49de3eccdfba",
+   "definition": "7982bf1648ace3fb",
    "family": "cap",
    "parent": "tub/0.L",
    "via": "base→front",
@@ -1201,19 +1201,19 @@
   {
    "instance": "grille/slat.1.L",
    "slot": "grille.slat",
-   "definition": "fee2e3413fbbc136",
+   "definition": "2c983de2c28393b1",
    "family": "vane",
    "parent": "tub/0.L",
-   "via": "root→rim.front.1@258°",
+   "via": "root→rim.front.1@260°",
    "decidedBy": []
   },
   {
    "instance": "grille/slat.2.L",
    "slot": "grille.slat",
-   "definition": "fee2e3413fbbc136",
+   "definition": "2c983de2c28393b1",
    "family": "vane",
    "parent": "tub/0.L",
-   "via": "root→rim.front.2@258°",
+   "via": "root→rim.front.2@260°",
    "decidedBy": []
   },
   {
@@ -1460,7 +1460,7 @@
   {
    "instance": "tub/0.R",
    "slot": "body.tub",
-   "definition": "da150c24ee7a1ad7",
+   "definition": "35773d1cd4315b59",
    "family": "band",
    "parent": "tub/0.L",
    "via": "midline→midline",
@@ -1628,7 +1628,7 @@
   {
    "instance": "tub/nose.R",
    "slot": "body.nose",
-   "definition": "3ed8da2373a6baee",
+   "definition": "53609b4da62f5331",
    "family": "cap",
    "parent": "tub/nose.L",
    "via": "midline→midline",
@@ -1747,19 +1747,19 @@
   {
    "instance": "grille/slat.1.R",
    "slot": "grille.slat",
-   "definition": "5793ed8b788f874c",
+   "definition": "96d40e024a51e18d",
    "family": "vane",
    "parent": "tub/0.R",
-   "via": "root→rim.front.1@258°",
+   "via": "root→rim.front.1@260°",
    "decidedBy": []
   },
   {
    "instance": "grille/slat.2.R",
    "slot": "grille.slat",
-   "definition": "5793ed8b788f874c",
+   "definition": "96d40e024a51e18d",
    "family": "vane",
    "parent": "tub/0.R",
-   "via": "root→rim.front.2@258°",
+   "via": "root→rim.front.2@260°",
    "decidedBy": []
   },
   {
