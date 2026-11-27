@@ -72,3 +72,9 @@ The target above is fixed at the commit that adds this file.
 
 | Round | Category | Seen in the pixels (self-assessed) | Change |
 |---|---|---|---|
+| 1 | vehicle | Read-outs flagged door cuts as weak folds (they are seams), 80° bends inside hidden wheel-well surfaces, and a side glass panel wrapping from the windscreen corner | Read-out checks folds only, as P4 intends; window frames, door cuts and the A-pillar declared as seams; wheel wells and glasshouse base declared hidden; front quarter glass is its own panel |
+| 2 | vehicle | The section strip drew every section at its own size without the glasshouse, so P1 barely showed | Strips at one common scale, glasshouse included at the cabin stations |
+| 1 | building | T-junction lines inside walls; corrugation folds at 2–8°; a 90° jamb inside one panel | Walls rebuilt as a shared-vertex grid; corrugation amplitude raised; one panel per jamb face (findings S4, S5) |
+| 2 | building | Upturned corners erased the hip fold (0.5°); the flare was one sharp kink | Softer corner lift and a six-ring flare profile; finial bands as separate panels. 24 weak folds remain (S6) |
+| 1 | tree | One panel per pair of hexagon facets put 60° folds inside panels | One panel per facet: the lines are bark ridges along each limb |
+| 2 | tree | Buttress valleys faded through zero up the trunk | Upper trunk fluted so each valley stays a valley (finding S7) |

@@ -1,0 +1,138 @@
+{
+ "panels": 266,
+ "declared_edges": 1260,
+ "declared_folds_below_8_deg": [
+  [
+   "roof|roof0.0.11",
+   "roof|roof0.0.10",
+   8.0
+  ],
+  [
+   "roof|roof0.1.11",
+   "roof|roof0.1.10",
+   8.0
+  ],
+  [
+   "roof|roof0.2.11",
+   "roof|roof0.2.10",
+   8.0
+  ],
+  [
+   "roof|roof0.3.11",
+   "roof|roof0.3.10",
+   8.0
+  ],
+  [
+   "roof|roof0.3.11",
+   "roof|roof0.0.0",
+   5.4
+  ],
+  [
+   "roof|roof0.1.0",
+   "roof|roof0.0.11",
+   5.4
+  ],
+  [
+   "roof|roof0.2.0",
+   "roof|roof0.1.11",
+   5.4
+  ],
+  [
+   "roof|roof0.3.0",
+   "roof|roof0.2.11",
+   5.4
+  ],
+  [
+   "roof|roof1.3.11",
+   "roof|roof1.0.0",
+   5.0
+  ],
+  [
+   "roof|roof1.1.0",
+   "roof|roof1.0.11",
+   5.0
+  ],
+  [
+   "roof|roof1.2.0",
+   "roof|roof1.1.11",
+   5.0
+  ],
+  [
+   "roof|roof1.3.0",
+   "roof|roof1.2.11",
+   5.0
+  ],
+  [
+   "roof|roof2.3.11",
+   "roof|roof2.0.0",
+   1.6
+  ],
+  [
+   "roof|roof2.1.0",
+   "roof|roof2.0.11",
+   1.6
+  ],
+  [
+   "roof|roof2.2.0",
+   "roof|roof2.1.11",
+   1.6
+  ],
+  [
+   "roof|roof2.3.0",
+   "roof|roof2.2.11",
+   1.6
+  ],
+  [
+   "finial|fin.band3.0",
+   "finial|fin.band2.0",
+   7.8
+  ],
+  [
+   "finial|fin.band3.0",
+   "finial|fin.band2.0",
+   7.8
+  ],
+  [
+   "finial|fin.band3.1",
+   "finial|fin.band2.1",
+   7.8
+  ],
+  [
+   "finial|fin.band3.1",
+   "finial|fin.band2.1",
+   7.8
+  ],
+  [
+   "finial|fin.band3.2",
+   "finial|fin.band2.2",
+   7.8
+  ],
+  [
+   "finial|fin.band3.2",
+   "finial|fin.band2.2",
+   7.8
+  ],
+  [
+   "finial|fin.band3.3",
+   "finial|fin.band2.3",
+   7.8
+  ],
+  [
+   "finial|fin.band3.3",
+   "finial|fin.band2.3",
+   7.8
+  ]
+ ],
+ "panel_edges_bending_over_20_deg": 124,
+ "max_panel_bend_deg": 44.2,
+ "hidden_panels": [
+  "soffit",
+  "podium.t",
+  "plinth.t"
+ ],
+ "hidden_panel_edges_bending_over_20_deg": 132,
+ "interior_vertices_defect_over_2_deg": 0,
+ "max_defect_deg": 0.0,
+ "series": [],
+ "sections": {}
+}

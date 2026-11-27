@@ -316,3 +316,13 @@ The method was committed in `449406b`, before any study or B-2 v6 artwork. Chang
 | 2026-11-27 | P6 silhouette topology | No change. Reproduced a reviewer finding: v5 tail-root pinhole, 86 px² at 400 px height | B-2 v6 brief §11, round v6-5 | raven (derivation) |
 | 2026-11-27 | P4 line visibility | No change. Found seven declared folds under 8° on the first v6 maquette, each a line that marked almost no form change | B-2 v6 brief §11, round v6-3 | raven (derivation) |
 | 2026-11-27 | P5 rake flag | No change, but a limit is recorded: v5's near-hand widths have a coefficient of variation of 0.19, above the proposed 0.08, yet the reviewer read them as "nearly equal". Foreshortening in the judged view hides the differences. The width test, like end alignment, should be measured in the judged view; this is not yet tested | B-2 v6 method board, series panel | raven (derivation) |
+
+### 12.1 Findings from the holdout categories (recorded, not applied)
+
+The building and the tree were designed with the method as committed in `449406b`. Their findings are listed in the [studies README](form-studies/README.md#findings-recorded-the-principle-text-is-not-changed-for-holdouts) (S4–S7, S10) and are **not** written into §3–§11, so that the holdout stays a holdout. In short:
+- S4: §4.1 should say that a boundary is a free edge of a sheet, never a T-junction inside one plane.
+- S5: P5's tessellation exception does not exempt P4 (line visibility).
+- S7, a new candidate rule from the tree: a declared fold keeps its sign along its length, or it is split where the sign changes.
+- S10: the declared-prismatic counterexample of P1 and P2 transferred as written.
+
+Two limits apply to every category: P4 gives no numeric bend allowance for a bent panel (the studies used 20° as a maquette parameter; S8), and P7 has no read-out (S9). P6 detects enclosed holes only (S3, from the vehicle).

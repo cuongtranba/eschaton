@@ -232,7 +232,7 @@ def method_board():
     frame(d, (40, y, W - 80, 320), "Read-outs (aids, not verdicts)")
     dg = json.load(open(os.path.join(shd, "diagnostics.json")))
     r = EXP["v6"]["ratios"]
-    lines = [f"v6 declared panels {dg['panels']}; declared edges {dg['declared_edges']}; declared folds under 8°: {len(dg['declared_below_8_deg'])} "
+    lines = [f"v6 declared panels {dg['panels']}; declared edges {dg['declared_edges']}; declared folds under 8°: {len(dg['declared_folds_below_8_deg'])} "
              f"(an under-8° fold is a line marking almost no form change; earlier iterations had seven, all fixed or removed)",
              f"Bends inside a panel: max {dg['max_panel_bend_deg']}° across one tessellation edge; {dg['panel_edges_bending_over_20_deg']} edges over 20°. "
              f"Interior vertices with angle defect over 2°: {dg['interior_vertices_defect_over_2_deg']} (max {dg['max_defect_deg']}°):",

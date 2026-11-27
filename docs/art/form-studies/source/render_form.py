@@ -91,7 +91,7 @@ with open(os.path.join(out, "projection.json"), "w") as f:
     json.dump(proj, f, indent=1)
 
 if not legacy_builder and mode == "declared":
-    diag = formkit.diagnostics(model)
+    diag = formkit.diagnostics(model, hidden=spec.get("hidden_panels", ()))
     diag["series"] = list(model.series.values())
     diag["sections"] = spec.get("sections", {})
     with open(os.path.join(out, "diagnostics.json"), "w") as f:

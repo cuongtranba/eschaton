@@ -241,8 +241,8 @@ def freestyle_declared(thickness=1.25, rgb=(0.14, 0.13, 0.12), silhouette=True):
     return ls
 
 
-def diagnostics(m, ink_min=8.0, bend_max=20.0, defect_max=2.0):
-    """Per-panel read-outs on the maquette (method P4): declared folds below ink_min degrees,
+def diagnostics(m, ink_min=8.0, bend_max=20.0, defect_max=2.0, hidden=()):
+    """Per-panel read-outs on the maquette (method P4): declared folds (not seams) below ink_min degrees,
     tessellation edges inside a panel bending more than bend_max, interior angle defects."""
     bm = bmesh.new()
     lay = bm.faces.layers.int.new("panel")
@@ -257,7 +257,10 @@ def diagnostics(m, ink_min=8.0, bend_max=20.0, defect_max=2.0):
     bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-6)
     bm.normal_update()
     names = {v: k for k, v in ids.items()}
-    folds, weak, bends, worst_bend = 0, [], 0, 0.0
+    folds, weak, bends, worst_bend, hidden_bends = 0, [], 0, 0.0, 0
+
+    def is_hidden(i):
+        return names[i].split("|", 1)[1].startswith(tuple(hidden)) if hidden else False
     for e in bm.edges:
         lf = e.link_faces
         if len(lf) != 2:
@@ -266,8 +269,11 @@ def diagnostics(m, ink_min=8.0, bend_max=20.0, defect_max=2.0):
         a = min(a, 180 - a) if a > 90 else a
         if lf[0][lay] != lf[1][lay]:
             folds += 1
-            if a < ink_min:
+            pa, pb = names[lf[0][lay]].split("|", 1)[1], names[lf[1][lay]].split("|", 1)[1]
+            if a < ink_min and m.kinds.get(frozenset((pa, pb)), FOLD) == FOLD:
                 weak.append((names[lf[0][lay]], names[lf[1][lay]], round(a, 1)))
+        elif is_hidden(lf[0][lay]):
+            hidden_bends += a > bend_max
         else:
             worst_bend = max(worst_bend, a)
             if a > bend_max:
@@ -275,15 +281,16 @@ def diagnostics(m, ink_min=8.0, bend_max=20.0, defect_max=2.0):
     defects = []
     for v in bm.verts:
         lf = v.link_faces
-        if len(lf) < 3 or v.is_boundary or len({f[lay] for f in lf}) != 1:
+        if len(lf) < 3 or v.is_boundary or len({f[lay] for f in lf}) != 1 or is_hidden(lf[0][lay]):
             continue
         s = sum(f.calc_center_median() and _corner_angle(f, v) for f in lf)
         d = abs(360 - math.degrees(s))
         if d > defect_max:
             defects.append(round(d, 1))
     bm.free()
-    return {"panels": len(ids), "declared_edges": folds, "declared_below_%g_deg" % ink_min: weak,
+    return {"panels": len(ids), "declared_edges": folds, "declared_folds_below_%g_deg" % ink_min: weak,
             "panel_edges_bending_over_%g_deg" % bend_max: bends, "max_panel_bend_deg": round(worst_bend, 1),
+            "hidden_panels": list(hidden), "hidden_panel_edges_bending_over_%g_deg" % bend_max: int(hidden_bends),
             "interior_vertices_defect_over_%g_deg" % defect_max: len(defects),
             "max_defect_deg": max(defects) if defects else 0.0}
 

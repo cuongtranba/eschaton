@@ -1,0 +1,13 @@
+{
+ "panels": 81,
+ "declared_edges": 990,
+ "declared_folds_below_8_deg": [],
+ "panel_edges_bending_over_20_deg": 1,
+ "max_panel_bend_deg": 20.3,
+ "hidden_panels": [],
+ "hidden_panel_edges_bending_over_20_deg": 0,
+ "interior_vertices_defect_over_2_deg": 0,
+ "max_defect_deg": 0.0,
+ "series": [],
+ "sections": {}
+}
