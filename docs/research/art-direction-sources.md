@@ -62,6 +62,14 @@ These observations drove the round-2 revision of Concept B: a shorter neck, a pl
 | NatureMapping, crow vs raven | Verified | Raven wingtip longer and more slotted; longer neck in flight |
 | "Flight feather", https://en.wikipedia.org/wiki/Flight_feather | Verified | Primaries sit on the hand, secondaries on the ulna; tertials, coverts, alula |
 | Cornell All About Birds, raven and crow pages | **Unverified** (blocked) | — |
+| Corvid Research, "A matter of a pinion" (2018), https://corvidresearch.blog/2018/12/21/a-matter-of-a-pinion | Verified (2026-11-27, B-2 v4 research). Unsigned blog post; its wing photos are credited to the Slater Museum | "the crow has five evident finger feathers (feathers 5-9) whereas ravens only have four (feathers 6-9)" |
+| Featherbase, *Corvus corax*, https://www.featherbase.info/uk/species/corvus/corax | Verified (the page's TLS certificate fails strict verification; it was read as text only) | Outer vanes partly narrowed on H6–H9; H10 narrowed along its whole length; on H5 only hinted; inner vanes narrowed on H6–H10. Longest primary P6 (67 %) or P7 (33 %), n = 6; primaries 315.5–396 mm; secondaries 217–240 mm; wing length 368–475 mm (n = 46, AVONET); hand-wing index 31–47 %. The numbering direction is not stated (inferred outermost = H10) |
+| Meinertzhagen (1926), *Novitates Zoologicae* 33, wing formulae, https://archive.org/download/biostor-146617/biostor-146617.pdf | Reported by a research pass from an image-only table; **not re-checked** | Raven P10 about the length of P3–P4; P7 longest in the European sample |
+| Sibley Guides, wing feather article, https://sibleyguides.com/?p=7222 | Verified (by the research pass) | Flight feathers "slide across each other like certain folding fans"; "from below we see mainly the inner webs … from above mainly the outer webs" |
+| "Covert feather", https://en.wikipedia.org/wiki/Covert_feather; US FWS Feather Atlas glossary, https://www.fws.gov/lab/featheratlas/glossary.html; BTO wing topography diagram | Verified (secondary sources and a labelled diagram) | Covert rows overlap like tiles: marginal, lesser, median, greater; primary coverts and alula on the hand. Emargination narrows the outer vane, a notch the inner vane |
+| San Fernando Valley Audubon, "Crows and ravens", https://sfvaudubon.org/crows-and-ravens/ | Verified (local chapter page) | Ravens soar with flatter wings; crows hold more of a "V" |
+
+Not found, so not used as fact in B-2 v4: corvid ulna and digit lengths, the wrist's position along the leading edge, the reach of the greater coverts, glide sweep and dihedral angles, the raven's secondary trailing-edge shape and camber, and "a longer neck in flight" (search snippets only).
 
 The span figures conflict: Audubon gives 116–118 cm and Wikipedia 116–153 cm. They are quoted as a range across sources. The design target in the concepts (span about 1.9–2.05 × length) sits inside it.
 
