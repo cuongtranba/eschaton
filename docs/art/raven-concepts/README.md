@@ -18,6 +18,9 @@
 | [`raven-concept-b2-sumi-flight-v6.png`](raven-concept-b2-sumi-flight-v6.png) | **Sheet B-2 v6**: the third flight revision, made with the proposed generic [form construction method](../form-construction-method.md) after the owner did not approve v5. Brief: [`b2-v6-flight-brief.md`](b2-v6-flight-brief.md). **Pending owner ART-1**; review in the packet §9 |
 | [`raven-concept-b2-v6-compare.png`](raven-concept-b2-v6-compare.png) | v5 beside v6 at identical cameras, scale and light; matched crops; silhouettes; v6 drawn the v5 way as a control |
 | [`raven-concept-b2-v6-method.png`](raven-concept-b2-v6-method.png) | The method's artefacts for v5 and v6: section program, top-view outline overlay, crease declaration map, junctions, series and envelope read-outs |
+| [`raven-concept-b2-sumi-flight-v7.png`](raven-concept-b2-sumi-flight-v7.png) | **Sheet B-2 v7**: v6 revised after its independent round-1 review (NEEDS REVISION, packet §9.2), to the target in the brief §12. **Pending owner ART-1**; its review is in the packet §9.4 |
+| [`raven-concept-b2-v7-compare.png`](raven-concept-b2-v7-compare.png) | v5 beside v7, both re-rendered at the v7 hero distance; matched crops; drawing controls (v7 the v5 way, and as flat facets) |
+| [`raven-concept-b2-v7-method.png`](raven-concept-b2-v7-method.png) | The method's artefacts for v5 and v7 |
 | [`raven-concept-c-modular.png`](raven-concept-c-modular.png) | **Sheet C v2**: modular tessellated raven, upstroke. Independent review: NO-GO as a separate direction |
 | [`raven-concepts-comparison.png`](raven-concepts-comparison.png) | A, B, B-2 and C side by side: hero, ink context, silhouette, district scale, hierarchy |
 | [`v3-failure-anatomy.png`](v3-failure-anatomy.png) | Actual V3 pixels (PR #11 @ `616b0cf`, captured at `74c686f`) beside A and B, per GEO-2 defect |
@@ -73,6 +76,18 @@ cd ../../raven-concepts/source
 Blender -b --factory-startup --python b2v6_export.py -- <scratch>/b2-export.json
 python3 sheet.py c2f6 <scratch>/c2f6 sheet-c2f6.png
 python3 b2v6_boards.py <scratch>/cmp-v5 <scratch>/cmp-v6 <scratch>/cmp-v6L <scratch>/b2-export.json <scratch>/c2f6 compare.png method.png
+# (the v6 boards reproduce with the tools at 6c2334a; formkit's section descriptors changed later, in 7a61392)
+# B-2 v7 (the comparison re-renders v5 at the v7 hero distance):
+cd ../../form-studies/source
+Blender -b --factory-startup --python render_form.py -- c2f7_sumi_flight <scratch>/c2f7 declared
+HERO_DIST=4.7 Blender -b --factory-startup --python render_form.py -- c2f5_sumi_flight <scratch>/cmp7-v5 legacy 2
+HERO_DIST=4.7 Blender -b --factory-startup --python render_form.py -- c2f7_sumi_flight <scratch>/cmp7-v7 declared 2
+HERO_DIST=4.7 Blender -b --factory-startup --python render_form.py -- c2f7_sumi_flight <scratch>/cmp7-v7L legacy 2
+HERO_DIST=4.7 Blender -b --factory-startup --python render_form.py -- c2f7_sumi_flight <scratch>/cmp7-v7F flat 2
+cd ../../raven-concepts/source
+Blender -b --factory-startup --python b2v7_export.py -- <scratch>/b2v7-export.json
+python3 sheet.py c2f7 <scratch>/c2f7 sheet-c2f7.png
+python3 b2v7_boards.py <scratch>/cmp7-v5 <scratch>/cmp7-v7 <scratch>/cmp7-v7L <scratch>/cmp7-v7F <scratch>/b2v7-export.json <scratch>/c2f7 compare.png method.png
 ```
 
 `sheet.py` gained three optional `concepts.json` fields: `ink_scale` and `ink_left` for the ink study, and `district_sub` for the district caption. Their defaults reproduce the earlier sheets; only `c2f4` and `c2f5` set them.

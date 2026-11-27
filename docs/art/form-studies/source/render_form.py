@@ -1,6 +1,10 @@
 """Render a maquette for a form-method sheet. DESIGN ARTIFACT ONLY.
 
-Usage: Blender -b --factory-startup --python render_form.py -- <module> <out_dir> [declared|legacy] [scale]
+Usage: Blender -b --factory-startup --python render_form.py -- <module> <out_dir> [declared|flat|legacy] [scale]
+
+"flat" draws declared lines only, like "declared", but on flat faces: the faceted truth of the
+maquette without continuous shading. HERO_DIST in the environment overrides the hero camera
+distance (used to re-render v5 and v7 at one matched camera).
 
 - A module whose build() returns a formkit.Model is drawn with declared lines (panel
   boundaries, free boundaries, silhouettes) and smooth shading inside panels.
@@ -35,6 +39,8 @@ os.makedirs(out, exist_ok=True)
 kit.reset()
 model, landmarks, spec = mod.build()
 legacy_builder = isinstance(model, kit.Builder)
+if os.environ.get("HERO_DIST") and "hero" in spec["views"]:
+    spec["views"]["hero"] = {**spec["views"]["hero"], "dist": float(os.environ["HERO_DIST"])}
 if legacy_builder:
     mode = "legacy"
 
@@ -49,14 +55,15 @@ if legacy_builder:
     root = model.build({**paper, **{k: paper[v] for k, v in spec["tones"].items()}})
     edge_kinds = {}
 else:
-    root, edge_kinds = formkit.to_blender(model, paper, spec["tones"], declared=(mode == "declared"))
+    root, edge_kinds = formkit.to_blender(model, paper, spec["tones"], declared=(mode in ("declared", "flat")),
+                                          smooth=(mode == "declared"))
 kit.setup_world((1.0, 0.97, 0.92), 0.42)
 for L in (kit.add_sun((0.45, -0.7, 1.0), 2.4, "key"), kit.add_sun((-0.6, 0.8, -0.3), 0.6, "fill", 1.0)):
     L.data.use_shadow = False
 
 
 def lines_paper():
-    if mode == "declared":
+    if mode in ("declared", "flat"):
         formkit.freestyle_declared(1.25, (0.14, 0.13, 0.12))
     else:
         kit.freestyle(1.25, (0.14, 0.13, 0.12), spec.get("crease", 155))

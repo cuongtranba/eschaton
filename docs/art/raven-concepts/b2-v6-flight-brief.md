@@ -125,3 +125,12 @@ The independent round-1 review found v6 **NEEDS REVISION** (packet §9.2). v6 st
 | Captions overclaim (panel count, "roots spread", crown "plane") | 8 | Captions computed from the model or limited to what the pixels show |
 
 Not changed: pose, bank, cameras other than the hero distance, proportions (§9), and everything §10 does not claim.
+
+### 12.1 v7 iteration log
+
+| Round | Seen (self-assessed) | Change |
+|---|---|---|
+| v7-1 | Built to the §12 target. The read-outs flagged the cheek-to-flank line at the nape (0.2°) and a dorsal ridge fading in | Declared, with reasons (method §4.0): the cheek plane continues into the flank; the nape fold is declared only where the crown plate meets the back |
+| v7-2 | The crown plate twisted in a 0.01-long transition from a flat top to the ridged back (bends of up to 39° across tessellation edges) | The transition was lengthened to 0.032. Read-out: 14 visible bends over 20° (max 53.9°), one declared fold at 6.3° (one edge of the nape boundary), no angle defects, no silhouette holes |
+
+**Measured deviation, logged.** Span/L is 2.11 against the §9 intent of about 2.0, because the longer hand that spreads the finger roots adds span. Tail/L 0.35, bill/L 0.12, head : body depth 0.77 (reported, not fitted).

@@ -161,7 +161,7 @@ def series_stats(name, widths, spacings, angles, ends):
             "cv_angle_step": cv(steps) if len(steps) > 1 else None, "ends_r2": r2}
 
 
-def to_blender(m, mats, tones, name="model", declared=True):
+def to_blender(m, mats, tones, name="model", declared=True, smooth=None):
     """Build one object per part. declared=True: smooth inside panels, sharp and inked on panel
     boundaries. declared=False: flat faces, no edge marks (the legacy crease-angle drawing)."""
     root = bpy.data.objects.new(name, None)
@@ -192,7 +192,7 @@ def to_blender(m, mats, tones, name="model", declared=True):
                 k = m.kinds.get(frozenset((pa, pb)), FOLD)
             marks.append(k)
         for f in bm.faces:
-            f.smooth = declared
+            f.smooth = declared if smooth is None else smooth
         me = bpy.data.meshes.new(part)
         bm.to_mesh(me)
         bm.free()
