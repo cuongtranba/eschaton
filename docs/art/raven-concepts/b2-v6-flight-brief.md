@@ -109,3 +109,19 @@ The target above is fixed at the commit that adds this file. Any later narrowing
 | v6-6 | Finding about the method, not the bird: the proposed P5 straight-line test on notch points did **not** flag v5 (R² 0.15 in the wing plane, 0.77 in the hero view of the near hand, against a proposed flag of 0.98). The reviewer's "one diagonal" is an evenly stepped, monotone arc in the judged view | v6's notches are staggered (hero R² 0.20, non-monotone). The method's P5 diagnostic is revised to be measured in the judged view and to flag a regular monotone progression (method §12). Width profile: P7 widest, not a monotone shrink |
 
 **Deviation from §6 and §7, logged.** The arm root moved from u = 0.06 to u = 0.03 so that it overlaps the body (§6, P8). The tertial fairing is a new secondary element that §6 did not name; it is the "deliberate overlap" that §5 asks for at the rump-to-tail junction. Measured on v6 (reported, not fitted): span/L 2.03, tail/L 0.35, bill/L 0.12 (B's bill), head : body depth 0.74, arm chord wrist/root 0.72 (v5 0.95).
+
+## 12. B-2 v7 target (committed before any v7 drawing)
+
+The independent round-1 review found v6 **NEEDS REVISION** (packet §9.2). v6 stays unchanged as the reviewed record. B-2 v7 is a new file with a new digest. It keeps §2–§9 above and answers the review through the same method steps, not by bird-only patches:
+
+| Review finding | Step and principle | v7 target |
+|---|---|---|
+| Hero crops the longest fingertips (blocker) | 8 (read every view) | The hero camera moves back. **v5 is re-rendered at the same new camera**, so the comparison stays matched; the framing change is stated on the board |
+| Eye missing; identity with Sheet B weakened | 1 (landmarks), layer S | The eye sits on the cheek plane at mid-head, as in Sheet B |
+| Smooth shading across doubly curved crown, throat and belly (shader rescue) | 6 (edges), P4, method §4.0 | Crown, throat and belly become plates that are flat across their width, so every panel can bend only along its length (developable; read-out: no angle defect). Continuous shading is used only in such panels. The board adds a **flat-faceted control** of v7, with declared lines and flat faces, so the reader can see the geometry without any smoothing |
+| Wing root and fairing lie over the back; the body is halved in the top hierarchy | 4 (junctions), P3, P8 | The arm's camber and arch fade to zero at the root, so the root passes under the back; the covert leaf and hem start at the flank; the tertial fairing moves under the body (an under-tone part) |
+| Tan strip at the wrist; line stubs in the underside coverts; dashed line at the rump | 5 and 6, P6, P8 | The under-wrist covert lies inside the upper leaf's outline; the under-covert rows overlap less; the under-tail covert is lowered off the tail blades |
+| Finger roots meet at one point; inner blades jump to fingers | 5, P5, P3 | Roots spread along a longer hand; P5 lengthened, so the trailing line runs into P6 |
+| Captions overclaim (panel count, "roots spread", crown "plane") | 8 | Captions computed from the model or limited to what the pixels show |
+
+Not changed: pose, bank, cameras other than the hero distance, proportions (§9), and everything §10 does not claim.
