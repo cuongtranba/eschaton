@@ -254,7 +254,7 @@ def main():
         cv.alpha_composite(s, (bx + (280 - s.width) // 2, sy + 60 + (335 - s.height) // 2))
 
     frame(d, (1240, sy, 680, 410), "District-scale readability",
-          "both silhouettes at 96 / 48 / 24 / 12 px height (wide ones capped by width); context hidden")
+          meta.get("district_sub", "both silhouettes at 96 / 48 / 24 / 12 px height (wide ones capped by width); context hidden"))
     d.rectangle((1252, sy + 60, 1908, sy + 395), fill=(222, 210, 186))
     for row, v in enumerate(meta["sil"][:2]):
         s0, _ = silhouette(load(os.path.join(rd, f"sil-{v}.png")), INK, (222, 210, 186), (2000, 2000))

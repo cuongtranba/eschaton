@@ -370,5 +370,79 @@
   ],
   "ink_scale": 0.34,
   "ink_left": 0.5
+ },
+ "c2f5": {
+  "title": "Raven Concept B-2 v5 — Sumi Sculptural Raven, flight revision",
+  "tagline": "Revision under ART-D3b after independent review of v4: tapered layered arm, covered wrist, varied fingers; B's head kept.",
+  "provenance": "Sheet B-2 v5 · 2026-11-27 · brief b2-v4-flight-brief.md + v4 review (packet §7.1) · Blender 5.2.1 maquette (c2f5_sumi_flight.py) + Pillow · Common Raven (Corvus corax)",
+  "hero_sub": "banked 20° glide turning toward the viewer; inner wing flexed at the wrist; neutral paper",
+  "labels": {
+   "bill_tip": "heavy arched bill (B's head)",
+   "finger_R": "4 graduated fingers P6–P9",
+   "tail_wedge_tip": "keeled wedge tail",
+   "throat_hackles": "hackle strip, sleeked",
+   "wrist_L": "wrist: primary-covert leaf"
+  },
+  "turn": [
+   [
+    "front",
+    "Front (banked)"
+   ],
+   [
+    "side",
+    "Side"
+   ],
+   [
+    "top",
+    "Top"
+   ],
+   [
+    "under",
+    "Underside"
+   ]
+  ],
+  "fourth": "underside (flight; model banked 20°, pitched 3° nose-down)",
+  "close": [
+   [
+    "head",
+    "Head — B's profile, compact neck"
+   ],
+   [
+    "wing",
+    "Arm, wrist and hand, from above"
+   ],
+   [
+    "tail",
+    "Tail — keeled wedge"
+   ]
+  ],
+  "hier_view": "top",
+  "hier_text": [
+   "pentagonal body, head, bill, tail",
+   "hem, coverts, secondaries, primaries",
+   "hackles, eye"
+  ],
+  "ink_view": "hero",
+  "ink_mode": "sky",
+  "flock_view": "under",
+  "sil": [
+   "hero",
+   "under"
+  ],
+  "notes": [
+   "Purpose: revise B-2's wing and pose (ART-D3b); same bird as B.",
+   "Arm: bevelled hem, cambered covert leaf over scalloped",
+   "  secondaries; broad root tapering to the wrist; elbow arch;",
+   "  under-wing covert band layers the underside too.",
+   "Wrist: one primary-covert leaf bridges arm and hand (above",
+   "  and below). Alula omitted: it did not read (v4 review).",
+   "Hand: 4 inner blades graduate into 4 slotted fingers P6–P9,",
+   "  each its own width and notch (P6/P7 longest) + short P10.",
+   "Pose: 20° bank, inner wing flexed, head and tail into turn.",
+   "~340 faces. Pending owner ART-1. Foldability NOT VERIFIED."
+  ],
+  "ink_scale": 0.34,
+  "ink_left": 0.5,
+  "district_sub": "96 / 48 / 24 / 12 px height (wide ones capped by width); context hidden"
  }
 }
