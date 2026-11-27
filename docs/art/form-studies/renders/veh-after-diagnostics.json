@@ -1,6 +1,6 @@
 {
- "panels": 59,
- "declared_edges": 683,
+ "panels": 61,
+ "declared_edges": 686,
  "declared_folds_below_8_deg": [],
  "panel_edges_bending_over_20_deg": 18,
  "max_panel_bend_deg": 61.9,
@@ -17,46 +17,46 @@
  "series": [],
  "sections": {
   "nose": {
-   "aspect": 0.936,
-   "peak_y": 0.14,
-   "widest_z": 0.205,
-   "fill": 0.013
+   "aspect_recorded": 0.474,
+   "fill": 0.913,
+   "side_lean_deg": 45.0,
+   "shoulder_height": 0.804
   },
   "front axle": {
-   "aspect": 1.167,
-   "peak_y": 0.172,
-   "widest_z": 0.262,
-   "fill": 0.019
+   "aspect_recorded": 0.556,
+   "fill": 0.925,
+   "side_lean_deg": 19.0,
+   "shoulder_height": 0.854
   },
   "cowl": {
-   "aspect": 1.245,
-   "peak_y": 0.168,
-   "widest_z": 0.16,
-   "fill": 0.021
+   "aspect_recorded": 0.624,
+   "fill": 0.958,
+   "side_lean_deg": 7.6,
+   "shoulder_height": 0.353
   },
-  "B-pillar, with glasshouse": {
-   "aspect": 2.096,
-   "peak_y": 0,
-   "widest_z": 0.16,
-   "fill": 0.032
+  "B-pillar + glass": {
+   "aspect_recorded": 1.071,
+   "fill": 0.869,
+   "side_lean_deg": 30.4,
+   "shoulder_height": 0.203
   },
-  "rear door, with glasshouse": {
-   "aspect": 2.074,
-   "peak_y": 0,
-   "widest_z": 0.155,
-   "fill": 0.031
+  "rear door + glass": {
+   "aspect_recorded": 1.037,
+   "fill": 0.858,
+   "side_lean_deg": 30.8,
+   "shoulder_height": 0.192
   },
   "rear axle": {
-   "aspect": 1.366,
-   "peak_y": 0.176,
-   "widest_z": 0.304,
-   "fill": 0.022
+   "aspect_recorded": 0.65,
+   "fill": 0.952,
+   "side_lean_deg": 22.9,
+   "shoulder_height": 0.898
   },
   "tail": {
-   "aspect": 1.295,
-   "peak_y": 0.15,
-   "widest_z": 0.272,
-   "fill": 0.016
+   "aspect_recorded": 0.721,
+   "fill": 0.936,
+   "side_lean_deg": 39.8,
+   "shoulder_height": 0.902
   }
  }
 }

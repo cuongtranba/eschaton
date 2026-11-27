@@ -14,7 +14,7 @@ VIEWS = {
     "three": {"dir": (0.75, -1.0, 0.25), "dist": 4.0, "lens": 60, "res": (1000, 1100), "target": (0.0, 0.0, 0.46)},
     "side": {"dir": (0, -1, 0.0001), "ortho": 1.15, "dist": 4, "res": (800, 900), "target": (0.0, 0, 0.47)},
     "front": {"dir": (1, 0, 0.0001), "ortho": 1.15, "dist": 4, "res": (800, 900), "target": (0, 0, 0.47)},
-    "top": {"dir": (0, 0, 1), "ortho": 0.9, "dist": 4, "res": (800, 800), "target": (0, 0, 0), "up": (0, 1, 0)},
+    "top": {"dir": (0, 0, 1), "ortho": 1.022, "dist": 4, "res": (800, 800), "target": (0, 0, 0), "up": (0, 1, 0)},
 }
 HEX = [(math.cos(2 * math.pi * i / 6 + 0.3), math.sin(2 * math.pi * i / 6 + 0.3)) for i in range(6)]
 
@@ -26,7 +26,7 @@ def spec(extra=None):
     return s
 
 
-def tube(m, part, name, spine, radii, ring=HEX, flat=None, panel_of=None, cap=True, sub=4):
+def tube(m, part, name, spine, radii, ring=HEX, flat=None, panel_of=None, cap=True, sub=4, cap_start=False):
     """A limb: rings perpendicular to a polyline spine. radii per spine point; flat = (w, h) scales."""
     pts, rs, fl = [], [], []
     for i in range(len(spine) - 1):
@@ -59,6 +59,8 @@ def tube(m, part, name, spine, radii, ring=HEX, flat=None, panel_of=None, cap=Tr
             m.face(part, pn, [q[0], q[2], q[3]])
     if cap:
         m.face("break" if part == "bark" else part, f"{name}.end", rings[-1])
+    if cap_start:
+        m.face(part, f"{name}.start", list(reversed(rings[0])))
     return pts
 
 
@@ -83,11 +85,15 @@ OVAL = [(math.cos(2 * math.pi * i / 10) * (1.0 if i % 2 == 0 else 0.70),
          math.sin(2 * math.pi * i / 10) * (1.0 if i % 2 == 0 else 0.70)) for i in range(10)]
 
 
-def branch(m, name, root, d, length, r0, r1, bend=V((0, 0, 0.0)), steps=3):
+def branch(m, name, root, d, length, r0, r1, bend=V((0, 0, 0.0)), steps=3, parent_r=0.0):
+    """A branch rooted inside its parent: it starts at the parent's axis with a collar radius, so the
+    junction reads continuous (method P3, P8) and no end face shows at the fork."""
     d = d.normalized()
     spine = [root + d * (length * i / steps) + bend * (length * (i / steps) ** 2) for i in range(steps + 1)]
     radii = [r0 + (r1 - r0) * i / steps for i in range(steps + 1)]
-    return tube(m, "bark", name, spine, radii)
+    spine = [root - d * parent_r * 0.6] + spine
+    radii = [min(r0 * 1.15, parent_r * 0.8)] + radii
+    return tube(m, "bark", name, spine, radii, cap_start=True)
 
 
 def at(path, t):
@@ -98,36 +104,41 @@ def at(path, t):
 
 def build_after():
     m = fk.Model()
-    keys = [(0.00, -0.000, 0.088, 0.088, LOBED, "trunk"), (0.06, -0.004, 0.056, 0.054, LOBED, "trunk"),
-            (0.25, -0.018, 0.039, 0.046, OVAL, "trunk"), (0.40, -0.040, 0.032, 0.054, OVAL, "trunk"),
-            (0.45, -0.050, 0.029, 0.048, OVAL, "trunk")]
+    keys = [(0.00, -0.000, 0.080, 0.080, LOBED, "trunk"), (0.06, -0.004, 0.050, 0.048, LOBED, "trunk"),
+            (0.25, -0.018, 0.034, 0.040, OVAL, "trunk"), (0.38, -0.036, 0.026, 0.036, OVAL, "trunk"),
+            (0.43, -0.046, 0.017, 0.024, OVAL, "trunk")]
     st, _ = fk.program(keys, sub=5)
     lo = [(z, x, w, h, ring, tag) for z, x, w, h, ring, tag in st]
     fk.section_loft(m, "bark", lo, lambda t, j: f"trunk.{j}", slice_axis=(1, 0, 0), up=V((0, 0, 1)),
-                    cap_start="trunk.base")
+                    cap_start="trunk.base", cap_end="trunk.top")
     m.faces = [(p, n, [V((-q.z, q.y, q.x)) for q in pts]) for p, n, pts in m.faces]
     fork = V((0.05, 0.0, 0.43))
-    a = [fork, V((0.15, 0.02, 0.60)), V((0.235, 0.0, 0.78)), V((0.262, -0.012, 0.88))]
-    tube(m, "bark", "limbA", a, [0.036, 0.028, 0.018, 0.013])
-    b = [fork + V((-0.01, 0.0, 0.0)), V((-0.07, 0.05, 0.57)), V((-0.17, 0.085, 0.68)), V((-0.27, 0.10, 0.73))]
-    tube(m, "bark", "limbB", b, [0.031, 0.023, 0.014, 0.007])
-    g2 = [("a1", a, 0.33, V((-0.35, -0.55, 1.0)), 0.23, 0.016, 0.005, V((0.1, 0, -0.15))),
-          ("a2", a, 0.64, V((1.0, 0.25, 0.55)), 0.17, 0.012, 0.004, V((0, 0, 0.25))),
-          ("a3", a, 0.86, V((-0.4, 0.6, 0.9)), 0.09, 0.008, 0.003, V((0, 0, 0))),
-          ("b1", b, 0.42, V((0.15, 0.35, 1.0)), 0.20, 0.013, 0.004, V((-0.15, 0, 0))),
-          ("b2", b, 0.76, V((-0.8, -0.3, -0.25)), 0.13, 0.009, 0.003, V((0, 0, 0.3)))]
+    a = [fork + V((-0.012, 0.004, -0.06)), fork, V((0.13, -0.075, 0.60)), V((0.20, -0.135, 0.77)), V((0.222, -0.152, 0.86))]
+    tube(m, "bark", "limbA", a, [0.019, 0.022, 0.018, 0.012, 0.009], cap_start=True)
+    b = [fork + V((0.004, -0.004, -0.06)), fork + V((-0.01, 0.0, 0.0)), V((-0.05, 0.085, 0.57)), V((-0.14, 0.17, 0.665)),
+         V((-0.22, 0.235, 0.71))]
+    tube(m, "bark", "limbB", b, [0.017, 0.019, 0.015, 0.009, 0.0055], cap_start=True)
+    g2 = [("a1", a, 0.42, V((-0.55, -0.25, 1.0)), 0.21, 0.012, 0.004, V((0.1, 0, -0.12)), 0.022),
+          ("a2", a, 0.66, V((0.85, -0.55, 0.45)), 0.16, 0.009, 0.003, V((0, 0, 0.22)), 0.016),
+          ("a3", a, 0.86, V((-0.2, 0.9, 0.8)), 0.09, 0.006, 0.002, V((0, 0, 0)), 0.012),
+          ("b1", b, 0.48, V((0.35, 0.75, 1.0)), 0.19, 0.010, 0.003, V((-0.12, 0, 0)), 0.018),
+          ("b2", b, 0.74, V((-0.85, 0.2, -0.2)), 0.13, 0.007, 0.0025, V((0, 0, 0.3)), 0.012),
+          ("b3", b, 0.30, V((-0.3, -0.85, 0.7)), 0.12, 0.008, 0.0025, V((0, 0, 0.1)), 0.02)]
     paths = {}
-    for nm, par, t, d, L, r0, r1, bend in g2:
-        paths[nm] = branch(m, nm, at(par, t), d, L, r0, r1, bend)
-    g3 = [("a1t", "a1", 0.55, V((0.6, -0.2, 0.8)), 0.085, 0.006, 0.0025),
-          ("a2t", "a2", 0.5, V((0.4, -0.5, 1.0)), 0.07, 0.005, 0.002),
-          ("b1t", "b1", 0.6, V((-0.7, 0.3, 0.6)), 0.08, 0.005, 0.002)]
+    for nm, par, t, d, L, r0, r1, bend, pr in g2:
+        paths[nm] = branch(m, nm, at(par, t), d, L, r0, r1, bend, parent_r=pr)
+    g3 = [("a1t", "a1", 0.55, V((0.6, -0.3, 0.8)), 0.085, 0.0045, 0.0018),
+          ("a2t", "a2", 0.50, V((0.4, -0.6, 1.0)), 0.07, 0.004, 0.0015),
+          ("a2u", "a2", 0.80, V((0.9, 0.3, -0.1)), 0.05, 0.003, 0.0012),
+          ("b1t", "b1", 0.60, V((-0.6, 0.5, 0.6)), 0.08, 0.004, 0.0015),
+          ("b2t", "b2", 0.55, V((-0.3, -0.7, 0.7)), 0.06, 0.0035, 0.0012),
+          ("b3t", "b3", 0.60, V((0.5, -0.4, 0.9)), 0.06, 0.0035, 0.0012)]
     for nm, par, t, d, L, r0, r1 in g3:
-        branch(m, nm, at(paths[par], t), d, L, r0, r1)
+        branch(m, nm, at(paths[par], t), d, L, r0, r1, parent_r=0.008)
     strip = [("root flare", [(x * 0.088, y * 0.088) for x, y in LOBED]),
              ("lower trunk", [(x * 0.056, y * 0.054) for x, y in LOBED]),
-             ("mid trunk, fluted oval", [(x * 0.039, y * 0.046) for x, y in OVAL]),
-             ("below fork, flattened", [(x * 0.032, y * 0.054) for x, y in OVAL])]
-    series = {"generations": "gen1: 2 limbs (0.47, 0.39); gen2: 5 branches, 0.09-0.23, at uneven stations "
-                             "0.33/0.64/0.86 and 0.42/0.76; gen3: 3 twigs, 0.07-0.085"}
+             ("mid trunk, 5 shallow flutes", [(x * 0.034, y * 0.040) for x, y in OVAL]),
+             ("below fork, flattened", [(x * 0.026, y * 0.036) for x, y in OVAL])]
+    series = {"generations": "gen1: 2 limbs; gen2: 6 branches, 0.09-0.21, at stations 0.42/0.66/0.86 and "
+                             "0.30/0.48/0.74; gen3: 6 twigs, 0.05-0.085; 13 tips; crown spread in x and y"}
     return m, {}, spec({"section_strip": strip, "series_note": series})

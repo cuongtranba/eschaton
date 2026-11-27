@@ -150,17 +150,27 @@ def main():
     d.text((40, 22), T["title"], font=ImageFont.truetype(SERIF, 44), fill=INK)
     d.text((42, 80), T["tag"], font=ImageFont.truetype(SERIF_I, 21), fill=MID)
     d.text((W - 40, 28), BANNER, font=font(18, True), fill=RED, anchor="ra")
-    d.text((W - 40, 56), f"form study {key} · 2026-11-27 · Blender 5.2.1 maquettes ({key}.py, formkit, render_form.py) + Pillow (study_sheet.py) · "
+    d.text((W - 40, 56), f"form study {key}, round 2 · 2026-11-27 · side, front and top share one scale · Blender 5.2.1 maquettes ({key}.py, formkit, render_form.py) + Pillow (study_sheet.py) · "
            "same cameras and lights before and after", font=font(13, True), fill=MID, anchor="ra")
     d.line((40, 114, W - 40, 114), fill=INK, width=2)
-    views = [("three", "Three-quarter"), ("side", "Side"), ("front", "Front"), ("top", "Top")]
+    views = [("three", "Three-quarter"), ("side", "Side"),
+             ("front", "Corner elevation (45°)" if key == "bld" else "Front"), ("top", "Top")]
+    ortho = ("side", "front", "top")
+    sizes = [rgba(os.path.join(ad, f"neutral-{v}.png")).size for v in ortho]
+    k_ortho = min(min(699 / w, 420 / h) for w, h in sizes)
     y = 130
     for r, (dirn, label, col) in enumerate(((bd, T["before"], RED), (ad, T["after"], INK))):
         d.text((40, y), label, font=font(16, True), fill=col)
         for i, (v, t) in enumerate(views):
             x = 40 + i * 735
             frame(d, (x, y + 28, 715, 460), t)
-            put(cv, render(os.path.join(dirn, f"neutral-{v}.png")), (x + 8, y + 60, 699, 420), crop=False)
+            path = os.path.join(dirn, f"neutral-{v}.png")
+            if v in ortho:
+                im = on(rgba(path))
+                im = im.resize((int(im.width * k_ortho), int(im.height * k_ortho)), Image.LANCZOS)
+                cv.alpha_composite(im, (x + 8 + (699 - im.width) // 2, y + 60 + (420 - im.height) // 2))
+            else:
+                put(cv, render(path), (x + 8, y + 60, 699, 420), crop=False)
         y += 510
     title, sub, boxes = T["observed"]
     frame(d, (40, y, 720, 520), title, sub)

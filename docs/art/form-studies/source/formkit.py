@@ -125,19 +125,23 @@ def section_loft(m, part, stations, panel_of, up=V((0, 0, 1)), cap_start=None, c
 
 
 def descriptors(ring, w, h):
-    """Normalised shape descriptors of one section: aspect, peak offset, side lean, fill."""
-    ys = [p[0] for p in ring]
-    zs = [p[1] for p in ring]
+    """Section shape descriptors (method P1, round 2), in the section's rest frame. ring is in
+    profile units and is scaled by (w, h). Aspect is recorded but is not a shape descriptor."""
+    pts = [(y * w, z * h) for y, z in ring]
+    ys = [p[0] for p in pts]
+    zs = [p[1] for p in pts]
+    W, Hh = max(ys) - min(ys), max(zs) - min(zs)
     area = 0.0
-    for i in range(len(ring)):
-        y0, z0 = ring[i]
-        y1, z1 = ring[(i + 1) % len(ring)]
+    for i in range(len(pts)):
+        y0, z0 = pts[i]
+        y1, z1 = pts[(i + 1) % len(pts)]
         area += y0 * z1 - y1 * z0
     area = abs(area) / 2
-    top = max(range(len(ring)), key=lambda i: zs[i])
-    widest = max(range(len(ring)), key=lambda i: abs(ys[i]))
-    return {"aspect": round(h / w, 3), "peak_y": round(abs(ys[top]), 3),
-            "widest_z": round(zs[widest], 3), "fill": round(area / 4.0, 3)}
+    top = max(range(len(pts)), key=lambda i: zs[i])
+    widest = max(range(len(pts)), key=lambda i: ys[i])
+    lean = math.degrees(math.atan2(ys[widest] - ys[top], zs[top] - zs[widest])) if zs[top] > zs[widest] else 90.0
+    return {"aspect_recorded": round(Hh / W, 3), "fill": round(area / (W * Hh), 3),
+            "side_lean_deg": round(lean, 1), "shoulder_height": round((zs[widest] - min(zs)) / Hh, 3)}
 
 
 def series_stats(name, widths, spacings, angles, ends):

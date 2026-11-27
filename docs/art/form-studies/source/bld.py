@@ -15,7 +15,7 @@ VIEWS = {
     "three": {"dir": (0.9, -1.1, 0.55), "dist": 4.6, "lens": 60, "res": (1000, 1100), "target": (0.0, 0.0, 0.47)},
     "side": {"dir": (0, -1, 0.0001), "ortho": 1.12, "dist": 4, "res": (800, 900), "target": (0.0, 0, 0.5)},
     "front": {"dir": (0.70711, -0.70711, 0.0001), "ortho": 1.12, "dist": 4, "res": (800, 900), "target": (0, 0, 0.5)},
-    "top": {"dir": (0, 0, 1), "ortho": 1.0, "dist": 4, "res": (800, 800), "target": (0, 0, 0), "up": (0, 1, 0)},
+    "top": {"dir": (0, 0, 1), "ortho": 0.995, "dist": 4, "res": (800, 800), "target": (0, 0, 0), "up": (0, 1, 0)},
 }
 
 
@@ -54,9 +54,9 @@ def build_before():
             m.face("decal", f"decal{k}.{side}", q)
         z += 0.26
     box(m, "finial", "fin", -0.02, 0.02, -0.02, 0.02, z - 0.06, z + 0.12)
-    strip = [("tier 1", [(0, 1.0), (1.0, 1.0), (1.0, -1.0), (0, -1.0)]),
-             ("tier 2", [(0, 0.76), (0.76, 0.76), (0.76, -0.76), (0, -0.76)]),
-             ("tier 3", [(0, 0.54), (0.54, 0.54), (0.54, -0.54), (0, -0.54)])]
+    strip = [("tier 1", [(0, 0.26), (0.22, 0.26), (0.22, 0.10), (0, 0.10)]),
+             ("tier 2", [(0, 0.52), (0.167, 0.52), (0.167, 0.36), (0, 0.36)]),
+             ("tier 3", [(0, 0.78), (0.119, 0.78), (0.119, 0.62), (0, 0.62)])]
     return m, {}, spec({"section_strip": strip})
 
 
@@ -68,15 +68,20 @@ TIERS = [  # wall half-width, wall base z, wall top z, eave half-width, eave z, 
 PER_SIDE = 12
 
 
-def square_ring(a, z, lift, n=PER_SIDE, corrugate=0.0):
-    """Points around a square of half-width a; eave corners lifted (curved eave line)."""
+def square_ring(a, z, lift, n=PER_SIDE, corrugate=0.0, eave_a=None):
+    """Points around a square of half-width a. Tile lines stay parallel to the fall line of each
+    roof face (perpendicular to the eave): a point keeps the eave's across-position and is clipped
+    by the hip, so the hips read as the lines where two faces' tiles meet. Eave corners lift."""
+    eave_a = eave_a or a
     pts = []
     for side in range(4):
         for i in range(n):
             t = -1 + 2 * i / n
-            corner = abs(t) ** 2.2
-            off = corrugate * (1 if i % 2 else -1) if 0 < i else 0.0
-            x, y = t * a, -a
+            x = max(-a, min(a, t * eave_a))
+            clipped = abs(t * eave_a) >= a - 1e-9
+            corner = abs(x / a) ** 2.2
+            off = 0.0 if (i == 0 or clipped) else corrugate * (1 if i % 2 else -1)
+            y = -a
             c, s = math.cos(side * math.pi / 2), math.sin(side * math.pi / 2)
             pts.append(V((x * c - y * s, x * s + y * c, z + lift * corner + off)))
     return pts
@@ -89,7 +94,7 @@ def roof(m, k, wall_a, eave_a, eave_z, lift, top_a, top_z, wall_top):
         u = r / 5
         a_u = top_a + (eave_a - top_a) * u
         z_u = top_z - (top_z - eave_z) * (1 - (1 - u) ** 1.7)
-        rings.append(square_ring(a_u, z_u, lift * u ** 3, corrugate=0.011 * u ** 0.6 if r else 0.0))
+        rings.append(square_ring(a_u, z_u, lift * u ** 3, corrugate=0.011 * u ** 0.6 if r else 0.0, eave_a=eave_a))
     n = len(rings[0])
     for r in range(5):
         for i in range(n):
@@ -102,7 +107,7 @@ def roof(m, k, wall_a, eave_a, eave_z, lift, top_a, top_z, wall_top):
     for i in range(n):
         j = (i + 1) % n
         m.face("fascia", f"fascia{k}.{i // PER_SIDE}", [rings[-1][i], hem[i], hem[j], rings[-1][j]])
-    soffit = square_ring(wall_a, wall_top, 0.0)
+    soffit = square_ring(wall_a, wall_top, 0.0, eave_a=eave_a)
     for i in range(n):
         j = (i + 1) % n
         m.face("fascia", f"soffit{k}.{i // PER_SIDE}", [hem[i], soffit[i], soffit[j], hem[j]])
@@ -145,9 +150,13 @@ def build_after():
     fk.section_loft(m, "finial", st, lambda t, j: f"fin.{t}.{j // 2}", slice_axis=(1, 0, 0))
     m.faces = [(p, n, [V((q.y, q.z, q.x)) if p == "finial" else q for q in pts]) if p == "finial" else (p, n, pts)
                for p, n, pts in m.faces]
-    strip = [("podium", [(0, 1.0), (1.0, 1.0), (1.0, -1.0), (0, -1.0)]),
-             ("roof 1, upper", [(0, 0.10), (0.78, 0.0), (0.78, -0.05), (0, -0.05)]),
-             ("roof 1, eave", [(0, 0.10), (1.0, -0.03), (1.0, -0.08), (0, -0.05)]),
-             ("tier 2 wall", [(0, 0.76), (0.76, 0.76), (0.76, -0.76), (0, -0.76)]),
-             ("tier 3 wall", [(0, 0.54), (0.54, 0.54), (0.54, -0.54), (0, -0.54)])]
-    return m, {}, spec({"section_strip": strip, "hidden_panels": ["soffit", "podium.t", "plinth.t"]})
+    a, z0, z1, ea, ez, lift, ta = TIERS[0]
+    top_z = TIERS[1][1]
+    prof = [(ta + (ea - ta) * (r / 10), top_z - (top_z - ez) * (1 - (1 - r / 10) ** 1.7)) for r in range(11)]
+    roof_sec = prof + [(y, z - 0.012) for y, z in reversed(prof)]
+    strip = [("podium", [(0, 0.085), (0.31, 0.085), (0.31, 0.0), (0, 0.0)]),
+             ("tier 1 wall", [(0, 0.30), (0.22, 0.30), (0.22, 0.10), (0, 0.10)]),
+             ("roof 1, steep to flared", roof_sec),
+             ("tier 2 wall", [(0, 0.52), (0.167, 0.52), (0.167, 0.392), (0, 0.392)]),
+             ("tier 3 wall", [(0, 0.70), (0.119, 0.70), (0.119, 0.608), (0, 0.608)])]
+    return m, {}, spec({"section_strip": strip, "hidden_panels": ["podium.t", "plinth.t"]})

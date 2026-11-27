@@ -1,9 +1,9 @@
 {
- "panels": 81,
- "declared_edges": 990,
+ "panels": 124,
+ "declared_edges": 1732,
  "declared_folds_below_8_deg": [],
- "panel_edges_bending_over_20_deg": 1,
- "max_panel_bend_deg": 20.3,
+ "panel_edges_bending_over_20_deg": 6,
+ "max_panel_bend_deg": 32.1,
  "hidden_panels": [],
  "hidden_panel_edges_bending_over_20_deg": 0,
  "interior_vertices_defect_over_2_deg": 0,

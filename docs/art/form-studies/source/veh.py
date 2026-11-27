@@ -37,8 +37,8 @@ def wheels(m, y_off=Y_TYRE, n=24):
 VIEWS = {
     "three": {"dir": (0.95, -0.85, 0.42), "dist": 3.2, "lens": 60, "res": (1400, 900), "target": (0.0, 0.0, 0.2)},
     "side": {"dir": (0, -1, 0.0001), "ortho": 1.25, "dist": 4, "res": (1100, 560), "target": (0.0, 0, 0.24)},
-    "front": {"dir": (1, 0, 0.0001), "ortho": 0.62, "dist": 4, "res": (700, 560), "target": (0, 0, 0.24)},
-    "top": {"dir": (0, 0, 1), "ortho": 1.25, "dist": 4, "res": (1100, 560), "target": (0, 0, 0), "up": (1, 0, 0)},
+    "front": {"dir": (1, 0, 0.0001), "ortho": 0.795, "dist": 4, "res": (700, 560), "target": (0, 0, 0.24)},
+    "top": {"dir": (0, 0, 1), "ortho": 1.25, "dist": 4, "res": (1100, 560), "target": (0, 0, 0), "up": (0, 1, 0)},
 }
 
 
@@ -76,13 +76,13 @@ def build_before():
 
 
 BODY_KEYS = [
-    (0.500, [(0, 0.220), (0.140, 0.236), (0.172, 0.205), (0.168, 0.125), (0.150, 0.075), (0, 0.075)], "front"),
-    (0.330, [(0, 0.268), (0.172, 0.292), (0.186, 0.262), (0.186, 0.150), (0.172, 0.075), (0, 0.075)], "front"),
-    (0.140, [(0, 0.300), (0.168, 0.312), (0.186, 0.292), (0.188, 0.160), (0.176, 0.078), (0, 0.078)], "door1"),
-    (-0.070, [(0, 0.308), (0.162, 0.318), (0.181, 0.300), (0.188, 0.160), (0.173, 0.080), (0, 0.080)], "door2"),
-    (-0.170, [(0, 0.310), (0.166, 0.324), (0.183, 0.302), (0.188, 0.155), (0.172, 0.080), (0, 0.080)], "rear"),
-    (-0.280, [(0, 0.312), (0.176, 0.334), (0.186, 0.304), (0.186, 0.150), (0.170, 0.080), (0, 0.080)], "rear"),
-    (-0.500, [(0, 0.282), (0.150, 0.300), (0.166, 0.272), (0.160, 0.150), (0.140, 0.085), (0, 0.085)], "rear"),
+    (0.500, [(0, 0.222), (0.140, 0.238), (0.172, 0.206), (0.168, 0.125), (0.150, 0.075), (0, 0.075)], "front"),
+    (0.330, [(0, 0.268), (0.186, 0.294), (0.197, 0.262), (0.197, 0.150), (0.180, 0.075), (0, 0.075)], "front"),
+    (0.140, [(0, 0.298), (0.166, 0.310), (0.184, 0.292), (0.186, 0.160), (0.174, 0.078), (0, 0.078)], "door1"),
+    (-0.070, [(0, 0.304), (0.160, 0.316), (0.180, 0.300), (0.184, 0.160), (0.171, 0.080), (0, 0.080)], "door2"),
+    (-0.170, [(0, 0.310), (0.168, 0.324), (0.186, 0.304), (0.188, 0.155), (0.174, 0.080), (0, 0.080)], "rear"),
+    (-0.280, [(0, 0.318), (0.186, 0.336), (0.197, 0.310), (0.197, 0.150), (0.180, 0.080), (0, 0.080)], "rear"),
+    (-0.500, [(0, 0.318), (0.150, 0.330), (0.170, 0.306), (0.164, 0.150), (0.144, 0.085), (0, 0.085)], "rear"),
 ]
 STRIP = {0: "deck", 1: "shoulder.R", 2: "side.R", 3: "rocker.R", 4: "under", 5: "under", 6: "rocker.L",
          7: "side.L", 8: "shoulder.L", 9: "deck"}
@@ -166,15 +166,14 @@ def build_after():
     m.faces = wells
     for s in (1, -1):
         for ax in AXLES:
-            n = 14
+            n = 12
             pts_o, pts_i = [], []
             for i in range(n + 1):
-                a = math.radians(-8 + (196 * i / n))
+                a = math.radians(14 + (152 * i / n))
                 x = ax + math.cos(a) * R_ARCH
                 z = R_TYRE + math.sin(a) * R_ARCH
-                yb = 0.188
-                pts_i.append(V((x, s * yb, z)))
-                pts_o.append(V((x + math.cos(a) * 0.014, s * (yb + 0.01), z + math.sin(a) * 0.014)))
+                pts_i.append(V((x, s * 0.1985, z)))
+                pts_o.append(V((x + math.cos(a) * 0.011, s * 0.2015, z + math.sin(a) * 0.011)))
             for i in range(n):
                 q = [pts_i[i], pts_i[i + 1], pts_o[i + 1], pts_o[i]]
                 m.face("lip", f"lip.{ax}.{s}", q if s > 0 else q[::-1])
@@ -182,16 +181,15 @@ def build_after():
           (-0.06, 0.208), (-0.1, 0.205), (-0.118, 0.19), (-0.118, 0.13), (-0.1, 0.112), (-0.06, 0.115)]
     m.face("grille", "grille", [V((0.5025, y, z)) for y, z in gr][::-1])
     for k, (z, half_w) in enumerate(((0.135, 0.085), (0.16, 0.104), (0.185, 0.094))):
-        m.face("slat", f"bar{k}", [V((0.505, half_w, z - 0.004)), V((0.505, -half_w, z - 0.004)),
-                                    V((0.505, -half_w, z + 0.004)), V((0.505, half_w, z + 0.004))])
+        m.face("slat", f"bar{k}", [V((0.509, half_w, z - 0.004)), V((0.509, -half_w, z - 0.004)),
+                                    V((0.509, -half_w, z + 0.004)), V((0.509, half_w, z + 0.004))])
+        m.face("slat", f"bar{k}.top", [V((0.509, half_w, z + 0.004)), V((0.509, -half_w, z + 0.004)),
+                                        V((0.499, -half_w, z + 0.004)), V((0.499, half_w, z + 0.004))])
     for s in (1, -1):
         c = V((0.494, s * 0.140, 0.205))
         lamp = [c + V((0, s * 0.022 * math.cos(2 * math.pi * i / 8), 0.018 * math.sin(2 * math.pi * i / 8)))
                 for i in range(8)]
         m.face("lamp", f"lamp.{s}", lamp if s < 0 else lamp[::-1])
-        bump = [V((0.508, s * 0.0, 0.075)), V((0.508, s * 0.16, 0.075)), V((0.49, s * 0.172, 0.095)),
-                V((0.506, s * 0.0, 0.095))]
-        m.face("lip", "bumper", bump if s < 0 else bump[::-1])
     wheels(m)
     def with_glass(body, glass):
         return [glass[0], glass[1], glass[2]] + body[2:]
@@ -201,7 +199,6 @@ def build_after():
     halves[4] = with_glass(halves[4], GLASS_KEYS[3][1])
     strip = list(zip(labels, halves))
     strip_glass = [("windscreen head", GLASS_KEYS[1][1]), ("roof rear", GLASS_KEYS[3][1])]
-    sections = {lab: fk.descriptors(fk.mirror_half(h), max(p[0] for p in h), max(p[1] for p in h) - min(p[1] for p in h))
-                for lab, h in strip}
+    sections = {lab: fk.descriptors(fk.mirror_half(h), 1.0, 1.0) for lab, h in strip}
     return m, {}, spec({"section_strip": strip, "glass_strip": strip_glass, "sections": sections,
                         "hidden_panels": ["well", "under", "cabin.base", "fascia", "tailpanel"]})
