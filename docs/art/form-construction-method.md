@@ -510,3 +510,38 @@ The frozen M3 at `8c2bd53` was reviewed by a separate agent, which recomputed it
 | E5 | §13.1 and P2 | Adopted bible §5 lists "Extruded slab: constant-thickness prism" as an anti-pattern. §4.0 rule 6 would then void the empty-program declaration for a prismatic shaft. P2's "slab tower in the reference image" counterexample prejudges O-1. **Both are added to owner question O-1** | **answered by D-4a**; §4.0 rule 6 now exempts only an intentional, declared functional prism |
 | E6 | P4 | "A larger defect means the panel is doubly curved and needs folds" is wrong. Folding never changes angle sums, so a vertex with angle defect needs a **cut or seam** (two sheets), not a fold | corrected here |
 | E7 | §12 intro | Mentions "the round-2 P7 exemption", which M3 replaced | stale, superseded |
+
+## 15. Independent re-review of M3.1 and errata (2026-11-28)
+
+**Reviewer and verdict.**
+- The M3.1 commit `e26ccae` was re-reviewed by a separate agent that wrote none of it. It recomputed the key numbers with its own code, using a different `e_v` method.
+- **Verdict: NEEDS REVISION** (no blocker, four majors).
+- This was the single re-review allowed by D-2. **No further revision is made.** The errata below supersede the text above where they conflict, and the bounded M3.1 round ends at this verdict.
+
+**What held:**
+- §4.0 rules 3 and 4 are consistent with GEO §1.8, §1.10 and §1.13.
+- Rule 6 no longer exempts anything from planarity, rigidity or visual judgment.
+- D-4a and D-4b are kept apart faithfully.
+- The 2 px constant is withdrawn, and P6's value is labelled an assumption.
+- No adoption is claimed, and the draft-branch labels are consistent.
+- No adopted gate is weakened.
+- The `e_v` proof and the dimensional formula are correct.
+- Every reproduced number matches (v5 `d` = 0; v7 rows; one-mass `e_v` 3.40 px; nested 0; cube √6/12).
+- E2, E4 and E5 are resolved. E1 is closed through the owner's D-2 de-scoping.
+
+| # | Severity | Where | Erratum (supersedes the text above) |
+|---|---|---|---|
+| R1 | major | P1 conformance | `d` (half-extents) and `ε_m` (model units) are different units. Compare `d · s` with `ε_m`, or `d` with `ε_m / s`. Include the sampling bound, with three outcomes: conforms if `d − bound > floor/s`; does not conform if `d + bound ≤ floor/s`; otherwise `NOT VERIFIED`. "Conforms" means only that **a** profile change exists. Whether it is the declared change, and whether it reads, is reviewer judgment |
+| R2 | major | §4.0 rule 7 | Rule 7 does **not** fully close the partition escape. Corrections:<ul><li>Classify stations and junctions by layer-S function and P3 class, **not** by edge kind. Under the operator erratum, every off-path O1 ring is a seam between sheets, so "a junction is a seam" would make every real profile change a junction.</li><li>Require targets for every consecutive pair along the whole spine, including across junctions.</li><li>When the two readings disagree, report a non-conformance if **either** fails.</li></ul>The sentence "a partition chosen to change a read-out cannot change a verdict" is withdrawn as stated |
+| R3 | major | §6.0 | Of the "data" values, only `d`, `e_v`, the cube control and the coefficients of variation are **computed by the scripts**. `D_v`, `c`, `λ` and P6 hole areas are defined but not implemented, so they are `NOT VERIFIED`. The M3.1 controls cover the old metrics; the new P7 measures have no computed positive or negative control |
+| R4 | major | P7 solid | `D_v` is a bounding-box ratio. A box and an ellipsoid with the same extents agree, and a thin fin or keel raises the depth extent with no volume. Measure it in the mass's **rest frame**, not in a posed view. A declared tolerance must come from the cited source's spread, not from the author |
+| R5 | minor | P7 sparse | Define `λ3/λ1` as the **smallest extent ÷ the largest extent** over the covariance axes. The eigen order can give a ratio above 1: 100 points at (±1, 0) and 2 at (0, ±3) give 3.0. For an isotropic covariance the axes are arbitrary; report that case |
+| R6 | minor | check §9 | "A convex body's widest section contains the rest" is false in general. The cube gives √6/12, and a disphenoid seen between opposite edges gives 0.2417 (reviewer). Only the **nested** class gives 0. "Bounded below by zero" should read "equals zero for nested bodies" |
+| R7 | minor | §4.0 rule 8, §11 | "Functionally equal" needs the subject's function or source to require **equal geometry** (for example interchangeability), not merely the same job. §11's P5 row still lacks the D-4a negative control |
+| R8 | minor | §4.0 rules 2, 3, 5 | Bind artwork identity to the content digest. A re-declaration made after a flag must disclose that flag. Independent confirmation happens before the artwork |
+| R9 | minor | §4.0 rule 6 | The required views are the ART-1/GEO-5 set plus every declared pose, articulation range and Collapse state. A brief cannot narrow them |
+| R10 | minor | P1 `constant` | A `constant` target across a declared function change needs a layer-S source showing the profile really is constant there. "An extrusion" is subject to bible §5's D-4a exclusion: a prism may not stand in for a form whose function changes along it |
+| R11 | minor | stale text | Corrections to stale text:<ul><li>§14's intro ("text above kept unchanged") is no longer true: M3.1 rewrote §4.0, P1 and P7 in place, and the frozen M3 text is at `8c2bd53`.</li><li>P4's "needs folds" should read "needs a cut or seam" (E6).</li><li>§12's intro mention of "the round-2 P7 exemption" is stale (E7).</li><li>§12.2's "addressed in M3" for P1 and P7 rejecting their fail examples is superseded by E1 and D-2.</li><li>§7.4's "M3's P7" now means `e_v`, which is information only.</li><li>The three v7 body `e_v` values (1.66, 1.69 and 1.71 px) differ by slice sampling and rasterisation: these scripts interpolate stations exactly, M3 rasterised at 3000 px, and the review used its own sampling. None is reconciled with the ring tilt. The verdict under M3 is the same for all three.</li></ul> |
+| R12 | minor | holdout | The holdout record is unchanged since its review **except** for two labelled, additive notes in `aaedf95`: a "Later note" in its README and erratum C12 in `composition.md`. Both came before D-1…D-5 |
+
+**Status after the round.** M3.1 stays a **proposal**, not adopted. P1 and P7 are conditional, informative read-outs whose definitions carry errata R1–R5. The B-2 v5 rejection stands as the human and independent visual result. Any further method work needs a new owner decision.
