@@ -1,0 +1,14 @@
+{
+ "hier": {
+  "body": 1,
+  "bill": 1,
+  "tail": 1,
+  "utc": 1,
+  "cov": 2,
+  "sec": 2,
+  "prim": 2,
+  "hackle": 3,
+  "bristle": 3,
+  "eye": 3
+ }
+}

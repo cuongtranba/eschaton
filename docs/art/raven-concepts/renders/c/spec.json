@@ -1,0 +1,18 @@
+{
+ "module_counts": {
+  "S": 38,
+  "M": 16,
+  "L": 41
+ },
+ "hier": {
+  "hull": 1,
+  "body": 1,
+  "bill": 1,
+  "tail": 1,
+  "cov": 2,
+  "sec": 2,
+  "prim": 2,
+  "hackle": 3,
+  "eye": 3
+ }
+}
