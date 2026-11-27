@@ -172,6 +172,8 @@ No new benchmark was recorded. The machine was not idle, and the change does not
 
 **Engineering recommendation: GO for the owner's gate review**, once this branch is reviewed and its CI is green. That is not a gate pass. Nothing below has been decided, and nothing is marked approved.
 
+> **Later decisions (2026-11-27).** This list is left as written. The owner has since decided choice 9 as (a) (item 3), kept cross-engine determinism as a tested property (item 4), and made the RTX 5070 test due before any Phase 5 work, not waived (item 5). The gate, the visual review and choices 1–8 are still undecided. Record: [`phase-3-owner-decision-packet.md`](phase-3-owner-decision-packet.md) §0.
+
 1. **Phase 3 gate:** pass, pass with conditions, or keep open (exit report §6, decision 1).
 2. **Visual review** at prototype level: [`phase-3-visual-walkthrough.md`](phase-3-visual-walkthrough.md). It has screenshots on a physical Apple GPU (WebGPU on Metal) and observations against the reference. They are not approval.
 3. **ADR 0017 choices 1–8** (exit report §6, decision 4), and **choice 9** (wind formula and system versioning), added by this audit.
