@@ -15,6 +15,9 @@
 | [`raven-concept-b2-v4-details.png`](raven-concept-b2-v4-details.png) | B-2 v4 close-ups and v3 beside v4 (reviewed record) |
 | [`raven-concept-b2-sumi-flight-v5.png`](raven-concept-b2-sumi-flight-v5.png) | **Sheet B-2 v5**: the second flight revision, answering the v4 review. Independent review: **NEEDS REVISION** ("close"; cleanup-level defects, packet §7.2). **Owner: NOT APPROVED** (packet §0.1); kept unchanged as the reviewed record |
 | [`raven-concept-b2-v5-details.png`](raven-concept-b2-v5-details.png) | B-2 v5 close-ups (near and far hand, wrist, arm front elevation, head), v3 beside v5 at matched view directions, clay beside ink, silhouettes on light and dark fields |
+| [`raven-concept-b2-sumi-flight-v6.png`](raven-concept-b2-sumi-flight-v6.png) | **Sheet B-2 v6**: the third flight revision, made with the proposed generic [form construction method](../form-construction-method.md) after the owner did not approve v5. Brief: [`b2-v6-flight-brief.md`](b2-v6-flight-brief.md). **Pending owner ART-1**; review in the packet §9 |
+| [`raven-concept-b2-v6-compare.png`](raven-concept-b2-v6-compare.png) | v5 beside v6 at identical cameras, scale and light; matched crops; silhouettes; v6 drawn the v5 way as a control |
+| [`raven-concept-b2-v6-method.png`](raven-concept-b2-v6-method.png) | The method's artefacts for v5 and v6: section program, top-view outline overlay, crease declaration map, junctions, series and envelope read-outs |
 | [`raven-concept-c-modular.png`](raven-concept-c-modular.png) | **Sheet C v2**: modular tessellated raven, upstroke. Independent review: NO-GO as a separate direction |
 | [`raven-concepts-comparison.png`](raven-concepts-comparison.png) | A, B, B-2 and C side by side: hero, ink context, silhouette, district scale, hierarchy |
 | [`v3-failure-anatomy.png`](v3-failure-anatomy.png) | Actual V3 pixels (PR #11 @ `616b0cf`, captured at `74c686f`) beside A and B, per GEO-2 defect |
@@ -59,6 +62,17 @@ python3 b2v4_boards.py <scratch>/c2f <scratch>/c2f4 b2v4-details.png   # <scratc
 /Applications/Blender.app/Contents/MacOS/Blender -b --factory-startup --python render.py -- c2f5_sumi_flight <scratch>/c2f5
 python3 sheet.py c2f5 <scratch>/c2f5 sheet-c2f5.png
 python3 b2v5_boards.py <scratch>/c2f <scratch>/c2f5 b2v5-details.png
+# B-2 v6 (formkit and render_form.py live in ../form-studies/source/):
+export PYTHONDONTWRITEBYTECODE=1
+cd ../../form-studies/source
+Blender -b --factory-startup --python render_form.py -- c2f6_sumi_flight <scratch>/c2f6 declared      # sheet renders
+Blender -b --factory-startup --python render_form.py -- c2f5_sumi_flight <scratch>/cmp-v5 legacy 2    # v5, drawn as before
+Blender -b --factory-startup --python render_form.py -- c2f6_sumi_flight <scratch>/cmp-v6 declared 2
+Blender -b --factory-startup --python render_form.py -- c2f6_sumi_flight <scratch>/cmp-v6L legacy 2   # drawing control
+cd ../../raven-concepts/source
+Blender -b --factory-startup --python b2v6_export.py -- <scratch>/b2-export.json
+python3 sheet.py c2f6 <scratch>/c2f6 sheet-c2f6.png
+python3 b2v6_boards.py <scratch>/cmp-v5 <scratch>/cmp-v6 <scratch>/cmp-v6L <scratch>/b2-export.json <scratch>/c2f6 compare.png method.png
 ```
 
 `sheet.py` gained three optional `concepts.json` fields: `ink_scale` and `ink_left` for the ink study, and `district_sub` for the district caption. Their defaults reproduce the earlier sheets; only `c2f4` and `c2f5` set them.
@@ -92,6 +106,7 @@ Every round was judged on pixels: by me first, then by an independent reviewer w
 | Revision 6 | **B-2 v5** (`c2f5_sumi_flight.py`, derived from v4; v4 unchanged): broad arm root tapering to the wrist with an S-curved trailing edge, bevelled hem, under-wing coverts, one flat primary-covert leaf, alula removed, individual finger widths and notches, the hackle strip set inside the throat, fewer head rings, a wider tail fan, and corrected framing. |
 | Independent round 6 | **B-2 v5: NEEDS REVISION** ("close"). Fixed: the jaw gap, the hoop, the clipping, the sliver, the crop, the pairs and the dark-field silhouettes. Open: lines that mark no form change on the fingers and the side wing; a banded head in the top and underside views; a near-rectangular inner arm from above; a tail-root pinhole; small slivers. **The revision stopped here** to keep the handoff bounded (packet §7.2–§7.3). |
 | Owner ruling (2026-11-27) | **B-2 v5 NOT APPROVED** (ART-D3b, second ruling): revise by a method that is generic for all objects, not bird-specific (packet §0.1). Sheet B stays the selected direction |
+| Revision 7 | The proposed [generic form method](../form-construction-method.md) committed first (`449406b`), then the [v6 brief](b2-v6-flight-brief.md) (`a400997`), then **B-2 v6**: a section program instead of one scaled pentagon, a converging arm, declared lines only, a pleated secondary tier, a two-group hand with staggered notches, the arm rooted inside the body and a tertial fairing at the tail root. The same procedure was applied to a vehicle, a building and a tree ([form studies](../form-studies/README.md)) |
 
 ## The directions
 
