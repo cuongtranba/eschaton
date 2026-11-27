@@ -116,7 +116,7 @@ def hatch(d, box, spacing, angle=0, width=1, fill=INK, rnd=None, jitter=0.0):
             d.line((x + i, y + h, x + i + h * k, y), fill=fill, width=width)
 
 
-def ink_context(raven, size, mode, seed=11, flock=None):
+def ink_context(raven, size, mode, seed=11, flock=None, scale=0.62, left=0.36):
     W, H = size
     rnd = random.Random(seed)
     im = paper(W, H, seed, (236, 224, 198)).convert("RGBA")
@@ -166,9 +166,9 @@ def ink_context(raven, size, mode, seed=11, flock=None):
         t = sil.resize((int(sil.width * s), int(sil.height * s)), Image.LANCZOS)
         im.alpha_composite(t, (int(W * 0.98 - t.width), int(H - t.height + H * 0.06)))
     else:
-        s = W * 0.62 / raven.width
+        s = W * scale / raven.width
         t = raven.resize((int(raven.width * s), int(raven.height * s)), Image.LANCZOS)
-        im.alpha_composite(t, (int(W * 0.36), int(H * 0.06)))
+        im.alpha_composite(t, (int(W * left), int(H * 0.06)))
     if flock is not None:
         for (fx, fy, fh) in [(0.62, 0.52, 22), (0.7, 0.47, 16), (0.12, 0.2, 18)] if mode == "perch" else \
                 [(0.12, 0.62, 20), (0.2, 0.56, 14), (0.06, 0.5, 11)]:
@@ -238,7 +238,8 @@ def main():
     flock_src, _ = silhouette(load(os.path.join(rd, f"neutral-{meta['flock_view']}.png")), INK, (0, 0, 0), (400, 400))
     fl = flock_src.convert("RGBA")
     fl.putalpha(flock_src.convert("L").point(lambda v: 255 if v > 0 else 0))
-    ctx = ink_context(ink_main, (iw - 20, 340), meta["ink_mode"], flock=fl)
+    ctx = ink_context(ink_main, (iw - 20, 340), meta["ink_mode"], flock=fl,
+                      scale=meta.get("ink_scale", 0.62), left=meta.get("ink_left", 0.36))
     cv.alpha_composite(ctx, (ix + 10, cy0 + 48))
 
     # silhouettes: light and dark fields, plus district scale
