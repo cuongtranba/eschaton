@@ -230,7 +230,7 @@
   "o2.py": "322b8aca3df19fc491609c430f3bf33844c72c2edfc69ea797006ea204d81377",
   "oracles_o2.py": "8757e723043c48f94f886b395307c21bafc9078d1e8da6dafd794d2dace40bce",
   "run_evidence_lab2.py": "05f7708f7a943730afb7cb41041be99b0fa9483186a9fdb274ce74826ebc34db",
-  "test_o2.py": "c4654f2be2cfc200f381afc9286bc3daa0cf6e46678794e50121de633fa87701"
+  "test_o2.py": "0b63fbeaf067267b8a2c1d40d4b6fd52c729a14339967cd96edeed5cc8afa843"
  },
  "system": "Darwin",
  "timing": {
@@ -238,18 +238,18 @@
   "rows": [
    {
     "creases": 1,
-    "insert_all_ms": 0.1250000000000001,
-    "pose_median_ms": 0.0794169999999983
+    "insert_all_ms": 0.13454200000000138,
+    "pose_median_ms": 0.08437500000000112
    },
    {
     "creases": 8,
-    "insert_all_ms": 2.1813750000000027,
-    "pose_median_ms": 0.43558299999999983
+    "insert_all_ms": 2.5504169999999995,
+    "pose_median_ms": 0.4804590000000025
    },
    {
     "creases": 64,
-    "insert_all_ms": 72.707208,
-    "pose_median_ms": 3.2842499999999886
+    "insert_all_ms": 131.195333,
+    "pose_median_ms": 9.61874999999998
    }
   ]
  }

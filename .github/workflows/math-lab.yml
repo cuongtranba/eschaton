@@ -35,7 +35,7 @@ jobs:
         # interpreter. Only exact outputs are compared across them; floats are checked against bands.
         python: ["3.9", "3.12"]
     env:
-      LAB_TESTS: "81"
+      LAB_TESTS: "92"
       DIAGNOSTIC_TESTS: "13"
     steps:
       - uses: actions/checkout@v7

@@ -243,16 +243,16 @@
   "o1v2.py": "b0434fc3ee5cf80eaab4c5a39c4ecdddfa89b93748dece982f89b910b521a05c",
   "oracles_o1v2.py": "86deabb13347c243e1f443f1f0c1b6d0251cb76736fa23983e8b670ab26c6f93",
   "run_evidence_lab2.py": "05f7708f7a943730afb7cb41041be99b0fa9483186a9fdb274ce74826ebc34db",
-  "test_o1v2.py": "ff20c998c3e5126c2bbea8dfa6a686c9827f849cb0f31f616c95ba0bc0b0b783"
+  "test_o1v2.py": "d9c325299c5b6e47e7a9a534c70c6f8a961282dece4855ff3f57c5ca3fc2a1aa"
  },
  "system": "Darwin",
  "timing": {
   "conditions": "single process, CPython 3.9.6, Darwin arm64",
-  "fitted_exponent_64_to_1024": 1.008400871831375,
+  "fitted_exponent_64_to_1024": 1.0948709014316649,
   "rows": [
    {
     "m_equals_n_at_most": 8,
-    "median_ms": 0.3517363333333338,
+    "median_ms": 0.39319433333332804,
     "vertices_used": [
      8,
      8
@@ -260,7 +260,7 @@
    },
    {
     "m_equals_n_at_most": 64,
-    "median_ms": 2.5693613333333345,
+    "median_ms": 4.3205276666666474,
     "vertices_used": [
      64,
      64
@@ -268,7 +268,7 @@
    },
    {
     "m_equals_n_at_most": 512,
-    "median_ms": 20.68793033333331,
+    "median_ms": 40.81765266666667,
     "vertices_used": [
      512,
      512
@@ -276,7 +276,7 @@
    },
    {
     "m_equals_n_at_most": 1024,
-    "median_ms": 42.07855566666667,
+    "median_ms": 89.92754166666666,
     "vertices_used": [
      1024,
      1024
