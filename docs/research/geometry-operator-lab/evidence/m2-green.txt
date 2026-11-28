@@ -1,0 +1,10 @@
+M2 green runs (implementation by a separate agent that wrote no contract, test or oracle), contract v1.1 @ 18fd118, tests @ 46d92f2
+python: 3.9.6 Darwin arm64
+command: python3 -m unittest docs/research/geometry-operator-lab/test_o2.py
+run 1:
+Ran 34 tests in 4.579s
+OK
+run 2:
+Ran 34 tests in 5.564s
+OK
+First implementation run: 34 tests OK (implementer's report); no test, fixture, oracle or band changed.
