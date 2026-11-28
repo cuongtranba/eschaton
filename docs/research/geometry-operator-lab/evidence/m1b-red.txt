@@ -1,0 +1,23 @@
+O1 v2 red run (tests first, against the stub o1v2.py), contract v2.2 @ 16d0a0f
+python: 3.9.6 Darwin arm64
+command: python3 -m unittest docs/research/geometry-operator-lab/test_o1v2.py
+ERROR: test_s7_the_digest_does_not_depend_on_the_hash_seed (docs.research.geometry-operator-lab.test_o1v2.Properties)
+FAIL: test_t1_an_oblique_cut_prism_has_two_trapezoids_and_two_quadrilaterals (docs.research.geometry-operator-lab.test_o1v2.Fixtures)
+FAIL: test_t2_a_tilted_diamond_keeps_the_eight_triangles_and_volume_of_f1 (docs.research.geometry-operator-lab.test_o1v2.Fixtures)
+FAIL: test_t3_a_book_has_volume_four_minus_eps_squared_and_canonical_a_second (docs.research.geometry-operator-lab.test_o1v2.Fixtures)
+FAIL: test_t3t_a_one_quantum_book_is_exact_and_thin_only_with_a_threshold (docs.research.geometry-operator-lab.test_o1v2.Fixtures)
+FAIL: test_t4_a_near_parallel_pair_is_accepted_with_f1_combinatorics (docs.research.geometry-operator-lab.test_o1v2.Fixtures)
+FAIL: test_t5_nets_of_t1_and_t2_are_congruent_within_tau (docs.research.geometry-operator-lab.test_o1v2.Fixtures)
+FAIL: test_w1_to_w4_plane_and_separation_codes (docs.research.geometry-operator-lab.test_o1v2.NegativeControls)
+FAIL: test_w5_degenerate_sections (docs.research.geometry-operator-lab.test_o1v2.NegativeControls)
+FAIL: test_w6_invalid_sections_return_their_codes (docs.research.geometry-operator-lab.test_o1v2.NegativeControls)
+FAIL: test_w7_w8_malformed_and_out_of_bounds (docs.research.geometry-operator-lab.test_o1v2.NegativeControls)
+FAIL: test_w9_w10_thin_panel_and_precedence (docs.research.geometry-operator-lab.test_o1v2.NegativeControls)
+FAIL: test_s1_to_s4_random_tilted_pairs_match_the_brute_force_hull (docs.research.geometry-operator-lab.test_o1v2.Properties)
+FAIL: test_s1b_cut_frusta_give_two_edge_faces_whose_section_edges_meet_on_the_axis (docs.research.geometry-operator-lab.test_o1v2.Properties)
+FAIL: test_s2_near_parallel_pairs_keep_the_count_and_support (docs.research.geometry-operator-lab.test_o1v2.Properties)
+FAIL: test_s5_cube_rotations_mirror_translation_and_scaling_transform_the_band (docs.research.geometry-operator-lab.test_o1v2.Properties)
+FAIL: test_s6_allowed_permutations_give_identical_canonical_json (docs.research.geometry-operator-lab.test_o1v2.Properties)
+FAIL: test_s8_random_nets_are_congruent_and_their_seams_match_within_tau (docs.research.geometry-operator-lab.test_o1v2.Properties)
+Ran 19 tests in 1.332s
+FAILED (failures=17, errors=1)
