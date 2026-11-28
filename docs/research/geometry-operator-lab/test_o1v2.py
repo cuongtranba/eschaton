@@ -1,10 +1,11 @@
-"""Bounded experiment for O1 contract v2.1 (tilted section planes), against m1b-o1v2-contract.md.
+"""Bounded experiment for O1 contract v2.2 (tilted section planes), against m1b-o1v2-contract.md.
 
 RESEARCH ARTEFACT ONLY (D-7). Tests use the public functions of o1v2.py, the independent oracles of
 oracles_o1v2.py and, for nets, v1.1's unchanged cut_open_net and oracles. No mocks, no sleeps,
 seeded generators only. Run from the repository root:
     python3 -m unittest discover -s docs/research/geometry-operator-lab -p 'test_*.py'
 """
+import hashlib
 import json
 import math
 import os
@@ -343,6 +344,57 @@ class Properties(unittest.TestCase):
             net = o1.cut_open_net(band)
             self.assertLessEqual(net["congruence_residual"], net["tau"])
             self.assertTrue(all(r <= net["tau"] for r in net["seam_residuals"]))
+
+
+class ReviewRegressions(unittest.TestCase):
+    """Added in the bounded revision after the independent O1 v2 review (README); o1v2.py and the
+    oracle module were not changed. Each names the review finding it closes."""
+
+    @staticmethod
+    def _newell(ring):
+        n = [0, 0, 0]
+        for i in range(len(ring)):
+            a, b = ring[i], ring[(i + 1) % len(ring)]
+            n[0] += (a[1] - b[1]) * (a[2] + b[2])
+            n[1] += (a[2] - b[2]) * (a[0] + b[0])
+            n[2] += (a[0] - b[0]) * (a[1] + b[1])
+        return n
+
+    def test_f1_fields_the_canonical_oracle_did_not_check(self):
+        for a, b in [(FX[k]["a"], FX[k]["b"]) for k in ("T1", "T2", "T3", "T4")] + [(list(map(list, x)), list(map(list, y))) for x, y in s1_pairs(40)]:
+            band = ok(run(a, b))
+            self.assertEqual(band["version"], "o1-contract-v2.0")
+            self.assertEqual(band["topology"], "closed-band")
+            self.assertEqual(len(band["lateral_edges"]), len(band["faces"]))
+            for f in band["faces"]:
+                self.assertEqual(math.gcd(math.gcd(abs(f["normal"][0]), abs(f["normal"][1])), abs(f["normal"][2])), 1)
+            for name in ("a", "b"):
+                self.assertEqual(band["newell_" + name], self._newell(band["ring_" + name]["vertices"]))
+            self.assertEqual(o1v2.canonical_json(band), json.dumps(band, sort_keys=True, separators=(",", ":"), ensure_ascii=True))
+            stripped = {k: v for k, v in band.items() if k not in ("min_altitude", "min_dihedral_deg")}
+            self.assertEqual(o1v2.digest(band), hashlib.sha256(o1v2.canonical_json(stripped).encode("ascii")).hexdigest())
+
+    def test_f2_thin_panel_and_min_altitude_bounds_are_exact(self):
+        a, b = FX["T1"]["a"], FX["T1"]["b"]
+        self.assertTrue(run(a, b, min_altitude=1500000)["ok"])
+        self.assertEqual(code(run(a, b, min_altitude=1500001)), "thin-panel")
+        self.assertEqual(code(run(a, b, min_altitude=4 * 10 ** 9 + 1)), "out-of-bounds")
+        self.assertEqual(code(run(a, b, min_altitude=0)), "malformed-input")
+
+    def test_f2_coordinate_and_vertex_bounds_are_inclusive(self):
+        a, b = [[400 * c for c in v] for v in FX["T1"]["a"]], [[400 * c for c in v] for v in FX["T1"]["b"]]
+        self.assertEqual(max(abs(c) for v in a + b for c in v), 10 ** 9)
+        self.assertTrue(run(a, b)["ok"])
+        ring = [[round(5e8 * math.cos(2 * math.pi * k / 1024)), round(5e8 * math.sin(2 * math.pi * k / 1024)), 0] for k in range(1024)]
+        h = 10 ** 8
+        lifted = [[10 ** 6, 10 ** 6, h + 1000], [-10 ** 6, 10 ** 6, h - 1000], [-10 ** 6, -10 ** 6, h - 1000], [10 ** 6, -10 ** 6, h + 1000]]
+        self.assertTrue(run(ring, lifted)["ok"])
+
+    def test_f2_non_consecutive_duplicates_and_collinear_before_non_planar(self):
+        sq = FX["square"]
+        self.assertEqual(code(run([sq[0], sq[1], sq[2], sq[0], sq[3]], FX["T2"]["b"])), "duplicate-vertex")
+        bent = [[0, 0, 0], [10, 0, 0], [20, 0, 0], [20, 20, 5], [0, 20, 0]]
+        self.assertEqual(code(run(bent, FX["T2"]["b"])), "collinear-vertex")
 
 
 class Independence(unittest.TestCase):

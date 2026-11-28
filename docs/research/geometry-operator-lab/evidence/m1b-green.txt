@@ -11,3 +11,8 @@ OK
 v1.1 baseline (S9): python3 -m unittest docs/research/geometry-operator-lab/test_o1.py
 Ran 28 tests in 15.827s
 OK
+
+Run 3, after the bounded revision that followed the independent O1 v2 review (PASS WITH FINDINGS): tests widened (F1 version, topology, lateral_edges count, primitive normals, Newell vectors, canonical JSON and digest scope; F2 exact thin-panel boundary, min_altitude bounds, inclusive coordinate and 1024-vertex bounds, non-consecutive duplicates, collinear before non-planar). o1v2.py and oracles_o1v2.py unchanged.
+Ran 23 tests in 8.574s
+OK
+Mutants re-run against the widened tests (scratch copies): empty lateral_edges, doubled normals, thin-panel judged with <=: each now fails its named test.
