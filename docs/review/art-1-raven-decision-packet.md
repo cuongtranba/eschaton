@@ -646,3 +646,72 @@ Each reviewer was a separate agent that made none of the work. Each recomputed t
 | D-10 | Any further method round on errata R1–R4 | optional; the read-outs stay informative either way |
 
 Q1–Q6 themselves are unchanged and open, as defined on draft PR #11 (`docs/research/geometry-expressiveness.md` §6 @ `616b0cf`).
+
+## 12. D-6 to D-10 and the laboratory CI: results and independent reviews (under §0.4, 2026-11-28)
+
+This section was written on draft PR #14. The work is research and design only.
+- No package, app, experiment, runtime, Foldon contract, production dependency, artwork file or `ci.yml` was changed.
+- No server was started.
+- Nothing is approved, adopted or promoted.
+
+Base: `main` @ `5886475d04db76f58105080f63d01426d2d72311`. PR #14 started from `df998d7`. PR #11 @ `616b0cf` is untouched.
+
+### 12.1 Commit order per track
+
+| Track | Commits, in order |
+|---|---|
+| Decisions and roadmap | `462e011` §0.4, lab §10 (M1b proposed, M2 independent of it, M3–M5 locked, the D-9 list) |
+| D-10 | `2714cd5` R1–R4 corrections → independent review → `97bd834` errata D10-1…D10-10 (no second round) |
+| D-6 M2 (O2) | `fc646c7` contract v1 → review → `18fd118` **freeze v1.1** → `46d92f2` **red** (34 tests: 32 F, 1 E) → `d326816` **green** (separate implementation agent; 34 pass) → review → `6861a19` bounded test revision (41 pass) |
+| D-7 M1b (O1 v2) | `c1bdd6e` contract v2.0 → review → `6b2aa39` **freeze v2.1** → `16d0a0f` v2.2 generator amendment (before any implementation; not re-reviewed, disclosed) → `4ebd2c8` **red** (19 tests: 17 F, 1 E) → `21928d8` **green** (separate implementation agent; one fixture literal reduced to lowest terms, value unchanged, disclosed) → review → `57a5971` bounded test revision (23 pass) |
+| D-8 | `8495f65` modular seams, design only |
+| Evidence and CI | `7e4a326` evidence and exact-evidence check; `733b087` "Math lab" workflow; `9618aea` count 92 and evidence refresh (hashes and timing only) |
+
+### 12.2 Independent reviews
+
+Each reviewer was a separate agent that made none of the work it reviewed, and each recomputed with its own code. The two implementation agents were also separate from the contract, test and oracle author. Every verdict is a recommendation.
+
+| Review | Verdict | Key reproduced or found |
+|---|---|---|
+| M2 contract v1 | **GO WITH AMENDMENTS** (3 majors, 7 minors) | Every proof (E1–E5, the tree, `closed-network` unreachable, the hinge sign) and every fixture value held. Majors: the near-±180° sign, the float axis rule, degenerate generator modes |
+| O1 v2 contract v2.0 | **GO WITH AMENDMENTS** (4 majors, 12 minors) | Every fixture value and the chain counterexamples CE1 and CE2 reproduced (CE2 in 3D). Majors: collinearity before planarity, a zero Newell vector, total precedence, a generator with no two-edge faces. A proposed witness could not be reproduced, so that claim was withdrawn instead |
+| D-10 corrections | **NEEDS REVISION** (4 majors, no blocker) | The symmetric P1 path, the units and function-based classification held. The asymmetric P1 path is invalid (reproduced). "P1 does not depend on the partition" is false. The floor needs a cap and a pre-declared `ε_m`. The junction range is withdrawn. Recorded as errata D10-1…D10-10 (method §16.1), with no further revision under the D-10 bound |
+| M2 implementation | **PASS WITH FINDINGS** | 0 disagreements with the contract, oracles or the reviewer's engine. 17 of 53 mutants survived the suite (test gaps, closed in `6861a19`). Tampered sheets can raise (out of contract, recorded) |
+| O1 v2 implementation | **PASS WITH FINDINGS** | 0 mismatches and 0 exceptions in about 71,000 inputs. 14 of 40 mutants survived (test gaps, closed in `57a5971`). Wording errata F3–F7 recorded in the lab README |
+
+### 12.3 Outcome
+
+| Item | Verdict | Evidence and limits |
+|---|---|---|
+| M2 (O2) within contract v1.1 | **PASS** | 41 tests. Worst pose residual 7.2e-4 τ; angle roundtrip 1.2e-11° (band 1e-7°); camber G7 within 1.6e-6 L (band 1e-5 L) |
+| O1 v2 within contract v2.2 | **PASS** | 23 tests. Net residuals ≤ 5.4e-7 τ. Timing measured only: 1024-vertex band 42–90 ms on a shared machine (CPython 3.9.6, arm64) |
+| Exact cross-engine agreement (P3D-6) | **PASS for the compared inputs** | Node 24 BigInt engines written by the reviewers from the contracts alone. M2: 11,156 `ok` results and 52,233 codes. O1 v2: 11,246 `ok` results and 59,645 codes. All byte-identical. Floats are not compared |
+| v1.1 baseline | **PASS, unchanged** | 28 tests; the v1.1 files are byte-identical since before v2.0 |
+| D-10 | **NEEDS REVISION, recorded** | R1 and R2 partly resolved, R3 partly, R4 resolved with minor gaps (method §16.1) |
+| D-8 seams | **design only** | conditions S-1…S-6, worked examples S1 and S2 (Descartes 4π check), counterexamples CX1–CX4 |
+| Laboratory CI | **green on the pushed head** (§12.4) | CPython 3.9.25 and 3.12.16 on Linux x86_64; 92 + 13 tests; exact evidence matches |
+| Global folding, collision, folding motion, thickness, chains of tilted bands, U1 `kit.loft` admissibility | **NOT VERIFIED; not claimed** | contracts M2 §4.6 and §12, v2 §7 |
+
+### 12.4 CI
+
+- **Run.** "Math lab" run 46124571720 on `733b087` passed: 81 laboratory tests (before the bounded revisions) and 13 diagnostic tests on each of CPython 3.9.25 and 3.12.16, with the exact evidence matching. The production "CI" run 46124571667 on the same head also passed.
+- **Failure detection, tested locally** on a copy outside the repository with the same step scripts: an injected failing test, a count mismatch and an altered digest each exit 1. No red artefact was committed.
+- **The final head** after this section is verified in the PR description.
+
+### 12.5 Unchanged
+
+- B-2 v7 is **NOT APPROVED**; B (perched) stays the selected direction only.
+- ART-D3c, Q1–Q6, ADR 0018 and ADR 0019, and the Phase 3 exit stay pending. D-8 resolves none of Q1, Q2 or Q4.
+- No merge, Geometry V4, Phase 4, production contract adoption, object modelling or visual approval.
+- Artwork digests re-verified at this branch: v5 `888cf4a5…0942`, v7 `2f1dc0a7…9e77`, B `55406933…4f74f`, holdout `9a21e3b7…38fc`.
+
+### 12.6 Decisions the owner would need before M3 (recommendations, not decisions)
+
+| ID | Question | Why it blocks M3 |
+|---|---|---|
+| D-11 | Are bands joined as separate sheets with seams (the D-8 model), and should the seam conditions S-1…S-6 be frozen as an M3 seam contract with oracles? | Every off-path O1 ring is a seam; M3 cannot be specified without a seam contract |
+| D-12 | Does M3 use parallel rings only (v1.1), or also tilted rings (v2.2, single bands only)? | v2 has no chain result, and CE2 shows that pairwise checks do not make a chain safe |
+| D-13 | Authorize M3 (O1 + O2 composition) as its own milestone, with the same freeze-first discipline? | M3 is locked until a separate permission |
+| D-14 | Optionally, a further method round on errata D10-1…D10-4 | the method stays a proposal either way |
+
+No actual blocker remains inside the authorized scope. The open items are the NOT VERIFIED properties above, which need these decisions or GEO-1.

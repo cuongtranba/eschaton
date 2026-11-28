@@ -163,3 +163,12 @@ Dashed arrows are conditional: M1b feeds M3 only if M3 needs tilted rings.
 | **Multi-host attachments** (one element held by two or more hosts, for example the holdout's strings) | O3 as proposed mates one child port to one host port. Two hosts close a loop in the assembly graph, so the assembly is no longer a tree | O3 single-host contract (M4); Q1/Q2 (how a bond is represented) | Is a second host a constraint (closure residual) or a second bond? Which host owns identity on detach? What tolerance closes the loop? |
 | **Holes in panels** (the holdout's peg holes) | A Foldon panel is one convex polygon. A hole makes the panel non-simply-connected, and O2 splits only simply connected convex panels | Q3 or a panel representation decision; O2 (M2) for the convex pieces around a hole | Is a hole a set of convex panels around a void (a seam ring), a separate boundary loop, or an attached element? |
 | **Advanced seam topology** (seams that meet at a vertex shared by three or more sheets, seams that cross creases, seam networks with cycles) | D-8 studies only one seam between two sheets along matching boundary chains | D-8 results; Q1, Q2, Q4; ADR 0019 | Vertex closure at a three-sheet corner; whether a seam cycle needs a global closure constraint; how seams and creases share a vertex |
+
+### 10.2 Status after D-6 to D-10 (2026-11-28)
+
+- **M2:** done in isolation under D-6. Contract v1.1 frozen after review; tests first; implementation by a separate agent; final review PASS WITH FINDINGS; one bounded test revision.
+- **M1b:** done as a bounded experiment under D-7. Contract v2.2; same discipline; final review PASS WITH FINDINGS.
+- **D-8:** seam research, design only.
+- **CI:** an independent "Math lab" job.
+
+Details and verdicts are in the laboratory [README](geometry-operator-lab/README.md) and in packet §12. **M3, M4 and M5 stay locked.**

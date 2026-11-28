@@ -384,3 +384,11 @@ The contract's corrections **C1–C16** supersede §3.1 and §3.4 above within t
 - the complexity is O(m + n) only for the merge.
 
 O1 stays a **research direction** (D-1), not a production API. Results 1–6 hold exactly on every tested case within that scope. Nothing here is claimed for tilted planes, non-convex sections, O2 or O3.
+
+## 11. Laboratory M2 (O2) and the O1 v2 experiment (2026-11-28)
+
+Under owner decisions D-6 and D-7 (decision packet §0.4), two contracts were frozen and tested, both research only:
+- O2, as [`geometry-operator-lab/m2-o2-contract.md`](geometry-operator-lab/m2-o2-contract.md) v1.1, with corrections K1–K7 to §3.2 above, among them that `closed-network` is unreachable in face-local insertion and that `thin-panel` is an exact altitude test;
+- O1 for tilted section planes, as [`geometry-operator-lab/m1b-o1v2-contract.md`](geometry-operator-lab/m1b-o1v2-contract.md) v2.2.
+
+Of v1.1's results, the following do **not** carry over to tilted planes: the Minkowski slices, the prismoidal volume, the sorted normal merge, the altitude bound, refinement and `on_path`, and chain non-intersection. Results are in the laboratory [README](geometry-operator-lab/README.md). The camber table of §3.2 was re-derived and is correct; its developed sheet width differs from the chord (M2 contract §7). Nothing here is a production API.
