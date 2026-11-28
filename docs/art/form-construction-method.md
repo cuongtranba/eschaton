@@ -109,11 +109,22 @@ A declaration is legitimate only if **all** of the following hold.
 7. **Mass partition (answers E1 and E3).**
    - **Classify every functional landmark.** The brief classifies each functional landmark on a spine, with its layer-S reason, as either:
      - a **station inside a mass**: a change of function within one continuous part;
-     - a **junction between masses**: the subject names two parts with distinct functions there, and the design intends a seam or a stated break with a transitional element (P3).
+     - a **junction between masses**: the subject names two parts with distinct functions there, with a P3 class: C (continuous) or B (a stated break with a transitional element).
 
-     The geometry must agree. A junction is a seam or a stated break in the crease map. A station is not.
-   - **Report the sensitivity.** Every P1 and P7 read-out is reported **twice**: under the declared partition, and with the whole spine as one mass. If the two disagree, the read-out is `partition-sensitive`. It then decides nothing in either direction, and the reviewer judges.
-   - This removes the incentive to declare a junction at every station: a partition chosen to change a read-out cannot change a verdict.
+     **Classify by function, not by construction (D-10 correction of erratum R2).** A landmark's class comes from layer-S function and its P3 junction class (C or B). It never comes from the edge kind that builds it. Design masses and their stations are units of function. Seams and creases are construction:
+     - under the operator erratum (operators §9 item 1), every off-path O1 ring is a **seam between sheets**, so a real profile change at a **station** is also built as a seam;
+     - one sheet may run continuously across a C junction.
+
+     So "a junction is a seam" is withdrawn. Neither the presence nor the absence of a seam or crease reclassifies a landmark, and a classification never changes after the artwork exists (rule 4).
+   - **Targets cover the whole spine.** The brief states a P1 target for **every** pair of consecutive declared stations along the whole spine, **including each pair that straddles a junction**. P1 compares only consecutive pairs, and the set of pairs is the same under every partition. So **P1 cannot be changed by the partition.**
+   - **Report the sensitivity (P7).** A P7 read-out depends on which mass is measured, so it is reported **twice**: under the declared partition, and with the whole spine as one mass. The combined result is:
+     - **does not conform** if **either** reading does not conform;
+     - **conforms** if both conform;
+     - `NOT VERIFIED` otherwise.
+
+     A disagreement is reported as `partition-sensitive`, with both readings.
+   - **What this does and does not close.** No declared partition can turn a non-conformance of the whole-spine reading into conformance. The sentence "a partition chosen to change a read-out cannot change a verdict" is **withdrawn as stated**: a partition can still make a verdict **stricter** (one more mass that fails), and that is intended.
+   - **Legitimate uncertainty.** Where the source does not fix where one part ends (for example, where a neck becomes a breast), the brief may declare the junction as a **range** with its source. P7 is then read at both ends of the range, and any disagreement is `NOT VERIFIED` and goes to the reviewer. This method defines no universal segmentation rule and no beauty metric.
 8. **Functionally equal elements (owner decision D-4a).**
    - **What may be declared.** A set of elements may be declared **functionally equal** when the subject's function makes them equal: the same job at different stations, for example wheels, tuning pegs, frets, or a row of identical windows. The declaration names the elements and the source of the function. P5's rake flags are then expected and are not defects.
    - **What P5 still asks.** P5 still asks for:
@@ -162,11 +173,12 @@ Each principle is a layer-U relationship. Each diagnostic is an **aid**: it find
 
 ### 6.0 What kind of number each value is (M3.1)
 
-Every number in this section is one of three kinds. It is labelled as such wherever it is used.
+Every number in this section is one of four kinds. It is labelled as such wherever it is used.
 
 | Kind | Meaning | Examples |
 |---|---|---|
-| **Data** | measured on committed geometry or keyframes with a stated method and bound; anyone can recompute it ([`form-method-diagnostics/`](form-method-diagnostics/README.md)) | P1 `d`; the measurement floor `ε_m`; P7 `D_v`, `c` and `λ`; P5 coefficients of variation; P6 hole areas |
+| **Data** | measured on committed geometry or keyframes with a stated method and bound, **by a committed script**; anyone can recompute it ([`form-method-diagnostics/`](form-method-diagnostics/README.md)) | P1 `d`, its sampling bound and the floor `φ` (from a stated `ε_m`); the M3 `e_v`, now information only; the cube control; P5 coefficients of variation |
+| **Proposed diagnostic, not computed** (D-10 correction of erratum R3) | defined in the text, but **no committed script computes it** and no positive or negative control exists. Every use is `NOT VERIFIED` until a script and its controls are committed | P7 `D_v`, `c` and `λ`; P6 hole areas |
 | **Unmeasured assumption** | a perception or tolerance value that nobody has measured on viewers. It may guide a reviewer's attention. It decides nothing | P2 width ratio 0.85–1.15; P4 8° line visibility (a bound from a shading model, not a measurement); P4 2° defect allowance; P5 0.08 and R² 0.98; P6 2 px at 400 px and 1.5 px at 96 px. **The M3 "p = 2 px" visibility constant of P1 and P7 is withdrawn** |
 | **Reviewer judgment** | what a person sees on the actual views at the required scales, under the neutral treatment (bible §4.6) | whether a section change, a depth, a series or a line reads; the v5 "banded head" and "block" |
 
@@ -179,21 +191,27 @@ A solid mass's sections change profile where the brief, from the subject's funct
 - **Declared targets.** For each pair of consecutive declared stations, the brief states one target with its layer-S reason, before the artwork (§4.0):
   - **`change`**, saying what changes. For example: "the back rounds into the neck"; "the bonnet flattens into the cowl".
   - **`constant`**, saying why. For example: a turned vessel, a lighthouse, a fuselage of circular section, an extrusion, or a prism justified under D-4a.
-- **Read-out (data):**
-  - `d`, the profile distance: Hausdorff distance between the normalised section boundaries. The normalisation and frame are as in M3: bounding box to [−1, 1]², minimised over the mirror for symmetric masses and over rotation for asymmetric ones.
-  - `ε_m`, the measurement floor: coordinate rounding, or the station tolerance when sections are sliced from a mesh.
-  - `Δ_L = d · s`, in model units, where s is the smaller half-extent.
-  - `Δ_px` at every scale tier at which the brief requires the section form to read.
-- **Conformance.**
+- **Read-out (data, computed by [`diagnostics.py`](form-method-diagnostics/diagnostics.py) `p1_conformance`; D-10 correction of erratum R1, §16):**
+  - `d`, the profile distance: Hausdorff distance between the normalised section boundaries. **Frame:** each section separately, its bounding-box centre to the origin and each axis scaled to [−1, 1]², minimised over the identity and the mirror x → −x for symmetric masses and over a rotation grid for asymmetric ones. So `d` is in **normalised half-extents**, a shape distance with size and aspect removed. It is not a length in model units.
+  - The sampling interval: the true `d` lies in `[d, d + b]`, with `b` from the sampling step (and the rotation grid).
+  - `ε_m`, the measurement uncertainty **in model units**, per coordinate axis: coordinate rounding, or the station tolerance when sections are sliced from a mesh.
+  - `φ`, the **measurement floor in the same units as `d`**: `φ = δ_A + δ_B`, with `δ_X = √((3ε/(h_x − ε))² + (3ε/(h_y − ε))²)` for a section X of half-extents `h_x`, `h_y` (with `ε = ε_m`; `ε_m √2` and the worst rotation for asymmetric masses). Derivation in §16.
+  - `Δ_px` at every scale tier at which the brief requires the section form to read. It is evidence for the reviewer only. **`Δ_L = d · s` is withdrawn as a conversion**: each section has its own two scale factors, so no single model-unit length corresponds to `d`.
+- **Conformance (three outcomes, R1).**
 
-  | Target | `d > ε_m` | `d ≤ ε_m` |
-  |---|---|---|
-  | `change` | **conforms**: the declared change exists | **does not conform**: the declared change is absent. This is F1, the mechanism of B-2 v5 |
-  | `constant` | **does not conform**: the declaration is not true of the geometry | **conforms** |
+  | Target | `d > φ` (a profile change exists above the floor) | `d + b ≤ φ` (no change above the floor) | otherwise |
+  |---|---|---|---|
+  | `change` | **conforms**: *a* profile change exists | **does not conform**: no change is measurable. This is F1, the mechanism of B-2 v5 | `NOT VERIFIED` |
+  | `constant` | **does not conform**: the declaration is not true of the geometry | **conforms** | `NOT VERIFIED` |
+
+  "Conforms" for `change` means only that **some** profile change exists. Whether it is the **declared** change, and whether it reads, is reviewer judgment.
+  - **Degenerate and limit cases.** A section with a zero half-extent (a point or a segment), or with `ε_m ≥` a half-extent, has no defined normalisation: the read-out is `not-applicable`.
+  - **The floor depends on size.** A shape change of `d = 0.0049` (a 0.7 % chamfer) conforms on a section of half-extent 1 L, but does not conform on one of half-extent 0.001 L with the same `ε_m = 1e-6 L`, where `φ = 0.0085`. Comparing `d` with `ε_m` directly would have passed both.
+  - **Sampling limit.** With the default sampling step, `b = 0.001`. A `constant` target can then conform only if `φ > b`, so exactly rounded keyframes (`ε_m = 0.5e-6 L`, `φ ≈ 4e-6`) give `NOT VERIFIED` for `constant`, never `conforms`. A finer step narrows `b`; no step is chosen here.
 
   No pixel threshold enters the verdict. Whether a change that exists is **visible** at a tier is reviewer judgment on the actual views at that tier. `Δ_px` is the evidence offered for it.
 - **Not applicable:** sheets, sparse forms, a mass with fewer than two declared stations, and equality **across** elements, which is P5's subject (§4.0 rule 8).
-- **Not verified:** a station pair with no declared target, which includes every brief written before M3.1; and a read-out that is `partition-sensitive` (§4.0 rule 7).
+- **Not verified:** a station pair with no declared target, which includes every brief written before M3.1; and a pair whose sampling interval straddles the floor (the third outcome above). P1 is not partition-sensitive once every consecutive pair has a target (§4.0 rule 7).
 - **Why the M3 rules were wrong** (numbers: [check](form-method-check.md) §9):
   - *Turned and extruded objects* (E3). A turned vessel has one circular profile at every function change, so `d = 0` (computed: 0.000). M3 failed it as a "scaled profile family". It is a correct `constant` program.
   - *Shallow masses.* `Δ_px = d · s_px`, and `s_px` is proportional to the mass's smaller half-extent. A pixel threshold therefore fails a **shallow** subject for being shallow: the holdout biwa's sourced shoulder change gives `d` = 0.139 but only `Δ` = 1.33 px at the hero lower bound. That reflects the subject's proportions, not a defect.
@@ -276,8 +294,17 @@ The positive envelope carries the silhouette landmarks. Every negative space is 
 The depth that the brief declares for a mass, from the subject's references, is present in the geometry. P7 compares **proportions in model units** with **declared targets**. It does not measure visibility in pixels, and it does not judge whether a view reads as volume: that is reviewer judgment on the actual views, under the neutral treatment, at every required view and scale.
 
 - **Declared targets.** Per mass, and before the artwork (§4.0), the brief states a target value, a tolerance and the layer-S or layer-P source. Without a declared target, P7 is `NOT VERIFIED` for that mass. That is not a fail.
-- **Read-outs by kind (data):**
-  - **Solid: depth ratio** `D_v`, in each principal view v = extent of the mass along v ÷ the smaller of its two in-view extents. It is measured on the mass's own geometry in model units, so it does not depend on other parts or on the drawing size. It conforms if it lies within the declared tolerance.
+- **Measures by kind (proposed diagnostics, not computed; D-10 correction of erratum R3).** No committed script computes `D_v`, `c` or `λ`, and none has a positive or negative control. So every P7 conformance is `NOT VERIFIED` until one exists (§6.0). The definitions stay as proposals:
+  - **Solid: depth ratio** `D_v`, in each principal view v = extent of the mass along v ÷ the smaller of its two in-view extents. It conforms if it lies within the declared tolerance.
+    - **Frame (R4).** It is measured on the mass's own geometry, in model units, in the mass's **declared rest frame**: the spine-aligned axes named in the brief, before the artwork. It is never measured in a posed or rendered view. It does not depend on other parts or on the drawing size.
+    - **Tolerance (R4).** The declared tolerance comes from the **spread of the cited source** (for example several references of the subject), not from the author's preference.
+    - **Limits (R4).** `D_v` is a ratio of bounding-box extents:
+      - *frame and rotation:* the extents change with the frame. A square section turned by 45° in the frame has extents √2 larger, so `D_v` is not rotation-invariant and is meaningful only in the declared frame;
+      - *shape inside the box:* a box, an ellipsoid and a double cone with the same extents have the same `D_v`;
+      - *unrelated extents:* a thin fin, keel or crest of the mass itself raises the depth extent with almost no volume;
+      - *hollow and nested volumes:* a shell, a cup or a ring has the same extents as the solid it bounds;
+      - *visibility not implied:* a `D_v` within tolerance says nothing about whether the depth **reads** in a view. That stays reviewer judgment.
+    - **Permitted use.** Only as an informative comparison against a declared, sourced target for the same mass in the same rest frame. Never across masses of different kinds, never as a pass or fail of the form, and never as a substitute for the views.
   - **Sheet: camber** `c` = the largest distance from the chord plane ÷ the chord, per declared section, against the target. A cambered arm needs `c > 0`; a door may have `c = 0`.
   - **Sparse: envelope ratio** `λ3 / λ1`. The axes are the eigenvectors of the covariance of the members' end points. The `λ_i` are the **extents** (maximum minus minimum) of the end points projected on those axes, not eigenvalues; this resolves the M3 ambiguity. It conforms within the declared tolerance.
 - **Single-section distance `e_v`: demoted to an informative read-out.**
@@ -295,7 +322,7 @@ The depth that the brief declares for a mass, from the subject's references, is 
 - **B-2 v5 front body.** The "two-tone block" and "shallow depth" are the owner's and the reviewer's visual results (packet §0.1, §7.2). M3.1 offers no read-out that claims to reproduce them, and none is required (D-2).
 - **Not applicable:** secondary elements (P5, P8). An end view along a spine whose program is declared `constant` is a section by construction, and that is a truthful view.
 - **Limits.**
-  - No full B-2 mesh is committed, so no `D_v` for v5–v7 is computed.
+  - No full B-2 mesh is committed, and no script computes `D_v`, `c` or `λ`; so no P7 value exists for any version.
   - No brief so far has declared a P7 target. Every P7 conformance to date is therefore `NOT VERIFIED`.
 
 ### P8. Every secondary element has an attachment frame
@@ -413,7 +440,7 @@ Only if the owner later authorizes Geometry V4 or an equivalent. Nothing here is
 
 | Diagnostic | Public seam (future) | Promise | Negative control |
 |---|---|---|---|
-| P1 profile distance (M3.1) | an object-evaluation entry point that receives a built object and its brief | a station pair whose declared target is `change` and whose `d ≤ ε_m` is reported; a `constant` pair whose `d > ε_m` is reported; a pair without a target is `NOT VERIFIED` | `diag(w_i, h_i) · P` through stations declared `change` must be reported (v5 mechanism); a turned vessel declared `constant` must not; a 20 × 12 m shaft declared `constant` under D-4a must not; a `constant` declaration on a body whose profiles differ must be reported |
+| P1 profile distance (M3.1) | an object-evaluation entry point that receives a built object and its brief | a station pair whose declared target is `change` and whose `d + b ≤ φ` is reported; a `constant` pair whose `d > φ` is reported; a pair whose interval straddles `φ`, or without a target, is `NOT VERIFIED` (§16) | `diag(w_i, h_i) · P` through stations declared `change` must be reported (v5 mechanism); a turned vessel declared `constant` must not; a 20 × 12 m shaft declared `constant` under D-4a must not; a `constant` declaration on a body whose profiles differ must be reported |
 | P2 convergence | same | a long limb with parallel edges and no declaration is reported | a rectangle must be reported; a declared door must not |
 | P3 junction step ratio | same | an undeclared step above ratio 1 is reported | a box placed on a slab must be reported; a declared eave overhang must not |
 | P4 undeclared folds and developability | the crease graph and the panel list | an undeclared non-coplanar edge inside a panel is reported; a bent panel with angle defect above the allowance is reported | a pentagon loft with no declared folds must be reported; a cylinder strip (developable) must not |
@@ -489,6 +516,7 @@ The bible is adopted and is not changed here. Where it and this proposal could d
 | M2 | `09591cf` | the B-2 v7 target (brief §12; it inherits M1 citations, packet §9.6) and round-2 studies | the round-2 sheet banners say "as committed in `449406b`", which is false for round 2; superseded by packet §9.6, and the images are unchanged |
 | M3 | `8c2bd53` (frozen) | no artwork; the frozen holdout check (§8) | not adopted; reviewed NEEDS REVISION (§14) |
 | M3.1 | the M3.1 commit on PR #14 (packet §11) | no artwork | not adopted; one bounded revision under D-2, with one independent re-review (packet §11) |
+| M3.1 with the D-10 corrections | the D-10 commit on PR #14 (packet §12) | no artwork | not adopted; only errata R1–R4 corrected under D-10, in place, with one independent review (§16). Not a new method cycle |
 
 **Stale captions stay as reviewed records.** The images are unchanged and the notes in packet §9.6 supersede them:
 - the v7 method board's "mildly doubly curved" sentence;
@@ -545,3 +573,32 @@ The frozen M3 at `8c2bd53` was reviewed by a separate agent, which recomputed it
 | R12 | minor | holdout | The holdout record is unchanged since its review **except** for two labelled, additive notes in `aaedf95`: a "Later note" in its README and erratum C12 in `composition.md`. Both came before D-1…D-5 |
 
 **Status after the round.** M3.1 stays a **proposal**, not adopted. P1 and P7 are conditional, informative read-outs whose definitions carry errata R1–R5. The B-2 v5 rejection stands as the human and independent visual result. Any further method work needs a new owner decision.
+
+## 16. D-10 corrections of errata R1–R4 (2026-11-28)
+
+**Authority.** Owner decision D-10 (decision packet §0.4) authorizes one bounded correction of R1–R4, with no artwork research cycle, no new principle and no new gate. The corrections are made **in place** in §4.0 rule 7, §6.0, P1 and P7, each labelled "D-10 correction". This list maps them. R5–R12 stay recorded errata and are not changed. Owner clarifications D-4a and D-4b are untouched. No artwork file changed, and no earlier verdict is changed (§4.0 rule 4).
+
+| Erratum | Where corrected | What changed |
+|---|---|---|
+| R1 (units) | P1; `diagnostics.py` `measurement_floor`, `classify_p1`, `p1_conformance`; four controls and one regression test in `test_diagnostics.py` | The floor is converted into normalised half-extents (below). There are three outcomes, with the sampling bound. "Conforms" means only that *a* change exists. Degenerate sections are `not-applicable`. `Δ_L = d · s` is withdrawn as a conversion |
+| R2 (partition) | §4.0 rule 7 | Landmarks are classified by function and P3 class, never by edge kind; "a junction is a seam" is withdrawn. Targets cover every consecutive pair, including across junctions, so P1 does not depend on the partition. P7: either reading failing is a non-conformance. The withdrawn sentence is replaced by the exact statement. A sourced junction range is allowed |
+| R3 (data claims) | §6.0, P7 | A fourth kind, "proposed diagnostic, not computed": `D_v`, `c`, `λ` and the P6 hole areas. Only `d`, `φ`, `e_v`, the cube control and the coefficients of variation are computed by scripts |
+| R4 (`D_v`) | P7 | Declared rest frame; a tolerance from the source's spread; the stated limits (frame and rotation, shape inside the box, fins and keels, hollow or nested volumes, visibility); and a narrow permitted use |
+
+**Derivation of the floor (R1).** Write a coordinate as `x' = (x − c)/h` with `u = x − c`, `|u| ≤ h`, where c is the box centre and h the half-extent on that axis. A per-axis error of at most ε changes x by at most ε, c by at most ε and h by at most ε. So `u` changes by `Δu` with `|Δu| ≤ 2ε`, and h by `δh` with `|δh| ≤ ε`. Then
+
+`|x'_new − x'| = |Δu/(h + δh) − u·δh/(h(h + δh))| ≤ 2ε/(h − ε) + ε/(h − ε) = 3ε/(h − ε)`, for ε < h.
+
+Each normalised boundary point therefore moves by at most `δ_X = √((3ε/(h_x − ε))² + (3ε/(h_y − ε))²)`. The Hausdorff distance between two sets moves by at most the sum of the two sets' displacements, so `d` is uncertain by at most `φ = δ_A + δ_B`. For a minimum over candidate frames, the minimum moves by at most the largest candidate's floor. A rotation turns a per-axis error ε into at most `ε√2` per axis. These two facts give the asymmetric case.
+
+**Computed values** (Python 3.9.6, `p1_conformance`):
+
+| Case | `d` | `b` | `φ` | Outcome |
+|---|---|---|---|---|
+| square → diamond, `change`, `ε_m = 1e-6` | 0.70711 | 0.001 | 8.5e-6 | conforms |
+| square, re-sliced by ≤ 5e-4, `constant`, `ε_m = 1e-3` | 0.00040 | 0.001 | 0.0085 | conforms (and `change` does not conform) |
+| 0.7 % chamfer at half-extent 1 L, `change`, `ε_m = 1e-6` | 0.00495 | 0.001 | 8.5e-6 | conforms |
+| the same chamfer at half-extent 0.001 L | 0.00495 | 0.001 | 0.0085 | does not conform; the uncorrected rule (`d > ε_m`) would have said conforms |
+| identical squares, `constant`, `ε_m = 0.5e-6` | 0 | 0.001 | 4.2e-6 | `NOT VERIFIED` (the sampling limit in P1) |
+
+**Superseded records.** The check rows that compare `d` with `ε_m` ([check](form-method-check.md) §5 and §9, and the M3 verdicts that used them) are historical records of earlier versions. They are kept unchanged, and the units rule above supersedes them for any later use.

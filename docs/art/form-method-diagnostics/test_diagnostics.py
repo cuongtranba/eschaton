@@ -54,5 +54,32 @@ class SingleSectionDistance(unittest.TestCase):
         self.assertFalse(dg.single_section_distance([dart])["applicable"])
 
 
+def chamfered_square(c, size=1.0):
+    return [(size * x, size * y) for x, y in [(1 - c, 1), (-1, 1), (-1, -1), (1, -1), (1, 1 - c)]]
+
+
+class P1Conformance(unittest.TestCase):
+    def test_a_declared_change_far_above_the_floor_conforms_and_a_constant_target_does_not(self):
+        self.assertEqual(dg.p1_conformance(SQUARE, DIAMOND, "change", 1e-6)["outcome"], "conforms")
+        self.assertEqual(dg.p1_conformance(SQUARE, DIAMOND, "constant", 1e-6)["outcome"], "does-not-conform")
+
+    def test_a_section_resliced_within_a_coarse_tolerance_conforms_to_constant_and_not_to_change(self):
+        moved = [(x + 4e-4, y - 3e-4) for x, y in SQUARE[:2]] + SQUARE[2:]
+        self.assertEqual(dg.p1_conformance(SQUARE, moved, "constant", 1e-3)["outcome"], "conforms")
+        self.assertEqual(dg.p1_conformance(SQUARE, moved, "change", 1e-3)["outcome"], "does-not-conform")
+
+    def test_R1_regression_the_floor_is_in_half_extents_so_one_shape_change_is_lost_on_a_small_section(self):
+        big = dg.p1_conformance(SQUARE, chamfered_square(0.007), "change", 1e-6)
+        small = dg.p1_conformance([(1e-3 * x, 1e-3 * y) for x, y in SQUARE], chamfered_square(0.007, 1e-3), "change", 1e-6)
+        self.assertEqual((big["outcome"], small["outcome"]), ("conforms", "does-not-conform"))
+
+    def test_a_distance_whose_sampling_interval_straddles_the_floor_is_not_verified(self):
+        self.assertEqual(dg.classify_p1(0.010, 0.001, 0.0105, "change"), "NOT VERIFIED")
+        self.assertEqual(dg.classify_p1(0.010, 0.001, 0.0105, "constant"), "NOT VERIFIED")
+
+    def test_a_degenerate_section_is_not_applicable(self):
+        self.assertEqual(dg.p1_conformance(SQUARE, [(0, 0), (1, 0)], "change", 1e-6)["outcome"], "not-applicable")
+
+
 if __name__ == "__main__":
     unittest.main()

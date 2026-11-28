@@ -4,7 +4,8 @@ DESIGN AND RESEARCH ARTEFACT ONLY (owner decision D-5, decision packet section 0
 Python 3 standard library only, imported by nothing in packages/, apps/ or experiments/. It computes
 informative read-outs for the proposed form method; it is not a gate and judges no beauty.
 
-Units: model units of the object (L for the raven). Every distance is returned together with a
+Units: model units of the object (L for the raven), except the P1 profile distance and its measurement
+floor, which are both in normalised half-extents (method section 16). Every distance is returned with a
 numerical bound or a convergence figure, because boundaries are sampled.
 """
 import math
@@ -271,3 +272,74 @@ def linear_slices(stations, per_interval):
     w, h, z, r = stations[-1]
     out.append(section_polygon(w, h, z, r))
     return out
+
+
+def _half_extents(poly):
+    xs = [x for x, _ in poly]
+    ys = [y for _, y in poly]
+    return (max(xs) - min(xs)) / 2.0, (max(ys) - min(ys)) / 2.0
+
+
+def _normalised_displacement(poly, eps):
+    """Largest displacement, in the normalised frame of `normalise`, of any boundary point when every
+    coordinate of `poly` is uncertain by at most eps per axis (model units). Per axis the bound is
+    3 eps / (h - eps): eps from the point, eps from the box centre, eps from the half-extent h (method
+    section 16). None when eps >= h on an axis, where the normalisation itself is not determined."""
+    hx, hy = _half_extents(poly)
+    if eps >= hx or eps >= hy:
+        return None
+    return math.hypot(3.0 * eps / (hx - eps), 3.0 * eps / (hy - eps))
+
+
+def measurement_floor(a, b, eps, symmetric=True, rotation_steps=720):
+    """P1 measurement floor in the same normalised half-extent units as the profile distance d.
+
+    The Hausdorff distance between two normalised boundaries moves by at most the sum of the two
+    sections' normalised displacements. For asymmetric masses the floor is the maximum over the
+    rotation grid (a rotated per-axis error eps is at most eps * sqrt(2) per axis). Returns None for a
+    degenerate section (a zero half-extent) or when eps reaches a half-extent."""
+    if min(_half_extents(a)) <= 0.0 or min(_half_extents(b)) <= 0.0:
+        return None
+    if symmetric:
+        da, db = _normalised_displacement(a, eps), _normalised_displacement(b, eps)
+        return None if da is None or db is None else da + db
+    worst = 0.0
+    e = eps * math.sqrt(2.0)
+    da = _normalised_displacement(a, e)
+    if da is None:
+        return None
+    for k in range(rotation_steps):
+        t = 2.0 * math.pi * k / rotation_steps
+        c, s = math.cos(t), math.sin(t)
+        db = _normalised_displacement([(c * x - s * y, s * x + c * y) for x, y in b], e)
+        if db is None:
+            return None
+        worst = max(worst, da + db)
+    return worst
+
+
+def classify_p1(d, bound, floor, target):
+    """Three-outcome P1 conformance (method section 16, erratum R1). The true distance lies in
+    [d, d + bound]; floor is in the same units. 'conforms' for a change target means only that some
+    profile change exists above the floor; whether it is the declared change, and whether it reads,
+    is reviewer judgment."""
+    if target not in ("change", "constant"):
+        raise ValueError("target must be 'change' or 'constant'")
+    if floor is None:
+        return "not-applicable"
+    exists = d > floor
+    absent = d + bound <= floor
+    if not exists and not absent:
+        return "NOT VERIFIED"
+    if target == "change":
+        return "conforms" if exists else "does-not-conform"
+    return "conforms" if absent else "does-not-conform"
+
+
+def p1_conformance(a, b, target, eps, symmetric=True, step=0.002, rotation_steps=720):
+    """Profile distance, its sampling bound, the measurement floor and the three-outcome verdict."""
+    floor = measurement_floor(a, b, eps, symmetric, rotation_steps)
+    if floor is None:
+        return {"outcome": "not-applicable", "d": None, "bound": None, "floor": None}
+    d, bound = profile_distance(a, b, symmetric, step, rotation_steps)
+    return {"outcome": classify_p1(d, bound, floor, target), "d": d, "bound": bound, "floor": floor}
