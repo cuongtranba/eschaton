@@ -132,3 +132,34 @@ No absolute millisecond budget is set before a measurement exists.
   - planarity and slices are checked exactly (C15);
   - two-engine determinism is claimed only for what was compared (C16).
 - **Not started.** M2–M5, O2 and O3 need a new owner decision.
+
+## 10. Roadmap after D-6 to D-10 (2026-11-28)
+
+- **Authorization.** Owner decisions D-6 to D-10 and the laboratory CI job (decision packet §0.4) permit research execution only. Results and their evidence are in the laboratory [README](geometry-operator-lab/README.md) and in packet §12. The §2 milestone table above stays as proposed; this section records what changed in the order.
+- **M1b, tilted sections (proposed label).** An O1 v2 contract for two convex sections on distinct, non-parallel planes, under D-7. It has its own freeze, review and version, and it never edits contract v1.1 or its evidence. It is a research track beside M1, not a prerequisite of M2.
+- **M2 does not depend on M1b.** O2 acts on one planar sheet in its rest plane. Its inputs are planar convex panels, so it needs no O1 result of any version. M2 proceeds after its own contract freeze (D-6).
+- **M3 stays locked.** M3 (O1 + O2 composition) needs a separate owner permission and seam evidence: every off-path O1 ring is a seam between sheets (operators §9 item 1), so M3 cannot be specified before the seam research of D-8 says how sheets meet. If M3 uses tilted rings, it also needs a frozen and tested M1b.
+- **M4 and M5 stay locked.** Under D-9, multi-host attachments, holes in panels and advanced seam topology belong to M4 and are not worked around anywhere earlier.
+
+```mermaid
+flowchart LR
+  M0["M0 O1 v1.1 frozen"] --> M1["M1 O1 parallel planes, done"]
+  M1 -.-> M1b["M1b O1 v2 tilted sections, proposed label"]
+  M2f["M2 freeze: O2 contract"] --> M2["M2 O2 crease insertion, planar panels"]
+  M1 --> M3["M3 O1 + O2 composition, LOCKED"]
+  M2 --> M3
+  SEAM["D-8 seam research, design only"] --> M3
+  M1b -.-> M3
+  M3 --> M5["M5 composed module, LOCKED"]
+  M4["M4 O3 attach, multi-host, holes, seam topology, LOCKED"] --> M5
+```
+
+Dashed arrows are conditional: M1b feeds M3 only if M3 needs tilted rings.
+
+### 10.1 Deferred to M4 under D-9 (not worked around)
+
+| Topic | Why it is deferred | Dependency | Open questions |
+|---|---|---|---|
+| **Multi-host attachments** (one element held by two or more hosts, for example the holdout's strings) | O3 as proposed mates one child port to one host port. Two hosts close a loop in the assembly graph, so the assembly is no longer a tree | O3 single-host contract (M4); Q1/Q2 (how a bond is represented) | Is a second host a constraint (closure residual) or a second bond? Which host owns identity on detach? What tolerance closes the loop? |
+| **Holes in panels** (the holdout's peg holes) | A Foldon panel is one convex polygon. A hole makes the panel non-simply-connected, and O2 splits only simply connected convex panels | Q3 or a panel representation decision; O2 (M2) for the convex pieces around a hole | Is a hole a set of convex panels around a void (a seam ring), a separate boundary loop, or an attached element? |
+| **Advanced seam topology** (seams that meet at a vertex shared by three or more sheets, seams that cross creases, seam networks with cycles) | D-8 studies only one seam between two sheets along matching boundary chains | D-8 results; Q1, Q2, Q4; ADR 0019 | Vertex closure at a three-sheet corner; whether a seam cycle needs a global closure constraint; how seams and creases share a vertex |

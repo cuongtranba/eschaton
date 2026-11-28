@@ -73,6 +73,32 @@ The earlier rejection and pending statuses stand as recorded: v3 not approved as
 
 The work done under these decisions is in §11.
 
+### 0.4 Decisions D-6 to D-10 and the laboratory CI job (2026-11-28)
+
+**Source.** The owner's explicit message, relayed to the agent in the Kanna handoff "Laboratory M2, O1 tilted-section research, modular seams, M3.1 corrections and independent CI" dated 2026-11-28. It was issued against `main` @ `5886475d04db76f58105080f63d01426d2d72311`, with draft PR #14 at `df998d7415f4a52e29ecf251e9a2b2b189e65f8b` (CI run 46058589368 green) and draft PR #11 at `616b0cfd316522d038e804cab9eaf04bc715bb59`. The first session that received it stopped on a provider error ("credit balance is too low") before changing any file or ref; this work was resumed in a new session, with the same instruction, from the same refs. **Recorded by the agent.** It is an owner instruction relayed to the agent. It is not a GitHub review or approval, and the identity is not cryptographically verified.
+
+**Where these decisions live.** As for §0.3: on the draft branch of PR #14 only, not in force on `main` until a merge is separately authorized (GOV-1).
+
+**What kind of permission this is.** Every row below permits **research execution**: writing contracts, oracles, standalone scripts under `docs/` and their evidence. None of them promotes anything. No row approves a merge, a production API, a Foldon or runtime contract, Geometry V4, Phase 4, an object model, a visual result, a gate, or an answer to Q1–Q6.
+
+| ID | Decision | Exactly what it covers | What it does not cover |
+|---|---|---|---|
+| **D-6** | **Authorize laboratory milestone M2: O2 crease insertion**, in an isolated mathematical laboratory | A frozen O2 contract and oracles, independently reviewed **before** any executable script; then tests first, an implementation and evidence as standalone Python under `docs/research/geometry-operator-lab/`, with one bounded revision. M2 works on **planar panel inputs** after its own freeze; it does not wait for, or depend on, O1 v2 | O3; M3 (O1 + O2 composition), M4, M5; closed crease networks; collision-free or global folding claims; any package, app, experiment or runtime change |
+| **D-7** | **Research O1 v2 for tilted (non-parallel) section planes**; freeze its contract before any experiment | A separately versioned O1 v2 contract (domain, fixtures, error precedence, oracles), frozen after an independent mathematical review; then, only if it passes that freeze gate, one bounded isolated test-first experiment. O1 v1.1 and its evidence stay unchanged and keep passing | A production extension; a general mesh engine; chains of tilted bands beyond what the frozen v2 contract states; non-convex sections or matched partitions |
+| **D-8** | **Prioritize modular seams between separate sheets** as the research direction for joining sheets; **do not implement closed crease networks** | Design and mathematics only: sheet identity, cut-open boundaries, matching edges and windings, closure residuals, worked examples and counterexamples | An attachment or seam engine; closed crease networks; any **production** answer to Q1, Q2 or Q4. D-8 is a research preference, not a resolution of those questions or of ADR 0019 |
+| **D-9** | **Defer** multi-host attachments, holes in panels and advanced seam topology **to M4** | They are listed as explicit dependencies and open questions, not worked around | Any implementation or partial workaround now |
+| **D-10** | **Correct the four remaining M3.1 issues R1–R4** (method §15); **no artwork research cycle** | One bounded correction of P1 (units and the three-outcome rule), §4.0 rule 7 (partition), §6.0 (what is computed) and P7 `D_v` (limits and permitted use), with one independent review | A new method version cycle, a new principle or gate, any artwork, any change to the earlier verdicts; the minors R5–R12 stay recorded errata |
+| **Lab CI** | **Add an independent CI check for the mathematical laboratory** on draft PR #14 | One narrowly scoped job that runs the committed laboratory and diagnostic `unittest` suites with a pinned Python and fails when they fail | Any change to the existing production CI jobs, repository settings, branch protection, credentials or deployments; making the job a required check |
+
+**Unchanged by these decisions:**
+- Phase 3 stays open. B-2 v7 stays **NOT APPROVED**; B (perched) stays the selected direction only (ART-D3a).
+- ART-D3c, Q1–Q6, ADR 0018 and ADR 0019 are not accepted or decided by these choices.
+- No PR is merged; PR #14 and PR #11 stay drafts, and PR #11 is untouched. No Geometry V4, Phase 4, production contract adoption, object modelling, visual approval or Kanna Home work. No server is started.
+- M3, M4 and M5 stay locked until a separate owner permission and, for M3, seam evidence (D-8).
+- Every frozen contract, fixture, evidence file and artwork digest on this branch stays as it is.
+
+The work done under these decisions is in §12.
+
 The original request follows.
 
 - Original status (before §0): **DECISION REQUEST. Nothing here is decided, approved or adopted.** This packet asks the owner for three separate decisions:
