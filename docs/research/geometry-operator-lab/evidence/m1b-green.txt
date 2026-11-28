@@ -1,0 +1,13 @@
+O1 v2 green runs (implementation by a separate agent that wrote no contract, test or oracle), contract v2.2 @ 16d0a0f, tests @ 4ebd2c8
+python: 3.9.6 Darwin arm64
+First implementation run: 19 tests, 1 failure (test_t3...: the fixture's T3 volume_q3 was [15000000000000000000, 4], not in lowest terms as the canonical form requires (v1.1 section 4.1, inherited by v2 section 5.3); the value 15/4 L^3 is equal and the same test's oracle volume check passed). Fixture representation corrected to [3750000000000000000, 1]; value, test, oracle and band unchanged. Disclosed (same class as the M1 first green run).
+command: python3 -m unittest docs/research/geometry-operator-lab/test_o1v2.py
+run 1:
+Ran 19 tests in 4.903s
+OK
+run 2:
+Ran 19 tests in 4.934s
+OK
+v1.1 baseline (S9): python3 -m unittest docs/research/geometry-operator-lab/test_o1.py
+Ran 28 tests in 15.827s
+OK
