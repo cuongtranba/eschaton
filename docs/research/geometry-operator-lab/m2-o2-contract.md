@@ -1,6 +1,6 @@
-# M2: contract for O2 crease insertion (contract v1, draft for review)
+# M2: contract for O2 crease insertion (contract v1.1, frozen)
 
-- Status: **M2 contract v1, written before any executable M2 script.** Authorized by owner decision D-6 (research execution only, in isolation; [decision packet](../../review/art-1-raven-decision-packet.md) §0.4). It is research, not a production API (D-1), and it changes no package, app, experiment, Foldon contract, gate or open question.
+- Status: **M2 contract v1.1 (frozen), before any committed M2 script.** v1 (`fc646c7`) was reviewed by an independent mathematician: GO WITH AMENDMENTS (§14). v1.1 applies the amendments. Authorized by owner decision D-6 (research execution only, in isolation; [decision packet](../../review/art-1-raven-decision-packet.md) §0.4). It is research, not a production API (D-1), and it changes no package, app, experiment, Foldon contract, gate or open question.
 - Source it narrows: [`geometry-operators.md`](../geometry-operators.md) §3.2 (O2) as frozen at `8c2bd53`, with its errata (§9 there), and [`geometry-operator-lab.md`](../geometry-operator-lab.md) §2 row M2, §3 and §7. Those texts are not edited. Where this contract differs from them, §11 lists the difference and its reason.
 - Independent of O1. M2 takes planar convex panels as input and uses no result of O1 v1.1 or of the proposed O1 v2 (lab §10).
 - Rule of this file: **nothing below may change after the first implementation commit** except by a new contract version, appended in §13, which says what changed and which evidence it invalidates. Expected values in §8 are hand-derived closed forms. They are never tuned to an implementation result.
@@ -16,7 +16,7 @@
 
 | Case | M2 behaviour | Reason |
 |---|---|---|
-| A line that would end inside an existing crease (a T-junction) or cross one | rejected `splits-crease` | it closes a cycle of faces (§3.4); closed crease networks are Q4 and excluded by D-8 |
+| A line that would end inside an existing crease (a T-junction) or cross one | rejected `splits-crease` | it closes a cycle of faces (§3.3): the two new pieces X⁺ and X⁻ would both border the neighbour Y across the old crease, giving the 3-cycle X⁺–Y–X⁻. Insertion is face-local, so a true crossing cannot even be expressed: it appears as a T-junction seen from the other face. Closed crease networks are Q4 and excluded by D-8 |
 | Splitting a face that was already split | rejected `not-a-leaf` | only current faces (the leaves of the lineage tree) exist as panels |
 | Curved creases, holes, non-convex outlines, several outlines | not representable or rejected | operators §3.2 "Deferred"; holes are D-9 (M4) |
 | Collision-free folding, a folding motion, contact at large angles, thickness, global self-intersection of the posed sheet | **not claimed**, NOT VERIFIED | §4.6 |
@@ -35,7 +35,7 @@
   - at most 64 creases per sheet (the 65th insertion is `out-of-bounds`);
   - optional `min_altitude` as in O1 v1.1 §2: an integer, 1 ≤ t ≤ 4·10⁹ q (non-integer, `bool` or < 1 is `malformed-input`, > 4·10⁹ is `out-of-bounds`);
   - fold angles: |θ| < 180° (`angle-out-of-range` otherwise; §4.1 explains why ±180° is excluded).
-- **Arithmetic bound (result E3).** Every face vertex is an outline vertex or the intersection of one input line with one outline edge line. Its coordinates are rationals whose denominator divides `cross(q − p, e)` for an outline edge vector e, so |den| ≤ 2·(2·10⁹)² = 8·10¹⁸ and |num| ≤ about 2⁸⁰. **Denominators do not grow with the number of insertions.** These bounds keep run time bounded; they are not a production budget.
+- **Arithmetic bound (follows from E3).** Every face vertex is an outline vertex or the intersection of one input line with one outline edge line. Its coordinates are rationals whose denominator divides `cross(q − p, e)` for an outline edge vector e, so |den| ≤ 2·(2·10⁹)² = 8·10¹⁸ and |num| ≤ 10⁹ · 8·10¹⁸ = 8·10²⁷ < 2⁹³ (v1.1; v1 said 2⁸⁰, which the review exceeded at 2^91.7). **Denominators do not grow with the number of insertions.** These bounds keep run time bounded; they are not a production budget.
 
 ## 3. Definitions and exact results (flat state)
 
@@ -89,7 +89,8 @@ If c₁ and c₂ cross or touch inside X, **both** orders are rejected `splits-c
 - **Rest state.** Every crease at θ = 0: the flat sheet in z = 0.
 - **Fold angle** θ of a crease is the repository's convention (`AGENTS.md`, "Fold-angle convention"): for parent front normal `nP`, child front normal `nC`, and `a = normalize(nP × uP)`, where `uP` is the in-plane unit vector perpendicular to the hinge pointing into the parent, `θ = atan2(dot(nP × nC, a), dot(nP, nC))`. **θ > 0 is valley** (fronts turn toward each other), **θ < 0 is mountain**.
 - **Assignment check.** A valley crease accepts θ ≥ 0, a mountain crease θ ≤ 0. θ = 0 is allowed for both. A violation is `assignment-mismatch`.
-- **Why |θ| = 180° is excluded.** At ±180° the two faces lie on each other, `atan2` returns +180° for both signs, so the sign cannot be recovered from the geometry and the roundtrip of §4.4 fails. Folding flat (a hem) is contact, which is GEO-1.11's subject. Angles strictly inside (−180°, 180°) are accepted, including values within 10⁻³° of the limits.
+- **Why |θ| = 180° is excluded.** At ±180° the two faces lie on each other, and the measured angle is +180° or −180° according to the sign of a rounding residue, so the sign cannot be recovered from the geometry.
+- **Near the limits (v1.1).** The input θ is checked against the assignment exactly (its sign). The **measured** angle is compared with θ by the wrapped difference `((m − θ + 180) mod 360) − 180`, because near ±180° its sign comes from rounding (the review saw 80 of 200 wrap at `nextafter(180, 0)`). The measured sign is never used for the assignment check. Folding flat (a hem) is contact, which is GEO-1.11's subject. Angles strictly inside (−180°, 180°) are accepted, including values within 10⁻³° of the limits.
 
 ### 4.2 Rigid motion about the crease
 
@@ -101,6 +102,8 @@ For a crease with endpoints P and Q, let the **parent** be its face on the side 
 - With `nP = ẑ`, `uP = −x̂` and `a = ẑ × (−x̂) = −ŷ`: `nP × nC = −ŷ sin θ`, so `dot(nP × nC, a) = sin θ` and `dot(nP, nC) = cos θ`. The convention gives `atan2(sin θ, cos θ) = θ` for |θ| < 180°.
 
 So `R(P, u, θ)`, with the parent on the right of u, realizes exactly the convention's θ, and θ > 0 is valley.
+
+**Axis in floats (v1.1).** The base point is P = the first endpoint of the crease record (endpoints sorted by exact value), and the direction is `u = normalize(float(Fraction(Q − P) / 10⁶))`, from the **exact** difference. Taking u from `float(Q) − float(P)` can differ by more than τ for a short crease far from the origin (the review measured 6.2e-9 L for a 4.4 q crease at 998 L). The implementation and the oracle PO both use this rule.
 
 **Composition.** With a root face r, each current face f has the unique crease path r = f₀, f₁, …, f_m = f in the tree (E4), and `T_f = T_{f_{m−1}} ∘ R(e_m)`, with `T_r` the identity. All axes are taken in rest coordinates.
 
@@ -119,7 +122,7 @@ So `R(P, u, θ)`, with the parent on the right of u, realizes exactly the conven
 - **Approximate:** the posed coordinates. They are float64, in L, from `math.cos` and `math.sin` of `math.radians(θ)`. At ±90°, `cos` is about 6.1e-17, not 0. Checks use bands:
   - `S = max(1, diameter of the outline in L)`, `τ = 1e-9 · S`;
   - distances and coincidences: within τ;
-  - the measured fold angle (the convention of §4.1, from the posed parent and child normals) equals θ within **1e-7°** for every face with altitude ≥ 1e-3 L. Thinner faces are reported, not judged.
+  - the measured fold angle (the convention of §4.1, from the posed parent and child normals) equals θ within **1e-7°**, by the wrapped difference of §4.1, for every crease whose **two** faces both have altitude ≥ `1e-3 · max(1, M)` L, where M is the largest |coordinate| of the outline in L (v1.1: the angle error grows with the distance from the origin). Other creases are reported, not judged.
 - **Determinism.** The canonical JSON and its digest contain no float. Float outputs are deterministic for one Python build on one platform only. **No cross-engine or cross-platform agreement of the floats is claimed** (P3D-6 is not claimed for them).
 
 ### 4.5 Float conversion
@@ -139,7 +142,7 @@ Module `o2.py` (Python 3 standard library). Every function returns a value; **no
 | Function | Returns |
 |---|---|
 | `make_sheet(outline)` | `{"ok": true, "sheet": …}` or `{"ok": false, "error": {"code", "detail"}}` |
-| `insert_crease(sheet, face_id, p, q, assignment, min_altitude=None)` | a **new** sheet (the input is not modified) or an error |
+| `insert_crease(sheet, face_id, p, q, assignment, min_altitude=None)` | `{"ok": true, "sheet": …}`, a **new** sheet (the input's canonical JSON is unchanged), or an error |
 | `pose(sheet, angles, root)` | `{"ok": true, "pose": {"root": id, "faces": [{"id", "vertices": [[x, y, z], …]}, …]}}` in L, or an error. `angles` maps every crease id to a degree value |
 | `canonical_json(obj)`, `digest(sheet)`, `geometry_digest(sheet)` | strings |
 
@@ -148,15 +151,17 @@ Module `o2.py` (Python 3 standard library). Every function returns a value; **no
 | Field | Content |
 |---|---|
 | `version` | `"o2-contract-v1"` |
-| `outline` | the outline, canonical ring of integer points |
+| `outline` | the outline, canonical ring of **integer** pairs `[x, y]` (not rationals) |
 | `faces` | every face ever created, sorted by id: `{"id", "parent", "children", "crease", "vertices", "area"}`. `parent` is null for `F`; `children` is null for a current face, else `[X.a, X.b]`; `crease` is the id of the crease that split it, or null; `vertices` is the canonical ring; `area` a rational in q² |
 | `creases` | sorted by id: `{"id", "endpoints", "assignment", "faces"}`. `endpoints` sorted lexicographically; `faces` the two **current** faces it separates, sorted |
 
 - **Canonical ring:** counter-clockwise seen from +z, starting at the lexicographically smallest `(x, y)` vertex; rationals compared exactly.
+- **Sort keys (v1.1).** Points sort by exact value, x first, then y (never by their `[num, den]` lists). Rings sort lexicographically by their points in order. Ids sort by Unicode code point. Crease endpoints sort as points. In `geometry_digest`, faces sort as rings, and creases sort by their endpoint pair, then their assignment.
+- **Pose output order (v1.1).** Each posed face lists its vertices in the order of that face's canonical ring in the sheet.
 - **Canonical JSON:** `json.dumps(obj, sort_keys=True, separators=(",", ":"), ensure_ascii=True)`, as in O1 v1.1 §4.2.
 - **`digest`:** SHA-256 of the canonical JSON of the sheet.
 - **`geometry_digest`:** SHA-256 of the canonical JSON of `{"outline", "faces": sorted list of current face rings, "creases": sorted list of [endpoints, assignment]}`, with every id and all lineage removed. It is the equality used by E5 and by the metamorphic checks.
-- **Allowed input permutations:** for `make_sheet`, any cyclic rotation and either orientation of the outline; for `insert_crease`, swapping p and q, or replacing them by any two distinct integer points on the same line. All give a **byte-identical canonical JSON**. For an error they give the same `code`; `detail` is informative only.
+- **Allowed input permutations:** for `make_sheet`, any cyclic rotation and either orientation of the outline; for `insert_crease`, swapping p and q, or replacing them by any two distinct integer points on the same line **within the bounds**. All give a **byte-identical canonical JSON**. For an error they give the same `code`; `detail` is informative only.
 - **Root face** of `pose` is a required argument; the pose output lists the current faces sorted by id.
 
 ## 6. Error codes and precedence
@@ -174,7 +179,7 @@ Module `o2.py` (Python 3 standard library). Every function returns a value; **no
 8. `thin-panel` (if `min_altitude` is given: either piece's altitude, defined as in O1 v1.1 §3.4 and compared exactly with rationals, is below it; piece `.a` first).
 
 **`pose`**, in this order:
-1. `malformed-input` (non-dict angles, a non-string key, a non-number, `bool`, NaN, ±∞);
+1. `malformed-input` (a malformed sheet, a root that is not a string, non-dict angles, a non-string key, a non-number, `bool`, NaN, ±∞). The assignment check is numeric: −0.0 and 0.0 pass for both assignments;
 2. `unknown-face`, then `not-a-leaf` (the root);
 3. `unknown-crease` (a key that is not a crease id), then `missing-angle` (a crease without a value), by crease id order;
 4. `angle-out-of-range` (|θ| ≥ 180), by crease id order;
@@ -206,14 +211,19 @@ Coordinates in L; the fixture file stores them ×10⁶ as integers. "Square" is 
 | G7 | camber: rectangle of height 0.2 L and width Σ wᵢ, with n = k + 1 strips of width `w = round(2R sin(Φ/(2n)) · 10⁶)` q, creases between strips, all valley at Φ/n, root the first strip; k = 1, 2, 3, 5 | the posed cross-section polyline (the vertices at y = 0, in order): chord length 1 L within 1e-5 L; every vertex at distance R = 1.3 L from the circle centre within 1e-5 L (the centre lies on the chord's perpendicular bisector, at R − s = 1.2 L on the concave side); its largest deviation from the arc, `R − min over segments of the distance from the centre to the segment midpoint`, equals 0.025245, 0.011240, 0.006327, 0.002813 L within 1e-5 L. (1e-5 L covers the rounding of each width to a quantum) |
 | G8 | G1 pose at θ = +179.999° (valley) and, with a mountain crease, at −179.999° | measured θ within 1e-7°; every edge length within τ |
 | G9 | G1 pose at θ = 0 | the rest coordinates within τ (P6) |
-| G10 | square split by x = ½ then `F.b` split by the line through (½, 0) and (1, 1), angles +30° and −45° (mountain), roots `F.a` and `F.b.b` | all pairwise distances between all posed vertices equal between the two roots within τ (P4); every crease's two posed copies coincide within τ (P2) |
+| G10 | square split by x = ½ (crease `F`, valley) then `F.b` split by the line through (½, 0) and (1, 1) (crease `F.b`, mountain); angles `F` = +30°, `F.b` = −45°; roots `F.a` and `F.b.b` | all pairwise distances between all posed vertices equal between the two roots within τ (P4); every crease's two posed copies coincide within τ (P2) |
+| G11 (v1.1) | G10 translated by (998, 998) L | as G10, with τ from the same diameter; the angle roundtrip judged under the `max(1, M)` threshold |
+| G12 (v1.1) | a chain of 64 strips of width 15625 q (1/64 L) and height 1 L at x ∈ [998, 999] L, y ∈ [0, 1] L, all valley at 2.8125°; and G1 at θ = `nextafter(180, 0)` | P1 and P2 within τ, and the pose equals oracle PO within τ; the G1 roundtrip judged by the wrapped difference |
+| G13 (v1.1) | G1 valley posed at θ = −0.0, and a mountain G1 at θ = 0.0 | both `ok`, each equal to the rest sheet within τ |
+| G14 (v1.1) | the square split at x = 1000 q | `ok` with `min_altitude` 1000 (the strip's altitude equals it); `thin-panel` with 1001 |
+| G15 (v1.1) | G1, then the canonical JSON of the **input** sheet | unchanged after `insert_crease` |
 
 **Negative controls**, one cause each. Each must return exactly its code.
 
 | ID | Input | Code |
 |---|---|---|
-| X1 | outline dart (0,0), (2,0), (1,0.5), (1,2); pentagram; bow tie | `non-convex-panel` |
-| X2 | outline square with an edge midpoint inserted; three collinear points | `collinear-vertex` |
+| X1 | outline dart (0,0), (2,0), (1,0.5), (1,2) L; the pentagram with the vertices `[int(10⁶ cos(2πk/5)), int(10⁶ sin(2πk/5))]` q for k = 0…4, taken in the order 0, 2, 4, 1, 3; the bow tie (0,0), (1,1), (1,0), (0,1) L | `non-convex-panel` |
+| X2 | the square with the midpoint (½, 0) inserted after (0, 0); the three points (0,0), (1,0), (2,0) L | `collinear-vertex` |
 | X3 | outline square with a vertex repeated (consecutive; non-consecutive) | `duplicate-vertex` |
 | X4 | a float coordinate, a `true` coordinate, a string, a missing point; assignment `"flat"` | `malformed-input` |
 | X5 | coordinate 10⁹ + 1; 1025 outline vertices; 2 outline vertices; a 65th crease; `min_altitude` 4·10⁹ + 1 | `out-of-bounds` |
@@ -223,24 +233,24 @@ Coordinates in L; the fixture file stores them ×10⁶ as integers. "Square" is 
 | X9 | square, line x = 2 | `line-misses-panel` |
 | X10 | square, line x = 1 (along an edge); line through (1, 1) and (2, 0) (touching one vertex) | `line-touches-boundary` |
 | X11 | G1, then insert into `F.a` the line y = ½ (a T-junction on crease `F`); G1, then insert into `F.b` the line y = ½ (the crossing pair of operators §3.2) | `splits-crease` |
-| X12 | square in quanta, line through (0, 1) q and (1, 0) q, `min_altitude` 1000 | `thin-panel` (the corner triangle has altitude 1/√2 q). Without `min_altitude` the same insertion is `ok` |
+| X12 | the unit square (10⁶ q side), line through (0, 1) q and (1, 0) q, `min_altitude` 1000 | `thin-panel` (the corner triangle has altitude 1/√2 q). Without `min_altitude` the same insertion is `ok` |
 | X13 | G1 pose with θ = 180, −180, 200 | `angle-out-of-range` |
 | X14 | G1 (valley) pose with θ = −10 | `assignment-mismatch` |
 | X15 | G1 pose with an extra key `"Q"`; with no key for `F` | `unknown-crease`; `missing-angle` |
 | X16 | G1 pose with θ = NaN, `true`, `"90"` | `malformed-input` |
 | X17 | G1 pose with root `F` (split) and root `"Z"` | `not-a-leaf`; `unknown-face` |
-| X18 | precedence: an out-of-bounds p **and** an unknown face → `out-of-bounds`; a not-a-leaf face **and** p = q → `not-a-leaf`; a missing angle **and** an out-of-range angle → `missing-angle` | as stated |
+| X18 | precedence: an out-of-bounds p **and** an unknown face → `out-of-bounds`; a not-a-leaf face **and** p = q → `not-a-leaf`; on G10's sheet, angles `{"F.b": −200}` (`F` missing, `F.b` out of range) → `missing-angle` | as stated |
 
 **Randomized and metamorphic properties** (seeded with `random.Random(seed)`, never the global generator):
 
 | ID | Property | Cases |
 |---|---|---|
-| Q1 | Each accepted split equals the clip oracle's two pieces exactly (vertex sets and canonical rings); the pieces are strictly convex; E2 holds exactly | seed 20261130: 300 (outline, line) pairs, outline m ∈ [3, 12] (exact hull of random points in ±10⁶ q), line through two random points in twice the outline's bounding box; rejections are counted and their codes checked against the oracle's classification |
-| Q2 | After every accepted insertion of a random sequence: E3 (every vertex on ∂S), E4 (oracle adjacency from the face rings alone is a tree and equals the crease records), cover (Σ areas = \|S\| and pairwise face interiors disjoint, exact), naming rule, no subdivided crease | seed 20261131: 100 sheets, up to 16 attempted insertions each on a random current face |
-| Q3 | Pose P1, P2, P4 and the angle roundtrip within the bands of §4.4, and the pose equals the independent oracle's pose within τ | the Q2 sheets, 3 angle assignments each, uniform in (−179, 179) with signs that match the assignments, random roots |
-| Q4 | Allowed permutations (§5) give byte-identical canonical JSON | seed 20261132: 150 cases, every rotation and orientation of the outline, p/q swapped, other points on the line |
-| Q5 | E5: non-crossing chord pairs commute (equal `geometry_digest`); crossing or touching pairs are `splits-crease` in both orders | seed 20261133: 100 pairs of each kind |
-| Q6 | Translation by an integer vector, a quarter turn about z, and a mirror x → −x map the result to the transformed result (`geometry_digest` of the transformed sheet; a mirror keeps assignments) | the Q1 cases, 50 each |
+| Q1 | Each split equals the clip oracle's two pieces exactly (vertex sets and canonical rings); the pieces are strictly convex; E2 holds exactly; every rejection's code equals the oracle's classification | seed 20261130: 300 cases. Outline: the exact hull of `randint(3, 36)` random integer points in ±10⁶ q, kept if it has 3–12 vertices. Line, by case index i mod 10: 0–4 random (two distinct random points in the outline's bounding box, enlarged to twice its size about its centre); 5 through a random outline vertex and a random point; 6 through two distinct random outline vertices; 7 along a random outline edge; 8 through a random outline vertex shifted by (1, 0) q, with a random direction; 9 through a random outline vertex and the outline's bounding-box centre |
+| Q2 | After every accepted insertion of a random sequence: E3 (every vertex on ∂S), E4 (oracle adjacency from the face rings alone is a tree and equals the crease records), cover (Σ areas = \|S\| and pairwise face interiors disjoint, exact), naming rule, no subdivided crease; every rejected insertion's code equals the oracle's classification of the line against the face (misses, touches; and `splits-crease` when a chord endpoint is inside a crease) | seed 20261131: 100 sheets (outlines as Q1, up to 10 vertices), 16 attempted insertions each on a random current face. Line, by attempt index j mod 4: 0–1 random in that face's bounding box enlarged to twice its size; 2 through a random **integer** vertex of that face (outline vertices and integer crease endpoints, so fans occur) and a random point; 3 through two random integer vertices of that face |
+| Q3 | Pose P1, P2, P4 and the angle roundtrip within the bands of §4.4, and the pose equals the independent oracle's pose within τ | the final sheet of each Q2 sequence; 3 angle assignments each from seed 20261136, uniform in (−179, 179) with signs that match the assignments, and a random root |
+| Q4 | Allowed permutations (§5) give byte-identical canonical JSON | seed 20261132: 150 accepted cases (as Q1, random lines): a random rotation of the outline in both orientations, crossed with [p, q], [q, p] and [p + 3(q − p), p] when that point is within the bounds |
+| Q5 | E5: non-crossing chord pairs commute (equal `geometry_digest`); crossing pairs are `splits-crease` in both orders | seed 20261133, on the unit square: four distinct boundary points are drawn as sorted perimeter parameters t₁ < t₂ < t₃ < t₄ in (0, 4·10⁶) q; the non-crossing pair is (t₁t₂, t₃t₄) and the crossing pair (t₁t₃, t₂t₄). **Fans** (v1.1): in every third draw, t₃ is replaced by t₂, so the non-crossing chords share an endpoint and must commute. "Touching" means meeting at a point of int X, which for two chords is the same as crossing. Identical chords are excluded. At least 100 of each class, and at least 30 fans |
+| Q6 | Translation by an integer vector, a quarter turn about z, and a mirror x → −x map the result to the transformed result (`geometry_digest` of the transformed sheet; a mirror keeps assignments) | 50 accepted cases from seed 20261130 (as Q1, random lines), each under all three maps |
 | Q7 | The digest does not change across `PYTHONHASHSEED` = 0 and 12345 | all fixtures |
 
 ## 9. Oracles, independent of the implementation
@@ -254,7 +264,7 @@ The oracles live in `oracles_o2.py`, which **must not import** `o2.py`; a test c
 | ADJ: adjacency | From the current face rings only: two faces are adjacent if they share a boundary segment of positive length (collinear edges with overlapping interiors). A partial overlap (one edge longer than the other) is reported as a subdivided crease. The graph must be connected with \|faces\| − 1 edges | exact |
 | BD: boundary | Every vertex lies on a closed outline edge | exact |
 | CV: cover | Σ areas = \|S\|, and every pair of faces has a separating axis among their edge normals with gap ≥ 0 | exact |
-| PO: pose | Quaternion composition along a breadth-first search of ADJ from the root, with the axis orientation and sign of §4.2 recomputed from the face rings | float, τ |
+| PO: pose | Quaternion composition along a breadth-first search of the crease records from the root, with the axis orientation and sign of §4.2 recomputed from the face rings, and the float axis rule of §4.2 | float, τ |
 | ANG: measured angle | The convention of §4.1 from the posed Newell normals of parent and child and the posed hinge | float, 1e-7° |
 | CN: canonical form | Rings counter-clockwise from the smallest vertex, rationals in lowest terms, the naming rule of §3.5, sorted ids, crease face pairs equal to ADJ | exact |
 
@@ -284,4 +294,35 @@ Collision-free folding and global self-intersection; any folding motion; contact
 
 | Version | Commit | Change |
 |---|---|---|
-| v1 | this commit | first contract, before any M2 script |
+| v1 | `fc646c7` | first contract, before any M2 script |
+| v1.1 | this commit | the review's amendments (§14), before any committed M2 script; no fixture value changed; fixtures G11–G15 added; generators frozen; the float axis rule, the wrapped roundtrip and the coordinate-scaled angle threshold added |
+
+## 14. Independent review of v1 (2026-11-28)
+
+**Reviewer.** A separate agent that wrote none of the contract. It worked on v1 (`fc646c7`) with its own implementation, quaternion oracle, clip oracle and generators, in Python, outside the repository.
+- **Verdict: GO WITH AMENDMENTS.** Under §10 that meant no implementation until the amendments are written in, which v1.1 does.
+- **Disclosure.** While the review ran, draft test, fixture and oracle files and a stub existed **uncommitted** in the worktree. No implementation existed. They are committed only after this freeze, in the red commit, updated to v1.1.
+
+**Held:** E1–E5, the splits-crease rule, the boundary invariant, the tree, `closed-network` unreachable, the naming rule, the hinge sign derivation and P1–P6, including the parent swap, rerooting and the assignment checks at 0 and −0.0.
+
+**Reproduced, with no mismatch:**
+- G1–G10, including G6's equal `geometry_digest` and different full digest across the two orders.
+- G7: R, Φ, the widths, the developed widths and the deviations. Posed chord error ≤ 1.55e-6 L, radius error ≤ 3.0e-7 L, deviation error ≤ 1.6e-7 L.
+- X1–X18, with its own choices where inputs were not frozen.
+- 1200 forced-mode splits; 150 random sheets for E3, E4 and the cover; 412 commuting pairs (269 fans) and 100 crossing pairs; 264 metamorphic cases.
+- The pose against its quaternion oracle to 1e-6·τ, with a worst angle error of 8e-12°.
+
+| # | Severity | Finding | Applied in v1.1 |
+|---|---|---|---|
+| 1 | major | near ±180° the measured sign comes from rounding (80 of 200 wraps at `nextafter(180, 0)`) | wrapped difference; the measured sign is never assignment-checked; G12 |
+| 2 | major | the float axis direction was unspecified (6.2e-9 L > τ between two correct rules); the angle error grows with the distance from the origin, untested beyond ±2 L | exact-difference axis rule for both implementation and oracle; threshold `1e-3·max(1, M)` L; G11 and G12 |
+| 3 | major | random lines never reach the degenerate paths; Q5 "touching" undefined; generators not frozen | forced modes in Q1 and Q2; Q5 defined, with fans; generators frozen |
+| 4 | minor | numerator bound 2⁸⁰ wrong; label collision with E3 | 8·10²⁷ < 2⁹³; label renamed |
+| 5 | minor | sort keys, outline storage, return shape and pose order undefined | §5 sort keys and output order |
+| 6 | minor | pose malformed list incomplete; −0.0 not stated | completed; G13 |
+| 7 | minor | some inputs not frozen; X18c not buildable on G1; G10 angles unassigned | X1, X2, X12, X18 and G10 made exact |
+| 8 | minor | §1 cited §3.4 for the cycle; the 3-cycle and crossings were not explained | fixed |
+| 9 | minor | no thin-panel boundary fixture and no immutability test | G14, G15 |
+| 10 | minor | the altitude threshold was ambiguous for a crease; permutations could leave the bounds | both faces must meet it; permutations within the bounds |
+
+**Freeze decision: GO** for the M2 implementation on v1.1. Every finding is applied, no fixture value changed, and no item stays disputed. Not verified by the review, left to M2 and its review: the real implementation and oracles, digest bytes, Q7, other platforms and engines, and exhaustive 1024-vertex and 64-crease behaviour at the coordinate bound.
