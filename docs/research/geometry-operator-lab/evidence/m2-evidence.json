@@ -1,0 +1,256 @@
+{
+ "artefact": "laboratory M2, O2 crease insertion (contract v1.1); research only",
+ "exact": {
+  "negative_controls": {
+   "X10_edge": "line-touches-boundary",
+   "X10_vertex": "line-touches-boundary",
+   "X11_crossing_pair": "splits-crease",
+   "X11_t_junction": "splits-crease",
+   "X12": "thin-panel",
+   "X13": "angle-out-of-range",
+   "X14": "assignment-mismatch",
+   "X15_missing": "missing-angle",
+   "X15_unknown": "unknown-crease",
+   "X17": "not-a-leaf",
+   "X18c": "missing-angle",
+   "X1_dart": "non-convex-panel",
+   "X2_midpoint": "collinear-vertex",
+   "X3_repeat": "duplicate-vertex",
+   "X6": "unknown-face",
+   "X7": "not-a-leaf",
+   "X8": "degenerate-line",
+   "X9": "line-misses-panel"
+  },
+  "sheets": {
+   "G1": {
+    "creases": [
+     [
+      "F",
+      [
+       "F.a",
+       "F.b"
+      ],
+      "valley"
+     ]
+    ],
+    "digest": "bc7d69e9569102808cee643a636446b4bd9987529927709de058f72be3ccd158",
+    "faces": [
+     "F.a",
+     "F.b"
+    ],
+    "geometry_digest": "9f256f959bbf389c5873ae3d56e032724aef0b114c7c743324c2b0d35ec54b29"
+   },
+   "G10": {
+    "creases": [
+     [
+      "F",
+      [
+       "F.a",
+       "F.b.a"
+      ],
+      "valley"
+     ],
+     [
+      "F.b",
+      [
+       "F.b.a",
+       "F.b.b"
+      ],
+      "mountain"
+     ]
+    ],
+    "digest": "f92985b81e41172f69d92964c92b5f67a7ced92d6002f90f16bba0a9b145aa03",
+    "faces": [
+     "F.a",
+     "F.b.a",
+     "F.b.b"
+    ],
+    "geometry_digest": "5b074d317b1e217c53d75bf93ca0b71e57c563d2d1d54c57ec3bfce536f23178"
+   },
+   "G1m": {
+    "creases": [
+     [
+      "F",
+      [
+       "F.a",
+       "F.b"
+      ],
+      "mountain"
+     ]
+    ],
+    "digest": "ea95d1b82e9d89ac18562fbe3364b75c51142e0b3b39ee4c7665b4ff1a6ec6c8",
+    "faces": [
+     "F.a",
+     "F.b"
+    ],
+    "geometry_digest": "739f9dcd3a22bae15411187f7005c20fa3690a550fdc0cd813bf61e4f10b7cc5"
+   },
+   "G3": {
+    "creases": [
+     [
+      "F",
+      [
+       "F.a",
+       "F.b"
+      ],
+      "valley"
+     ]
+    ],
+    "digest": "a17c650e92fdce25cb4b375b5524ca754ac6a384b7ca5e3763496343dc3eadcb",
+    "faces": [
+     "F.a",
+     "F.b"
+    ],
+    "geometry_digest": "eb42471219b98778a8afe55e4fe24deaa010ac421702cfbbc24e33ee52e82976"
+   },
+   "G4": {
+    "creases": [
+     [
+      "F",
+      [
+       "F.a",
+       "F.b"
+      ],
+      "valley"
+     ]
+    ],
+    "digest": "00e5a851a11c6c96fc09da8694054a0e8f216f801ae7aaaffef3f39d18e4ccfc",
+    "faces": [
+     "F.a",
+     "F.b"
+    ],
+    "geometry_digest": "afd55e7eda5a8f856521d68529f5a248aaa3e5e66e3c387ec00c691fb3e69745"
+   },
+   "G5": {
+    "creases": [
+     [
+      "F",
+      [
+       "F.a.b",
+       "F.b"
+      ],
+      "valley"
+     ],
+     [
+      "F.a",
+      [
+       "F.a.a",
+       "F.a.b"
+      ],
+      "valley"
+     ]
+    ],
+    "digest": "faf0d4b3bccffdef449aefe705f68b8e721d4c0a0a6a9ab8e0aa0e312fc6d305",
+    "faces": [
+     "F.a.a",
+     "F.a.b",
+     "F.b"
+    ],
+    "geometry_digest": "d6e33b5449971b9b7eba8416b4d31f62d174a936a625e782584562f8672d1e03"
+   },
+   "G6": {
+    "creases": [
+     [
+      "F",
+      [
+       "F.a",
+       "F.b.a"
+      ],
+      "valley"
+     ],
+     [
+      "F.b",
+      [
+       "F.b.a",
+       "F.b.b"
+      ],
+      "valley"
+     ]
+    ],
+    "digest": "19ad7935db65b5061a76c71ff7bf638e719c388c7befc547f183a997d0cc2893",
+    "faces": [
+     "F.a",
+     "F.b.a",
+     "F.b.b"
+    ],
+    "geometry_digest": "78c856006f51967b52e03c508ba9c8236a1175e92340a27019eb1742dd1752cc"
+   },
+   "G6_other_order": {
+    "creases": [
+     [
+      "F",
+      [
+       "F.a.b",
+       "F.b"
+      ],
+      "valley"
+     ],
+     [
+      "F.a",
+      [
+       "F.a.a",
+       "F.a.b"
+      ],
+      "valley"
+     ]
+    ],
+    "digest": "72e829ec1647921b0d8231480d996cfa896eaa7815300a09b81e7d88f699b54a",
+    "faces": [
+     "F.a.a",
+     "F.a.b",
+     "F.b"
+    ],
+    "geometry_digest": "78c856006f51967b52e03c508ba9c8236a1175e92340a27019eb1742dd1752cc"
+   }
+  }
+ },
+ "float": {
+  "G10": {
+   "measured_minus_input_deg": {
+    "F": 0.0,
+    "F.b": 0.0
+   }
+  },
+  "G1_+179.999": {
+   "measured_minus_input_deg": {
+    "F": 0.0
+   }
+  },
+  "G1_+90": {
+   "measured_minus_input_deg": {
+    "F": 0.0
+   }
+  }
+ },
+ "machine": "arm64",
+ "python": "3.9.6",
+ "sha256": {
+  "m2-fixtures.json": "7d2b6356fbafe8571d9100589e262cf9b9c2f9bec8dd52c2f8ea79b08213cd41",
+  "m2-o2-contract.md": "bb4b8fcc215dcc2add369bd18ec065c08e3c8722e6361231dbf83ecae5c2d654",
+  "o2.py": "322b8aca3df19fc491609c430f3bf33844c72c2edfc69ea797006ea204d81377",
+  "oracles_o2.py": "8757e723043c48f94f886b395307c21bafc9078d1e8da6dafd794d2dace40bce",
+  "run_evidence_lab2.py": "05f7708f7a943730afb7cb41041be99b0fa9483186a9fdb274ce74826ebc34db",
+  "test_o2.py": "c4654f2be2cfc200f381afc9286bc3daa0cf6e46678794e50121de633fa87701"
+ },
+ "system": "Darwin",
+ "timing": {
+  "conditions": "single process, CPython 3.9.6, Darwin arm64",
+  "rows": [
+   {
+    "creases": 1,
+    "insert_all_ms": 0.1250000000000001,
+    "pose_median_ms": 0.0794169999999983
+   },
+   {
+    "creases": 8,
+    "insert_all_ms": 2.1813750000000027,
+    "pose_median_ms": 0.43558299999999983
+   },
+   {
+    "creases": 64,
+    "insert_all_ms": 72.707208,
+    "pose_median_ms": 3.2842499999999886
+   }
+  ]
+ }
+}
