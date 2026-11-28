@@ -1,0 +1,684 @@
+{
+ "artefact": "laboratory M1, O1 section transition (contract v1.1); research only",
+ "bands": {
+  "F1": {
+   "area_mid": [
+    3500000000000,
+    1
+   ],
+   "digest": "6db3adb93972f63835a27a33c1bbbdaef98849d4d7f4e4dc619f83a276f3dfc6",
+   "faces": 8,
+   "kinds": [
+    "triangle",
+    "triangle",
+    "triangle",
+    "triangle",
+    "triangle",
+    "triangle",
+    "triangle",
+    "triangle"
+   ],
+   "min_altitude_q": 1000000.0,
+   "min_dihedral_deg": 54.735610317245346,
+   "net": {
+    "classes": {
+     "disjoint": 15,
+     "inconclusive": 0,
+     "legal-contact": 13,
+     "overlap": 0,
+     "touching": 0
+    },
+    "congruence_residual_L": 6.661338147750939e-16,
+    "seam_residual_L": 4.440892098500626e-16,
+    "tau_L": 2.8284271247461906e-09
+   },
+   "net_points_L": [
+    [
+     0.0,
+     0.0
+    ],
+    [
+     2.0,
+     0.0
+    ],
+    [
+     1.0,
+     1.0
+    ],
+    [
+     2.366025,
+     1.366025
+    ],
+    [
+     3.732051,
+     1.0
+    ],
+    [
+     3.366025,
+     2.366025
+    ],
+    [
+     4.732051,
+     2.732051
+    ],
+    [
+     3.732051,
+     3.732051
+    ],
+    [
+     4.732051,
+     4.732051
+    ],
+    [
+     3.366025,
+     5.098076
+    ]
+   ],
+   "net_points_max_deviation_L": 7.621135331525863e-05,
+   "ok": true,
+   "topology": "closed-band",
+   "volume": [
+    10000000000000000000,
+    3
+   ]
+  },
+  "F15": {
+   "code": "thin-panel",
+   "digest": "ee7a8ecdd0b926e034bfdd9375276cb18fefa38a3c97b0f2cfb16f03f0144661",
+   "min_altitude_q_without_threshold": 1.4142135623727414,
+   "ok": false
+  },
+  "F16": {
+   "area_mid": [
+    8006976093545,
+    2
+   ],
+   "digest": "acbb2369f7a52996bd4bd8514e81cd02e0a7c5b89753e4c485e6bd658f1116fd",
+   "faces": 8,
+   "kinds": [
+    "triangle",
+    "triangle",
+    "triangle",
+    "triangle",
+    "triangle",
+    "triangle",
+    "triangle",
+    "triangle"
+   ],
+   "min_altitude_q": 895053.6876354968,
+   "min_dihedral_deg": 0.22347236521609584,
+   "net": {
+    "classes": {
+     "disjoint": 15,
+     "inconclusive": 0,
+     "legal-contact": 13,
+     "overlap": 0,
+     "touching": 0
+    },
+    "congruence_residual_L": 4.440892098500626e-16,
+    "seam_residual_L": 2.220446049250313e-16,
+    "tau_L": 2.9999990155906717e-09
+   },
+   "ok": true,
+   "topology": "closed-band",
+   "volume": [
+    12006976187090000000,
+    3
+   ]
+  },
+  "F18": {
+   "area_mid": [
+    1000000000000,
+    1
+   ],
+   "digest": "f652fa793a0b88f6b6ba36d52c4a863593f0afe35256b6e889719188a3f88aab",
+   "faces": 4,
+   "kinds": [
+    "triangle",
+    "triangle",
+    "triangle",
+    "triangle"
+   ],
+   "min_altitude_q": 1414213.562373095,
+   "min_dihedral_deg": 59.99999999999999,
+   "net": {
+    "classes": {
+     "disjoint": 0,
+     "inconclusive": 0,
+     "legal-contact": 6,
+     "overlap": 0,
+     "touching": 0
+    },
+    "congruence_residual_L": 4.440892098500626e-16,
+    "seam_residual_L": 0.0,
+    "tau_L": 2.8284271247461906e-09
+   },
+   "ok": true,
+   "topology": "disc-cap",
+   "volume": [
+    4000000000000000000,
+    3
+   ]
+  },
+  "F2": {
+   "area_mid": [
+    4000000000000,
+    1
+   ],
+   "digest": "964a38e21487eeeb85076167fbf06323386d7da307ed4f0ab8e2e1b293c42e10",
+   "faces": 4,
+   "kinds": [
+    "trapezoid",
+    "trapezoid",
+    "trapezoid",
+    "trapezoid"
+   ],
+   "min_altitude_q": 1000000.0,
+   "min_dihedral_deg": 90.0,
+   "net": {
+    "classes": {
+     "disjoint": 3,
+     "inconclusive": 0,
+     "legal-contact": 3,
+     "overlap": 0,
+     "touching": 0
+    },
+    "congruence_residual_L": 0.0,
+    "seam_residual_L": 0.0,
+    "tau_L": 3.0000000000000004e-09
+   },
+   "ok": true,
+   "topology": "closed-band",
+   "volume": [
+    4000000000000000000,
+    1
+   ]
+  },
+  "F3": {
+   "area_mid": [
+    4000000000000,
+    1
+   ],
+   "digest": "52bcf31c8213281d1d2cd492c66beadb22de0f2151a7b2c2a7e87b73fdfc3cec",
+   "faces": 4,
+   "kinds": [
+    "trapezoid",
+    "trapezoid",
+    "trapezoid",
+    "trapezoid"
+   ],
+   "min_altitude_q": 1030776.4064044151,
+   "min_dihedral_deg": 83.77314970286564,
+   "net": {
+    "classes": {
+     "disjoint": 3,
+     "inconclusive": 0,
+     "legal-contact": 3,
+     "overlap": 0,
+     "touching": 0
+    },
+    "congruence_residual_L": 2.220446049250313e-16,
+    "seam_residual_L": 2.220446049250313e-16,
+    "tau_L": 3.50891721190455e-09
+   },
+   "ok": true,
+   "topology": "closed-band",
+   "volume": [
+    4000000000000000000,
+    1
+   ]
+  },
+  "F4": {
+   "area_mid": [
+    2250000000000,
+    1
+   ],
+   "digest": "8df621de31ebf50a6eba939e9a5d6a728c1f7fe0be0d074b8589f834fb618ee3",
+   "faces": 4,
+   "kinds": [
+    "trapezoid",
+    "trapezoid",
+    "trapezoid",
+    "trapezoid"
+   ],
+   "min_altitude_q": 1118033.9887498948,
+   "min_dihedral_deg": 78.46304096718453,
+   "net": {
+    "classes": {
+     "disjoint": 3,
+     "inconclusive": 0,
+     "legal-contact": 3,
+     "overlap": 0,
+     "touching": 0
+    },
+    "congruence_residual_L": 6.661338147750939e-16,
+    "seam_residual_L": 4.440892098500626e-16,
+    "tau_L": 2.8284271247461906e-09
+   },
+   "ok": true,
+   "topology": "closed-band",
+   "volume": [
+    7000000000000000000,
+    3
+   ]
+  },
+  "F5": {
+   "area_mid": [
+    2500000000000,
+    1
+   ],
+   "digest": "8cedcb1d130daf094c021ac617de80d98cba60184fc484824896005a9d18826c",
+   "faces": 4,
+   "kinds": [
+    "trapezoid",
+    "trapezoid",
+    "trapezoid",
+    "trapezoid"
+   ],
+   "min_altitude_q": 1000000.0,
+   "min_dihedral_deg": 90.0,
+   "net": {
+    "classes": {
+     "disjoint": 3,
+     "inconclusive": 0,
+     "legal-contact": 3,
+     "overlap": 0,
+     "touching": 0
+    },
+    "congruence_residual_L": 4.440892098500626e-16,
+    "seam_residual_L": 0.0,
+    "tau_L": 3.1622776601683795e-09
+   },
+   "ok": true,
+   "topology": "closed-band",
+   "volume": [
+    2500000000000000000,
+    1
+   ]
+  },
+  "F6": {
+   "area_mid": [
+    10156773600,
+    1
+   ],
+   "digest": "ad2845afcb328f4acb890efbb9d50ca4b57a12c2edc066e23d4080f3453fdcf0",
+   "faces": 9,
+   "index_matched_loft_warp_L_idealised": 0.002134416909749856,
+   "kinds": [
+    "triangle",
+    "triangle",
+    "triangle",
+    "triangle",
+    "triangle",
+    "triangle",
+    "trapezoid",
+    "triangle",
+    "triangle"
+   ],
+   "min_altitude_q": 38044.58432058684,
+   "min_dihedral_deg": 3.0936413392780313,
+   "net": {
+    "classes": {
+     "disjoint": 20,
+     "inconclusive": 0,
+     "legal-contact": 16,
+     "overlap": 0,
+     "touching": 0
+    },
+    "congruence_residual_L": 4.163336342344337e-17,
+    "seam_residual_L": 1.3877787807814457e-17,
+    "tau_L": 1e-09
+   },
+   "ok": true,
+   "topology": "closed-band",
+   "volume": [
+    548703100800000,
+    1
+   ]
+  },
+  "F7": {
+   "area_mid": [
+    1000000000000,
+    1
+   ],
+   "digest": "29e4c2a93d0ddaccc055853ce2d3f69f3dad393e603cc022af135f082a5aad2d",
+   "faces": 4,
+   "kinds": [
+    "triangle",
+    "triangle",
+    "triangle",
+    "triangle"
+   ],
+   "min_altitude_q": 1414213.562373095,
+   "min_dihedral_deg": 59.99999999999999,
+   "net": {
+    "classes": {
+     "disjoint": 0,
+     "inconclusive": 0,
+     "legal-contact": 6,
+     "overlap": 0,
+     "touching": 0
+    },
+    "congruence_residual_L": 6.661338147750939e-16,
+    "seam_residual_L": 2.220446049250313e-16,
+    "tau_L": 2.8284271247461906e-09
+   },
+   "ok": true,
+   "topology": "disc-cap",
+   "volume": [
+    4000000000000000000,
+    3
+   ]
+  },
+  "F8": {
+   "area_mid": [
+    1500000000000,
+    1
+   ],
+   "digest": "d68a11ddd2d4f6346a895e1bf1332e9b91ba137a6e74484d050076047ed0fe18",
+   "faces": 4,
+   "kinds": [
+    "triangle",
+    "trapezoid",
+    "triangle",
+    "trapezoid"
+   ],
+   "min_altitude_q": 1118033.9887498948,
+   "min_dihedral_deg": 71.56505117707799,
+   "net": {
+    "classes": {
+     "disjoint": 2,
+     "inconclusive": 0,
+     "legal-contact": 4,
+     "overlap": 0,
+     "touching": 0
+    },
+    "congruence_residual_L": 6.661338147750939e-16,
+    "seam_residual_L": 2.220446049250313e-16,
+    "tau_L": 2.8284271247461906e-09
+   },
+   "ok": true,
+   "topology": "disc-wedge",
+   "volume": [
+    5000000000000000000,
+    3
+   ]
+  },
+  "F9": {
+   "area_mid": [
+    2000000000000,
+    1
+   ],
+   "digest": "3c24448b1410e0142d96d126e57f09601f184a38e8a5dd41c5a030ae05db6dd8",
+   "faces": 6,
+   "kinds": [
+    "triangle",
+    "triangle",
+    "triangle",
+    "triangle",
+    "triangle",
+    "triangle"
+   ],
+   "min_altitude_q": 1118033.9887498948,
+   "min_dihedral_deg": 43.08872313536283,
+   "net": {
+    "classes": {
+     "disjoint": 5,
+     "inconclusive": 0,
+     "legal-contact": 10,
+     "overlap": 0,
+     "touching": 0
+    },
+    "congruence_residual_L": 4.440892098500626e-16,
+    "seam_residual_L": 4.440892098500626e-16,
+    "tau_L": 2.8284271247461906e-09
+   },
+   "ok": true,
+   "topology": "disc-wedge",
+   "volume": [
+    2000000000000000000,
+    1
+   ]
+  }
+ },
+ "chains": {
+  "F10": {
+   "digest": "46c83374bac520966926b9b028029cb693a43d243c5868064b51931befa88150",
+   "edges": [
+    "dissolvable",
+    "dissolvable",
+    "dissolvable",
+    "dissolvable",
+    "dissolvable",
+    "dissolvable",
+    "dissolvable",
+    "dissolvable"
+   ],
+   "kind": "tessellation-ring",
+   "on_path": true,
+   "vertex_angle_deg": [
+    360.0,
+    360.0,
+    360.0,
+    360.0,
+    360.0,
+    360.0,
+    360.0,
+    360.0
+   ],
+   "vertex_flat": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ]
+  },
+  "F11": {
+   "digest": "a0dfcd09fe624efb519e3f23a208017906225c4f26cf31cdf6f61cf1792c584f",
+   "edges": [
+    "seam-dihedral",
+    "seam-dihedral",
+    "seam-dihedral",
+    "seam-dihedral"
+   ],
+   "kind": "seam-ring",
+   "on_path": false,
+   "vertex_angle_deg": [
+    420.0,
+    420.0,
+    420.0,
+    420.0
+   ],
+   "vertex_flat": [
+    false,
+    false,
+    false,
+    false
+   ]
+  },
+  "F12": {
+   "digest": "a05a5077cee206093b7f79820f68cc9cb3d9989d62ede1a23dda05ba061c33ae",
+   "edges": [
+    "dissolvable",
+    "seam-dihedral",
+    "dissolvable",
+    "seam-dihedral"
+   ],
+   "kind": "mixed-ring",
+   "on_path": false,
+   "vertex_angle_deg": [
+    306.86989764584405,
+    306.86989764584405,
+    306.86989764584405,
+    306.86989764584405
+   ],
+   "vertex_flat": [
+    false,
+    false,
+    false,
+    false
+   ]
+  },
+  "F13": {
+   "digest": "8bb38065d77a7df62fc2c4dac794543cf0ae5897017eb839ead4e069a8e4b1c0",
+   "edges": [
+    "seam-dihedral",
+    "seam-dihedral",
+    "seam-dihedral",
+    "seam-dihedral"
+   ],
+   "kind": "seam-ring",
+   "on_path": false,
+   "vertex_angle_deg": [
+    456.3793702084428,
+    456.3793702084428,
+    456.3793702084428,
+    456.3793702084428
+   ],
+   "vertex_flat": [
+    false,
+    false,
+    false,
+    false
+   ]
+  },
+  "F14": {
+   "digest": "c7f7ace8ba4dcc1d771c2070d8b3fd0736ccb12b9fb3aacb9540a55b0422b095",
+   "edges": [
+    "seam-dihedral",
+    "seam-dihedral",
+    "seam-dihedral",
+    "seam-dihedral"
+   ],
+   "kind": "seam-ring",
+   "on_path": false,
+   "vertex_angle_deg": [
+    263.62062979155723,
+    263.62062979155723,
+    263.62062979155723,
+    263.62062979155723
+   ],
+   "vertex_flat": [
+    false,
+    false,
+    false,
+    false
+   ]
+  },
+  "F17": {
+   "digest": "0b40b6ca1dfd00b314b67eadaa81ec3e4f6c3f3022dd5635fb87b5faee0179d4",
+   "edges": [
+    "dissolvable",
+    "dissolvable",
+    "dissolvable",
+    "dissolvable"
+   ],
+   "kind": "mixed-ring",
+   "on_path": false,
+   "vertex_angle_deg": [
+    327.4795905833761,
+    327.4795905833761,
+    327.4795905833761,
+    327.4795905833761
+   ],
+   "vertex_flat": [
+    false,
+    false,
+    false,
+    false
+   ]
+  }
+ },
+ "f1_worst_angle_sum_error_deg": 0.0,
+ "machine": "arm64",
+ "negative_controls": {
+  "N1": "non-convex-section",
+  "N10a": "degenerate-band",
+  "N10b": "degenerate-band",
+  "N10c": "degenerate-band",
+  "N11a": "malformed-input",
+  "N11b": "malformed-input",
+  "N11c": "malformed-input",
+  "N11d": "malformed-input",
+  "N11e": "malformed-input",
+  "N11f": "malformed-input",
+  "N12a": "out-of-bounds",
+  "N12b": "out-of-bounds",
+  "N12c": "out-of-bounds",
+  "N12d": "out-of-bounds",
+  "N13": "degenerate-interior-station",
+  "N14a": "non-monotone-stations",
+  "N14b": "non-monotone-stations",
+  "N2": "non-convex-section",
+  "N3": "non-convex-section",
+  "N4": "collinear-vertex",
+  "N5": "collinear-vertex",
+  "N6": "duplicate-vertex",
+  "N7": "duplicate-vertex",
+  "N8": "coincident-planes",
+  "N9a": "unsupported-plane",
+  "N9b": "unsupported-plane",
+  "P1": "duplicate-vertex",
+  "P2": "duplicate-vertex"
+ },
+ "python": "3.9.6",
+ "randomized_nets": {
+  "cases": 500,
+  "inconclusive_pairs": 0,
+  "overlapping_pairs": 0,
+  "touching_pairs": 0,
+  "worst_congruence_residual_over_tau": 5.729487630922673e-07,
+  "worst_seam_residual_over_tau": 4.857284680123909e-07
+ },
+ "sha256": {
+  "fixtures.json": "e1cf07b50827233eb5c88365224a948d23461ef3ac1b73199538ad09170f1ebf",
+  "m0-o1-contract.md": "a70ca40c6ed8360c03a9c35364b96b801eb058b5d74cbc9f74c353aa3edbce10",
+  "o1.py": "b659f7a684e0fb4b97f13a3f2e84620746b0164b0105a2845a0bd4f2122e2eb9",
+  "oracles.py": "cf1def30868e2af07003580fe3b7a04019789ef9e8305143c5e9d0773850c4c4",
+  "run_evidence.py": "720ce8490f692525483582ce5127f4d2427c60546bb1aca6ce8793ae77dab28c",
+  "test_o1.py": "23eff96adf255afa7a7da9aac62e1e12f1a1a4d90b77646dc5cf7cdbddfb871c"
+ },
+ "system": "Darwin",
+ "timing": {
+  "conditions": "section_transition only (validation, merge, exact areas and volume, exact altitudes, dihedrals); single process, CPython 3.9.6, arm64; median of 5 runs over 3 seeded pairs",
+  "fitted_exponent_64_to_1024": 0.9797738323957408,
+  "rows": [
+   {
+    "m_equals_n_at_most": 8,
+    "median_ms": 0.5761529999999867,
+    "vertices_used": [
+     8,
+     8
+    ]
+   },
+   {
+    "m_equals_n_at_most": 64,
+    "median_ms": 4.186499999999982,
+    "vertices_used": [
+     64,
+     64
+    ]
+   },
+   {
+    "m_equals_n_at_most": 512,
+    "median_ms": 33.610264,
+    "vertices_used": [
+     512,
+     512
+    ]
+   },
+   {
+    "m_equals_n_at_most": 1024,
+    "median_ms": 63.33099999999995,
+    "vertices_used": [
+     1024,
+     1024
+    ]
+   }
+  ]
+ }
+}

@@ -1,6 +1,6 @@
 # ART-1 Raven: owner decision packet (2026-11-27)
 
-- Status: **PARTLY DECIDED.** The owner decided ART-D1, ART-D2, ART-D3a and ART-D3b on 2026-11-27 (§0). ART-D3c is not authorized. The B-2 flight revision went through two independent reviews (§7). Its latest version, **B-2 v5, is reviewed NEEDS REVISION** and is pending the owner's ART-1 decision. Open owner decisions and feasibility hypotheses are in §8. §1–§6 are the original decision request, kept as the record of what the owner was shown. Later edits to them are only notes marked as later: two link and status notes in §1 for the adopted files, a finger-count update in §6, and the base note below.
+- Status: **PARTLY DECIDED.** The owner decided ART-D1, ART-D2, ART-D3a and ART-D3b on 2026-11-27 (§0). *Later (§9.5): the generic-method round ended NO-GO for owner approval. B-2 v6 and v7 and the method were each reviewed NEEDS REVISION twice; bounded next actions are listed. Later (§0.2): the owner did **not approve B-2 v7** and redirected the work to method correction and geometry-operator research. That round's outputs, reviews (both NEEDS REVISION) and the open decisions D-1 to D-5 are in §10. Later (§0.3, 2026-11-28): the owner decided D-1 to D-5, recorded on this draft branch and not in force on `main` until a merge is authorized. The bounded M3.1 revision and the laboratory milestones M0–M1 done under them are in §11.* ART-D3c is not authorized. The B-2 flight revision went through two independent reviews (§7). Its latest reviewed version, **B-2 v5, was reviewed NEEDS REVISION and then NOT APPROVED by the owner** (ART-D3b, second ruling, §0.1): the concept is to be revised by a method that is generic for all objects, not bird-specific. The proposed generic method, the next B-2 version and their reviews are in §9. Open owner decisions and feasibility hypotheses are in §8. §1–§6 are the original decision request, kept as the record of what the owner was shown. Later edits to them are only notes marked as later: two link and status notes in §1 for the adopted files, a finger-count update in §6, and the base note below.
 
 ## 0. Owner decisions recorded (2026-11-27)
 
@@ -20,6 +20,84 @@
 - Q1–Q6 and ADR 0019 keep their current statuses.
 - No Geometry V4 work is authorized. PR #11 is untouched.
 - Historical sheets, review records, digests and provenance are kept. A new sheet version or a material change (ART §2.5) is a new file with a new digest. It is `NOT VERIFIED` until the owner decides on it.
+
+### 0.1 ART-D3b, second ruling: B-2 v5 not approved (2026-11-27)
+
+**Source.** The owner's explicit message, relayed to the agent in the Kanna handoff "Generalized Object Form & Construction Design, B-2 V5 rejection" dated 2026-11-27, issued against `main` @ `5886475d04db76f58105080f63d01426d2d72311` (the PR #13 merge). **Recorded by the agent.** This is an owner instruction relayed to the agent. It is not a GitHub review or approval, and the identity is not cryptographically verified.
+
+| ID | Decision | Exactly what it covers | What it does not cover |
+|---|---|---|---|
+| **ART-D3b (v5)** | **NOT APPROVED; revise the concept** | Sheet B-2 v5, `docs/art/raven-concepts/raven-concept-b2-sumi-flight-v5.png`, SHA-256 `888cf4a5bb0178057914847f0ffea9d581540c0f6c411f821fedea752c2b0942`, and its details board `raven-concept-b2-v5-details.png`, SHA-256 `dfb18c3ce480af64bda9de1318dcd63c66146ea375a982eec5e03416205e02b9`. Both were first committed in `41c383f`; the digests were re-verified against the files at `5886475` | Sheet B (perched): it stays the selected direction under ART-D3a at `554069333c47…4f74f`. ART-D3c: it stays undecided. Any change to a policy, gate or standard |
+
+The owner's words, verbatim: *"kêu kanna sửa lại theo đánh giá của bạn, nhưng hướng sửa phải là generic cho toàn bộ vật thể chứ không gói gọn theo hình chim"*. In English: have the agent revise according to the reviewer's assessment, but the direction of the fix must be generic for all objects, not confined to the bird shape.
+
+What the ruling instructs, as recorded:
+- The revision answers the independent round-2 review of v5 (§7.2) **and** the owner's reading of the v5 pixels relayed in the handoff. The wing layering and the silhouette improved. Still wrong: the head reads banded from the top and from below; the front body reads as a block; the inner arm is close to a rectangle; there is a pinhole at the tail root; there are slivers at the mouth and the wrist; there are lines that mark no form change; and the depth is shallow.
+- The method of the fix must be a generic form-design method that applies to every object category. Raven-only corrections do not meet it.
+- The perched direction (Sheet B) stays selected. Whether the perched sheets and the flight sheets are one folding stays unverified (§8.2, H8).
+
+B-2 v3, v4 and v5, their digests and their review records (§3 and §7) are kept unchanged as history. A next B-2 version is a new file with a new digest and inherits nothing (ART §2.5). The ruling authorizes the agent to record it and to revise the design. It does not adopt any new policy, approve any artwork, or authorize a merge, Geometry V4, Phase 4 or any phase transition.
+
+### 0.2 ART-D3b, third ruling: B-2 v7 not approved; method and operator research (2026-11-27)
+
+**Source.** The owner's explicit message, relayed to the agent in the Kanna handoff "Mathematical Geometry Operators research & laboratory proposal" dated 2026-11-27, issued against `main` @ `5886475d04db76f58105080f63d01426d2d72311` with draft PR #14 at `e2b018b609f85db57a84c502184f170df2274189`. **Recorded by the agent.** It is not a GitHub review and the identity is not cryptographically verified.
+
+| ID | Decision | Exactly what it covers | What it does not cover |
+|---|---|---|---|
+| **ART-D3b (v7)** | **NOT APPROVED** | Sheet B-2 v7, `docs/art/raven-concepts/raven-concept-b2-sumi-flight-v7.png`, SHA-256 `2f1dc0a790fc8dbe6a8e6f3ca6a7731ba9fceaa43ce38db5d8b172bf935f9e77`, first committed in evidence commit `418e2430d8a84025c9af49071e85e4fd47592bd4` (digest and commit re-verified against the file on 2026-11-27). Its compare and method boards (`2d2fa598…bb52f0`, `2eae501c…2a9c`, same commit) carry no approval either | Sheet B (perched), which stays the selected direction under ART-D3a at `554069333c47…4f74f`; v4 and v6 (still undecided, not approved); ART-D3c; Q1–Q6; ADR 0018 and 0019; the Phase 3 exit |
+| Scope of the round | **No more bird-specific artwork this round.** Correct P1, P7 and the §4.0 declaration rule of the proposed method; research composable geometry operators; write a Geometry Operator Laboratory **proposal only**; check transfer on a previously unused object category at design level | design and research documents on PR #14 | any runtime or experimental implementation, any new package or app, Geometry V4, Phase 4, Kanna Home, any merge, any visual approval, any change to an adopted policy. PR #14 and PR #11 stay drafts; PR #11 is untouched |
+
+The earlier rejection and pending statuses stand as recorded: v3 not approved as drawn, v5 not approved, v4 and v6 never decided. No concept is approved by this ruling. The work it authorizes is in §10.
+
+### 0.3 Decisions D-1 to D-5 on the §10.4 questions (2026-11-28)
+
+**Source.** The owner's explicit message, relayed to the agent in the Kanna handoff "Geometry Operator Laboratory M0–M1 & bounded Form Method M3.1" dated 2026-11-28. It was issued against `main` @ `5886475d04db76f58105080f63d01426d2d72311`, with draft PR #14 at `0d7f2cc8b6787d6a766a2644b96d699d6e022dea` and draft PR #11 at `616b0cfd316522d038e804cab9eaf04bc715bb59`. **Recorded by the agent.** It is an owner instruction relayed to the agent. It is not a GitHub review or approval, and the identity is not cryptographically verified.
+
+**Where these decisions live.** They are recorded on the **draft branch** of PR #14. They are **not** in force on `main` until the owner separately authorizes a merge (GOV-1). The Visual Bible clarifications under D-4a and D-4b are written into the bible on this branch only. They are marked there in the same way.
+
+| ID | Decision | Exactly what it covers | What it does not cover |
+|---|---|---|---|
+| **D-1** | **Accept** O1 section transition, O2 crease insertion and O3 attach as a **research direction** | Further mathematical research on the three operators of [`geometry-operators.md`](../research/geometry-operators.md), with the seam erratum (§9 there) | A production API, a Foldon contract change, Geometry V4, or any answer to Q1–Q6 |
+| **D-2** | **Authorize one bounded revision M3.1** of the proposed form method, with one independent re-review and no artwork | P1 and P7 are restated as **conditional geometric diagnostics**: each is measured against a declared, subject-specific functional or form target. Neither is a universal aesthetic pass or fail, and neither requires shape variety for its own sake | Adoption of the method; any new gate; any artwork iteration; a second revision round |
+| **D-3** | **Authorize the Geometry Operator Laboratory, milestones M0 and M1 only, in isolation** | M0: freeze the O1 contract and its oracles before any executable script. M1: O1 only, as standalone mathematical scripts | O2 or O3 implementation, M2–M5, any package, app, experiment or runtime change, servers, a web UI, object modelling |
+| **D-4a** | Prismatic and box forms are **allowed when function and art direction justify them** (answers O-1) | Intentional functional rectangular or prismatic structures, declared before the artwork with their reason, for example a slab tower like those in the reference image | Unintended blockiness, which stays an anti-pattern (bible §5: voxel blockiness, extruded slab, plank limb) |
+| **D-4b** | Asymmetry is **not mandatory**. Geometric symmetry is judged separately from gesture, pose and composition (answers O-2) | Symmetric geometry can be correct. Bible §4.1.3 governs pose, gesture and the composition of a view or scene | The heraldic-spread anti-pattern for poses, which stands |
+| **D-5** | **Allow** reproducible mathematical diagnostic scripts to be committed under `docs/` as design and research artefacts | Standalone scripts with their input fixtures, expected outputs and generated evidence, labelled as design or research artefacts | Any import of these scripts by `packages/*`, `apps/*` or `experiments/*`; runtime use; a runnable lab outside what D-3 allows |
+
+**Unchanged by these decisions:**
+- B-2 v7 stays **NOT APPROVED**. B (perched) stays the selected direction only (ART-D3a).
+- ART-D3c, Q1–Q6, ADR 0018 and ADR 0019, and the Phase 3 exit stay pending.
+- No PR is merged. No Geometry V4, Phase 4, production runtime change, object implementation, visual approval or Kanna Home work is authorized.
+- The adopted ART and GEO gates are unchanged. Mathematical evidence, concept approval (ART-1) and final visual approval (ART-5, GEO-2, GEO-5, GEO-7) stay separate decisions.
+- The frozen M3 text, the frozen holdout record and every existing artwork file and digest are kept unchanged.
+
+The work done under these decisions is in §11.
+
+### 0.4 Decisions D-6 to D-10 and the laboratory CI job (2026-11-28)
+
+**Source.** The owner's explicit message, relayed to the agent in the Kanna handoff "Laboratory M2, O1 tilted-section research, modular seams, M3.1 corrections and independent CI" dated 2026-11-28. It was issued against `main` @ `5886475d04db76f58105080f63d01426d2d72311`, with draft PR #14 at `df998d7415f4a52e29ecf251e9a2b2b189e65f8b` (CI run 46058589368 green) and draft PR #11 at `616b0cfd316522d038e804cab9eaf04bc715bb59`. The first session that received it stopped on a provider error ("credit balance is too low") before changing any file or ref; this work was resumed in a new session, with the same instruction, from the same refs. **Recorded by the agent.** It is an owner instruction relayed to the agent. It is not a GitHub review or approval, and the identity is not cryptographically verified.
+
+**Where these decisions live.** As for §0.3: on the draft branch of PR #14 only, not in force on `main` until a merge is separately authorized (GOV-1).
+
+**What kind of permission this is.** Every row below permits **research execution**: writing contracts, oracles, standalone scripts under `docs/` and their evidence. None of them promotes anything. No row approves a merge, a production API, a Foldon or runtime contract, Geometry V4, Phase 4, an object model, a visual result, a gate, or an answer to Q1–Q6.
+
+| ID | Decision | Exactly what it covers | What it does not cover |
+|---|---|---|---|
+| **D-6** | **Authorize laboratory milestone M2: O2 crease insertion**, in an isolated mathematical laboratory | A frozen O2 contract and oracles, independently reviewed **before** any executable script; then tests first, an implementation and evidence as standalone Python under `docs/research/geometry-operator-lab/`, with one bounded revision. M2 works on **planar panel inputs** after its own freeze; it does not wait for, or depend on, O1 v2 | O3; M3 (O1 + O2 composition), M4, M5; closed crease networks; collision-free or global folding claims; any package, app, experiment or runtime change |
+| **D-7** | **Research O1 v2 for tilted (non-parallel) section planes**; freeze its contract before any experiment | A separately versioned O1 v2 contract (domain, fixtures, error precedence, oracles), frozen after an independent mathematical review; then, only if it passes that freeze gate, one bounded isolated test-first experiment. O1 v1.1 and its evidence stay unchanged and keep passing | A production extension; a general mesh engine; chains of tilted bands beyond what the frozen v2 contract states; non-convex sections or matched partitions |
+| **D-8** | **Prioritize modular seams between separate sheets** as the research direction for joining sheets; **do not implement closed crease networks** | Design and mathematics only: sheet identity, cut-open boundaries, matching edges and windings, closure residuals, worked examples and counterexamples | An attachment or seam engine; closed crease networks; any **production** answer to Q1, Q2 or Q4. D-8 is a research preference, not a resolution of those questions or of ADR 0019 |
+| **D-9** | **Defer** multi-host attachments, holes in panels and advanced seam topology **to M4** | They are listed as explicit dependencies and open questions, not worked around | Any implementation or partial workaround now |
+| **D-10** | **Correct the four remaining M3.1 issues R1–R4** (method §15); **no artwork research cycle** | One bounded correction of P1 (units and the three-outcome rule), §4.0 rule 7 (partition), §6.0 (what is computed) and P7 `D_v` (limits and permitted use), with one independent review | A new method version cycle, a new principle or gate, any artwork, any change to the earlier verdicts; the minors R5–R12 stay recorded errata |
+| **Lab CI** | **Add an independent CI check for the mathematical laboratory** on draft PR #14 | One narrowly scoped job that runs the committed laboratory and diagnostic `unittest` suites with a pinned Python and fails when they fail | Any change to the existing production CI jobs, repository settings, branch protection, credentials or deployments; making the job a required check |
+
+**Unchanged by these decisions:**
+- Phase 3 stays open. B-2 v7 stays **NOT APPROVED**; B (perched) stays the selected direction only (ART-D3a).
+- ART-D3c, Q1–Q6, ADR 0018 and ADR 0019 are not accepted or decided by these choices.
+- No PR is merged; PR #14 and PR #11 stay drafts, and PR #11 is untouched. No Geometry V4, Phase 4, production contract adoption, object modelling, visual approval or Kanna Home work. No server is started.
+- M3, M4 and M5 stay locked until a separate owner permission and, for M3, seam evidence (D-8).
+- Every frozen contract, fixture, evidence file and artwork digest on this branch stays as it is.
+
+The work done under these decisions is in §12.
 
 The original request follows.
 
@@ -233,6 +311,7 @@ The panel is labelled as a self-assessment. Its pixels were left unchanged so th
 
 ### 7.3 State of the flight concept
 
+- *Later note (2026-11-27, §0.1):* the owner did **not approve** B-2 v5 and asked for a revision by a generic method. The bullets below are the state as it was recorded before that ruling.
 - **B-2 is not credible yet.** v3 is not approved (ART-D3b). v4 and v5 are both NEEDS REVISION. The revision was stopped at v5 to keep the handoff bounded; it was not forced to a pass. The open defects are the §7.2 list. They are cleanup-level in the reviewer's judgement and do not need a wing redesign, but **that judgement is not an approval**.
 - Every B-2 file stays **`NOT VERIFIED` for ART-1** until the owner decides. A later B-2 v6 would be a new file with a new digest and would need its own independent review. None of v3, v4 or v5 inherits anything.
 - **Sheet B (perched)** stays the selected direction (ART-D3a) at `554069333c47…4f74f`. B-2 v4 and v5 reuse B's head profile but **do not change Sheet B**. B's own open caveats (§3) are still open.
@@ -243,7 +322,7 @@ The panel is labelled as a self-assessment. Its pixels were left unchanged so th
 
 | ID | Question | State |
 |---|---|---|
-| ART-1, B-2 | Approve, revise or reject the flight concept. **B-2 v5** is the latest; its independent review says NEEDS REVISION (§7.2) | open |
+| ART-1, B-2 | Approve, revise or reject the flight concept. **B-2 v5: NOT APPROVED** by the owner (§0.1). The next version is in §9. *Later (§0.2): **B-2 v7 NOT APPROVED**; no bird artwork this round* | open; no B-2 version is approved |
 | ART-D3c | Numerical tolerances for ART-4 (concept README §E.0) | not authorized; open |
 | B caveats | Whether B's bib, front column and dark triangles (§3) need a revision of Sheet B | open (not raised by the owner) |
 | ADR 0006 | Whether moving pieces, such as a flying raven, carry hatching | open |
@@ -272,3 +351,367 @@ None of this is evidence for any GEO gate. These are the hypotheses a later Geom
 | H9 | The maquette's planes can become valid Foldon panels | GEO-1 | **No.** The maquettes guarantee neither planarity nor convexity (the primary-covert leaf is a concave polygon). Overlapping layers have zero thickness, and collision is not checked |
 
 **Material change rule (ART §2.5, GEO §1.10).** Any change to the silhouette, proportions, hierarchy, pose or plane language of a reviewed sheet returns its verdicts to `NOT VERIFIED`, until a reviewer inspects the new pixels. An owner approval would be voided the same way. A new version is a new file, and it inherits nothing.
+
+## 9. Generic form method and the next B-2 version (under ART-D3b, second ruling)
+
+Design only. No Foldon, package, app or Geometry V4 change. Nothing in this section is approved. It is filled in by the later commits of the same branch, in order: the proposed method, the briefs committed before any artwork, the cross-category design studies, the next B-2 version, and the independent reviews.
+
+### 9.1 What was produced (round 1, evidence `57da41b`)
+
+| Item | File | SHA-256 | Commit |
+|---|---|---|---|
+| Proposed method (not adopted) | [`docs/art/form-construction-method.md`](../art/form-construction-method.md) | — (text) | `449406b`, before any study or v6 artwork |
+| B-2 v6 brief | [`b2-v6-flight-brief.md`](../art/raven-concepts/b2-v6-flight-brief.md) | — (text) | `a400997`, before any v6 artwork |
+| Sheet B-2 v6 | `raven-concept-b2-sumi-flight-v6.png` | `793ecc828cc26496730c242367c6d515eb4bc75547e5945c8457b494929dd7ea` | `6c2334a` |
+| v5 beside v6 | `raven-concept-b2-v6-compare.png` | `12ba8c8f4f208ea8a963deb742609545c6c584bd6ee461229bf9433d18b07c39` | `6c2334a` |
+| v6 method board | `raven-concept-b2-v6-method.png` | `24e77fd7b9813f5659dbc5ce092f3dcbd29070b0feabc38f02bb3823f8b23440` | `6c2334a` |
+| Form studies (vehicle, building, tree) | [`docs/art/form-studies/`](../art/form-studies/README.md) | listed there | `57da41b` |
+
+### 9.2 Independent reviews, round 1
+
+Three reviewers, each a separate agent that made none of the artwork and none of the method. The two pixel reviewers were told not to read the sources, briefs or method before writing their pixel findings. The method reviewer read the method, the adopted bible and gates, the evidence and the git history. Their crops were kept outside the repository (`/tmp/review-*`). Every verdict is a recommendation.
+
+**B-2 v6: NEEDS REVISION.**
+
+| Item | Finding |
+|---|---|
+| Fixed, and confirmed as form changes (they survive the old drawing in the control panel) | the inner arm converges to the wrist; the tail-root pinhole is gone; the underside covert panel has no straight ends; the near-hand notches are staggered |
+| Partly fixed | head bands (2–3 left from the top, and the old drawing brings the rings back, so part of this was a drawing change); the front body is a faceted lump rather than a block; slivers at the mouth and a tan strip at the wrist remain; lines that end mid-panel (underside coverts, side wing, tail close-up); volume mostly from shading; finger roots still meet at one wrist point in the hero and from below; inner blades still jump to fingers on the far hand |
+| Blocker | the hero crops the far wing's longest fingertips, so the label "fingers P6–P9, P7 longest" cannot be checked |
+| Major | the eye is missing in every view (identity with Sheet B weakened); smooth shading across the crown, throat and belly reads as computer-modelled shells, which the reviewer calls shader rescue (ART-2.5) and a step away from B's flat planes (R5); in the top-view hierarchy diagram, wing-root and fairing parts lie over the back and halve the visible body |
+| Overclaims | the sheet says 94 declared panels, the method board 102; "roots spread"; "tab and slivers to rooted covert leaf"; "head from above: crown plane" (a smooth bulge); "lines only on declared edges"; "deep breast, broad back" from above; the drawing control summarised as clean support when it is mixed |
+| ART-2 | 2.1 PASS (weak) · 2.2 PASS (weak), dark-field small sizes not shown · **2.3 FAIL** · 2.4 PASS (weak) · **2.5 FAIL** · 2.6 PASS |
+| R1–R9 | R1, R2, R4, R8 PASS (weak) · R6, R7 PASS · **R3, R5, R9 FAIL** |
+
+**Form studies:** vehicle **CREDIBLE STUDY** (major: the top view runs off its panel and is at a different scale; the arch lips read as hoops standing off the body). Building **CREDIBLE STUDY** (major: the corrugation radiates from the finial through the corners, so the hips do not read and the top view is a sunburst). Tree **NEEDS REVISION** (major: the crown lies nearly in one plane, which is the heraldic-spread anti-pattern in the front and top views; the fork reads as prisms pushed into a stump). The reviewer also found README overclaims about the tree fork, the vehicle lips and the vehicle plan.
+
+**Method: NEEDS REVISION.** The reviewer kept the layers, vocabulary, junction, envelope and attachment ideas and the "decide before the tool decides" procedure as object-generic, and found the status labels disciplined. The findings were:
+- **B1:** the holdouts were not blind. The committed method already described the building and tree solutions, and the befores are reconstructions. They show that the procedure can be executed, not that the principles transfer blind.
+- **M1:** the P5 revision was fitted to one example. It has no negative control, it was never computed, and it would flag the tier progressions that bible §4.3 endorses.
+- **M2:** P7 flags any box in an orthographic view and misreads bible §4.5 ("two values plus line").
+- **M3:** the P1 descriptors are ill-defined: normalised aspect, peak degenerate on symmetric masses, frame unstated.
+- **M4:** a hidden-surface exemption was added to the tool mid-study without a §12 entry, and the building's visible soffit was classed as hidden.
+- **M5:** pixel contradictions in the transfer matrix.
+- **M6:** a bent panel has no Foldon representation (panels are planar), and this was not listed as open.
+- **M7:** declarations (prismatic, tessellation, B junction, hidden, fold) act as escape hatches without a legitimacy test.
+- Minors: brief deviations not logged; a study brief reinterpreting the bible's asymmetry rule; the §5 "every object" wording; P3 undefined at limb roots; weak threshold reasons.
+
+### 9.3 Bounded response
+
+One revision round answers these findings. Then one re-review, and the work stops at that result, whatever it is. The round-1 files and their digests stay unchanged as the reviewed record. The response is in §9.4.
+
+### 9.4 Round 2: what was produced, and the independent reviews (evidence `418e243`)
+
+| Item | File | SHA-256 | Commit |
+|---|---|---|---|
+| Method, round-2 revision | `docs/art/form-construction-method.md` (§12 change log) | — (text) | `09591cf` |
+| Form studies, round 2 | `docs/art/form-studies/form-study-{vehicle,building,tree}.png` | listed in the [studies README](../art/form-studies/README.md) | `7a61392` |
+| B-2 v7 target | [`b2-v6-flight-brief.md`](../art/raven-concepts/b2-v6-flight-brief.md) §12 | — (text) | `898a0c0`, before any v7 drawing |
+| Sheet B-2 v7 | `raven-concept-b2-sumi-flight-v7.png` | `2f1dc0a790fc8dbe6a8e6f3ca6a7731ba9fceaa43ce38db5d8b172bf935f9e77` | `418e243` |
+| v5 beside v7 | `raven-concept-b2-v7-compare.png` | `2d2fa598d58562c2186e0a50d9cc7056fe32c0b4443fcfdfa2936ba875bb52f0` | `418e243` |
+| v7 method board | `raven-concept-b2-v7-method.png` | `2eae501cf86c07249eb88bdc97a8a180be98a336c4a9956d58bbd71a450f2a9c` | `418e243` |
+
+Three new reviewers, each a separate agent that made none of the work and saw neither the round-1 reviewers' process nor the author's. The pixel reviewers read no source, brief or method before writing their pixel findings. Every verdict is a recommendation.
+
+**B-2 v7: NEEDS REVISION** ("not a NO-GO: the bird reads as a raven, it is the same bird as B, and the direction is improving").
+- Fixed: the cropped hero fingertips (the v6 blocker), the tail-root pinhole, the arm's taper to the wrist (wrist/root chord about 0.72), the panel-count mismatch, and the "roots spread" caption.
+- Still present, by part and view:
+  - the front body reads as a block, now a hexagonal prism (front);
+  - all finger roots meet at one wrist point (hero, top);
+  - rounded inner blades jump to needle fingers (both hands);
+  - a tan strip at the hero wrist;
+  - line stubs that end mid-panel (hero inner blades and back, underside coverts);
+  - slivers at the mouth corner and the wing root;
+  - volume carried by gradients rather than planes (crown highlight band, belly);
+  - the body halved in the top-view hierarchy diagram.
+- New: the eye geometry juts past the head outline as small spurs, and is about 3 px in the hero; the tail label covers the hero tail tip; a dithered smudge in the underside coverts; an asymmetric dark slab at the vent; a floating fragment at the elbow from above.
+- Overclaims:
+  - "continuous shading only inside developable panels". The v7 read-out has no angle defect over 2°, but 14 tessellation edges bend more than 20° (max 53.9°). The v7 method board also still prints a sentence carried over from v6 saying the crown, throat and belly are "mildly doubly curved". That is a stale caption, and the two statements contradict each other;
+  - "eye restored" holds in the side view only;
+  - "wing root under the back" is contradicted by the hierarchy diagram;
+  - the drawing controls are too small to separate form from drawing, and the flat-face row shows part of the cleaner look comes from hiding tessellation edges.
+- ART-2: 2.1 PASS (weak) · 2.2 NOT VERIFIED (no dark-field small sizes; the tail is hidden in the hero) · **2.3 FAIL** · 2.4 PASS (weak) · **2.5 FAIL** · 2.6 PASS.
+- R1–R9: R1, R2, R4, R7, R8 PASS (weak) · R6 PASS · **R3, R5, R9 FAIL**.
+
+**Form studies, round 2: vehicle, building and tree each NEEDS REVISION.** The reviewer confirmed that side, front and top now share one scale.
+- **Vehicle:** the clipped top view and the plan width are fixed. The arch lips still stand off the body in three of four views. New: the car reads tall and narrow, with a flat body side.
+- **Building:** the hips now read from the top, and the soffit is visible and counted. The three-quarter view still shows radiating pleats. The section strip still says nothing about the roof, and the equal-tooth eave fringe reads as repeated noise.
+- **Tree:** the trunk is slender and the fork no longer shows end faces. But the crown is still nearly planar from the top (about 4.5:1), the hero three-quarter view is edge-on, and the fork collar reads as a pasted box.
+- Overclaims in the studies README: the tree crown "spreads in depth"; the vehicle lip "lies on the body side"; the fork "no butt joint"; tree 24 px readability. The vehicle's fascia, tail panel and wheel wells were also classed as hidden although they are visible, which repeats the soffit error.
+
+**Method, round 2: NEEDS REVISION.** Resolved: M1 (the P5 revision withdrawn), M6 (bent panels listed as open), the asymmetry question sent to the owner, P3 at limb roots, and the logged brief deviations. Partly resolved: B1, M3, M4, M5, M7. Not resolved: M2. New problems:
+- **P7 and P1 now pass B-2 v5,** their own fail examples. P7 went from three plane families at 20° to two at 8°, so v5's two-tone block passes. Its bible §4.5 citation is still a misreading. P1's "side lean" brings aspect back, and ε has no unit.
+- **§4.0 test 2 lets declarations be added after a diagnostic fires,** which conflicts with GEO §1.8.
+- **Holdout wording** remains in several places, including the round-2 sheet banners ("designed with the method exactly as committed in `449406b`"), which is false for round 2.
+- **The v7 target keeps v6 brief text** that cites the old P1 and P7.
+- **The §12 table is split by a blank line.**
+- **A slab tower exempted by declaration** sits against bible §8 ("towers taper and break"). That question should go to the owner.
+
+### 9.5 Outcome: NO-GO for owner approval at this stage (bounded stop)
+
+Under §9.3 the work stops at the round-2 result. **No B-2 version, study or method text in this record is put forward as ready for approval.** B-2 v7 is the latest flight concept and stays `NOT VERIFIED` for ART-1. Every file and digest above is kept unchanged as the reviewed record.
+
+Bounded next actions, if the owner wants another round (each one named by a reviewer):
+1. **Method.**
+   - Restate P7 so a two-tone block fails, and P1 so aspect cannot return through side lean (ε with units). Check every fail example against every principle and report the v5 and v6 results.
+   - Make §4.0 non-retroactive, in line with GEO §1.8. Have a reviewer confirm declarations, and forbid a declaration that reproduces a bible §5 anti-pattern.
+   - Turn bends over the allowance into P4 flags.
+2. **B-2.**
+   - Front body as planes that read from the front.
+   - Finger roots spread along the hand, so they do not meet at one point.
+   - A transitional blade between the inner primaries and the fingers.
+   - Remove the wrist strip, the line stubs, the slivers and the eye spurs.
+   - Shade only true planes, or show the faceted drawing as the main image.
+   - A hierarchy diagram that matches the top view, and dark-field small sizes.
+3. **Studies.**
+   - Vehicle: lips as body-side flares, sedan proportions.
+   - Building: a section strip that shows the roof-to-wall relation; an eave edge that is not an equal-tooth fringe.
+   - Tree: a crown with real depth in the top view, and a fork without a collar box.
+4. **Owner questions surfaced:**
+   - whether a slab tower may be exempt against bible §8 "towers taper and break";
+   - how broad a declared tessellation may be against bible §4.3;
+   - the bible §4.1.3 asymmetry question (studies brief, B-c).
+
+Factual corrections made after the round-2 review, with no change to any reviewed image, any design or any principle text, are listed in §9.6.
+
+### 9.6 Factual corrections after the round-2 review
+
+These change no reviewed image, design or principle text. They correct statements that the round-2 reviewers found contradicted by the pixels or the data.
+
+| Where | Correction |
+|---|---|
+| Studies README: matrix, read-out table | The vehicle lip, the tree crown depth, the tree fork and the tree 24 px claims now state what the reviewer saw. The vehicle's wheel wells, fascia and tail panel are visible, so they are no longer classed as hidden, and the building's podium top likewise. The corrected vehicle read-out is **161 visible bends over 20° (max 82.1°) and 45 vertices with an angle defect over 2° (max 20°)**, against the 18 and 0 that the round-2 sheet still prints. The sheet image is unchanged as the reviewed record |
+| Studies brief; method status, §8, §12, §12.1 | "Holdout" wording that the reviews showed to be untrue is corrected: not blind; round 2 used the method as revised in `09591cf`. The round-2 sheet banners still carry the old wording and are superseded by these notes |
+| Method §12 | The table no longer splits at a blank line. A new §12.2 lists what stays open after the round-2 review |
+| B-2 v6 brief §3 | A note that §1, §3, §6 and §8 cite P1, P5 and P7 as first committed, which the method has since revised. The v7 target inherits them; this is recorded, not reconciled |
+| B-2 v7 method board | Its read-out panel prints a sentence carried over from v6 ("the merged crown, throat and belly panels are mildly doubly curved"). The v7 read-out file (`renders/b2v7/diagnostics.json`) shows **no** angle defect over 2°, 14 edges bending over 20° (max 53.9°), and one declared fold under 8°. The image is unchanged as the reviewed record; this note supersedes the sentence |
+
+## 10. Method correction, geometry operators and holdout (under §0.2)
+
+Design and research only. No package, app, experiment, runtime, lab or server was added. Nothing is approved or adopted. PR #14 stays a draft, and PR #11 is untouched.
+
+### 10.1 What was produced
+
+| Item | File | Commit |
+|---|---|---|
+| Ruling recorded (v7 NOT APPROVED) | this packet §0.2; ART gates §8–§9 | `8e4e0cf` |
+| Method M3: P1, P7, §4.0, P4 bends, P5 tessellation, §13 consistency | [`form-construction-method.md`](../art/form-construction-method.md) | `8371748` |
+| Old and new P1 and P7 against v5, v6, v7, a prismatic shaft, repeats, sheets and sparse forms | [`form-method-check.md`](../art/form-method-check.md) | `8371748` |
+| Operators O1, O2 and O3 (research proposal) | [`geometry-operators.md`](../research/geometry-operators.md) | `8c2bd53` |
+| Geometry Operator Laboratory (**proposal only**) | [`geometry-operator-lab.md`](../research/geometry-operator-lab.md) | `8c2bd53` |
+| **Freeze** of M3 and the operators, before any holdout category was chosen | — | `8c2bd53` (pushed) |
+| Holdout selection log (biwa-type lute, chosen by an independent selector) | [`holdout/README.md`](../art/form-studies/holdout/README.md) | `56fe301` |
+| Holdout brief, before any drawing or computation | [`holdout/brief.md`](../art/form-studies/holdout/brief.md) | `ff0b4a2` |
+| Holdout sheet (original drawing, `9a21e3b7158e92610a174e6ba81db067c1314b093ceaeec9640f4ad565a838fc`) and composition | [`holdout/`](../art/form-studies/holdout/README.md) | `a2ec1c1` |
+| Reviews and errata | holdout README §4; method §14; check §8; operators §9; lab §8 | `557e583` and the commit that adds this section |
+
+### 10.2 Independent reviews
+
+Each reviewer was a separate agent that made none of the work and recomputed the numbers independently. Every verdict is a recommendation.
+
+**Method M3 at `8c2bd53`: NEEDS REVISION** (one blocker, five majors; method §14).
+- **Met:** P1 rejects the v5 scaled profile family; equal repeated elements, planar sheets and sparse forms are not punished; the frame, normalisation and metric are explicit for P1; symmetry, degenerate peaks and correspondence are handled; the worked numbers reproduce; there is no global beauty threshold; P7 counts no planes and needs no shader; §4.0 requires declarations before artwork, with new versions; the operators' theorems and labels are correct; there is no migration decision.
+- **Blocker:** **P7 does not reject v5 under its own rules.** v5 declared a nape fold, not a junction, so it is one mass and passes at 3.4 px.
+- **Majors:**
+  - P7's measure does not track visible depth (nested bodies, raised stations);
+  - P1 fails turned or extruded objects, and the mass split can escape it;
+  - §4.0 rules 3 and 4 contradict each other, and the hidden test used the declared tier;
+  - the extruded-slab anti-pattern (bible §5) conflicts with prismatic shafts;
+  - operator rings between bands are **seams, not folds** (angle defect; operators §9).
+
+**Holdout (biwa) at `a2ec1c1`: NEEDS REVISION** (no blocker). It **supports the author's "transfer partial" conclusion**.
+- **What held:** the freeze, ancestry and leakage controls; the key numbers reproduce.
+- **Findings judged real:**
+  - P7 fails a mass whose sections nest;
+  - P1 fails shallow masses;
+  - no declaration route exists for equal functional elements (P5);
+  - the two-host string is not covered by O3;
+  - holes against Q2;
+  - soundboard camber against P4.
+- **The sheet's reads** (hero, end view, small sizes) and **four claims** were overstated. They are corrected in composition §5. The sheet is not redrawn.
+
+### 10.3 Outcome
+
+- **Mathematical research.** The operator proposal holds up except for the seam erratum: its exact results were reproduced. The lab proposal is complete as a proposal.
+- **Method.** M3 meets the P1 requirement but **not** the P7 requirement. Its §4.0 needs one wording fix.
+- **Transfer.** "Partial", on one category. Generalization is **NOT VERIFIED**.
+- **No further revision this round,** so the work stops at the research approval boundary. No artwork, concept, gate, policy or phase decision changed.
+
+### 10.4 Decisions for the owner (actionable only)
+
+*Later: the owner decided D-1 to D-5 on 2026-11-28, with D-4 split into D-4a and D-4b (§0.3). The table below is kept as the question that was asked.*
+
+| ID | Question | Options | Recommendation (not a decision) |
+|---|---|---|---|
+| **D-1** | Accept the **research direction**: O1 section transition, O2 crease insertion and O3 attach, with a grammar for global shape and a solver for local choice, as the basis for any later operator work | accept · revise · reject | accept as a research direction, with the seam erratum. It is not a production API |
+| **D-2** | Authorize a **bounded M3.1** of the method. Scope: replace or condition P7 (E1, E2); a rule for a fold inside a mass against a junction between masses; P1 for turned and extruded objects (E3); §4.0 wording (E4); a declaration route for equal functional elements (holdout) | authorize · stop the method track · defer | authorize one bounded revision with one independent re-review, without artwork |
+| **D-3** | Authorize the **Geometry Operator Laboratory, milestones M0–M1 only**: mathematical and exploratory, under the ART-1 feasibility allowance, with no Foldon change | authorize · defer · reject | defer until D-1 |
+| **D-4** | **O-1:** may a tower shaft, or any mass, be prismatic, given bible §5 "extruded slab" and §8 "towers taper and break"? **O-2:** does bible §4.1.3 asymmetry apply to objects without a gesture? | answer each | — |
+| **D-5** | May diagnostic **computation scripts** (no runtime, imported by nothing) be committed under `docs/` as design artefacts, so that read-outs are reproducible? This round they were kept out of the repository because the ruling forbids a runnable lab | allow · keep out | allow, labelled as design artefacts |
+
+**Unchanged and not asked here:**
+- ART-1 for B-2: no version is approved. B (perched) stays the selected direction.
+- ART-D3c.
+- Q1–Q6.
+- ADR 0018 and ADR 0019.
+- The Phase 3 exit.
+- Phase 4 and Geometry V4.
+- Any merge.
+
+
+## 11. M3.1, laboratory M0–M1 and their independent reviews (under §0.3, 2026-11-28)
+
+This section was written on draft PR #14. The work is design and research only, and no artwork was drawn. No package, app, experiment, runtime, server or Foldon contract was changed. Nothing is approved or adopted.
+
+### 11.1 What was produced
+
+| Item | File | Commits |
+|---|---|---|
+| Decisions D-1…D-5 recorded; bible clarifications D-4a and D-4b (draft branch only) | §0.3; [`visual-bible.md`](../art/visual-bible.md) §4.1.3, §5 and §8; `AGENTS.md` | `eab9920`, `9fd8018` |
+| Method **M3.1**, the bounded revision under D-2 | [`form-construction-method.md`](../art/form-construction-method.md) §4.0, §6.0, P1, P5, P6, P7 | `e26ccae` |
+| Diagnostic scripts (D-5): they reproduce the M3 read-outs and compute the controls | [`form-method-diagnostics/`](../art/form-method-diagnostics/README.md); [check](../art/form-method-check.md) §9 | `e26ccae` |
+| Re-review of M3.1, recorded as errata R1–R12 | method §15 | `d25f738` |
+| **M0:** O1 contract v1, written before any script | [`m0-o1-contract.md`](../research/geometry-operator-lab/m0-o1-contract.md) | `58b424f` |
+| **M0 freeze:** contract v1.1 after the independent math review; decision **GO** | contract §11–§12 | `33e7f67` |
+| **M1 red:** fixtures, oracles, tests and a stub | [`geometry-operator-lab/`](../research/geometry-operator-lab/README.md) | `0770c03` |
+| **M1 green:** the implementation and the evidence | same | `44cfd68` |
+| The bounded revision after the M1 review | same | `8965cff` |
+| Pointers from the operator and lab proposals; README index rows | operators §10; lab §9; `README.md` | `36bd051`, `fa608e5` |
+
+### 11.2 Independent reviews
+
+Each reviewer was a separate agent that made none of the work. Each recomputed the numbers with its own code. Every verdict is a recommendation.
+
+**M0 contract v1: GO WITH AMENDMENTS** (contract §12).
+- **Reproduced:** every fixture value, plus 300 random pairs and 200 caps and wedges against a brute-force hull, with 0 mismatches.
+- **Findings:** 15, applied in v1.1 before any script. The main ones:
+  - "a sliver comes only from a short edge" was false;
+  - caps and wedges are not intrinsically flat;
+  - the ring kind must be exact (`on_path`);
+  - the convexity predicate, the total error precedence and a canonical-form oracle were missing.
+- No fixture value changed.
+
+**Method M3.1: NEEDS REVISION** (no blocker, four majors; method §15). This was the single re-review that D-2 allows, so no further revision follows.
+- **Held:**
+  - §4.0 rules 3 and 4 reconciled with GEO §1.8–§1.13;
+  - no exemption from geometric truth or visual judgment;
+  - D-4a and D-4b applied faithfully;
+  - the 2 px constant withdrawn;
+  - no adopted gate weakened;
+  - every reproduced number matches.
+- **Majors:**
+  - P1 compares `d` with `ε_m` in different units (R1);
+  - the partition rule does not fully close the escape and conflicts with the operator seam erratum (R2);
+  - §6.0 lists P7 measures as data, but the scripts do not compute them (R3);
+  - `D_v` is a bounding-box ratio with unstated limits (R4).
+
+**Laboratory M1: PASS WITH FINDINGS** (lab README).
+- **Chronology:** confirmed. The freeze came before any script, and the tests before the implementation. No oracle, fixture value or tolerance changed after the implementation existed.
+- **Second implementation:** the reviewer wrote a BigInt O1 on Node 24 (V8) from the contract alone. It produced **byte-identical digests on 736 of 736 `ok` cases** and identical codes on 70 error cases, against `o1.py` on CPython 3.9.6. The cases include permuted inputs, reversed chains, ±10⁹ coordinates, h = 1 q and 1024-vertex pairs.
+- **Adversarial checks:** 40,000 fuzzed calls raised no exception. Star polygons, error precedence, `normal` and `min_altitude` all behaved as specified.
+- **Findings, fixed in `8965cff`:**
+  - an empty vertex list and fewer than 2 stations returned `malformed-input`, not `out-of-bounds`;
+  - the README timing did not match the committed evidence;
+  - R6 permuted only one section, and R7 omitted chains;
+  - areas were not checked against their own oracle;
+  - no overlapping net was tested.
+
+### 11.3 Outcome
+
+| Item | Verdict | Remaining |
+|---|---|---|
+| M0 | **GO**; contract v1.1 frozen | — |
+| M1 against contract v1.1 | **PASS** on every listed item (28 tests), after one bounded revision for the count-bound codes | `inconclusive` net class never seen; Hausdorff bound out of scope |
+| Cross-engine agreement (P3D-6 is a tested property) | **PASS for 806 inputs** compared (CPython against V8) | floats, error details, other versions and platforms not compared |
+| Worst residuals | exact parts: 0. Float parts: net congruence 5.7e-7 τ, seam 4.9e-7 τ, with τ = 1e-9 × diameter; F1 angle error 0.0°; F1 net deviation 7.6e-5 L | — |
+| Timing | measured only: 0.58, 4.19, 33.6 and 63.3 ms per band at m = n = 8, 64, 512 and 1024; fitted exponent 0.98 (CPython 3.9.6, arm64) | no budget |
+| Rigid folding path, collision, physical seam closure, single-sheet foldability | **NOT VERIFIED; not claimed** | needs Q1, Q2 or Q4, and GEO-1 |
+| M3.1 | **NEEDS REVISION**, recorded as errata; stays a proposal | R1–R4 for any later round |
+| v5 rejection | stands as the human and independent visual result; no metric is required to reproduce it (D-2) | — |
+
+**Unchanged:**
+- B-2 v7 is **NOT APPROVED**; B (perched) stays the selected direction only.
+- ART-D3c, Q1–Q6, ADR 0018 and ADR 0019, and the Phase 3 exit stay pending.
+- No merge, Geometry V4, Phase 4, object implementation or visual approval.
+- Artwork digests re-verified at this branch: v5 `888cf4a5…0942`, v7 `2f1dc0a7…9e77`, B `55406933…4f74f`, holdout `9a21e3b7…38fc`.
+
+### 11.4 Decisions the owner would need before M2 or later
+
+| ID | Question | Recommendation (not a decision) |
+|---|---|---|
+| D-6 | Authorize M2 (O2 crease insertion) under the same isolation, test-first and freeze-first discipline? | authorize only after deciding whether O1's next contract covers tilted planes, which every real spine needs |
+| D-7 | Extend the O1 contract to non-parallel section planes, or to non-convex sections through matched partitions? | tilted planes first, as a contract v2 with its own freeze and review |
+| D-8 | Q1, Q2 and Q4: are bands joined by seams between sheets (Q1, Q2), or by closed crease networks (Q4)? Without one of them, no closed shell built from O1 bands can be a Foldon object | needed before M3 (O1 + O2 composition) |
+| D-9 | O3 attachments with more than one host (the holdout's strings), holes in panels (the holdout's peg holes) and seam topology | a research question for M4, not decided |
+| D-10 | Any further method round on errata R1–R4 | optional; the read-outs stay informative either way |
+
+Q1–Q6 themselves are unchanged and open, as defined on draft PR #11 (`docs/research/geometry-expressiveness.md` §6 @ `616b0cf`).
+
+## 12. D-6 to D-10 and the laboratory CI: results and independent reviews (under §0.4, 2026-11-28)
+
+This section was written on draft PR #14. The work is research and design only.
+- No package, app, experiment, runtime, Foldon contract, production dependency, artwork file or `ci.yml` was changed.
+- No server was started.
+- Nothing is approved, adopted or promoted.
+
+Base: `main` @ `5886475d04db76f58105080f63d01426d2d72311`. PR #14 started from `df998d7`. PR #11 @ `616b0cf` is untouched.
+
+### 12.1 Commit order per track
+
+| Track | Commits, in order |
+|---|---|
+| Decisions and roadmap | `462e011` §0.4, lab §10 (M1b proposed, M2 independent of it, M3–M5 locked, the D-9 list) |
+| D-10 | `2714cd5` R1–R4 corrections → independent review → `97bd834` errata D10-1…D10-10 (no second round) |
+| D-6 M2 (O2) | `fc646c7` contract v1 → review → `18fd118` **freeze v1.1** → `46d92f2` **red** (34 tests: 32 F, 1 E) → `d326816` **green** (separate implementation agent; 34 pass) → review → `6861a19` bounded test revision (41 pass) |
+| D-7 M1b (O1 v2) | `c1bdd6e` contract v2.0 → review → `6b2aa39` **freeze v2.1** → `16d0a0f` v2.2 generator amendment (before any implementation; not re-reviewed, disclosed) → `4ebd2c8` **red** (19 tests: 17 F, 1 E) → `21928d8` **green** (separate implementation agent; one fixture literal reduced to lowest terms, value unchanged, disclosed) → review → `57a5971` bounded test revision (23 pass) |
+| D-8 | `8495f65` modular seams, design only |
+| Evidence and CI | `7e4a326` evidence and exact-evidence check; `733b087` "Math lab" workflow; `9618aea` count 92 and evidence refresh (hashes and timing only) |
+
+### 12.2 Independent reviews
+
+Each reviewer was a separate agent that made none of the work it reviewed, and each recomputed with its own code. The two implementation agents were also separate from the contract, test and oracle author. Every verdict is a recommendation.
+
+| Review | Verdict | Key reproduced or found |
+|---|---|---|
+| M2 contract v1 | **GO WITH AMENDMENTS** (3 majors, 7 minors) | Every proof (E1–E5, the tree, `closed-network` unreachable, the hinge sign) and every fixture value held. Majors: the near-±180° sign, the float axis rule, degenerate generator modes |
+| O1 v2 contract v2.0 | **GO WITH AMENDMENTS** (4 majors, 12 minors) | Every fixture value and the chain counterexamples CE1 and CE2 reproduced (CE2 in 3D). Majors: collinearity before planarity, a zero Newell vector, total precedence, a generator with no two-edge faces. A proposed witness could not be reproduced, so that claim was withdrawn instead |
+| D-10 corrections | **NEEDS REVISION** (4 majors, no blocker) | The symmetric P1 path, the units and function-based classification held. The asymmetric P1 path is invalid (reproduced). "P1 does not depend on the partition" is false. The floor needs a cap and a pre-declared `ε_m`. The junction range is withdrawn. Recorded as errata D10-1…D10-10 (method §16.1), with no further revision under the D-10 bound |
+| M2 implementation | **PASS WITH FINDINGS** | 0 disagreements with the contract, oracles or the reviewer's engine. 17 of 53 mutants survived the suite (test gaps, closed in `6861a19`). Tampered sheets can raise (out of contract, recorded) |
+| O1 v2 implementation | **PASS WITH FINDINGS** | 0 mismatches and 0 exceptions in about 71,000 inputs. 14 of 40 mutants survived (test gaps, closed in `57a5971`). Wording errata F3–F7 recorded in the lab README |
+
+### 12.3 Outcome
+
+| Item | Verdict | Evidence and limits |
+|---|---|---|
+| M2 (O2) within contract v1.1 | **PASS** | 41 tests. Worst pose residual 7.2e-4 τ; angle roundtrip 1.2e-11° (band 1e-7°); camber G7 within 1.6e-6 L (band 1e-5 L) |
+| O1 v2 within contract v2.2 | **PASS** | 23 tests. Net residuals ≤ 5.4e-7 τ. Timing measured only: 1024-vertex band 42–90 ms on a shared machine (CPython 3.9.6, arm64) |
+| Exact cross-engine agreement (P3D-6) | **PASS for the compared inputs** | Node 24 BigInt engines written by the reviewers from the contracts alone. M2: 11,156 `ok` results and 52,233 codes. O1 v2: 11,246 `ok` results and 59,645 codes. All byte-identical. Floats are not compared |
+| v1.1 baseline | **PASS, unchanged** | 28 tests; the v1.1 files are byte-identical since before v2.0 |
+| D-10 | **NEEDS REVISION, recorded** | R1 and R2 partly resolved, R3 partly, R4 resolved with minor gaps (method §16.1) |
+| D-8 seams | **design only** | conditions S-1…S-6, worked examples S1 and S2 (Descartes 4π check), counterexamples CX1–CX4 |
+| Laboratory CI | **green on the pushed head** (§12.4) | CPython 3.9.25 and 3.12.16 on Linux x86_64; 92 + 13 tests; exact evidence matches |
+| Global folding, collision, folding motion, thickness, chains of tilted bands, U1 `kit.loft` admissibility | **NOT VERIFIED; not claimed** | contracts M2 §4.6 and §12, v2 §7 |
+
+### 12.4 CI
+
+- **Run.** "Math lab" run 46124571720 on `733b087` passed: 81 laboratory tests (before the bounded revisions) and 13 diagnostic tests on each of CPython 3.9.25 and 3.12.16, with the exact evidence matching. The production "CI" run 46124571667 on the same head also passed.
+- **Failure detection, tested locally** on a copy outside the repository with the same step scripts: an injected failing test, a count mismatch and an altered digest each exit 1. No red artefact was committed.
+- **The final head** after this section is verified in the PR description.
+
+### 12.5 Unchanged
+
+- B-2 v7 is **NOT APPROVED**; B (perched) stays the selected direction only.
+- ART-D3c, Q1–Q6, ADR 0018 and ADR 0019, and the Phase 3 exit stay pending. D-8 resolves none of Q1, Q2 or Q4.
+- No merge, Geometry V4, Phase 4, production contract adoption, object modelling or visual approval.
+- Artwork digests re-verified at this branch: v5 `888cf4a5…0942`, v7 `2f1dc0a7…9e77`, B `55406933…4f74f`, holdout `9a21e3b7…38fc`.
+
+### 12.6 Decisions the owner would need before M3 (recommendations, not decisions)
+
+| ID | Question | Why it blocks M3 |
+|---|---|---|
+| D-11 | Are bands joined as separate sheets with seams (the D-8 model), and should the seam conditions S-1…S-6 be frozen as an M3 seam contract with oracles? | Every off-path O1 ring is a seam; M3 cannot be specified without a seam contract |
+| D-12 | Does M3 use parallel rings only (v1.1), or also tilted rings (v2.2, single bands only)? | v2 has no chain result, and CE2 shows that pairwise checks do not make a chain safe |
+| D-13 | Authorize M3 (O1 + O2 composition) as its own milestone, with the same freeze-first discipline? | M3 is locked until a separate permission |
+| D-14 | Optionally, a further method round on errata D10-1…D10-4 | the method stays a proposal either way |
+
+No actual blocker remains inside the authorized scope. The open items are the NOT VERIFIED properties above, which need these decisions or GEO-1.

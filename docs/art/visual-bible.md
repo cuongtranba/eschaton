@@ -1,6 +1,8 @@
 # Eschaton Visual Bible
 
 > **Status: ADOPTED as the artistic reference for object form** by owner decision **ART-D2** on 2026-11-27 (record: [`docs/review/art-1-raven-decision-packet.md`](../review/art-1-raven-decision-packet.md) §0). Adoption makes this the art-direction reference; it does not change any other adopted rule, gate, ADR or phase decision. The adopted geometry gates (GEO-0…GEO-7, [`docs/governance/geometry-quality-gates.md`](../governance/geometry-quality-gates.md)) stay authoritative and unchanged. The companion gates are the adopted [ART-0…ART-5](../governance/art-quality-gates.md). Sources, with use and licence status, are listed in [`docs/research/art-direction-sources.md`](../research/art-direction-sources.md). The Raven concepts that apply this bible are in [`docs/art/raven-concepts/`](raven-concepts/README.md).
+>
+> **Draft-branch clarifications (2026-11-28).** §4.1.3, §5 and §8 carry the owner's clarifications D-4a and D-4b ([packet](../review/art-1-raven-decision-packet.md) §0.3). They are recorded on draft PR #14 and are not in force on `main` until the owner authorizes a merge. They clarify existing rules and add no gate.
 
 This document is the canonical art-direction reference **for object form and design intent**. It builds on, and does not replace:
 
@@ -44,6 +46,7 @@ I checked [`assets/reference/visual-direction.png`](../../assets/reference/visua
 1. Every object must be identifiable **as a filled silhouette** on both a light field and a dark field before any interior line is drawn. Test it at hero scale and at district scale (§6).
 2. A silhouette carries **a few readable signature features**: for a raven, the heavy bill, the wedge tail and the slotted hand. Find them from the subject's biology or function, never from the construction system.
 3. **Asymmetry and gesture beat symmetry.** A frontal, mirror-symmetric spread reads as heraldry. Prefer a three-quarter view, banking, a head turn or an offset weight.
+   - *Clarification D-4b (owner decision of 2026-11-28, recorded on draft PR #14 and not in force on `main` until a merge is authorized; [packet](../review/art-1-raven-decision-packet.md) §0.3):* this rule is about **gesture, pose and the composition of a view or scene**. It does not require asymmetric geometry. A bilaterally symmetric body, a vehicle shell or an instrument can be correct as geometry. Its symmetry is judged separately from its pose and from the composition it is shown in. No object is required to be asymmetric. A frontal, mirror-symmetric **pose** still reads as heraldry (§5, heraldic spread).
 4. **Use negative space deliberately.** Gaps between fingers, the space under a raised wing and the gap between bill mandibles all carry identity. Do not fill them with detail.
 
 ### 4.2 Form hierarchy
@@ -97,6 +100,13 @@ Palette: use the tokens in master plan §2.1 (Paper, Pale paper, Ink, Charcoal, 
 | Shader or noise rescue | texture, grain or dramatic light used to hide weak form | — (a gate rule) |
 | Gratuitous detail | detail that does not change recognition at either scale | — |
 
+**Intentional against unintentional (clarifications D-4a and D-4b; owner decision of 2026-11-28, recorded on draft PR #14 and not in force on `main` until a merge is authorized; [packet](../review/art-1-raven-decision-packet.md) §0.3).** The rows above name forms that arise **by default**: from a grid, from an extrusion tool, or from one element repeated at a constant pitch.
+- **Rectangular and prismatic structures.** An intentional rectangular or prismatic structure is acceptable when the subject's function and the art direction justify it, and the reason is declared before the artwork. Examples: a slab tower like those in the reference image (§3), a doorway, a crate, a beam, a shipping container. The voxel-blockiness, extruded-slab and plank-limb rows still apply to blockiness that nobody decided, and to a prism that stands in for a form whose function changes along it (a raven limb, a car body).
+- **Repeated equal elements.** Deliberately repeated equal elements are acceptable when the subject's function makes them equal. Examples: the four wheels of a car, tuning pegs, a row of identical windows, frets. The planar-rake and repeated-noise rows still apply to an accidental series: equal blades, gaps or steps that the subject does not call for, or many small units that hide the mass.
+- **Symmetry.** Symmetric geometry is not an anti-pattern (§4.1.3). The heraldic-spread row is about pose.
+
+These clarifications do not loosen the rest of this bible, the ART gates or the GEO gates. Each declaration is still checked for truth, and every visible form is still judged at every required view and scale.
+
 The board [`raven-concepts/v3-failure-anatomy.png`](raven-concepts/v3-failure-anatomy.png) puts actual V3 pixels next to the corresponding Concept A view, row by row (head, wing, below, side).
 
 ## 6. Scale: hero and district
@@ -139,7 +149,7 @@ The concept sheets include a strip at 96, 48, 24 and 12 px. A concept passes the
 
 **Architecture.**
 - Roofs are the main signature: tiled, curved eaves and gables. Corrugation is a legitimate repeated rhythm here because the subject is corrugated.
-- Towers taper and break.
+- Towers taper and break. *Clarification D-4a (owner decision of 2026-11-28, recorded on draft PR #14 and not in force on `main` until a merge is authorized):* this is the default, not a ban. A prismatic slab tower, as seen in the reference (§3), is acceptable where function and the art direction justify it and the reason is declared (§5).
 - Openings are negative space, not decals.
 
 **Plants.**

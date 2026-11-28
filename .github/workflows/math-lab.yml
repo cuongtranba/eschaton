@@ -1,0 +1,60 @@
+# Independent CI for the mathematical laboratory (owner decision "Lab CI", decision packet §0.4,
+# draft PR #14). It runs the committed standard-library unittest suites and the exact-evidence check.
+# It is separate from ci.yml, which is unchanged: path filters here never skip the production checks.
+name: Math lab
+
+on:
+  pull_request:
+    paths:
+      - "docs/research/geometry-operator-lab/**"
+      - "docs/art/form-method-diagnostics/**"
+      - ".github/workflows/math-lab.yml"
+  push:
+    branches: [main]
+    paths:
+      - "docs/research/geometry-operator-lab/**"
+      - "docs/art/form-method-diagnostics/**"
+      - ".github/workflows/math-lab.yml"
+
+concurrency:
+  group: math-lab-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  lab:
+    name: math lab · unittest + exact evidence · python ${{ matrix.python }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        # 3.9 matches the interpreter of the committed evidence (CPython 3.9.6); 3.12 is a second
+        # interpreter. Only exact outputs are compared across them; floats are checked against bands.
+        python: ["3.9", "3.12"]
+    env:
+      LAB_TESTS: "92"
+      DIAGNOSTIC_TESTS: "13"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Interpreter
+        run: python -c "import platform, sys; print(sys.version); print(platform.platform())"
+      - name: Geometry operator laboratory (O1 v1.1, O1 v2, O2)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s docs/research/geometry-operator-lab -p 'test_*.py' -v 2>&1 | tee lab.log
+          grep -Eq "^Ran ${LAB_TESTS} tests" lab.log || { echo "expected ${LAB_TESTS} laboratory tests"; exit 1; }
+      - name: Form-method diagnostics
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s docs/art/form-method-diagnostics -p 'test_*.py' -v 2>&1 | tee diag.log
+          grep -Eq "^Ran ${DIAGNOSTIC_TESTS} tests" diag.log || { echo "expected ${DIAGNOSTIC_TESTS} diagnostic tests"; exit 1; }
+      - name: Exact parts of the committed evidence
+        run: python docs/research/geometry-operator-lab/check_exact_evidence.py

@@ -178,7 +178,7 @@ Not done: an `ART-1` field in the GEO reporting template (GEO §10) was optional
 | ART-D1 | ART gates | **adopted** (this file) |
 | ART-D2 | Visual Bible as the canonical art-direction reference for object form | **adopted** ([`visual-bible.md`](../art/visual-bible.md)) |
 | ART-D3a | Raven concept (ART-1) | **Concept B (perched) selected as the artistic direction**, at the sheet digest recorded in the [decision packet](../review/art-1-raven-decision-packet.md) §0 |
-| ART-D3b | B-2 flight wing and pose | **revise before approval**; not approved as drawn. Any revised B-2 is pending a new owner ART-1 decision |
+| ART-D3b | B-2 flight wing and pose | **revise before approval**; v3 not approved as drawn. **v5 not approved** (second ruling, 2026-11-27): revise by a method generic for all objects, not bird-specific ([packet](../review/art-1-raven-decision-packet.md) §0.1). **v7 not approved** (third ruling, 2026-11-27, at `2f1dc0a7…9e77`, packet §0.2). Any revised B-2 is pending a new owner ART-1 decision |
 | ART-D3c | Numerical tolerances for ART-4 | **not authorized**; the proposed values stay proposals |
 
 ## 9. Current ART gate state for the Raven
@@ -187,7 +187,7 @@ Not done: an `ART-1` field in the GEO reporting template (GEO §10) was optional
 |---|---|---|
 | ART-0 | research recorded, not graded | sources in [`art-direction-sources.md`](../research/art-direction-sources.md) |
 | ART-1, B perched | **direction selected by the owner** (1.4 recorded for the artistic direction only) | selecting a direction does not approve final object quality or geometry; B's open defects are listed in the packet §3 |
-| ART-1, B-2 flight | `NOT VERIFIED` | revision requested (ART-D3b). Revisions v4 and v5 were each independently reviewed **NEEDS REVISION** (packet §7); the owner has not decided on either |
+| ART-1, B-2 flight | `NOT VERIFIED` | revision requested (ART-D3b). Revisions v4 and v5 were each independently reviewed **NEEDS REVISION** (packet §7). The owner did **not approve v5** and asked for a revision by a generic method (packet §0.1). v6 and v7 were each independently reviewed **NEEDS REVISION** (packet §9). The owner did **not approve v7** (packet §0.2); v4 and v6 were never decided, and no version is approved |
 | ART-1 tolerances | `NOT VERIFIED` | ART-D3c not authorized |
 | ART-2 … ART-5 | `NOT VERIFIED` | no implementation exists; Geometry V4 is not authorized |
 

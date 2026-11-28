@@ -1,6 +1,6 @@
 # Raven concepts A · B (+ B-2) · C (ART-1 candidates)
 
-> **Status: CONCEPT ARTWORK. Not implemented geometry.** On 2026-11-27 the owner selected **Concept B (perched), Sheet B v4 at SHA-256 `554069333c47d2c8adde05f0fa4866be5d278d27873807cac7e76a694ec4f74f`, as the artistic direction** (ART-D3a). That selects a direction. It does not approve final object quality, geometry or foldability. **B-2 v3 is not approved** (ART-D3b: revise before approval), and any revised B-2 is pending a new owner ART-1 decision. A and C are not approved. ART-D3c (tolerances) is not authorized. Record: [decision packet](../../review/art-1-raven-decision-packet.md) §0.
+> **Status: CONCEPT ARTWORK. Not implemented geometry.** On 2026-11-27 the owner selected **Concept B (perched), Sheet B v4 at SHA-256 `554069333c47d2c8adde05f0fa4866be5d278d27873807cac7e76a694ec4f74f`, as the artistic direction** (ART-D3a). That selects a direction. It does not approve final object quality, geometry or foldability. **B-2 v3 is not approved** (ART-D3b: revise before approval). **B-2 v5 is not approved** either (ART-D3b, second ruling: revise by a method generic for all objects, not bird-specific; packet §0.1). **B-2 v7 is not approved** (ART-D3b, third ruling; packet §0.2). v4 and v6 were never decided. Any revised B-2 is pending a new owner ART-1 decision. A and C are not approved. ART-D3c (tolerances) is not authorized. Record: [decision packet](../../review/art-1-raven-decision-packet.md) §0.
 >
 > The sheets are design artifacts. They are not production meshes, not geometry contracts, and not evidence for any GEO gate. Physical foldability, collision, closure and structural bonds are **NOT VERIFIED** for any concept. The sheets apply the adopted [Visual Bible](../visual-bible.md). The labels printed on the historical sheets ("pending owner ART-1 review") describe their state when they were drawn, and the images are kept unchanged.
 
@@ -13,8 +13,14 @@
 | [`raven-concept-b2-sumi-flight.png`](raven-concept-b2-sumi-flight.png) | **Sheet B-2 v3**: the same sumi raven in a banked glide (flight study). **Not approved** (ART-D3b: revise before approval); kept unchanged as history |
 | [`raven-concept-b2-sumi-flight-v4.png`](raven-concept-b2-sumi-flight-v4.png) | **Sheet B-2 v4**: the first flight revision under ART-D3b, drawn after the committed [brief](b2-v4-flight-brief.md). Independent review: **NEEDS REVISION** (packet §7.1). Kept unchanged as the reviewed record |
 | [`raven-concept-b2-v4-details.png`](raven-concept-b2-v4-details.png) | B-2 v4 close-ups and v3 beside v4 (reviewed record) |
-| [`raven-concept-b2-sumi-flight-v5.png`](raven-concept-b2-sumi-flight-v5.png) | **Sheet B-2 v5**: the second flight revision, answering the v4 review. Independent review: **NEEDS REVISION** ("close"; cleanup-level defects, packet §7.2). **Pending owner ART-1**; not approved |
+| [`raven-concept-b2-sumi-flight-v5.png`](raven-concept-b2-sumi-flight-v5.png) | **Sheet B-2 v5**: the second flight revision, answering the v4 review. Independent review: **NEEDS REVISION** ("close"; cleanup-level defects, packet §7.2). **Owner: NOT APPROVED** (packet §0.1); kept unchanged as the reviewed record |
 | [`raven-concept-b2-v5-details.png`](raven-concept-b2-v5-details.png) | B-2 v5 close-ups (near and far hand, wrist, arm front elevation, head), v3 beside v5 at matched view directions, clay beside ink, silhouettes on light and dark fields |
+| [`raven-concept-b2-sumi-flight-v6.png`](raven-concept-b2-sumi-flight-v6.png) | **Sheet B-2 v6**: the third flight revision, made with the proposed generic [form construction method](../form-construction-method.md) after the owner did not approve v5. Brief: [`b2-v6-flight-brief.md`](b2-v6-flight-brief.md). Independent review: **NEEDS REVISION** (packet §9.2). Kept unchanged as the reviewed record |
+| [`raven-concept-b2-v6-compare.png`](raven-concept-b2-v6-compare.png) | v5 beside v6 at identical cameras, scale and light; matched crops; silhouettes; v6 drawn the v5 way as a control |
+| [`raven-concept-b2-v6-method.png`](raven-concept-b2-v6-method.png) | The method's artefacts for v5 and v6: section program, top-view outline overlay, crease declaration map, junctions, series and envelope read-outs |
+| [`raven-concept-b2-sumi-flight-v7.png`](raven-concept-b2-sumi-flight-v7.png) | **Sheet B-2 v7**: v6 revised after its independent round-1 review (NEEDS REVISION, packet §9.2), to the target in the brief §12. Independent review round 2: **NEEDS REVISION** (packet §9.4); the round stopped there (§9.5). **Owner: NOT APPROVED** (packet §0.2); kept unchanged as the reviewed record |
+| [`raven-concept-b2-v7-compare.png`](raven-concept-b2-v7-compare.png) | v5 beside v7, both re-rendered at the v7 hero distance; matched crops; drawing controls (v7 the v5 way, and as flat facets) |
+| [`raven-concept-b2-v7-method.png`](raven-concept-b2-v7-method.png) | The method's artefacts for v5 and v7 |
 | [`raven-concept-c-modular.png`](raven-concept-c-modular.png) | **Sheet C v2**: modular tessellated raven, upstroke. Independent review: NO-GO as a separate direction |
 | [`raven-concepts-comparison.png`](raven-concepts-comparison.png) | A, B, B-2 and C side by side: hero, ink context, silhouette, district scale, hierarchy |
 | [`v3-failure-anatomy.png`](v3-failure-anatomy.png) | Actual V3 pixels (PR #11 @ `616b0cf`, captured at `74c686f`) beside A and B, per GEO-2 defect |
@@ -59,6 +65,29 @@ python3 b2v4_boards.py <scratch>/c2f <scratch>/c2f4 b2v4-details.png   # <scratc
 /Applications/Blender.app/Contents/MacOS/Blender -b --factory-startup --python render.py -- c2f5_sumi_flight <scratch>/c2f5
 python3 sheet.py c2f5 <scratch>/c2f5 sheet-c2f5.png
 python3 b2v5_boards.py <scratch>/c2f <scratch>/c2f5 b2v5-details.png
+# B-2 v6 (formkit and render_form.py live in ../form-studies/source/):
+export PYTHONDONTWRITEBYTECODE=1
+cd ../../form-studies/source
+Blender -b --factory-startup --python render_form.py -- c2f6_sumi_flight <scratch>/c2f6 declared      # sheet renders
+Blender -b --factory-startup --python render_form.py -- c2f5_sumi_flight <scratch>/cmp-v5 legacy 2    # v5, drawn as before
+Blender -b --factory-startup --python render_form.py -- c2f6_sumi_flight <scratch>/cmp-v6 declared 2
+Blender -b --factory-startup --python render_form.py -- c2f6_sumi_flight <scratch>/cmp-v6L legacy 2   # drawing control
+cd ../../raven-concepts/source
+Blender -b --factory-startup --python b2v6_export.py -- <scratch>/b2-export.json
+python3 sheet.py c2f6 <scratch>/c2f6 sheet-c2f6.png
+python3 b2v6_boards.py <scratch>/cmp-v5 <scratch>/cmp-v6 <scratch>/cmp-v6L <scratch>/b2-export.json <scratch>/c2f6 compare.png method.png
+# (the v6 boards reproduce with the tools at 6c2334a; formkit's section descriptors changed later, in 7a61392)
+# B-2 v7 (the comparison re-renders v5 at the v7 hero distance):
+cd ../../form-studies/source
+Blender -b --factory-startup --python render_form.py -- c2f7_sumi_flight <scratch>/c2f7 declared
+HERO_DIST=4.7 Blender -b --factory-startup --python render_form.py -- c2f5_sumi_flight <scratch>/cmp7-v5 legacy 2
+HERO_DIST=4.7 Blender -b --factory-startup --python render_form.py -- c2f7_sumi_flight <scratch>/cmp7-v7 declared 2
+HERO_DIST=4.7 Blender -b --factory-startup --python render_form.py -- c2f7_sumi_flight <scratch>/cmp7-v7L legacy 2
+HERO_DIST=4.7 Blender -b --factory-startup --python render_form.py -- c2f7_sumi_flight <scratch>/cmp7-v7F flat 2
+cd ../../raven-concepts/source
+Blender -b --factory-startup --python b2v7_export.py -- <scratch>/b2v7-export.json
+python3 sheet.py c2f7 <scratch>/c2f7 sheet-c2f7.png
+python3 b2v7_boards.py <scratch>/cmp7-v5 <scratch>/cmp7-v7 <scratch>/cmp7-v7L <scratch>/cmp7-v7F <scratch>/b2v7-export.json <scratch>/c2f7 compare.png method.png
 ```
 
 `sheet.py` gained three optional `concepts.json` fields: `ink_scale` and `ink_left` for the ink study, and `district_sub` for the district caption. Their defaults reproduce the earlier sheets; only `c2f4` and `c2f5` set them.
@@ -91,6 +120,8 @@ Every round was judged on pixels: by me first, then by an independent reviewer w
 | Independent round 5 | **B-2 v4: NEEDS REVISION.** Plank arm in the top and underside views, slab hem, glove hub underneath, a repeated finger unit, a jaw gap and neck hoop, a clipped side view, wrist clutter and presentation errors (packet §7.1). |
 | Revision 6 | **B-2 v5** (`c2f5_sumi_flight.py`, derived from v4; v4 unchanged): broad arm root tapering to the wrist with an S-curved trailing edge, bevelled hem, under-wing coverts, one flat primary-covert leaf, alula removed, individual finger widths and notches, the hackle strip set inside the throat, fewer head rings, a wider tail fan, and corrected framing. |
 | Independent round 6 | **B-2 v5: NEEDS REVISION** ("close"). Fixed: the jaw gap, the hoop, the clipping, the sliver, the crop, the pairs and the dark-field silhouettes. Open: lines that mark no form change on the fingers and the side wing; a banded head in the top and underside views; a near-rectangular inner arm from above; a tail-root pinhole; small slivers. **The revision stopped here** to keep the handoff bounded (packet §7.2–§7.3). |
+| Owner ruling (2026-11-27) | **B-2 v5 NOT APPROVED** (ART-D3b, second ruling): revise by a method that is generic for all objects, not bird-specific (packet §0.1). Sheet B stays the selected direction |
+| Revision 7 | The proposed [generic form method](../form-construction-method.md) committed first (`449406b`), then the [v6 brief](b2-v6-flight-brief.md) (`a400997`), then **B-2 v6**: a section program instead of one scaled pentagon, a converging arm, declared lines only, a pleated secondary tier, a two-group hand with staggered notches, the arm rooted inside the body and a tertial fairing at the tail root. The same procedure was applied to a vehicle, a building and a tree ([form studies](../form-studies/README.md)) |
 
 ## The directions
 

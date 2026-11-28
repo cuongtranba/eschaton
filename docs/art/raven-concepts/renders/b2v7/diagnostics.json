@@ -1,0 +1,107 @@
+{
+ "panels": 100,
+ "declared_edges": 622,
+ "declared_folds_below_8_deg": [
+  [
+   "body|body.back.L",
+   "body|head.crown",
+   6.3
+  ]
+ ],
+ "panel_edges_bending_over_20_deg": 14,
+ "max_panel_bend_deg": 53.9,
+ "hidden_panels": [],
+ "hidden_panel_edges_bending_over_20_deg": 0,
+ "interior_vertices_defect_over_2_deg": 0,
+ "max_defect_deg": 0.0,
+ "series": [
+  {
+   "name": "inner primaries P1-P5 (ends = tips)",
+   "cv_width": 0.041,
+   "cv_spacing": 0.154,
+   "cv_angle_step": 0.138,
+   "ends_r2": 0.9664
+  },
+  {
+   "name": "fingers P6-P9 (ends = notch points)",
+   "cv_width": 0.197,
+   "cv_spacing": 0.083,
+   "cv_angle_step": 0.138,
+   "ends_r2": 0.3652
+  }
+ ],
+ "sections": {
+  "+0.404": {
+   "aspect_recorded": 1.273,
+   "fill": 0.784,
+   "side_lean_deg": 41.1,
+   "shoulder_height": 0.55
+  },
+  "+0.384": {
+   "aspect_recorded": 1.326,
+   "fill": 0.784,
+   "side_lean_deg": 40.0,
+   "shoulder_height": 0.55
+  },
+  "+0.366": {
+   "aspect_recorded": 1.273,
+   "fill": 0.784,
+   "side_lean_deg": 41.1,
+   "shoulder_height": 0.55
+  },
+  "+0.322": {
+   "aspect_recorded": 1.088,
+   "fill": 0.795,
+   "side_lean_deg": 48.3,
+   "shoulder_height": 0.59
+  },
+  "+0.272": {
+   "aspect_recorded": 0.906,
+   "fill": 0.791,
+   "side_lean_deg": 49.3,
+   "shoulder_height": 0.525
+  },
+  "+0.240": {
+   "aspect_recorded": 0.971,
+   "fill": 0.755,
+   "side_lean_deg": 47.3,
+   "shoulder_height": 0.525
+  },
+  "+0.205": {
+   "aspect_recorded": 1.047,
+   "fill": 0.765,
+   "side_lean_deg": 43.7,
+   "shoulder_height": 0.5
+  },
+  "+0.130": {
+   "aspect_recorded": 1.019,
+   "fill": 0.776,
+   "side_lean_deg": 43.1,
+   "shoulder_height": 0.475
+  },
+  "+0.030": {
+   "aspect_recorded": 0.748,
+   "fill": 0.84,
+   "side_lean_deg": 57.4,
+   "shoulder_height": 0.573
+  },
+  "-0.070": {
+   "aspect_recorded": 0.686,
+   "fill": 0.84,
+   "side_lean_deg": 59.6,
+   "shoulder_height": 0.573
+  },
+  "-0.130": {
+   "aspect_recorded": 0.546,
+   "fill": 0.845,
+   "side_lean_deg": 61.6,
+   "shoulder_height": 0.505
+  },
+  "-0.205": {
+   "aspect_recorded": 0.28,
+   "fill": 0.845,
+   "side_lean_deg": 74.4,
+   "shoulder_height": 0.5
+  }
+ }
+}

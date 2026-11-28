@@ -1,0 +1,30 @@
+# M1 red run: tests and oracles against the stub o1.py, before the implementation
+# command: python3 -m unittest discover -s docs/research/geometry-operator-lab -p 'test_*.py'  (Python 3.9.6)
+Ran 24 tests in 0.371s
+
+FAILED (failures=553, errors=1890)
+# test methods with at least one failing or erroring case:
+   1 ERROR: test_f18_cap_with_the_point_below_has_a_282_degree_apex
+   1 ERROR: test_f1_face_angles_total_150_at_square_and_210_at_diamond_vertices
+   1 ERROR: test_f1_faces_lie_in_the_frozen_planes
+   1 ERROR: test_f1_net_matches_the_frozen_points_without_overlap
+   1 ERROR: test_f6_v5_pent_pair_has_one_trapezoid_on_the_shared_bottom_direction
+   1 ERROR: test_mixed_ring_dissolves_only_the_flat_y_edges
+   1 ERROR: test_on_path_ring_merges_into_the_single_band
+ 500 ERROR: test_r2_face_count_equals_distinct_edge_directions_and_faces_have_3_or_4_vertices
+  20 ERROR: test_r2_large_polygons_give_supporting_face_planes
+   1 ERROR: test_r3_slices_equal_the_minkowski_combination
+ 511 ERROR: test_r4_prismoidal_volume_equals_tetrahedral_volume_and_topology_is_right
+ 200 ERROR: test_r5_translation_quarter_turn_mirror_and_scaling_transform_the_result
+ 150 ERROR: test_r6_every_allowed_permutation_gives_an_identical_digest
+   1 ERROR: test_r7_digests_do_not_depend_on_the_hash_seed
+ 500 ERROR: test_r8_nets_are_congruent_within_tau
+  23 FAIL: test_each_negative_band_fails_with_exactly_its_code_in_either_argument_order
+   5 FAIL: test_each_negative_chain_fails_with_exactly_its_code
+   1 FAIL: test_f15_short_chamfer_is_a_thin_panel_and_reports_a_sub_2q_altitude
+   1 FAIL: test_f16_near_parallel_directions_give_full_size_faces_at_a_small_dihedral
+  11 FAIL: test_fixture_bands_have_the_frozen_topology_counts_owners_areas_and_volumes
+   6 FAIL: test_non_list_inputs_are_malformed_not_exceptions
+ 500 FAIL: test_r1_faces_equal_the_brute_force_hull_and_are_canonical
+   6 FAIL: test_rings_have_the_frozen_kind_edge_classes_and_vertex_angles
+test_the_oracles_do_not_import_the_implementation

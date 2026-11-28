@@ -444,5 +444,153 @@
   "ink_scale": 0.34,
   "ink_left": 0.5,
   "district_sub": "96 / 48 / 24 / 12 px height (wide ones capped by width); context hidden"
+ },
+ "c2f6": {
+  "title": "Raven Concept B-2 v6 — Sumi Sculptural Raven, flight revision",
+  "tagline": "Revision under ART-D3b (v5 not approved): the generic form method applied — section program, converging arm, declared lines, structured hand.",
+  "provenance": "Sheet B-2 v6 · 2026-11-27 · brief b2-v6-flight-brief.md + form-construction-method.md · Blender 5.2.1 maquette (c2f6_sumi_flight.py, formkit) + Pillow · Common Raven (Corvus corax)",
+  "hero_sub": "banked 20° glide turning toward the viewer; inner wing flexed at the wrist; neutral paper",
+  "labels": {
+   "bill_tip": "heavy arched bill (B's head)",
+   "finger_R": "fingers P6–P9, P7 longest",
+   "tail_wedge_tip": "keeled wedge tail",
+   "throat_hackles": "hackle strip, sleeked",
+   "wrist_L": "wrist: primary-covert leaf"
+  },
+  "turn": [
+   [
+    "front",
+    "Front (banked)"
+   ],
+   [
+    "side",
+    "Side"
+   ],
+   [
+    "top",
+    "Top"
+   ],
+   [
+    "under",
+    "Underside"
+   ]
+  ],
+  "fourth": "underside (flight; model banked 20°, pitched 3° nose-down)",
+  "close": [
+   [
+    "head",
+    "Head — crown, brow and nape planes"
+   ],
+   [
+    "wing",
+    "Arm, wrist and hand, from above"
+   ],
+   [
+    "tail",
+    "Tail — keeled wedge, rump plate"
+   ]
+  ],
+  "hier_view": "top",
+  "hier_text": [
+   "body, head, bill, tail",
+   "hem, coverts, secondaries, primaries",
+   "hackles, eye"
+  ],
+  "ink_view": "hero",
+  "ink_mode": "sky",
+  "flock_view": "under",
+  "sil": [
+   "hero",
+   "under"
+  ],
+  "notes": [
+   "Purpose: revise B-2 by the generic form method (ART-D3b, v5",
+   "  not approved); same bird as Sheet B, same pose and cameras as v5.",
+   "Sections change shape: tall brow, crown plane, pinched nape,",
+   "  deep breast, broad back, flat rump plate into the tail.",
+   "Arm converges: root chord 0.40 L to wrist 0.29 L; S trailing edge.",
+   "Lines only on declared folds, seams, boundaries and silhouette.",
+   "Hand: inner blades P1–P5 and fingers P6–P9 as two groups;",
+   "  P7 widest and longest, notches off one line, roots spread.",
+   "Rump to tail continuous; every secondary has a root and overlap.",
+   "94 declared panels. Pending owner ART-1. Foldability NOT VERIFIED."
+  ],
+  "ink_scale": 0.34,
+  "ink_left": 0.5,
+  "district_sub": "96 / 48 / 24 / 12 px height (wide ones capped by width); context hidden"
+ },
+ "c2f7": {
+  "title": "Raven Concept B-2 v7 — Sumi Sculptural Raven, flight revision",
+  "tagline": "Revision of v6 after its independent review: hero reframed, eye restored, flat-across head plates, wing root under the back.",
+  "provenance": "Sheet B-2 v7 · 2026-11-27 · brief b2-v6-flight-brief.md §12 + form-construction-method.md · Blender 5.2.1 maquette (c2f7_sumi_flight.py, formkit) + Pillow · Common Raven (Corvus corax)",
+  "hero_sub": "banked 20° glide turning toward the viewer; inner wing flexed at the wrist; neutral paper",
+  "labels": {
+   "bill_tip": "heavy arched bill (B's head)",
+   "finger_R": "slotted fingers P6–P9",
+   "tail_wedge_tip": "keeled wedge tail",
+   "throat_hackles": "hackle strip, sleeked",
+   "wrist_L": "wrist: primary-covert leaf"
+  },
+  "turn": [
+   [
+    "front",
+    "Front (banked)"
+   ],
+   [
+    "side",
+    "Side"
+   ],
+   [
+    "top",
+    "Top"
+   ],
+   [
+    "under",
+    "Underside"
+   ]
+  ],
+  "fourth": "underside (flight; model banked 20°, pitched 3° nose-down)",
+  "close": [
+   [
+    "head",
+    "Head — crown plate, brow, nape, eye"
+   ],
+   [
+    "wing",
+    "Arm, wrist and hand, from above"
+   ],
+   [
+    "tail",
+    "Tail — keeled wedge, rump plate"
+   ]
+  ],
+  "hier_view": "top",
+  "hier_text": [
+   "body, head, bill, tail",
+   "hem, coverts, secondaries, primaries",
+   "hackles, eye"
+  ],
+  "ink_view": "hero",
+  "ink_mode": "sky",
+  "flock_view": "under",
+  "sil": [
+   "hero",
+   "under"
+  ],
+  "notes": [
+   "Purpose: revise B-2 by the generic form method; v6 was reviewed",
+   "  NEEDS REVISION (packet §9.2). Same bird as Sheet B.",
+   "Head: crown and throat plates flat across their width; brow",
+   "  and nape folds only where the crown meets forehead and back.",
+   "Arm converges from root to wrist; its root passes under the back.",
+   "Lines only on declared folds, seams, boundaries and silhouette;",
+   "  continuous shading only inside developable panels.",
+   "Hand: inner blades P1–P5 and slotted fingers P6–P9, P7 widest.",
+   "Rump to tail continuous; fairing under the body at the tail root.",
+   "100 declared panels. Pending owner ART-1. Foldability NOT VERIFIED."
+  ],
+  "ink_scale": 0.34,
+  "ink_left": 0.5,
+  "district_sub": "96 / 48 / 24 / 12 px height (wide ones capped by width); context hidden"
  }
 }

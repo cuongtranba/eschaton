@@ -1,0 +1,227 @@
+{
+ "artefact": "form-method diagnostics (D-5); informative read-outs, not a gate",
+ "p1_controls": {
+  "pent_collinear_vertex_padding": 0.0,
+  "prism_identical_sections": 0.0,
+  "rectangle_aspect_change_only": 0.0,
+  "square_vs_diamond": 0.7071,
+  "turned_vessel_circle_r1_vs_r3": 0.0
+ },
+ "p1_v5_all_pairs": {
+  "max_d": 0.0,
+  "pairs": 45,
+  "sample_bound": 0.001
+ },
+ "p1_v7_station_pairs": [
+  {
+   "bound": 0.001,
+   "d": 0.039,
+   "delta_px": 0.4,
+   "from": [
+    0.366,
+    "BROW"
+   ],
+   "s_px": 10.3,
+   "to": [
+    0.322,
+    "CROWN"
+   ]
+  },
+  {
+   "bound": 0.001,
+   "d": 0.055,
+   "delta_px": 0.6,
+   "from": [
+    0.322,
+    "CROWN"
+   ],
+   "s_px": 11.0,
+   "to": [
+    0.272,
+    "NAPE_FLAT"
+   ]
+  },
+  {
+   "bound": 0.001,
+   "d": 0.136,
+   "delta_px": 1.5,
+   "from": [
+    0.272,
+    "NAPE_FLAT"
+   ],
+   "s_px": 11.0,
+   "to": [
+    0.24,
+    "NAPE"
+   ]
+  },
+  {
+   "bound": 0.001,
+   "d": 0.066,
+   "delta_px": 0.85,
+   "from": [
+    0.24,
+    "NAPE"
+   ],
+   "s_px": 12.9,
+   "to": [
+    0.205,
+    "NECK"
+   ]
+  },
+  {
+   "bound": 0.001,
+   "d": 0.03,
+   "delta_px": 0.48,
+   "from": [
+    0.205,
+    "NECK"
+   ],
+   "s_px": 16.3,
+   "to": [
+    0.13,
+    "BREAST"
+   ]
+  },
+  {
+   "bound": 0.001,
+   "d": 0.166,
+   "delta_px": 2.9,
+   "from": [
+    0.13,
+    "BREAST"
+   ],
+   "s_px": 17.5,
+   "to": [
+    0.03,
+    "BACK"
+   ]
+  },
+  {
+   "bound": 0.001,
+   "d": 0.082,
+   "delta_px": 0.65,
+   "from": [
+    -0.07,
+    "BACK"
+   ],
+   "s_px": 8.0,
+   "to": [
+    -0.13,
+    "VENT"
+   ]
+  },
+  {
+   "bound": 0.001,
+   "d": 0.131,
+   "delta_px": 0.35,
+   "from": [
+    -0.13,
+    "VENT"
+   ],
+   "s_px": 2.7,
+   "to": [
+    -0.205,
+    "PLATE"
+   ]
+  }
+ ],
+ "p5": {
+  "four_equal_pegs_cv_width": 0.0,
+  "v5_fingers_cv_width_recorded": 0.191
+ },
+ "p7": {
+  "cube_body_diagonal_view": {
+   "analytic": 0.20412,
+   "applicable": true,
+   "best_slice": 149,
+   "e_v": 0.20412,
+   "rays": 3600
+  },
+  "nested_changing_profiles_inside_widest": {
+   "applicable": true,
+   "best_slice": 0,
+   "e_v": 0.0,
+   "rays": 3600
+  },
+  "nested_torpedo_circles": {
+   "applicable": true,
+   "best_slice": 3,
+   "e_v": 0.0,
+   "rays": 3600
+  },
+  "v5_body_first_station_raised_0.03L": {
+   "L_px": 200.0,
+   "applicable": true,
+   "best_slice": 52,
+   "convergence_L": {
+    "per_interval_60_vs_30": 0.0,
+    "rays_3600_vs_1800": 5e-05
+   },
+   "e_v_L": 0.01473,
+   "e_v_px": 2.95,
+   "rays": 3600
+  },
+  "v5_body_mass": {
+   "L_px": 200.0,
+   "applicable": true,
+   "best_slice": 120,
+   "convergence_L": {
+    "per_interval_60_vs_30": 0.0,
+    "rays_3600_vs_1800": 0.0
+   },
+   "e_v_L": 0.0,
+   "e_v_px": 0.0,
+   "rays": 3600
+  },
+  "v5_one_mass_head_and_body": {
+   "L_px": 200.0,
+   "applicable": true,
+   "best_slice": 360,
+   "convergence_L": {
+    "per_interval_60_vs_30": 0.0,
+    "rays_3600_vs_1800": 0.0
+   },
+   "e_v_L": 0.017,
+   "e_v_px": 3.4,
+   "rays": 3600
+  },
+  "v7_body_mass": {
+   "L_px": 189.84,
+   "applicable": true,
+   "best_slice": 144,
+   "convergence_L": {
+    "per_interval_60_vs_30": 0.0,
+    "rays_3600_vs_1800": 0.0
+   },
+   "e_v_L": 0.00876,
+   "e_v_px": 1.66,
+   "rays": 3600
+  },
+  "v7_body_mass_folded_wings_scale": {
+   "L_px": 400.0,
+   "applicable": true,
+   "best_slice": 144,
+   "convergence_L": {
+    "per_interval_60_vs_30": 0.0,
+    "rays_3600_vs_1800": 0.0
+   },
+   "e_v_L": 0.00876,
+   "e_v_px": 3.5,
+   "note": "same body; object drawn with folded wings, so its largest extent is L, not the span",
+   "rays": 3600
+  }
+ },
+ "parameters": {
+  "hero_lower_bound_px": 400.0,
+  "p1_sample_step_half_extents": 0.002,
+  "rays": 3600,
+  "slices_per_interval": 60
+ },
+ "python": "3.9.6",
+ "script_sha256": {
+  "diagnostics.py": "36d4c4958be9bd9025e3c30409fc8fcfced7cb86e13ede5d733153a67fcb5434",
+  "inputs.json": "61e68b429b32c894996be04e167ef8d82a5fa511a09497b4f9b64e7c20bf3967",
+  "run_readouts.py": "f4c6ead010333e4264a9950d40bd29eecf524c31e9ee8ebd04621b16272761d6"
+ }
+}

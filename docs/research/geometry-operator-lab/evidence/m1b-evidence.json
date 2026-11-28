@@ -1,0 +1,287 @@
+{
+ "artefact": "O1 v2 experiment, tilted section planes (contract v2.2); research only",
+ "exact": {
+  "bands": {
+   "T1": {
+    "axis": [
+     0,
+     -1,
+     0
+    ],
+    "digest": "2fef76aacf8bbfc2c5c8cb31234710be4ecbee3067b376951cef79f4f2f524a1",
+    "kinds": [
+     "quadrilateral",
+     "trapezoid",
+     "quadrilateral",
+     "trapezoid"
+    ],
+    "owners": [
+     "AB",
+     "AB",
+     "AB",
+     "AB"
+    ],
+    "volume": [
+     8000000000000000000,
+     1
+    ]
+   },
+   "T2": {
+    "axis": [
+     0,
+     -1,
+     0
+    ],
+    "digest": "ea2e79ce4621aa095300c4bd9021c4c134105568959efcaff897e000cd7353a9",
+    "kinds": [
+     "triangle",
+     "triangle",
+     "triangle",
+     "triangle",
+     "triangle",
+     "triangle",
+     "triangle",
+     "triangle"
+    ],
+    "owners": [
+     "A",
+     "B",
+     "A",
+     "B",
+     "A",
+     "B",
+     "A",
+     "B"
+    ],
+    "volume": [
+     10000000000000000000,
+     3
+    ]
+   },
+   "T3": {
+    "axis": [
+     0,
+     1,
+     0
+    ],
+    "digest": "865e43f1d604af3477894337b7ac0102d6a239498e3e7dd878842f54fc53c05b",
+    "kinds": [
+     "trapezoid",
+     "quadrilateral",
+     "trapezoid",
+     "quadrilateral"
+    ],
+    "owners": [
+     "AB",
+     "AB",
+     "AB",
+     "AB"
+    ],
+    "volume": [
+     3750000000000000000,
+     1
+    ]
+   },
+   "T3t": {
+    "axis": [
+     0,
+     1,
+     0
+    ],
+    "digest": "3c4f5013a61c1c956019a84ca571310d01846fb7ecbf0e6acc7604515649ff25",
+    "kinds": [
+     "trapezoid",
+     "quadrilateral",
+     "trapezoid",
+     "quadrilateral"
+    ],
+    "owners": [
+     "AB",
+     "AB",
+     "AB",
+     "AB"
+    ],
+    "volume": [
+     3999999999999000000,
+     1
+    ]
+   },
+   "T4": {
+    "axis": [
+     0,
+     -1,
+     0
+    ],
+    "digest": "721583bc084b3ade1ffc150b8301cde93ba84abd03e5e8da963509734a4493ed",
+    "kinds": [
+     "triangle",
+     "triangle",
+     "triangle",
+     "triangle",
+     "triangle",
+     "triangle",
+     "triangle",
+     "triangle"
+    ],
+    "owners": [
+     "A",
+     "B",
+     "A",
+     "B",
+     "A",
+     "B",
+     "A",
+     "B"
+    ],
+    "volume": [
+     10000000000000000000,
+     3
+    ]
+   }
+  },
+  "negative_controls": {
+   "W1": "non-planar-section",
+   "W2": "parallel-planes",
+   "W3": "coincident-planes",
+   "W3_overlapping": "coincident-planes",
+   "W4a": "sections-not-separated",
+   "W4b": "sections-not-separated",
+   "W4c": "sections-not-separated",
+   "W6_dart": "non-convex-section",
+   "W6_midpoint": "collinear-vertex",
+   "W6_non_planar": "non-planar-section",
+   "W6_pentagram": "non-convex-section",
+   "W6_planar_bowtie": "non-convex-section",
+   "W6_repeated": "duplicate-vertex",
+   "W9": "thin-panel"
+  }
+ },
+ "float": {
+  "S8_random_nets": {
+   "cases": 300,
+   "pair_classes": {
+    "disjoint": 15986,
+    "inconclusive": 0,
+    "legal-contact": 9539,
+    "overlap": 0,
+    "touching": 0
+   },
+   "worst_congruence_over_tau": 5.361278368285978e-07,
+   "worst_seam_over_tau": 4.7596032767120553e-07
+  },
+  "T1": {
+   "min_altitude_q": 1500000.0,
+   "min_dihedral_deg": 90.0,
+   "net_classes": {
+    "disjoint": 3,
+    "inconclusive": 0,
+    "legal-contact": 3,
+    "overlap": 0,
+    "touching": 0
+   },
+   "net_congruence_over_tau": 0.0,
+   "net_seam_over_tau": 0.0
+  },
+  "T2": {
+   "min_altitude_q": 750000.0,
+   "min_dihedral_deg": 48.527065691059505,
+   "net_classes": {
+    "disjoint": 15,
+    "inconclusive": 0,
+    "legal-contact": 13,
+    "overlap": 0,
+    "touching": 0
+   },
+   "net_congruence_over_tau": 3.1401849173675496e-07,
+   "net_seam_over_tau": 7.850462293418874e-08
+  },
+  "T3": {
+   "min_altitude_q": 707106.7811865475,
+   "min_dihedral_deg": 90.0,
+   "net_classes": {
+    "disjoint": 3,
+    "inconclusive": 0,
+    "legal-contact": 3,
+    "overlap": 0,
+    "touching": 0
+   },
+   "net_congruence_over_tau": 1.2819751242557092e-07,
+   "net_seam_over_tau": 3.204937810639273e-08
+  },
+  "T3t": {
+   "min_altitude_q": 1.4142135623730951,
+   "min_dihedral_deg": 90.0,
+   "net_classes": {
+    "disjoint": 3,
+    "inconclusive": 0,
+    "legal-contact": 3,
+    "overlap": 0,
+    "touching": 0
+   },
+   "net_congruence_over_tau": 1.2819751242557092e-07,
+   "net_seam_over_tau": 3.370133732336348e-08
+  },
+  "T4": {
+   "min_altitude_q": 999999.0,
+   "min_dihedral_deg": 54.73558330776487,
+   "net_classes": {
+    "disjoint": 15,
+    "inconclusive": 0,
+    "legal-contact": 13,
+    "overlap": 0,
+    "touching": 0
+   },
+   "net_congruence_over_tau": 2.355138688025662e-07,
+   "net_seam_over_tau": 7.850462293418874e-08
+  }
+ },
+ "machine": "arm64",
+ "python": "3.9.6",
+ "sha256": {
+  "m1b-fixtures.json": "4c741df9df54abad4cb78859e54fafbf6e6b4a53ab212e6fcedd26dc26549112",
+  "m1b-o1v2-contract.md": "fef0baf2f435ba35a2a584780841f6102bc97ef3956c4137d5ec2da848581f23",
+  "o1v2.py": "b0434fc3ee5cf80eaab4c5a39c4ecdddfa89b93748dece982f89b910b521a05c",
+  "oracles_o1v2.py": "86deabb13347c243e1f443f1f0c1b6d0251cb76736fa23983e8b670ab26c6f93",
+  "run_evidence_lab2.py": "05f7708f7a943730afb7cb41041be99b0fa9483186a9fdb274ce74826ebc34db",
+  "test_o1v2.py": "d9c325299c5b6e47e7a9a534c70c6f8a961282dece4855ff3f57c5ca3fc2a1aa"
+ },
+ "system": "Darwin",
+ "timing": {
+  "conditions": "single process, CPython 3.9.6, Darwin arm64",
+  "fitted_exponent_64_to_1024": 1.0948709014316649,
+  "rows": [
+   {
+    "m_equals_n_at_most": 8,
+    "median_ms": 0.39319433333332804,
+    "vertices_used": [
+     8,
+     8
+    ]
+   },
+   {
+    "m_equals_n_at_most": 64,
+    "median_ms": 4.3205276666666474,
+    "vertices_used": [
+     64,
+     64
+    ]
+   },
+   {
+    "m_equals_n_at_most": 512,
+    "median_ms": 40.81765266666667,
+    "vertices_used": [
+     512,
+     512
+    ]
+   },
+   {
+    "m_equals_n_at_most": 1024,
+    "median_ms": 89.92754166666666,
+    "vertices_used": [
+     1024,
+     1024
+    ]
+   }
+  ]
+ }
+}

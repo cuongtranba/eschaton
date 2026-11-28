@@ -1,0 +1,15 @@
+M2 green runs (implementation by a separate agent that wrote no contract, test or oracle), contract v1.1 @ 18fd118, tests @ 46d92f2
+python: 3.9.6 Darwin arm64
+command: python3 -m unittest docs/research/geometry-operator-lab/test_o2.py
+run 1:
+Ran 34 tests in 4.579s
+OK
+run 2:
+Ran 34 tests in 5.564s
+OK
+First implementation run: 34 tests OK (implementer's report); no test, fixture, oracle or band changed.
+
+Run 3, after the bounded revision that followed the independent M2 review (PASS WITH FINDINGS): tests widened (F1 pinned digests reproduced by the reviewer's independent Node/BigInt engine, canonical fields and lineage, G5 areas, assignment in geometry_digest; F2 short far crease axis rule; F3 thin .b piece; F4 precedence; F5 inclusive bounds; F6 wrong version; F8 posed vertex count; F9 Q7 over all fixture sheets). o2.py unchanged.
+Ran 41 tests in 23.428s
+OK
+Mutants re-run against the widened tests (scratch copies): digest without canonical JSON, axis from float(Q) - float(P), thin check on .a only: each now fails exactly its named test.
