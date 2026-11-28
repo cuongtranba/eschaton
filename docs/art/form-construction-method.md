@@ -191,6 +191,8 @@ A solid mass's sections change profile where the brief, from the subject's funct
 - **Declared targets.** For each pair of consecutive declared stations, the brief states one target with its layer-S reason, before the artwork (§4.0):
   - **`change`**, saying what changes. For example: "the back rounds into the neck"; "the bonnet flattens into the cowl".
   - **`constant`**, saying why. For example: a turned vessel, a lighthouse, a fuselage of circular section, an extrusion, or a prism justified under D-4a.
+> **Errata D10-1…D10-10 (§16.1) supersede this text where they conflict.** In particular the asymmetric (rotation-grid) path is **not valid** (D10-1), and the claim that P1 does not depend on the partition is false (D10-3).
+
 - **Read-out (data, computed by [`diagnostics.py`](form-method-diagnostics/diagnostics.py) `p1_conformance`; D-10 correction of erratum R1, §16):**
   - `d`, the profile distance: Hausdorff distance between the normalised section boundaries. **Frame:** each section separately, its bounding-box centre to the origin and each axis scaled to [−1, 1]², minimised over the identity and the mirror x → −x for symmetric masses and over a rotation grid for asymmetric ones. So `d` is in **normalised half-extents**, a shape distance with size and aspect removed. It is not a length in model units.
   - The sampling interval: the true `d` lies in `[d, d + b]`, with `b` from the sampling step (and the rotation grid).
@@ -602,3 +604,37 @@ Each normalised boundary point therefore moves by at most `δ_X = √((3ε/(h_x 
 | identical squares, `constant`, `ε_m = 0.5e-6` | 0 | 0.001 | 4.2e-6 | `NOT VERIFIED` (the sampling limit in P1) |
 
 **Superseded records.** The check rows that compare `d` with `ε_m` ([check](form-method-check.md) §5 and §9, and the M3 verdicts that used them) are historical records of earlier versions. They are kept unchanged, and the units rule above supersedes them for any later use.
+
+### 16.1 Independent review of the D-10 corrections, and errata (2026-11-28)
+
+**Reviewer and verdict.**
+- The D-10 commit `2714cd5` (against its parent `c1bdd6e`) was reviewed by a separate agent that wrote none of it. It recomputed the floor, the controls and the evidence with its own code.
+- **Verdict: NEEDS REVISION** (no blocker, four majors).
+- D-10 authorizes one correction and **one** review. **No further revision is made.** The errata below supersede §16, P1 and rule 7 where they conflict. The two decisive ones, D10-1 and D10-8, were reproduced by the agent that made the correction (values below).
+
+**What held:**
+- The units are now consistent, and the symmetric P1 path is sound: `d > φ` proves that a change exists, and `d + b ≤ φ` shows none above the floor.
+- Classifying landmarks by function, not by edge kind, is correct. "Either reading fails" stops a finer partition from helping P7, and no partition turns a failing whole-spine P7 reading into conformance.
+- `D_v`, `c` and `λ` are correctly labelled not computed. The R4 frame, sourced tolerance and permitted use are correct.
+- No artwork, gate, D-4a or D-4b change. The M3.1 evidence is unchanged. The §16 table reproduces, and the R1 regression test fails under the old rule as claimed.
+
+| # | Severity | Where | Erratum (supersedes the text above) |
+|---|---|---|---|
+| D10-1 | major | P1, `profile_distance`, `classify_p1` (asymmetric) | The rotation-grid error is **two-sided**: the true minimum over all rotations can lie **below** the grid minimum, so `[d, d + b]` is not an interval for the true value. The added grid term is not a valid bound for thin sections either. Reproduced: PENT against itself rotated by 0.35 rad, `ε_m = 1e-6`, gives `d` = 0.00125 > φ = 1.28e-5, so identical profiles read `constant` → does not conform and `change` → conforms. **The asymmetric P1 path is not valid** and must not be used. The symmetric path (identity and mirror, D-4b) is unaffected |
+| D10-2 | major | P1 degenerate and limit cases; `measurement_floor` | φ grows without bound as h → ε, and it has no cap at the largest possible `d` (2√2). Square → diamond gives `constant` conforms at h/ε = 1.5, 5 and 10. A read-out whose φ is not small against the largest possible `d` should be `not-applicable`, and `ε_m` must be **declared and sourced before** the read-out, so that it cannot be inflated to help a `constant` target. Exact data cannot confirm `constant` at the default step (as P1 already states) |
+| D10-3 | major | §4.0 rule 7 | "The set of pairs is the same under every partition, so P1 cannot be changed by the partition" is **false**: reclassifying a landmark between station and junction changes the station set, and so the pairs. With landmarks A, B, C and profiles P, P, Q, B as a station gives a failing A→B `change`, while B as a junction leaves one straddling pair A→C, which conforms. The vocabulary (§4, Mass) and P1's "fewer than two declared stations" are not reconciled with whole-spine pairs. The P1 pair set would have to be fixed independently of the station/junction classification |
+| D10-4 | major | rule 7, "Legitimate uncertainty" | The junction **range** is a new declaration form outside R2, and it softens "either reading fails" (a failure at one end becomes `NOT VERIFIED`). Its P1 pair placement is undefined. **Withdrawn**: no junction range may be declared under this text |
+| D10-5 | minor | rule 7, P7 | No rule says where the whole-spine P7 target comes from. A whole-spine "mass" may not be a functional unit |
+| D10-6 | minor | rule 7 | "A classification never changes after the artwork exists (rule 4)" contradicts rule 3, which allows a late change as a new brief version. Read it as: a later change never alters an earlier version's verdict (rule 4) |
+| D10-7 | minor | §6.0, §16 R3 row | P6 hole areas **are** computed, in px, by `docs/art/form-studies/source/sil_topology.py` `holes()` (used by the v6/v7 boards). That script needs PIL and has no controls. So P6 is "computed, without controls", not "not computed". φ and the three outcomes are computed on synthetic controls only, never on committed geometry. `Δ_px` has no kind label |
+| D10-8 | minor | §16 derivation | 3ε/(h − ε) is valid but loose: `\|Δc\| + \|Δh\| ≤ ε`, so the tight bound is **2ε/(h − ε)**. Reproduced: with it, the R1 regression case (chamfer at h = 0.001 L) gives φ = 0.00566 < `d + b` = 0.00595, so `NOT VERIFIED`, not does-not-conform. The test asserts the committed (looser) rule, and it still fails under the old `d > ε_m` rule, but its expected outcome depends on that slack |
+| D10-9 | minor | P7 R4 limits | The 45° example does not show non-invariance for a long mass rolled about its spine (both extents scale by √2). Unlisted: a curved spine (no single spine-aligned box), the switch inside min(), and a tolerance from a single source. "Never a pass or fail" sits uneasily with the conforms wording |
+| D10-10 | minor | §16 "Superseded records" | The `d`-against-`ε_m` rows are in check §1.3, §2 and §3, not §5 and §9. For asymmetric masses the code tests `ε√2` against rotated extents, not `ε_m` against a half-extent |
+
+**Status after the D-10 round.**
+- R1 is **partly resolved**: the symmetric path only, with D10-2 and D10-8 open.
+- R2 is **partly resolved**: function-based classification and the P7 "either fails" rule hold; D10-3 and D10-4 are open (the range is withdrawn).
+- R3 is **partly resolved** (D10-7).
+- R4 is **resolved, with minor gaps** (D10-9).
+
+M3.1 stays a **proposal**, not adopted. Any further method work needs a new owner decision.
