@@ -183,7 +183,9 @@ def check_pose(test, sh, angles, root):
     got = posed(sh, angles, root)
     faces = current(sh)
     ref = orc.pose(faces, crease_map(sh), angles, root)
+    test.assertEqual(sorted(got), sorted(faces))
     for fid, ring in faces.items():
+        test.assertEqual((len(got[fid]), len(ref[fid])), (len(ring), len(ring)), fid)
         for a, b in zip(got[fid], ref[fid]):
             test.assertLessEqual(orc.dist3(a, b), t, fid)
         rest = [orc._fl(v) for v in ring]
@@ -568,13 +570,68 @@ class Properties(unittest.TestCase):
 
     def test_q7_the_digest_does_not_depend_on_the_hash_seed(self):
         script = ("import json,sys; sys.path.insert(0, %r); import o2;"
-                  "fx=json.load(open(%r)); s=o2.make_sheet(fx['square'])['sheet'];"
-                  "s=o2.insert_crease(s,'F',*fx['G1']['line'],'valley')['sheet'];"
-                  "s=o2.insert_crease(s,'F.a',*fx['G5']['second_line'],'valley')['sheet'];"
-                  "print(o2.digest(s), o2.geometry_digest(s))") % (HERE, os.path.join(HERE, "m2-fixtures.json"))
+                  "fx=json.load(open(%r)); b=o2.make_sheet(fx['square'])['sheet'];"
+                  "i=lambda s,f,l,a='valley': o2.insert_crease(s,f,l[0],l[1],a)['sheet'];"
+                  "g1=i(b,'F',fx['G1']['line']); l6=fx['G6']['lines'];"
+                  "sheets=[g1,i(b,'F',fx['G1']['line'],'mountain'),i(b,'F',fx['G3']['line']),i(b,'F',fx['G4']['line']),"
+                  "i(g1,'F.a',fx['G5']['second_line']),i(i(b,'F',l6[0]),'F.b',l6[1]),i(g1,'F.b',fx['G10']['second_line'],'mountain')];"
+                  "print([(o2.digest(s), o2.geometry_digest(s)) for s in sheets])") % (HERE, os.path.join(HERE, "m2-fixtures.json"))
         outs = {subprocess.run([sys.executable, "-c", script], env=dict(os.environ, PYTHONHASHSEED=seed),
                                capture_output=True, text=True, check=True).stdout for seed in ("0", "12345")}
         self.assertEqual(len(outs), 1)
+
+
+class ReviewRegressions(unittest.TestCase):
+    """Added in the bounded revision after the independent M2 review (contract section 14 and README);
+    o2.py was not changed. Each names the review finding it closes."""
+
+    def test_f1_digests_are_pinned_to_values_an_independent_engine_reproduced(self):
+        g1 = ok(insert(sheet(), "F", FX["G1"]["line"]))["sheet"]
+        g5 = ok(insert(g1, "F.a", FX["G5"]["second_line"]))["sheet"]
+        self.assertEqual((o2.digest(g1), o2.geometry_digest(g1)),
+                         ("bc7d69e9569102808cee643a636446b4bd9987529927709de058f72be3ccd158",
+                          "9f256f959bbf389c5873ae3d56e032724aef0b114c7c743324c2b0d35ec54b29"))
+        self.assertEqual((o2.digest(g5), o2.geometry_digest(g5)),
+                         ("faf0d4b3bccffdef449aefe705f68b8e721d4c0a0a6a9ab8e0aa0e312fc6d305",
+                          "d6e33b5449971b9b7eba8416b4d31f62d174a936a625e782584562f8672d1e03"))
+
+    def test_f1_the_canonical_sheet_value_has_the_contract_fields(self):
+        g5 = ok(insert(ok(insert(sheet(SQ[2:] + SQ[:2]), "F", FX["G1"]["line"]))["sheet"], "F.a", FX["G5"]["second_line"]))["sheet"]
+        self.assertEqual(o2.canonical_json(g5), json.dumps(g5, sort_keys=True, separators=(",", ":"), ensure_ascii=True))
+        self.assertEqual(g5["outline"], SQ)
+        self.assertEqual([f["id"] for f in g5["faces"]], ["F", "F.a", "F.a.a", "F.a.b", "F.b"])
+        lineage = {f["id"]: (f["parent"], f["children"], f["crease"]) for f in g5["faces"]}
+        self.assertEqual(lineage, {"F": (None, ["F.a", "F.b"], "F"), "F.a": ("F", ["F.a.a", "F.a.b"], "F.a"),
+                                   "F.a.a": ("F.a", None, None), "F.a.b": ("F.a", None, None), "F.b": ("F", None, None)})
+        areas = {f["id"]: f["area"] for f in g5["faces"] if f["children"] is None}
+        self.assertEqual(areas, {"F.a.a": [25 * 10 ** 10, 1], "F.a.b": [25 * 10 ** 10, 1], "F.b": [5 * 10 ** 11, 1]})
+        mountain = ok(insert(sheet(), "F", FX["G1"]["line"], "mountain"))["sheet"]
+        valley = ok(insert(sheet(), "F", FX["G1"]["line"]))["sheet"]
+        self.assertNotEqual(o2.geometry_digest(mountain), o2.geometry_digest(valley))
+
+    def test_f2_a_short_crease_far_from_the_origin_follows_the_exact_axis_rule(self):
+        outline = [[998000000, 998000000], [999000000, 998157296], [999000000, 999000000], [998287708, 999000000]]
+        sh = ok(insert(sheet(outline), "F", [[998000005, 997999997], [997999997, 998000002]]))["sheet"]
+        faces = current(sh)
+        root = min(faces, key=lambda f: orc.shoelace(faces[f]))
+        check_pose(self, sh, {"F": 90.0}, root)
+
+    def test_f3_a_thin_b_piece_is_thin_panel(self):
+        self.assertEqual(code(insert(sheet(), "F", [[999999, 0], [M, 1]], min_altitude=1000)), "thin-panel")
+
+    def test_f4_precedence_of_unknown_crease_and_root_checks(self):
+        g1 = ok(insert(sheet(), "F", FX["G1"]["line"]))["sheet"]
+        self.assertEqual(code(o2.pose(g1, {"Q": 1}, "F.a")), "unknown-crease")
+        self.assertEqual(code(o2.pose(g1, {"F": 200}, "Z")), "unknown-face")
+        self.assertEqual(code(insert(g1, "F.b", [[0, H], [M, H]], min_altitude=M)), "splits-crease")
+
+    def test_f5_the_bounds_are_inclusive(self):
+        self.assertTrue(o2.make_sheet([[-10 ** 9, -10 ** 9], [10 ** 9, -10 ** 9], [10 ** 9, 10 ** 9]])["ok"])
+        self.assertEqual(code(insert(sheet(), "F", FX["G1"]["line"], min_altitude=4 * 10 ** 9)), "thin-panel")
+
+    def test_f6_a_sheet_with_a_wrong_version_is_malformed(self):
+        sh = dict(sheet(), version="o2-contract-v0")
+        self.assertEqual(code(insert(sh, "F", FX["G1"]["line"])), "malformed-input")
 
 
 class Independence(unittest.TestCase):
